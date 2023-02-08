@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     [DisallowMultipleComponent]
     public sealed class GameDriver : MonoBehaviour
@@ -13,7 +13,6 @@ namespace HotUpdate
         {
             "热更部分启动成功！！".Log();
             DontDestroyOnLoad(this);
-            GameEntryConfig.Port.Log();
         }
     }
 }

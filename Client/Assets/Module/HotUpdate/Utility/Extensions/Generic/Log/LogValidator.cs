@@ -1,4 +1,4 @@
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     /// <summary>
     /// 日志验证器

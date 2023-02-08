@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     public static partial class LogExtensions
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using System.Linq;
 
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     public static class StringExtensions
     {

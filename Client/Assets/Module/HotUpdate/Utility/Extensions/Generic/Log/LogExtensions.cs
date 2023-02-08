@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     public static partial class LogExtensions
     {

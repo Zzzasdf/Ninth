@@ -1,4 +1,4 @@
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     public class ColorDefine
     {

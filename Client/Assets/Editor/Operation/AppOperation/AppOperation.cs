@@ -4,11 +4,15 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-public class ApplyOperation : Editor
+namespace NinthEditor
 {
-    [MenuItem("Tools/App/Work/腾讯会议")]
-    private static void App()
+    public class ApplyOperation : Editor
     {
-        Process.Start("F:/腾讯会议/WeMeet/wemeetapp.exe");
+        [MenuItem("Tools/App/Work/鑵捐浼氳")]
+        private static void App()
+        {
+            Process.Start("F:/鑵捐浼氳/WeMeet/wemeetapp.exe");
+        }
     }
 }
+

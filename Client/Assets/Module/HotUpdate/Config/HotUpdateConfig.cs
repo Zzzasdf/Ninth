@@ -1,4 +1,4 @@
-namespace HotUpdate
+namespace Ninth.HotUpdate
 {
     public sealed class HotUpdateConfig
     {
