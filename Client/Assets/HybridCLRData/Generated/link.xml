@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <linker>
   <assembly fullname="Main">
-    <type fullname="GameEntryConfig" preserve="all" />
+    <type fullname="Ninth.AssetLocate" preserve="all" />
   </assembly>
   <assembly fullname="mscorlib">
     <type fullname="System.Collections.Generic.IEnumerable`1" preserve="all" />

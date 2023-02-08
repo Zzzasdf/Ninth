@@ -1,0 +1,12 @@
+{
+    "AssetRefList": [
+        {
+            "AssetPath": "Assets/GAssets/LocalGroup/Cube.prefab",
+            "BundleRef": {
+                "BundleName": "gassets_localgroup",
+                "AssetLocate": 0
+            },
+            "Dependencies": null
+        }
+    ]
+}

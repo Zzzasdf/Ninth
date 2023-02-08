@@ -1,114 +1,108 @@
-//using HybridCLR.Editor;
-//using HybridCLR.Editor.Commands;
-//using System.Collections.Generic;
-//using System.IO;
-//using System.Linq;
-//using UnityEditor;
-//using UnityEngine;
+using HybridCLR.Editor;
+using HybridCLR.Editor.Commands;
+using Ninth.HotUpdate;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
-//namespace Ninth.Editor
-//{
-//    public sealed partial class BuildAssetsCommand
-//    {
-//        public static string ToRelativeAssetPath(string s)
-//        {
-//            return s.Substring(s.IndexOf("Assets/"));
-//        }
+namespace Ninth.Editor
+{
+    public sealed partial class BuildAssetsCommand
+    {
+        public static string ToRelativeAssetPath(string s)
+        {
+            return s.Substring(s.IndexOf("Assets/"));
+        }
 
-//        public static void BuildDllByTarget(BuildTarget target)
-//        {
-//            ScanAssembly(HybridCLR.Editor.BuildAssetsCommand.GetAssetBundleTempDirByTarget(target), target);
-//        }
+        public static void BuildDll(BuildTarget target, string dstDir)
+        {
+            ScanAssembly(target, dstDir);
+        }
 
-//        /// <summary>
-//        /// 打包程序集
-//        /// </summary>
-//        /// <param name="directoryInfo"></param>
-//        private static void ScanAssembly(string assetDirSourceDataDir, BuildTarget target)
-//        {
-//            CompileDllCommand.CompileDll(target);
+        /// <summary>
+        /// 打包程序集
+        /// </summary>
+        /// <param name="directoryInfo"></param>
+        private static void ScanAssembly(BuildTarget target, string dstDir)
+        {
+            CompileDllCommand.CompileDll(target);
+            CopyAOTAssemblies2SourceDataTempPath(dstDir);
+            CopyHotUpdateAssemblies2SourceDataTempPath(dstDir);
+        }
 
-//            List<string> notSceneAssets = new List<string>();
+        public static void CopyAOTAssemblies2SourceDataTempPath(string dstDir)
+        {
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
+            string aotAssembliesDstDir = dstDir;
 
-//            string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+            foreach (var dll in LoadDll.AOTMetaAssemblyNames)
+            {
+                string srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
+                if (!File.Exists(srcDllPath))
+                {
+                    Debug.LogError($"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+                    continue;
+                }
+                string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.bytes";
+                File.Copy(srcDllPath, dllBytesPath, true);
+                Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+                DllSortOut($"{dll}.bytes");
+            }
+        }
 
-//            foreach (var dll in AssemblyConfig.HotUpdateAssemblies)
-//            {
-//                string dllPath = $"{hotfixDllSrcDir}/{dll}";
+        public static void CopyHotUpdateAssemblies2SourceDataTempPath(string dstDir)
+        {
+            var target = EditorUserBuildSettings.activeBuildTarget;
 
-//                string dllBytesPath = $"{assetDirSourceDataDir}/{dll}.bytes";
+            string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+            string hotfixAssembliesDstDir = dstDir;
 
-//                File.Copy(dllPath, dllBytesPath, true);
+            foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+            {
+                string dllPath = $"{hotfixDllSrcDir}/{dll}";
+                string dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
+                File.Copy(dllPath, dllBytesPath, true);
+                Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+                DllSortOut($"{ dll}.bytes");
+            }
+        }
 
-//                notSceneAssets.Add(dllBytesPath);
-//            }
-//            string aotDllDir = BuildConfig.GetAssembliesPostIl2CppStripDir(target);
+        private static void DllSortOut(string dllName)
+        {
+            AssetLocate assetLocate = AssetLocate.Dll;
+            if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
+            {
+                m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
+            }
+            m_AssetLocate2BundleNameList[assetLocate].Add(dllName);
 
-//            foreach (var dll in AssemblyConfig.AOTMetaAssemblies)
-//            {
-//                string dllPath = $"{aotDllDir}/{dll}";
+            // 配置Bundle引用
+            BundleRef bundleRef = new BundleRef()
+            {
+                BundleName = dllName,
+                AssetLocate = assetLocate
+            };
+            m_BundleName2BundleRef.Add(dllName, bundleRef);
 
-//                if (!File.Exists(dllPath))
-//                {
-//                    Debug.LogError($"ab中添加AOT补充元数据dll:{dllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+            // 资源
+            AssetRef assetRef = new AssetRef()
+            {
+                AssetPath = dllName,
+                BundleRef = bundleRef
+            };
 
-//                    continue;
-//                }
-//                string dllBytesPath = $"{assetDirSourceDataDir}/{dll}.bytes";
-
-//                File.Copy(dllPath, dllBytesPath, true);
-
-//                notSceneAssets.Add(dllBytesPath);
-//            }
-
-//            // 配置bundle数据
-//            string bundleName = NameConfig.DllsBundleName;
-
-//            AssetLocate assetLocate = AssetLocate.Dll;
-
-//            // 分类
-//            m_AssetLocate2BundleNameList.AddAndDefine(assetLocate, bundleName);
-
-//            // Bundle
-//            AssetBundleBuild build = new AssetBundleBuild()
-//            {
-//                assetBundleName = bundleName,
-
-//                assetNames = notSceneAssets.Select(s => ToRelativeAssetPath(s)).ToArray(),
-//            };
-//            m_AssetBundleBuildList.Add(build);
-
-//            // 加载配置 -- 资源所在的AB包
-//            BundleRef bundleRef = new BundleRef()
-//            {
-//                BundleName = bundleName,
-
-//                AssetLocate = assetLocate
-//            };
-//            m_BundleName2BundleRef.Add(bundleName, bundleRef);
-
-//            string assetPath = bundleName;
-
-//            m_AssetLocate2AssetPathList.AddAndDefine(assetLocate, assetPath);
-
-//            // 资源
-//            AssetRef assetRef = new AssetRef()
-//            {
-//                AssetPath = assetPath,
-
-//                BundleRef = bundleRef
-//            };
-//            m_AssetPath2AssetRef.Add(assetPath, assetRef);
-
-//            // 配置
-//            if (!m_LoadConfig.ContainsKey(assetLocate))
-//            {
-//                m_LoadConfig.Add(assetLocate, new LoadConfig()
-//                {
-//                    AssetRefList = new List<AssetRef>()
-//                });
-//            }
-//            m_LoadConfig[assetLocate].AssetRefList.Add(assetRef);
-//        }
-//    }
-//}
+            // 配置加载配置
+            if (!m_LoadConfig.ContainsKey(assetLocate))
+            {
+                m_LoadConfig.Add(assetLocate, new LoadConfig()
+                {
+                    AssetRefList = new List<AssetRef>()
+                });
+            }
+            m_LoadConfig[assetLocate].AssetRefList.Add(assetRef);
+        }
+    }
+}
