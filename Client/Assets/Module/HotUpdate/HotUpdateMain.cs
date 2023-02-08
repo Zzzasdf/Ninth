@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class HotUpdateMain : MonoBehaviour
 {
-
     public string text;
 
     void Start()
@@ -16,5 +15,8 @@ public class HotUpdateMain : MonoBehaviour
         gameObject.AddComponent<CreateByCode>();
 
         Debug.Log("=======看到此条日志代表你成功运行了示例项目的热更新代码=======");
+
+        Debug.Log("=======执行热更部分======");
+        gameObject.AddComponent<HotUpdate.GameDriver>();
     }
 }
