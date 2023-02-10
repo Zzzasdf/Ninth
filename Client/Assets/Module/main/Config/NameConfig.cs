@@ -43,26 +43,6 @@ namespace Ninth
         public static string LoadConfigNameInRemote { get; private set; }
 
         /// <summary>
-        /// 远端的热更扩展文件夹
-        /// </summary>
-        public static string RemoteExtensionsDirectory { get; private set; }
-
-        /// <summary>
-        /// 在远端的热更扩展下载配置名
-        /// </summary>
-        public static string DownloadConfigNameInRemoteExtensions { get; private set; }
-
-        /// <summary>
-        /// 在远端的热更扩展下载临时配置名
-        /// </summary>
-        public static string TempDownloadConfigNameInRemoteExtensions { get; private set; }
-
-        /// <summary>
-        /// 在远端的热更扩展加载配置名
-        /// </summary>
-        public static string LoadConfigNameInRemoteExtensions { get; private set; }
-
-        /// <summary>
         /// Dll文件夹
         /// </summary>
         public static string DllDirectory { get; private set; }
@@ -111,15 +91,6 @@ namespace Ninth
             TempDownloadConfigNameInRemote = "TempDownloadRemote.json";
 
             LoadConfigNameInRemote = "LoadRemote.json";
-
-            // 远端扩展
-            RemoteExtensionsDirectory = "RemoteExtensions";
-
-            DownloadConfigNameInRemoteExtensions = "DownloadRemoteExtensions.json";
-
-            TempDownloadConfigNameInRemoteExtensions = "TempDownloadRemoteExtensions.json";
-
-            LoadConfigNameInRemoteExtensions = "LoadRemoteExtensions.json";
 
             // Dll
             DllDirectory = "Dll";

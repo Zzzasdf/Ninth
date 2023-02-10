@@ -32,12 +32,15 @@ namespace Ninth.Editor
             {
                 m_PackAssetMode = value;
 
+                AssetBundleOutputAllVersionRoot = $"{Application.dataPath}/../../Bundles/AssetBundleOutput/{PlatformConfig.ProduceName}/{BuildPlatform}";
+
                 AssetBundleOutputRoot = m_PackAssetMode switch
                 {
-                    AssetMode.RemoteAB => string.Format("{0}/../../Bundles/AssetBundleOutput/{1}/{2}", Application.dataPath, PlatformConfig.ProduceName, BuildPlatform),
-                    AssetMode.LocalAB => string.Format("{0}", Application.streamingAssetsPath),
+                    AssetMode.RemoteAB => $"{AssetBundleOutputAllVersionRoot}/{{0}}",
+                    AssetMode.LocalAB => Application.streamingAssetsPath,
                     _ => throw new System.NotImplementedException(),
                 };
+
                 PlayerOutputRoot =
                     string.Format("{0}/../../Player/{1}/{2}", Application.dataPath, PlatformConfig.ProduceName, BuildPlatform);
             }
@@ -49,6 +52,9 @@ namespace Ninth.Editor
 
         // 源数据根节点
         private static string AssetBundleSourceDataRoot { get; set; }
+
+        // 远端所有版本数据跟节点
+        private static string AssetBundleOutputAllVersionRoot { get; set; }
 
         // 完整数据根节点
         private static string AssetBundleOutputRoot { get; set; }
@@ -72,35 +78,26 @@ namespace Ninth.Editor
             return string.Format("{0}/{1}/{2}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteDirectory);
         }
 
-        public static string SourceDataRemoteExtensionsPathDirectory(long version)
-        {
-            return string.Format("{0}/{1}/{2}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory);
-        }
-
         public static string SourceDataDllPathDirectory(long version)
         {
             return string.Format("{0}/{1}/{2}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.DllDirectory);
         }
 
         // 输出目录
-        public static string OutputLocalPathDirectory(long version)
+        public static string OutputLocalPathDirectory()
         {
             return string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.LocalDirectory);
         }
 
         public static string OutputRemotePathDirectory(long version)
         {
-            return string.Format("{0}/{1}/{2}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteDirectory);
-        }
-
-        public static string OutputRemoteExtensionsPathDirectory(long version)
-        {
-            return string.Format("{0}/{1}/{2}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory);
+            
+            return string.Format("{0}/{1}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.RemoteDirectory);
         }
 
         public static string OutputDllPathDirectory(long version)
         {
-            return string.Format("{0}/{1}/{2}", AssetBundleOutputRoot, version.ToString(), NameConfig.DllDirectory);
+           return string.Format("{0}/{1}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.DllDirectory);
         }
 
         // 客户端输出目录
@@ -128,18 +125,13 @@ namespace Ninth.Editor
 
         public static string VersionInOutputPath()
         {
-            return string.Format("{0}/{1}", AssetBundleOutputRoot, NameConfig.VersionConfigName);
+            return string.Format("{0}/{1}", AssetBundleOutputAllVersionRoot, NameConfig.VersionConfigName);
         }
 
-        // 下载配置
-        public static string DownloadConfigInRemoteInSourceDataPath(long version)
+    // 下载配置
+    public static string DownloadConfigInRemoteInSourceDataPath(long version)
         {
             return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
-        }
-
-        public static string DownloadConfigInRemoteExtensionsInSourceDataPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.DownloadConfigNameInRemoteExtensions);
         }
 
         public static string DownloadConfigInDllInSourceDataPath(long version)
@@ -149,17 +141,12 @@ namespace Ninth.Editor
 
         public static string DownloadConfigInRemoteInOutputPath(long version)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
-        }
-
-        public static string DownloadConfigInRemoteExtensionsInOutputPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.DownloadConfigNameInRemoteExtensions);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
         }
 
         public static string DownloadConfigInDllInOutputPath(long version)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.DllDirectory, NameConfig.DownloadConfigNameInDll);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.DllDirectory, NameConfig.DownloadConfigNameInDll);
         }
 
         // 加载配置
@@ -171,11 +158,6 @@ namespace Ninth.Editor
         public static string LoadConfigInRemoteInSourceDataPath(long version)
         {
             return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
-        }
-
-        public static string LoadConfigInRemoteExtensionsInSourceDataPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.LoadConfigNameInRemoteExtensions);
         }
 
         public static string LoadConfigInDllInSourceDataPath(long version)
@@ -190,17 +172,12 @@ namespace Ninth.Editor
 
         public static string LoadConfigInRemoteInOutputPath(long version)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
-        }
-
-        public static string LoadConfigInRemoteExtensionsInOutputPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.LoadConfigNameInRemoteExtensions);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
         }
 
         public static string LoadConfigInDllInOutputPath(long version)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.DllDirectory, NameConfig.LoadConfigNameInDll);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.DllDirectory, NameConfig.LoadConfigNameInDll);
         }
 
         // Bundle路径
@@ -219,11 +196,6 @@ namespace Ninth.Editor
             return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteDirectory, bundleName);
         }
 
-        public static string BundleInRemoteExtensionsInSourceDataPath(long version, string bundleName)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, bundleName);
-        }
-
         public static string BundleInDllInSourceDataPath(long version, string bundleName)
         {
             return string.Format("{0}/{1}/{2}/{3}", AssetBundleSourceDataRoot, version.ToString(), NameConfig.DllDirectory, bundleName);
@@ -236,17 +208,12 @@ namespace Ninth.Editor
 
         public static string BundleInRemoteInOutputPath(long version, string bundleName)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteDirectory, bundleName);
-        }
-
-        public static string BundleInRemoteExtensionsInOutputPath(long version, string bundleName)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.RemoteExtensionsDirectory, bundleName);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.RemoteDirectory, bundleName);
         }
 
         public static string BundleInDllInOutputPath(long version, string bundleName)
         {
-            return string.Format("{0}/{1}/{2}/{3}", AssetBundleOutputRoot, version.ToString(), NameConfig.DllDirectory, bundleName);
+            return string.Format("{0}/{1}/{2}", string.Format(AssetBundleOutputRoot, version.ToString()), NameConfig.DllDirectory, bundleName);
         }
     }
 }

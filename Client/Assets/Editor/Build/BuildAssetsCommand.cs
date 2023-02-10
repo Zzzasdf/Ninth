@@ -429,15 +429,15 @@ namespace Ninth.Editor
             Utility.ToJson(m_VersionConfig, PackConfig.VersionInSourceDataPath(m_VersionConfig.Version));
 
             // 空包也添加配置 =》解决拉取配置404问题
-            List<AssetLocate> nullPackAssetLocate = new List<AssetLocate>()
+            List<AssetLocate> packAssetLocate = new List<AssetLocate>()
             {
                 AssetLocate.Remote,
                 AssetLocate.Dll
             };
 
-            for (int index = 0; index < nullPackAssetLocate.Count; index++)
+            for (int index = 0; index < packAssetLocate.Count; index++)
             {
-                AssetLocate assetLocate = nullPackAssetLocate[index];
+                AssetLocate assetLocate = packAssetLocate[index];
 
                 if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
                 {
@@ -460,7 +460,7 @@ namespace Ninth.Editor
                     move2SourceDataFolder = PackConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version);
                     Utility.CreateNewDirectory(move2SourceDataFolder);
 
-                    copy2OutputFolder = PackConfig.OutputLocalPathDirectory(m_VersionConfig.Version);
+                    copy2OutputFolder = PackConfig.OutputLocalPathDirectory();
                     Utility.CreateNewDirectory(copy2OutputFolder);
 
                     // 保存加载配置

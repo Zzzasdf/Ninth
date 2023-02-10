@@ -107,6 +107,9 @@ namespace Ninth
             // 可能可以用程序集代码反射调用启动热更区，但热更模块好像不打包成dll文件 
 
             // TODO .. 打包Local时, remote和dll文件夹上会有一个版号文件夹，需要在打包时去掉
+
+            // TODO .. 删除掉输出目录，只留源目录，并把版本文件外置
+
             var asset = "gassets_remotegroup";
             string dir = GlobalConfig.AssetMode switch
             {
