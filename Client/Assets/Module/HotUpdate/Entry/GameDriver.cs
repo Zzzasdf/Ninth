@@ -11,7 +11,7 @@ namespace Ninth.HotUpdate
 
         private void Awake()
         {
-            "热更部分启动成功！！".Log();
+            "热更部分启动成功2！！".Log();
             DontDestroyOnLoad(this);
         }
     }

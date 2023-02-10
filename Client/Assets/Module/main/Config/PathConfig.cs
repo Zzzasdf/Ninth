@@ -27,12 +27,6 @@ namespace Ninth
         private static string m_TempDownloadConfigInRemoteInPersistentDataPath { get; }
           = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory, NameConfig.TempDownloadConfigNameInRemote);
 
-        private static string m_DownloadConfigInRemoteExtensionsInPersistentDataPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteExtensionsDirectory, NameConfig.DownloadConfigNameInRemoteExtensions);
-
-        private static string m_TempDownloadConfigInRemoteExtensionsInPersistentDataPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteExtensionsDirectory, NameConfig.TempDownloadConfigNameInRemoteExtensions);
-
         private static string m_DownloadConfigInDllInPersistentDataPath { get; }
            = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.DllDirectory, NameConfig.DownloadConfigNameInDll);
 
@@ -49,9 +43,6 @@ namespace Ninth
         private static string m_LoadConfigInRemoteInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
 
-        private static string m_LoadConfigInRemoteExtensionsInPersistentDataPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteExtensionsDirectory, NameConfig.LoadConfigNameInRemoteExtensions);
-
         private static string m_LoadConfigInDllInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.DllDirectory, NameConfig.LoadConfigNameInDll);
 
@@ -62,11 +53,14 @@ namespace Ninth
         private static string m_BundleRootInLocalInStreamingAssetPath { get; }
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.LocalDirectory);
 
+        public static string m_BundleRootInRemoteInStreamingAssetPath { get; }
+            = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.RemoteDirectory);
+
         private static string m_BundleRootInRemoteInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory);
 
-        private static string m_BundleRootInRemoteExtensionsInPersistentDataPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteExtensionsDirectory);
+        private static string m_BundleRootInDllInStreamingAssetPath { get; }
+            = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.DllDirectory);
 
         private static string m_BundleRootInDllInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.DllDirectory);
@@ -101,11 +95,6 @@ namespace Ninth
             return string.Format("{0}/{1}/{2}/{3}", m_DownloadConfigRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
         }
 
-        public static string DownloadConfigInRemoteExtensionsInServerPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", m_DownloadConfigRootInServerPath, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.DownloadConfigNameInRemoteExtensions);
-        }
-
         public static string DownloadConfigInDllInServerPath(long version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_DownloadConfigRootInServerPath, version.ToString(), NameConfig.DllDirectory, NameConfig.DownloadConfigNameInDll);
@@ -120,16 +109,6 @@ namespace Ninth
         public static string TempDownloadConfigInRemoteInPersistentDataPath()
         {
             return m_TempDownloadConfigInRemoteInPersistentDataPath;
-        }
-
-        public static string DownloadConfigInRemoteExtensionsInPersistentDataPath()
-        {
-            return m_DownloadConfigInRemoteExtensionsInPersistentDataPath;
-        }
-
-        public static string TempDownloadConfigInRemoteExtensionsInPersistentDataPath()
-        {
-            return m_TempDownloadConfigInRemoteExtensionsInPersistentDataPath;
         }
 
         public static string DownloadConfigInDllInPersistentDataPath()
@@ -148,11 +127,6 @@ namespace Ninth
             return string.Format("{0}/{1}/{2}/{3}", m_LoadConfigRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
         }
 
-        public static string LoadConfigInRemoteExtensionsInServerPath(long version)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", m_LoadConfigRootInServerPath, version.ToString(), NameConfig.RemoteExtensionsDirectory, NameConfig.LoadConfigNameInRemoteExtensions);
-        }
-
         public static string LoadConfigInDllInServerPath(long version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_LoadConfigRootInServerPath, version.ToString(), NameConfig.DllDirectory, NameConfig.LoadConfigNameInDll);
@@ -169,11 +143,6 @@ namespace Ninth
             return m_LoadConfigInRemoteInPersistentDataPath;
         }
 
-        public static string LoadConfigInRemoteExtensionsInPersistentDataPath()
-        {
-            return m_LoadConfigInRemoteExtensionsInPersistentDataPath;
-        }
-
         public static string LoadConfigInDllInPersistentDataPath()
         {
             return m_LoadConfigInDllInPersistentDataPath;
@@ -183,11 +152,6 @@ namespace Ninth
         public static string BundleInRemoteInServerPath(long version, string bundleName)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_BundleRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, bundleName);
-        }
-
-        public static string BundleInRemoteExtensionsInServerPath(long version, string bundleName)
-        {
-            return string.Format("{0}/{1}/{2}/{3}", m_BundleRootInServerPath, version.ToString(), NameConfig.RemoteExtensionsDirectory, bundleName);
         }
 
         public static string BundleInDllInServerPath(long version, string bundleName)
@@ -201,16 +165,20 @@ namespace Ninth
             return string.Format("{0}/{1}", m_BundleRootInLocalInStreamingAssetPath, bundleName);
         }
 
+        public static string BunldeInRemoteInStreamingAssetPath(string bundleName)
+        {
+            return string.Format("{0}/{1}", m_BundleRootInRemoteInStreamingAssetPath, bundleName);
+        }
+
         public static string BundleInRemoteInPersistentDataPath(string bundleName)
         {
             return string.Format("{0}/{1}", m_BundleRootInRemoteInPersistentDataPath, bundleName);
         }
-
-        public static string BundleInRemoteExtensionsInPersistentDataPath(string bundleName)
+        
+        public static string BunldeInDllInStreamingAssetPath(string bundleName)
         {
-            return string.Format("{0}/{1}", m_BundleRootInRemoteExtensionsInPersistentDataPath, bundleName);
+            return string.Format("{0}/{1}", m_BundleRootInDllInStreamingAssetPath, bundleName);
         }
-
         public static string BundleInDllInPersistentDataPath(string bundleName)
         {
             return string.Format("{0}/{1}", m_BundleRootInDllInPersistentDataPath, bundleName);

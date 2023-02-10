@@ -8,31 +8,31 @@ namespace Ninth.Editor
         [MenuItem("Tools/BuildPlayer/ActiveBuildTarget/Remote")]
         public static void BuildPlayerActiveBuildTargetInRemote()
         {
-            BuildPlayer(EditorUserBuildSettings.activeBuildTarget, AssetMode.RemoteAB);
+            BuildPlayer(EditorUserBuildSettings.selectedBuildTargetGroup, EditorUserBuildSettings.activeBuildTarget, AssetMode.RemoteAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Win64/Remote")]
         public static void BuildPlayerInWin64InRemote()
         {
-            BuildPlayer(BuildTarget.StandaloneWindows64, AssetMode.RemoteAB);
+            BuildPlayer(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, AssetMode.RemoteAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Win32/Remote")]
         public static void BuildPlayerInWin32InRemote()
         {
-            BuildPlayer(BuildTarget.StandaloneWindows, AssetMode.RemoteAB);
+            BuildPlayer(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows, AssetMode.RemoteAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Android/Remote")]
         public static void BuildPlayerInAndroidInRemote()
         {
-            BuildPlayer(BuildTarget.Android, AssetMode.RemoteAB);
+            BuildPlayer(BuildTargetGroup.Android, BuildTarget.Android, AssetMode.RemoteAB);
         }
 
         [MenuItem("Tools/BuildPlayer/IOS/Remote")]
         public static void BuildPlayerInIOSInRemote()
         {
-            BuildPlayer(BuildTarget.iOS, AssetMode.RemoteAB);
+            BuildPlayer(BuildTargetGroup.iOS, BuildTarget.iOS, AssetMode.RemoteAB);
         }
         #endregion
 
@@ -40,31 +40,31 @@ namespace Ninth.Editor
         [MenuItem("Tools/BuildPlayer/ActiveBuildTarget/Local")]
         public static void BuildPlayerActiveBuildTargetInLocal()
         {
-            BuildPlayer(EditorUserBuildSettings.activeBuildTarget, AssetMode.LocalAB);
+            BuildPlayer(EditorUserBuildSettings.selectedBuildTargetGroup, EditorUserBuildSettings.activeBuildTarget, AssetMode.LocalAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Win64/Local")]
         public static void BuildPlayerInWin64InLocal()
         {
-            BuildPlayer(BuildTarget.StandaloneWindows64, AssetMode.LocalAB);
+            BuildPlayer(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, AssetMode.LocalAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Win32/Local")]
         public static void BuildPlayerInWin32InLocal()
         {
-            BuildPlayer(BuildTarget.StandaloneWindows, AssetMode.LocalAB);
+            BuildPlayer(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows, AssetMode.LocalAB);
         }
 
         [MenuItem("Tools/BuildPlayer/Android/Local")]
         public static void BuildPlayerInAndroidInLocal()
         {
-            BuildPlayer(BuildTarget.Android, AssetMode.LocalAB);
+            BuildPlayer(BuildTargetGroup.Android, BuildTarget.Android, AssetMode.LocalAB);
         }
 
         [MenuItem("Tools/BuildPlayer/IOS/Local")]
         public static void BuildPlayerInIOSInLocal()
         {
-            BuildPlayer(BuildTarget.iOS, AssetMode.LocalAB);
+            BuildPlayer(BuildTargetGroup.iOS, BuildTarget.iOS, AssetMode.LocalAB);
         }
         #endregion
 

@@ -22,7 +22,7 @@ namespace Ninth.Editor
             }
 
             // 开始写入Json文件
-            if (File.Exists(path) == true)
+            if (File.Exists(path))
             {
                 File.Delete(path);
             }

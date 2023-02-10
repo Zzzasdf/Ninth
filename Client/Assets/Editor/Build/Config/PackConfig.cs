@@ -38,6 +38,8 @@ namespace Ninth.Editor
                     AssetMode.LocalAB => string.Format("{0}", Application.streamingAssetsPath),
                     _ => throw new System.NotImplementedException(),
                 };
+                PlayerOutputRoot =
+                    string.Format("{0}/../../Player/{1}/{2}", Application.dataPath, PlatformConfig.ProduceName, BuildPlatform);
             }
         }
 
@@ -50,6 +52,9 @@ namespace Ninth.Editor
 
         // 完整数据根节点
         private static string AssetBundleOutputRoot { get; set; }
+
+        // 客户端根节点
+        private static string PlayerOutputRoot { get; set; }
 
         // 源目录
         public static string SourceDataTempPathDirectory(long version)
@@ -96,6 +101,12 @@ namespace Ninth.Editor
         public static string OutputDllPathDirectory(long version)
         {
             return string.Format("{0}/{1}/{2}", AssetBundleOutputRoot, version.ToString(), NameConfig.DllDirectory);
+        }
+
+        // 客户端输出目录
+        public static string OutputPlayerDirectory(long version)
+        {
+            return string.Format("{0}/{1}", PlayerOutputRoot, version.ToString());
         }
 
         // 打包资源根节点
