@@ -9,10 +9,10 @@ namespace Ninth
     {
         public async void EnterProcedure()
         {
-            long version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
+            string version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
 
             // 资源服务器的加载配置的存放路径
-            List<Func<long, string>> loadConfigInServerPathList = new List<Func<long, string>>()
+            List<Func<string, string>> loadConfigInServerPathList = new List<Func<string, string>>()
             {
                 version => PathConfig.LoadConfigInRemoteInServerPath(version),
                 version => PathConfig.LoadConfigInDllInServerPath(version),

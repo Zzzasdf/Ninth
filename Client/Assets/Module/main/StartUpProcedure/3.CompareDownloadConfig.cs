@@ -19,7 +19,7 @@ namespace Ninth
             GameEntry.DownloadCore.DecreaseTypeNodes.Add(0);
 
             // 当前版本
-            long version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
+            string version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
 
             // 资源服务器存放下载配置路径
             List<string> serverDownloadConfigPathList = new List<string>()

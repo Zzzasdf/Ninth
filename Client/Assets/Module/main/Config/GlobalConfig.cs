@@ -27,9 +27,9 @@ namespace Ninth
         {
             Utf8 = new UTF8Encoding(false);
 
-            AssetMode = AssetMode.LocalAB;
+            AssetMode = AssetMode.RemoteAB;
 
-            Url = "http://192.168.1.192:80";
+            Url = "http://192.168.8.197:80";
         }
     }
 }

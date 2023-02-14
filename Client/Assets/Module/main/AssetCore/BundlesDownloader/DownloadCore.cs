@@ -33,11 +33,10 @@ namespace Ninth
             {
                 throw new System.Exception("tempVersionConfig is missing");
             }
-            if(!long.TryParse(PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion, out long lastBreakVersion)
-                || tempVersionConfig.Version != lastBreakVersion)
+            if(tempVersionConfig.Version != PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion)
             {
                 // 重置版本 与 断点位置
-                PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion = tempVersionConfig.Version.ToString();
+                PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion = tempVersionConfig.Version;
                 PlayerPrefsDefine.DownloadBundleStartPos = 0;
             }
             return PlayerPrefsDefine.DownloadBundleStartPos;
@@ -111,7 +110,7 @@ namespace Ninth
 
             request.downloadHandler = new DownloadHandlerFile(dstPath);
 
-            UnityEngine.Debug.Log("请求下载到本地路径: " + dstPath);
+            UnityEngine.Debug.Log("原路径:" + srcPath + "请求下载到本地路径: " + dstPath);
 
             await request.SendWebRequest();
 

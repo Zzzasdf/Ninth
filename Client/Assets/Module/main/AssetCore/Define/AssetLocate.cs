@@ -8,16 +8,18 @@ namespace Ninth
         /// <summary>
         /// 本地
         /// </summary>
-        Local,
+        Local = 1 << 0,
 
         /// <summary>
         /// 远端
         /// </summary>
-        Remote,
+        Remote = 1 << 1,
 
         /// <summary>
         /// 程序集
         /// </summary>
-        Dll
+        Dll = 1 << 2,
+
+        Max = int.MaxValue
     }
 }

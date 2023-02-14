@@ -90,12 +90,12 @@ namespace Ninth
         }
 
         // 下载配置在服务器的路径
-        public static string DownloadConfigInRemoteInServerPath(long version)
+        public static string DownloadConfigInRemoteInServerPath(string version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_DownloadConfigRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
         }
 
-        public static string DownloadConfigInDllInServerPath(long version)
+        public static string DownloadConfigInDllInServerPath(string version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_DownloadConfigRootInServerPath, version.ToString(), NameConfig.DllDirectory, NameConfig.DownloadConfigNameInDll);
         }
@@ -122,12 +122,12 @@ namespace Ninth
         }
 
         // 加载配置在服务器的路径
-        public static string LoadConfigInRemoteInServerPath(long version)
+        public static string LoadConfigInRemoteInServerPath(string version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_LoadConfigRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
         }
 
-        public static string LoadConfigInDllInServerPath(long version)
+        public static string LoadConfigInDllInServerPath(string version)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_LoadConfigRootInServerPath, version.ToString(), NameConfig.DllDirectory, NameConfig.LoadConfigNameInDll);
         }
@@ -149,12 +149,12 @@ namespace Ninth
         }
 
         // Bundle在服务器的路径
-        public static string BundleInRemoteInServerPath(long version, string bundleName)
+        public static string BundleInRemoteInServerPath(string version, string bundleName)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_BundleRootInServerPath, version.ToString(), NameConfig.RemoteDirectory, bundleName);
         }
 
-        public static string BundleInDllInServerPath(long version, string bundleName)
+        public static string BundleInDllInServerPath(string version, string bundleName)
         {
             return string.Format("{0}/{1}/{2}/{3}", m_BundleRootInServerPath, version.ToString(), NameConfig.DllDirectory, bundleName);
         }

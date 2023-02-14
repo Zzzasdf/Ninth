@@ -11,9 +11,9 @@ namespace Ninth
     {
         public async void EnterProcedure()
         {
-            long version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
+            string version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
 
-            List<Func<long, string, string>> bundleServerPathList = new List<Func<long, string, string>>
+            List<Func<string, string, string>> bundleServerPathList = new List<Func<string, string, string>>
             {
                 (version, bundleName) => PathConfig.BundleInRemoteInServerPath(version, bundleName),
                 (version, bundleName) => PathConfig.BundleInDllInServerPath(version, bundleName),
@@ -39,7 +39,7 @@ namespace Ninth
                     long size = increaseBundleList[index].Size;
                     GameEntry.DownloadCore.MessageBox.DownloadNext("当前的下载进度{0}%({1}/{2})", size);
                     
-                    bool result = await GameEntry.DownloadCore.Download(bundleServerPathList[i](version, bundleName), bundlePersistentDataPathList[i](bundleName));
+                    bool result = await GameEntry.DownloadCore.Download(bundleServerPathList[i - 1](version, bundleName), bundlePersistentDataPathList[i - 1](bundleName));
                     if (!result)
                     {
                         // TODO .. 弹窗提示 .. 下载错误  Y .. 重试（3）

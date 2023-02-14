@@ -18,9 +18,8 @@ namespace Ninth.Editor
         {
             if (string.IsNullOrEmpty(path))
             {
-                UnityEngine.Debug.LogError("保存Json的路径为空！！保存失败！！");
+                return;
             }
-
             // 开始写入Json文件
             if (File.Exists(path))
             {
