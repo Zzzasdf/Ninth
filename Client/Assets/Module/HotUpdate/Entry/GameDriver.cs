@@ -7,12 +7,17 @@ namespace Ninth.HotUpdate
     [DisallowMultipleComponent]
     public sealed class GameDriver : MonoBehaviour
     {
+        public static void Init()
+        {
+            new GameObject("GameDriver").AddComponent<GameDriver>();
+        }
+
         private GameDriver() { }
 
         private void Awake()
         {
-            "热更部分启动成功3！！".Log();
             DontDestroyOnLoad(this);
+            "热更部分启动成功7！！".Log();
         }
     }
 }

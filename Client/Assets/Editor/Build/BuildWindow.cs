@@ -164,7 +164,7 @@ namespace Ninth.Editor
                 ButtonClick();
                 GetWindow<BuildWindow>().Close();
             }
-            if(GUILayout.Button("Confirm And Apply"))
+            if(Param.IsRemote && GUILayout.Button("Confirm And Apply"))
             {
                 ButtonClick(()=> BuildAssetsCommand.RemoteApply());
                 GetWindow<BuildWindow>().Close();

@@ -27,41 +27,45 @@ namespace Ninth
 
         public async void EnterProcedure()
         {
-            var assets = new List<string>
+            if (GlobalConfig.AssetMode == AssetMode.LocalAB
+                || GlobalConfig.AssetMode == AssetMode.RemoteAB)
             {
-                "Assembly-CSharp.dll",
-            }.Concat(AOTMetaAssemblyNames);
-
-            foreach (var asset in assets)
-            {
-                string dir = GlobalConfig.AssetMode switch
+                var assets = new List<string>
                 {
-                    AssetMode.RemoteAB => PathConfig.BundleInDllInPersistentDataPath(asset),
-                    AssetMode.LocalAB => PathConfig.BunldeInDllInStreamingAssetPath(asset),
-                    _ => throw new Exception("unknown assetMode")
-                };
-                string dllPath = GetWebRequestPath(dir);
-                Debug.Log($"start download asset:{dllPath}");
-                UnityWebRequest www = UnityWebRequest.Get(dllPath);
-                await www.SendWebRequest();
+                    "Assembly-CSharp.dll",
+                }.Concat(AOTMetaAssemblyNames);
+
+                foreach (var asset in assets)
+                {
+                    string dir = GlobalConfig.AssetMode switch
+                    {
+                        AssetMode.RemoteAB => PathConfig.BundleInDllInPersistentDataPath(asset),
+                        AssetMode.LocalAB => PathConfig.BunldeInDllInStreamingAssetPath(asset),
+                        _ => throw new Exception("unknown assetMode")
+                    };
+                    string dllPath = GetWebRequestPath(dir);
+                    Debug.Log($"start download asset:{dllPath}");
+                    UnityWebRequest www = UnityWebRequest.Get(dllPath);
+                    await www.SendWebRequest();
 
 #if UNITY_2020_1_OR_NEWER
-                if (www.result != UnityWebRequest.Result.Success)
+                    if (www.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.Log(www.error);
+                    }
+#else
+                if (www.isHttpError || www.isNetworkError)
                 {
                     Debug.Log(www.error);
                 }
-#else
-            if (www.isHttpError || www.isNetworkError)
-            {
-                Debug.Log(www.error);
-            }
 #endif
-                else
-                {
-                    // Or retrieve results as binary data
-                    byte[] assetData = www.downloadHandler.data;
-                    Debug.Log($"dll:{asset}  size:{assetData.Length}");
-                    s_assetDatas[asset] = assetData;
+                    else
+                    {
+                        // Or retrieve results as binary data
+                        byte[] assetData = www.downloadHandler.data;
+                        Debug.Log($"dll:{asset}  size:{assetData.Length}");
+                        s_assetDatas[asset] = assetData;
+                    }
                 }
             }
             ExitProcedure();
@@ -78,6 +82,38 @@ namespace Ninth
                 path += ".bytes";
             }
             return path;
+        }
+
+        public void ExitProcedure()
+        {
+            System.Reflection.Assembly gameAss = null;
+#if !UNITY_EDITOR
+            gameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+#else
+            switch (GlobalConfig.AssetMode)
+            {
+                case AssetMode.NonAB:
+                    {
+                        gameAss = AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Assembly-CSharp");
+                        break;
+                    }
+                case AssetMode.LocalAB:
+                case AssetMode.RemoteAB:
+                    {
+                        LoadMetadataForAOTAssemblies();
+                        gameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+                        break;
+                    }
+            }
+#endif
+            if (gameAss == null)
+            {
+                UnityEngine.Debug.LogError("dll未加载");
+                return;
+            }
+            var appType = gameAss.GetType("Ninth.HotUpdate.GameDriver");
+            var mainMethod = appType.GetMethod("Init");
+            mainMethod.Invoke(null, null);
         }
 
         /// <summary>
@@ -97,53 +133,6 @@ namespace Ninth
                 LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
                 Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. mode:{mode} ret:{err}");
             }
-        }
-
-        public async void ExitProcedure()
-        {
-            // TODO .. 这里加载了资源bundle
-            // 只能把资源加载模块放入非热更去
-            // HOPE .. 想要将资源加载模块放入热更区, 所以就不能用加载资源的方式去启动热更模块,
-            // 可能可以用程序集代码反射调用启动热更区
-
-            var asset = "gassets_remotegroup";
-            string dir = GlobalConfig.AssetMode switch
-            {
-                AssetMode.RemoteAB => PathConfig.BundleInRemoteInPersistentDataPath(asset),
-                AssetMode.LocalAB => PathConfig.BunldeInRemoteInStreamingAssetPath(asset),
-                _ => throw new Exception("unknown assetMode")
-            };
-
-            string dllPath = GetWebRequestPath(dir);
-            Debug.Log($"start download asset:{dllPath}");
-            UnityWebRequest www = UnityWebRequest.Get(dllPath);
-            await www.SendWebRequest();
-
-#if UNITY_2020_1_OR_NEWER
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-            }
-#else
-            if (www.isHttpError || www.isNetworkError)
-            {
-                Debug.Log(www.error);
-            }
-#endif
-            else
-            {
-                // Or retrieve results as binary data
-                byte[] assetData = www.downloadHandler.data;
-                Debug.Log($"dll:{asset}  size:{assetData.Length}");
-                s_assetDatas[asset] = assetData;
-            }
-
-#if !UNITY_EDITOR
-        System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
-#endif
-            AssetBundle prefabAb = AssetBundle.LoadFromMemory(GetAssetData("gassets_remotegroup"));
-
-            GameObject testPrefab = GameObject.Instantiate(prefabAb.LoadAsset<GameObject>("HotUpdatePrefab.prefab"));
         }
     }
 }
