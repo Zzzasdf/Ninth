@@ -4,23 +4,26 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-public partial class BrowserOperation : Editor
+namespace NinthEditor
 {
-    [MenuItem("Tools/Browser/Joy/Õ¯“◊‘∆“Ù¿÷")]
-    private static void WebsiteWangYiYunMusic()
+    public partial class BrowserOperation : Editor
     {
-        Process.Start("https://music.163.com/#");
-    }
+        [MenuItem("Tools/Browser/Joy/ÁΩëÊòì‰∫ëÈü≥‰πê")]
+        private static void WebsiteWangYiYunMusic()
+        {
+            Process.Start("https://music.163.com/#");
+        }
 
-    [MenuItem("Tools/Browser/Joy/bilibili")]
-    private static void WebsiteBilibili()
-    {
-        Process.Start("https://www.bilibili.com/");
-    }
+        [MenuItem("Tools/Browser/Joy/bilibili")]
+        private static void WebsiteBilibili()
+        {
+            Process.Start("https://www.bilibili.com/");
+        }
 
-    [MenuItem("Tools/Browser/Joy/Age∂Ø¬˛")]
-    private static void Website()
-    {
-        Process.Start("https://www.agemys.net/");
+        [MenuItem("Tools/Browser/Joy/AgeÂä®Êº´")]
+        private static void Website()
+        {
+            Process.Start("https://www.agemys.net/");
+        }
     }
 }

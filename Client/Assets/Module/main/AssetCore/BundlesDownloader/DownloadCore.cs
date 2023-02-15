@@ -37,9 +37,9 @@ namespace Ninth
             {
                 // 重置版本 与 断点位置
                 PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion = tempVersionConfig.Version;
-                PlayerPrefsDefine.DownloadBundleStartPos = 0;
+                DownloadBundleStartPos = 0;
             }
-            return PlayerPrefsDefine.DownloadBundleStartPos;
+            return DownloadBundleStartPos;
         }
 
         public MessageBox MessageBox { get; set; }
@@ -88,8 +88,6 @@ namespace Ninth
             m_IncreaseBundleDic.Clear();
 
             m_DecreaseBundleDic.Clear();
-
-            DownloadBundleStartPos = 0;
 
             GetRemoteIncreaseBundleCount = 0;
 

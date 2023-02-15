@@ -4,17 +4,20 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-public partial class BrowserOperation : Editor
+namespace NinthEditor
 {
-    [MenuItem("Tools/Browser/Collection/SharpLab")]
-    private static void WebsiteSharpLab()
+    public partial class BrowserOperation : Editor
     {
-        Process.Start("https://sharplab.io/");
-    }
+        [MenuItem("Tools/Browser/Collection/SharpLab")]
+        private static void WebsiteSharpLab()
+        {
+            Process.Start("https://sharplab.io/");
+        }
 
-    [MenuItem("Tools/Browser/Collection/UnityÊÖ²á")]
-    private static void WebsiteUnityDocs()
-    {
-        Process.Start("https://docs.unity3d.com/cn");
+        [MenuItem("Tools/Browser/Collection/Unityæ‰‹å†Œ")]
+        private static void WebsiteUnityDocs()
+        {
+            Process.Start("https://docs.unity3d.com/cn");
+        }
     }
 }

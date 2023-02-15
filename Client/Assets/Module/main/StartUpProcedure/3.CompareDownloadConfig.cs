@@ -69,19 +69,18 @@ namespace Ninth
                 // 增加bundle列表
                 foreach (var item in tempDownloadConfig.BundleInfos)
                 {
-                    // 断点续传，忽略下载成功的bundle
-                    if (bundleIndex < bundleBreakPos)
-                    {
-                        bundleIndex++;
-                        continue;
-                    }
-
                     string bundleName = item.Key;
                     BundleInfo bundleInfo = item.Value;
 
                     // 第一次下载这个下载配置 || 本地第一次下载这个bundle
                     if (downloadConfig == null || !downloadConfig.BundleInfos.TryGetValue(bundleName, out BundleInfo value))
                     {
+                        // 断点续传，忽略下载成功的bundle
+                        if (bundleIndex < bundleBreakPos)
+                        {
+                            bundleIndex++;
+                            continue;
+                        }
                         GameEntry.DownloadCore.IncreaseBundle(bundleName, bundleInfo);
                         totalSize += bundleInfo.Size;
                     }
@@ -89,6 +88,12 @@ namespace Ninth
                     {
                         if (value.Crc != bundleInfo.Crc)
                         {
+                            // 断点续传，忽略下载成功的bundle
+                            if (bundleIndex < bundleBreakPos)
+                            {
+                                bundleIndex++;
+                                continue;
+                            }
                             GameEntry.DownloadCore.IncreaseBundle(bundleName, bundleInfo);
                             totalSize += bundleInfo.Size;
                         }

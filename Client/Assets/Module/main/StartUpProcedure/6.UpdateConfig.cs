@@ -42,8 +42,6 @@ namespace Ninth
             }
             File.Move(PathConfig.TempVersionInPersistentDataPath(), PathConfig.VersionInPersistentDataPath());
 
-            // 重置下载开始点
-            GameEntry.DownloadCore.DownloadBundleStartPos = 0;
             ExitProcedure();
         }
 

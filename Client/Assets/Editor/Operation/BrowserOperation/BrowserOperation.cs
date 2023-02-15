@@ -4,11 +4,14 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-public partial class BrowserOperation : Editor
+namespace NinthEditor
 {
-    [MenuItem("Tools/Browser/°Ù¶È")]
-    private static void WebsiteBaiDu()
+    public partial class BrowserOperation : Editor
     {
-        Process.Start("http://www.baidu.com");
+        [MenuItem("Tools/Browser/ç™¾åº¦")]
+        private static void WebsiteBaiDu()
+        {
+            Process.Start("http://www.baidu.com");
+        }
     }
 }

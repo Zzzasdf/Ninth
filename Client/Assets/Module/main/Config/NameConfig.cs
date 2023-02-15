@@ -76,7 +76,7 @@ namespace Ninth
         {
             VersionConfigName = "VersionConfig.json";
 
-            TempVersionConfigName = "Temp_VersionConfig.json";
+            TempVersionConfigName = "TempVersionConfig.json";
 
             // 本地
             LocalDirectory = "Local";
@@ -97,14 +97,14 @@ namespace Ninth
 
             DllsBundleName = "Assemblys";
 
-            DownloadConfigNameInDll = "DownloadConfigNameInDll.json";
+            DownloadConfigNameInDll = "DownloadDll.json";
 
-            TempDownloadConfigNameInDll = "TempDownloadConfigNameInDll.json";
+            TempDownloadConfigNameInDll = "TempDownloadDll.json";
 
-            LoadConfigNameInDll = "LoadConfigNameInDll.json";
+            LoadConfigNameInDll = "LoadDll.json";
 
             // 打包的临时目录
-            PackTempDirectory = "PackTempDirectory";
+            PackTempDirectory = "TempPackDirectory";
         }
     }
 }
