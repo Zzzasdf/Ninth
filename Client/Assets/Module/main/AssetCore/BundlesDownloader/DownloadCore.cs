@@ -14,11 +14,7 @@ namespace Ninth
 
         private Dictionary<string, BundleInfo> m_IncreaseBundleDic; // 新增的Bundle
 
-        private Dictionary<string, BundleInfo> m_DecreaseBundleDic; // 废弃的Bundle
-
         public List<int> IncreaseTypeNodes { get; set; } // 新增的类型节点
-
-        public List<int> DecreaseTypeNodes { get; set; } // 废弃的类型节点
 
         public int DownloadBundleStartPos
         {
@@ -29,11 +25,14 @@ namespace Ninth
         public int GetDownloadBundleStartPos()
         {
             VersionConfig tempVersionConfig = GetVersionConfig(PathConfig.TempVersionInPersistentDataPath());
-            if(tempVersionConfig == null)
+            VersionConfig versionConfig = GetVersionConfig(PathConfig.VersionInPersistentDataPath());
+
+            if (tempVersionConfig == null)
             {
                 throw new System.Exception("tempVersionConfig is missing");
             }
-            if(tempVersionConfig.Version != PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion)
+            if(tempVersionConfig.Version != PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion
+                || versionConfig == null) // 防止出现持久化目录数据被删除但有缓存的情况，这种情况下会少下资源包
             {
                 // 重置版本 与 断点位置
                 PlayerPrefsDefine.DownloadBundleStartPosFromAssetVersion = tempVersionConfig.Version;
@@ -75,8 +74,6 @@ namespace Ninth
             m_Path2DownloadConfig = new Dictionary<string, DownloadConfig>();
 
             m_IncreaseBundleDic = new Dictionary<string, BundleInfo>();
-
-            m_DecreaseBundleDic = new Dictionary<string, BundleInfo>();
         }
 
         public void Clear()
@@ -86,8 +83,6 @@ namespace Ninth
             m_Path2DownloadConfig.Clear();
 
             m_IncreaseBundleDic.Clear();
-
-            m_DecreaseBundleDic.Clear();
 
             GetRemoteIncreaseBundleCount = 0;
 
@@ -156,6 +151,12 @@ namespace Ninth
                 return newDownloadConfig;
             }
         }
+
+        public void ClearConfigCache()
+        {
+            m_Path2VersionConfig.Clear();
+            m_Path2DownloadConfig.Clear();
+        }
         #endregion
 
         #region Bundle
@@ -165,26 +166,12 @@ namespace Ninth
         public Dictionary<string, BundleInfo> GetIncreaseBundleList => m_IncreaseBundleDic;
 
         /// <summary>
-        /// 获取废弃Bundle列表
-        /// </summary>
-        public Dictionary<string, BundleInfo> GetDecreaseBundleList => m_DecreaseBundleDic;
-
-        /// <summary>
         /// 新增的Bundle
         /// </summary>
         /// <param name="bundleInfo"></param>
         public void IncreaseBundle(string bundleName, BundleInfo bundleInfo)
         {
             m_IncreaseBundleDic.Add(bundleName, bundleInfo);
-        }
-
-        /// <summary>
-        /// 废弃的Bundle
-        /// </summary>
-        /// <param name="bundleInfo"></param>
-        public void DecreaseBundle(string bundleName, BundleInfo bundleInfo)
-        {
-            m_DecreaseBundleDic.Add(bundleName, bundleInfo);
         }
         #endregion
 

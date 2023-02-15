@@ -15,8 +15,6 @@ namespace Ninth
             // 节点初始化
             GameEntry.DownloadCore.IncreaseTypeNodes = new List<int>();
             GameEntry.DownloadCore.IncreaseTypeNodes.Add(0);
-            GameEntry.DownloadCore.DecreaseTypeNodes = new List<int>();
-            GameEntry.DownloadCore.DecreaseTypeNodes.Add(0);
 
             // 当前版本
             string version = GameEntry.DownloadCore.GetVersionConfig(PathConfig.TempVersionInPersistentDataPath()).Version;
@@ -99,23 +97,7 @@ namespace Ninth
                         }
                     }
                 }
-
-                // 删除bundle列表
-                if (downloadConfig != null)
-                {
-                    foreach (var item in downloadConfig.BundleInfos)
-                    {
-                        string bundleName = item.Key;
-                        BundleInfo bundleInfo = item.Value;
-
-                        if (!tempDownloadConfig.BundleInfos.TryGetValue(bundleName, out BundleInfo value))
-                        {
-                            GameEntry.DownloadCore.DecreaseBundle(bundleName, bundleInfo);
-                        }
-                    }
-                }
                 GameEntry.DownloadCore.IncreaseTypeNodes.Add(GameEntry.DownloadCore.GetIncreaseBundleList.Count);
-                GameEntry.DownloadCore.DecreaseTypeNodes.Add(GameEntry.DownloadCore.GetDecreaseBundleList.Count);
             }
 
             GameEntry.DownloadCore.GetTotalIncreaseBundleSize = totalSize;
@@ -136,7 +118,7 @@ namespace Ninth
 
         public void ExitProcedure()
         {
-            new OperationBundles().EnterProcedure();
+            new IncreaseBundles().EnterProcedure();
         }
     }
 }

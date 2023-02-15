@@ -42,12 +42,17 @@ namespace Ninth
             }
             File.Move(PathConfig.TempVersionInPersistentDataPath(), PathConfig.VersionInPersistentDataPath());
 
+            GameEntry.DownloadCore.DownloadBundleStartPos = 0;
+
+            // 因为文件名发生了变化，所以把配置缓存清空
+            GameEntry.DownloadCore.ClearConfigCache();
+
             ExitProcedure();
         }
 
         public void ExitProcedure()
         {
-            new StartUp().EnterProcedure();
+            new ScanDeleteBundles().EnterProcedure();
         }
     }
 }

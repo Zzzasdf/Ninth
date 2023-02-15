@@ -56,13 +56,13 @@ namespace Ninth
         public static string m_BundleRootInRemoteInStreamingAssetPath { get; }
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.RemoteDirectory);
 
-        private static string m_BundleRootInRemoteInPersistentDataPath { get; }
+        public static string BundleRootInRemoteInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory);
 
         private static string m_BundleRootInDllInStreamingAssetPath { get; }
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.DllDirectory);
 
-        private static string m_BundleRootInDllInPersistentDataPath { get; }
+        public static string BundleRootInDllInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.DllDirectory);
 
         // 版本在服务器的路径
@@ -172,7 +172,7 @@ namespace Ninth
 
         public static string BundleInRemoteInPersistentDataPath(string bundleName)
         {
-            return string.Format("{0}/{1}", m_BundleRootInRemoteInPersistentDataPath, bundleName);
+            return string.Format("{0}/{1}", BundleRootInRemoteInPersistentDataPath, bundleName);
         }
         
         public static string BunldeInDllInStreamingAssetPath(string bundleName)
@@ -181,7 +181,7 @@ namespace Ninth
         }
         public static string BundleInDllInPersistentDataPath(string bundleName)
         {
-            return string.Format("{0}/{1}", m_BundleRootInDllInPersistentDataPath, bundleName);
+            return string.Format("{0}/{1}", BundleRootInDllInPersistentDataPath, bundleName);
         }
     }
 }

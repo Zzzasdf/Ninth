@@ -7,7 +7,7 @@ using System;
 
 namespace Ninth
 {
-    public class OperationBundles : IProcedure
+    public class IncreaseBundles : IProcedure
     {
         public async void EnterProcedure()
         {
@@ -57,22 +57,6 @@ namespace Ninth
             if (GameEntry.DownloadCore.MessageBox != null)
             {
                 GameEntry.DownloadCore.MessageBox.OverStatus();
-            }
-
-            // 删除废弃Bundle
-            List<BundleInfo> decreaseBundleList = GameEntry.DownloadCore.GetDecreaseBundleList.Values.ToList();
-
-            for (int i = 1; i < GameEntry.DownloadCore.DecreaseTypeNodes.Count; i++)
-            {
-                int startIndex = GameEntry.DownloadCore.DecreaseTypeNodes[i - 1];
-                int endIndex = GameEntry.DownloadCore.DecreaseTypeNodes[i];
-
-                for (int index = startIndex; index < endIndex; index++)
-                {
-                    string bundleName = decreaseBundleList[index].BundleName;
-                    string path = bundlePersistentDataPathList[i](bundleName);
-                    File.Delete(path);
-                }
             }
             ExitProcedure();
         }

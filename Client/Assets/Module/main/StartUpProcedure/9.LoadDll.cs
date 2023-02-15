@@ -104,9 +104,8 @@ namespace Ninth
             // TODO .. 这里加载了资源bundle
             // 只能把资源加载模块放入非热更去
             // HOPE .. 想要将资源加载模块放入热更区, 所以就不能用加载资源的方式去启动热更模块,
-            // 可能可以用程序集代码反射调用启动热更区，但热更模块好像不打包成dll文件 
+            // 可能可以用程序集代码反射调用启动热更区
 
-            // TODO .. 断点续传有问题。。
             var asset = "gassets_remotegroup";
             string dir = GlobalConfig.AssetMode switch
             {
