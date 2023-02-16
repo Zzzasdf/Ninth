@@ -16,6 +16,14 @@ namespace Ninth
         /// </summary>
         public static List<string> RemoteGroup { get; }
             = new List<string> { "RemoteGroup" };
+
+
+        public static AssetMode ScriptMode { get; }
+            = AssetMode.NonAB | AssetMode.LocalAB;
+
+        public static AssetMode DllMode { get; }
+            = AssetMode.LocalAB | AssetMode.RemoteAB;
+        
     }
 }
 

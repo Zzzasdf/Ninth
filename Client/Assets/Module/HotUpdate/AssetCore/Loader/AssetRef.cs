@@ -20,6 +20,11 @@ namespace Ninth.HotUpdate
         /// 这个资源所依赖的BundleRef对象列表
         /// </summary>
         public List<BundleRef> Dependencies;
+
+        /// <summary>
+        /// 加载时自身Asset的引用
+        /// </summary>
+        public GameObject Asset;
     }
 
 }

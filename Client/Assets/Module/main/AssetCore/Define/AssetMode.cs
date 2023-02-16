@@ -5,10 +5,10 @@ namespace Ninth
 {
     public enum AssetMode
     {
-        NonAB,
+        NonAB = 1 << 0,
 
-        LocalAB,
+        LocalAB = 1 << 1,
 
-        RemoteAB,
+        RemoteAB = 1 << 2,
     }
 }

@@ -1,10 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Pool;
-using Object = UnityEngine.Object;
 
 namespace Ninth.HotUpdate
 {
@@ -22,7 +18,7 @@ namespace Ninth.HotUpdate
             }
 
             #region Frame
-            public static T FrameLog<T>(T message, Object tag = null)
+            public static T FrameLog<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameLog))
                 {
@@ -31,7 +27,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameLog<T>(List<T> message, Object tag = null)
+            public static List<T> FrameLog<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameLog))
                 {
@@ -40,7 +36,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static T FrameWarning<T>(T message, Object tag = null)
+            public static T FrameWarning<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameWarning))
                 {
@@ -49,7 +45,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameWarning<T>(List<T> message, Object tag = null)
+            public static List<T> FrameWarning<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameWarning))
                 {
@@ -58,7 +54,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static T FrameError<T>(T message, Object tag = null)
+            public static T FrameError<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameError))
                 {
@@ -67,7 +63,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameError<T>(List<T> message, Object tag = null)
+            public static List<T> FrameError<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.FrameError))
                 {
@@ -78,7 +74,7 @@ namespace Ninth.HotUpdate
             #endregion
 
             #region Game
-            public static T Log<T>(T message, Object tag = null)
+            public static T Log<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Log))
                 {
@@ -87,7 +83,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Log<T>(List<T> message, Object tag = null)
+            public static List<T> Log<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Log))
                 {
@@ -96,7 +92,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static T Warning<T>(T message, Object tag = null)
+            public static T Warning<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Warning))
                 {
@@ -105,7 +101,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Warning<T>(List<T> message, Object tag = null)
+            public static List<T> Warning<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Warning))
                 {
@@ -114,7 +110,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static T Error<T>(T message, Object tag = null)
+            public static T Error<T>(T message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Error))
                 {
@@ -123,7 +119,7 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Error<T>(List<T> message, Object tag = null)
+            public static List<T> Error<T>(List<T> message, object tag = null)
             {
                 if (Validator.HasFlag(LogValidator.Error))
                 {
@@ -148,7 +144,7 @@ namespace Ninth.HotUpdate
                 return string.Join(' ', DateTime.Now.ToString(), "{0}");
             }
 
-            private static string MessageFormat<T>(T message, Object tag = null)
+            private static string MessageFormat<T>(T message, object tag = null)
             {
                 string tagStr = tag?.ToString();
                 if (string.IsNullOrEmpty(tagStr))
@@ -161,7 +157,7 @@ namespace Ninth.HotUpdate
                 }
             }
 
-            private static string MessageListFormat<T>(List<T> message, Object tag = null)
+            private static string MessageListFormat<T>(List<T> message, object tag = null)
             {
                 string tagStr = tag?.ToString();
                 if (string.IsNullOrEmpty(tagStr))
