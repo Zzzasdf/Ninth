@@ -20,6 +20,6 @@ namespace Ninth
         /// </summary>
         Dll = 1 << 2,
 
-        Max = int.MaxValue
+        All = int.MaxValue
     }
 }

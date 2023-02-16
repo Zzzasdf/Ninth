@@ -568,7 +568,7 @@ namespace Ninth.Editor
                 case AssetMode.LocalAB:
                     {
                         // 全部拷贝到streamingAssets
-                        CopyFilesSortOut(AssetLocate.Max);
+                        CopyFilesSortOut(AssetLocate.All);
                         break;
                     }
                 case AssetMode.RemoteAB:

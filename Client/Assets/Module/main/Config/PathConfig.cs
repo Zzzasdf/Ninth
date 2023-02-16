@@ -40,6 +40,9 @@ namespace Ninth
         private static string m_LoadConfigInLocalInStreamingAssetPath { get; }
             = string.Format("{0}/{1}/{2}", Application.streamingAssetsPath, NameConfig.LocalDirectory, NameConfig.LoadConfigNameInLocal);
 
+        private static string m_LoadConfigInRemoteInStreamingAssetPath { get; }
+            = string.Format("{0}/{1}/{2}", Application.streamingAssetsPath, NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
+
         private static string m_LoadConfigInRemoteInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory, NameConfig.LoadConfigNameInRemote);
 
@@ -136,6 +139,11 @@ namespace Ninth
         public static string LoadConfigInLocalInStreamingAssetPath()
         {
             return m_LoadConfigInLocalInStreamingAssetPath;
+        }
+
+        public static string LoadConfigInRemoteInStreamingAssetPath()
+        {
+            return m_LoadConfigInRemoteInStreamingAssetPath;
         }
 
         public static string LoadConfigInRemoteInPersistentDataPath()
