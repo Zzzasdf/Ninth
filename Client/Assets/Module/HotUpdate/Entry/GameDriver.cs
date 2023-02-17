@@ -30,31 +30,26 @@ namespace Ninth.HotUpdate
 
         private async void Update()
         {
-            if(Input.GetKeyDown(KeyCode.U))
+            if(Input.GetKeyDown(KeyCode.P))
             {
                 await AssetsMgr.UnLoadAll();
             }
-            if(Input.GetKeyDown(KeyCode.P))
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                await AssetsMgr.AssetsClearAndUnLoadAll();
-            }
-            if(Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                GameObject obj = await AssetsMgr.Load<GameObject>("Assets/GAssets/LocalGroup/Cube.prefab");
-                obj1 = Instantiate(obj);
+                obj1 = await AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab");
             }
             if(Input.GetKeyDown(KeyCode.Q))
             {
-                DestroyImmediate(obj1.Log(), true);
+                DestroyImmediate(obj1);
             }
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                GameObject obj = await AssetsMgr.Load<GameObject>("Assets/GAssets/RemoteGroup/Sphere.prefab");
-                obj2 = Instantiate(obj);
+                obj2 = await AssetsMgr.CloneAsync("Assets/GAssets/RemoteGroup/Sphere.prefab");
             }
             if (Input.GetKeyDown(KeyCode.W))
             {
-                DestroyImmediate(obj2.Log(), true);
+                DestroyImmediate(obj2);
             }
         }
     }

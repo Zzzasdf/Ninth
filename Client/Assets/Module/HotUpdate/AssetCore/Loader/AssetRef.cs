@@ -25,6 +25,11 @@ namespace Ninth.HotUpdate
         /// 加载时自身Asset的引用
         /// </summary>
         public GameObject Asset;
+
+        /// <summary>
+        /// 依赖此资源的对象
+        /// </summary>
+        public List<GameObject> BeGameObjectDependedList;
     }
 
 }

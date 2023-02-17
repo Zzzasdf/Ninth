@@ -35,7 +35,7 @@ namespace NinthEditor
         [MenuItem("Tools/Browser/Work/版本开发计划")]
         private static void BrowsersiteVersionQPN()
         {
-            Process.Start("https://doc.weixin.qq.com/sheet/e3_AUkA7gZjAMMWw0eD6r1SKO2Lt9W33?scode=AJEAIQdfAAovvfK1BeAUkA7gZjAMM&version=4.0.20.6020&platform=win&tab=hbwx0f");
+            Process.Start("https://doc.weixin.qq.com/sheet/e3_AUkA7gZjAMMWw0eD6r1SKO2Lt9W33?scode=AJEAIQdfAAoVbTp2TNAZQA9AYHAEU&tab=hbwx0f");
         }
     }
 }

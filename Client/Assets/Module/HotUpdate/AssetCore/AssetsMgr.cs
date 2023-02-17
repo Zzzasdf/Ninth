@@ -9,14 +9,14 @@ using UnityEngine.SceneManagement;
 
 namespace Ninth.HotUpdate
 {
-    public class AssetsMgr: Singleton<AssetsMgr>
+    public class AssetsMgr : Singleton<AssetsMgr>
     {
-        private static Dictionary<string, AssetRef> m_AssetPath2AssetRef;
+        private Dictionary<string, AssetRef> m_AssetPath2AssetRef;
 
-        private static Dictionary<string, BundleRef> m_BundleName2BundleRef;
+        private Dictionary<string, BundleRef> m_BundleName2BundleRef;
 
-        private static Func<string, string> m_LocalPathFunc;
-        private static Func<string, string> m_RemotePathFunc;
+        private Func<string, string> m_LocalPathFunc;
+        private Func<string, string> m_RemotePathFunc;
 
         public AssetsMgr()
         {
@@ -27,7 +27,7 @@ namespace Ninth.HotUpdate
 
         private void Register()
         {
-            switch(GlobalConfig.AssetMode)
+            switch (GlobalConfig.AssetMode)
             {
                 case AssetMode.NonAB:
                     {
@@ -56,7 +56,7 @@ namespace Ninth.HotUpdate
 
         private AssetsMgr SetPath2BundleName(LoadConfig loadConfig)
         {
-            if(loadConfig.AssetRefList == null)
+            if (loadConfig.AssetRefList == null)
             {
                 return this;
             }
@@ -88,40 +88,73 @@ namespace Ninth.HotUpdate
             return true;
         }
 
-        public static async UniTask<T> Load<T>(string assetName) where T : UnityEngine.Object
+        public async UniTask<GameObject> CloneAsync(string assetPath)
         {
-            T asset = null;
-            switch(GlobalConfig.AssetMode)
+            GameObject cloneObj = null;
+            switch (GlobalConfig.AssetMode)
             {
                 case AssetMode.NonAB:
                     {
 #if UNITY_EDITOR
-                        asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetName);
+                        GameObject asset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                        cloneObj = UnityEngine.Object.Instantiate(asset);
 #else
-                        "不支持在非编辑器模式下使用此模式加载资源".Error();
+                        throw new Exception("Loading resources using this mode in non-editor mode is not supported");
 #endif
                         break;
                     }
                 case AssetMode.LocalAB:
                 case AssetMode.RemoteAB:
                     {
-                        AssetRef assetRef = await LoadAssetRef(assetName);
-
-                        asset = assetRef.Asset as T;
+                        AssetRef assetRef = await LoadAssetRefAsync(assetPath);
+                        cloneObj = UnityEngine.Object.Instantiate(assetRef.Asset);
+                        if (assetRef.BeGameObjectDependedList == null)
+                        {
+                            assetRef.BeGameObjectDependedList = new List<GameObject>();
+                        }
+                        assetRef.BeGameObjectDependedList.Add(cloneObj);
                         break;
                     }
             }
-            return asset;
+            return cloneObj;
         }
 
-        private static async UniTask<AssetRef> LoadAssetRef(string assetPath)
+        public async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
+        {
+            switch (GlobalConfig.AssetMode)
+            {
+                case AssetMode.NonAB:
+                    {
+#if UNITY_EDITOR
+                        T asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                        return asset;
+#else
+                        throw new Exception("Loading resources using this mode in non-editor mode is not supported");
+#endif
+                    }
+                case AssetMode.LocalAB:
+                case AssetMode.RemoteAB:
+                    {
+                        AssetRef assetRef = await LoadAssetRefAsync(assetPath);
+                        if (assetRef.BeGameObjectDependedList == null)
+                        {
+                            assetRef.BeGameObjectDependedList = new List<GameObject>();
+                        }
+                        assetRef.BeGameObjectDependedList.Add(mountObj);
+                        return assetRef.Asset as T;
+                    }
+            }
+            throw new Exception("This mode is not defined");
+        }
+
+        private async UniTask<AssetRef> LoadAssetRefAsync(string assetPath)
         {
             if (!m_AssetPath2AssetRef.TryGetValue(assetPath, out AssetRef assetRef))
             {
                 throw new InvalidOperationException("Asset not found");
             }
             List<BundleRef> bundleList = assetRef.Dependencies?.ToList() ?? new List<BundleRef>();
-            
+
             bundleList.Add(assetRef.BundleRef);
 
             for (int index = 0; index < bundleList.Count; index++)
@@ -129,11 +162,11 @@ namespace Ninth.HotUpdate
                 BundleRef bundleRef = bundleList[index];
 
                 string bundleName = bundleRef.BundleName;
-                
+
                 if (!m_BundleName2BundleRef.ContainsKey(bundleName))
                 {
                     AssetLocate assetLocate = assetRef.BundleRef.AssetLocate;
-                    
+
                     string bundlePath = string.Empty;
                     switch (assetLocate)
                     {
@@ -159,8 +192,15 @@ namespace Ninth.HotUpdate
 
                     bundleRef.BeAssetRefDependedList = new List<AssetRef>();
                 }
-                bundleRef.BeAssetRefDependedList.Add(assetRef);
+                if(index < bundleList.Count - 1)
+                {
+                    bundleRef.BeAssetRefDependedList.Add(assetRef);
+                }
             }
+            bundleList.Remove(assetRef.BundleRef);
+
+            assetRef.Dependencies = bundleList;
+
             AssetBundle bundle = assetRef.BundleRef.Bundle;
 
             string name = assetRef.AssetPath;
@@ -172,18 +212,54 @@ namespace Ninth.HotUpdate
 
         public async UniTask UnLoadAll()
         {
-            "尝试卸载".Warning();
-            await Resources.UnloadUnusedAssets();
-            GC.Collect();
-        }
+            foreach (AssetRef assetRef in m_AssetPath2AssetRef.Values)
+            {
+                if (assetRef.BeGameObjectDependedList == null || assetRef.BeGameObjectDependedList.Count == 0)
+                {
+                    continue;
+                }
+                for (int index = assetRef.BeGameObjectDependedList.Count - 1; index >= 0; index--)
+                {
+                    GameObject go = assetRef.BeGameObjectDependedList[index];
 
-        public async UniTask AssetsClearAndUnLoadAll()
-        {
-            "清空资源并卸载".Warning();
-            m_AssetPath2AssetRef.Clear();
-            m_BundleName2BundleRef.Clear();
-            Register();
-            await UnLoadAll();
+                    if (go == null)
+                    {
+                        assetRef.BeGameObjectDependedList.RemoveAt(index);
+                    }
+                }
+
+                // 如果这个资源assetRef已经没有被任何GameObject所依赖了，那么此assetRef就可以卸载了
+                if (assetRef.BeGameObjectDependedList.Count == 0)
+                {
+                    m_AssetPath2AssetRef.Remove(assetRef.AssetPath);
+
+                    assetRef.Asset = null;
+
+                    await Resources.UnloadUnusedAssets();
+
+                    // 对于assetRef所属的这个bundle, 解除关系
+                    assetRef.BundleRef.BeAssetRefDependedList.Remove(assetRef);
+
+                    if (assetRef.BundleRef.BeAssetRefDependedList.Count == 0)
+                    {
+                        m_BundleName2BundleRef.Remove(assetRef.BundleRef.BundleName);
+
+                        await assetRef.BundleRef.Bundle.UnloadAsync(true);
+                    }
+
+                    // 对于assetRef所依赖的那些bundle列表，解除关系
+                    foreach (BundleRef bundleRef in assetRef.Dependencies)
+                    {
+                        if (bundleRef.BeAssetRefDependedList.Count == 0)
+                        {
+                            m_BundleName2BundleRef.Remove(bundleRef.BundleName);
+
+                            await bundleRef.Bundle.UnloadAsync(true);
+                        }
+                    }
+
+                }
+            }
         }
     }
 }
