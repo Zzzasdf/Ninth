@@ -18,7 +18,7 @@ namespace Ninth.HotUpdate
 
         GameObject obj1;
         GameObject obj2;
-
+        bool isUnLoadAll = false;
         private async void Awake()
         {
             DontDestroyOnLoad(this);
@@ -30,16 +30,13 @@ namespace Ninth.HotUpdate
 
         private async void Update()
         {
-            if(Input.GetKeyDown(KeyCode.P))
-            {
-                await AssetsMgr.UnLoadAll();
-            }
+            await AssetsMgr.UnLoadAllAsync();
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 obj1 = await AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab");
             }
-            if(Input.GetKeyDown(KeyCode.Q))
+            if (Input.GetKeyDown(KeyCode.Q))
             {
                 DestroyImmediate(obj1);
             }
@@ -50,6 +47,10 @@ namespace Ninth.HotUpdate
             if (Input.GetKeyDown(KeyCode.W))
             {
                 DestroyImmediate(obj2);
+            }
+            if(Input.GetKeyDown(KeyCode.P))
+            {
+                isUnLoadAll = !isUnLoadAll;
             }
         }
     }

@@ -24,7 +24,7 @@ namespace Ninth.HotUpdate
         /// <summary>
         /// 加载时自身Asset的引用
         /// </summary>
-        public GameObject Asset;
+        public Object Asset;
 
         /// <summary>
         /// 依赖此资源的对象

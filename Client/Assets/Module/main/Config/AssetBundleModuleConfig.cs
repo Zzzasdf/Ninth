@@ -19,7 +19,7 @@ namespace Ninth
 
 
         public static AssetMode ScriptMode { get; }
-            = AssetMode.NonAB | AssetMode.LocalAB;
+            = AssetMode.NonAB;
 
         public static AssetMode DllMode { get; }
             = AssetMode.LocalAB | AssetMode.RemoteAB;
