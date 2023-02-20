@@ -18,11 +18,10 @@ namespace Ninth.HotUpdate
 
         GameObject obj1;
         GameObject obj2;
-        bool isUnLoadAll = false;
-        private async void Awake()
+        private void Awake()
         {
             DontDestroyOnLoad(this);
-            "热更部分启动成功10！！".Log();
+            "热更部分启动成功！！".Log();
 
             // 资源加载
             AssetsMgr = AssetsMgr.Instance;
@@ -47,10 +46,6 @@ namespace Ninth.HotUpdate
             if (Input.GetKeyDown(KeyCode.W))
             {
                 DestroyImmediate(obj2);
-            }
-            if(Input.GetKeyDown(KeyCode.P))
-            {
-                isUnLoadAll = !isUnLoadAll;
             }
         }
     }
