@@ -10,6 +10,7 @@
     <type fullname="Ninth.PathConfig" preserve="all" />
   </assembly>
   <assembly fullname="mscorlib">
+    <type fullname="System.Action`1" preserve="all" />
     <type fullname="System.Activator" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2/Enumerator" preserve="all" />
@@ -24,11 +25,14 @@
     <type fullname="System.Exception" preserve="all" />
     <type fullname="System.Func`2" preserve="all" />
     <type fullname="System.IDisposable" preserve="all" />
+    <type fullname="System.IndexOutOfRangeException" preserve="all" />
     <type fullname="System.Int32" preserve="all" />
+    <type fullname="System.IO.DirectoryNotFoundException" preserve="all" />
     <type fullname="System.IO.File" preserve="all" />
-    <type fullname="System.IO.FileStream" preserve="all" />
-    <type fullname="System.IO.Stream" preserve="all" />
+    <type fullname="System.IO.FileNotFoundException" preserve="all" />
+    <type fullname="System.IProgress`1" preserve="all" />
     <type fullname="System.Object" preserve="all" />
+    <type fullname="System.Reflection.DefaultMemberAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.AsyncStateMachineAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.AsyncVoidMethodBuilder" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.CompilationRelaxationsAttribute" preserve="all" />
@@ -36,32 +40,43 @@
     <type fullname="System.Runtime.CompilerServices.ExtensionAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.IAsyncStateMachine" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" preserve="all" />
+    <type fullname="System.Runtime.CompilerServices.TupleElementNamesAttribute" preserve="all" />
     <type fullname="System.Security.Permissions.SecurityAction" preserve="all" />
     <type fullname="System.Security.Permissions.SecurityPermissionAttribute" preserve="all" />
     <type fullname="System.Security.UnverifiableCodeAttribute" preserve="all" />
+    <type fullname="System.Single" preserve="all" />
     <type fullname="System.String" preserve="all" />
     <type fullname="System.Text.Encoding" preserve="all" />
     <type fullname="System.Text.UTF8Encoding" preserve="all" />
+    <type fullname="System.Threading.CancellationToken" preserve="all" />
+    <type fullname="System.Threading.CancellationTokenSource" preserve="all" />
+    <type fullname="System.Threading.Monitor" preserve="all" />
+    <type fullname="System.TimeSpan" preserve="all" />
     <type fullname="System.Type" preserve="all" />
+    <type fullname="System.ValueTuple`2" preserve="all" />
     <type fullname="System.ValueType" preserve="all" />
   </assembly>
   <assembly fullname="UniTask">
+    <type fullname="Cysharp.Threading.Tasks.CancellationTokenSourceExtensions" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder`1" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.DelayType" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.PlayerLoopTiming" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.Progress" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.SwitchToThreadPoolAwaitable" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.SwitchToThreadPoolAwaitable/Awaiter" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask/Awaiter" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask`1" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask`1/Awaiter" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTaskExtensions" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions/AssetBundleCreateRequestAwaiter" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions/AssetBundleRequestAwaiter" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions/AsyncOperationAwaiter" preserve="all" />
-    <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions/UnityWebRequestAsyncOperationAwaiter" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.YieldAwaitable" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.YieldAwaitable/Awaiter" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.AssetBundleModule">
     <type fullname="UnityEngine.AssetBundle" preserve="all" />
     <type fullname="UnityEngine.AssetBundleCreateRequest" preserve="all" />
-    <type fullname="UnityEngine.AssetBundleRequest" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.CoreModule">
     <type fullname="UnityEngine.AsyncOperation" preserve="all" />
@@ -72,14 +87,19 @@
     <type fullname="UnityEngine.KeyCode" preserve="all" />
     <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.Quaternion" preserve="all" />
     <type fullname="UnityEngine.Resources" preserve="all" />
+    <type fullname="UnityEngine.SceneManagement.SceneManager" preserve="all" />
+    <type fullname="UnityEngine.Vector2" preserve="all" />
+    <type fullname="UnityEngine.Vector2Int" preserve="all" />
+    <type fullname="UnityEngine.Vector3" preserve="all" />
+    <type fullname="UnityEngine.Vector3Int" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.InputLegacyModule">
     <type fullname="UnityEngine.Input" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UnityWebRequestModule">
     <type fullname="UnityEngine.Networking.DownloadHandler" preserve="all" />
-    <type fullname="UnityEngine.Networking.DownloadHandlerFile" preserve="all" />
     <type fullname="UnityEngine.Networking.UnityWebRequest" preserve="all" />
     <type fullname="UnityEngine.Networking.UnityWebRequestAsyncOperation" preserve="all" />
   </assembly>

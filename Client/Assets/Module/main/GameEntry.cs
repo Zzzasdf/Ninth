@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Ninth
@@ -6,8 +7,12 @@ namespace Ninth
     {
         public static DownloadCore DownloadCore;
 
+        public static GameEntry Instance {  get ; private set; }
+
         private void Awake()
         {
+            Instance = this;
+
             DownloadCore = new DownloadCore();
         }
 

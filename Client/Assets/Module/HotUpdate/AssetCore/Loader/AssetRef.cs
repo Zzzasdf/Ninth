@@ -22,6 +22,11 @@ namespace Ninth.HotUpdate
         public List<BundleRef> Dependencies;
 
         /// <summary>
+        /// 资源状态
+        /// </summary>
+        public AssetStatus AssetStatus;
+
+        /// <summary>
         /// 加载时自身Asset的引用
         /// </summary>
         public Object Asset;
@@ -30,6 +35,10 @@ namespace Ninth.HotUpdate
         /// 依赖此资源的对象
         /// </summary>
         public List<GameObject> BeGameObjectDependedList;
-    }
 
+        public AssetRef()
+        {
+            AssetStatus = AssetStatus.Empty;
+        }
+    }
 }

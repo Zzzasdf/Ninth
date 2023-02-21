@@ -1,37 +1,69 @@
 //using Newtonsoft.Json;
+using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Ninth.HotUpdate
 {
     public sealed partial class Utility
     {
-        public static T ToObject<T>(string path)
+        private static Dictionary<string, object> m_ObjDic = new Dictionary<string, object>();
+
+        public static async UniTask<T> ToObjectWithLock<T>(string path)
         {
-            if (!File.Exists(path))
+            if (!m_ObjDic.ContainsKey(path))
             {
+                m_ObjDic.Add(path, new object());
+            }
+            await UniTask.SwitchToThreadPool();
+            T t = ToObject(path);
+            await UniTask.Yield(PlayerLoopTiming.Update);
+            return t;
+
+            static T ToObject(string path)
+            {
+                try
+                {
+                    lock (m_ObjDic[path])
+                    {
+                        string fileContent = File.ReadAllText(path, GlobalConfig.Utf8);
+                        T t = LitJson.JsonMapper.ToObject<T>(fileContent);
+                        return t;
+                    }
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.Error();
+                }
                 return default(T);
             }
-            return LitJson.JsonMapper.ToObject<T>(File.ReadAllText(path, GlobalConfig.Utf8));
         }
 
-        public static void ToJson<T>(T obj, string path)
+        public static async UniTask ToJsonWithLock<T>(T obj, string path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (!m_ObjDic.ContainsKey(path))
             {
-                UnityEngine.Debug.LogError("保存Json的路径为空！！保存失败！！");
+                m_ObjDic.Add(path, new object());
             }
+            await UniTask.SwitchToThreadPool();
+            ToJson(obj, path);
+            await UniTask.Yield(PlayerLoopTiming.Update);
 
-            // 开始写入Json文件
-            if (File.Exists(path))
+            static void ToJson(T obj, string path)
             {
-                File.Delete(path);
+                try
+                {
+                    lock (m_ObjDic[path])
+                    {
+                        string jsonData = LitJson.JsonMapper.ToJson(obj);
+                        File.WriteAllText(path, jsonData, GlobalConfig.Utf8);
+                    }
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    e.Error();
+                }
             }
-            File.Create(path).Dispose();
-
-            string jsonData = LitJson.JsonMapper.ToJson(obj);
-
-            //File.WriteAllText(path, ConvertJsonString(jsonData), GlobalConfig.Utf8);
-            File.WriteAllText(path, jsonData, GlobalConfig.Utf8);
         }
 
         ///// <summary>

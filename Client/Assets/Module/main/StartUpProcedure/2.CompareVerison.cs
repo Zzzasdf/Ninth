@@ -12,14 +12,14 @@ namespace Ninth
             GameEntry.DownloadCore.Clear();
 
             // 请求远端版本配置
-            bool result = await GameEntry.DownloadCore.Download(PathConfig.VersionInServerPath(), PathConfig.TempVersionInPersistentDataPath());
+            GameEntry.Instance.StartCoroutine(GameEntry.DownloadCore.Download(PathConfig.VersionInServerPath(), PathConfig.TempVersionInPersistentDataPath()));
 
-            if (!result)
-            {
-                // TODO .. 弹窗提示  Y .. 重试  N .. 退出
-                UnityEngine.Debug.LogError($"远端的版本配置文件无法下载!!");
-                return;
-            }
+            //if (!result)
+            //{
+            //    // TODO .. 弹窗提示  Y .. 重试  N .. 退出
+            //    UnityEngine.Debug.LogError($"远端的版本配置文件无法下载!!");
+            //    return;
+            //}
 
             VersionConfig baseVersionConfig = GameEntry.DownloadCore.GetVersionConfig(PathConfig.BaseVersionPath());
             if (baseVersionConfig == null)

@@ -1,5 +1,8 @@
-using System.Collections;
+
+
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Ninth.HotUpdate
@@ -18,35 +21,62 @@ namespace Ninth.HotUpdate
 
         GameObject obj1;
         GameObject obj2;
-        private void Awake()
+
+        int index = 0;
+
+        public PlayerLoopTiming TestYieldTiming = PlayerLoopTiming.PreUpdate;
+
+        private async void Awake()
         {
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
 
             // 资源加载
-            AssetsMgr = AssetsMgr.Instance;
+            AssetsMgr = await AssetsMgr.Instance.Init();
+
+            //AssetsMgr.TestRequest();
+            //Utility.ToObjectWithLock<GameDriver>("AA").Forget();
+            // Utility.ToJsonWithLock(new BundleRef(), Application.streamingAssetsPath + "/aaa/" + "jjj.json");
+
         }
 
-        private async void Update()
+        private void Update()
         {
-            await AssetsMgr.UnLoadAllAsync();
-
+            //if (Input.GetKeyDown(KeyCode.S))
+            //{
+            //    AssetsMgr.TestLoadSceneAsync();
+            //}
+            ////AssetsMgr.UnLoadAllAsync();
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                obj1 = await AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab");
+                if(AssetsMgr != null)
+                {
+                    AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab").Forget();
+                }
             }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                DestroyImmediate(obj1);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                obj2 = await AssetsMgr.CloneAsync("Assets/GAssets/RemoteGroup/Sphere.prefab");
-            }
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                DestroyImmediate(obj2);
-            }
+            //AssetsMgr.UnLoadAllAsync();
+            //await Load();
+            //if (Input.GetKeyDown(KeyCode.Q))
+            //{
+            //    DestroyImmediate(obj1);
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha2))
+            //{
+            //    obj2 = await AssetsMgr.CloneAsync("Assets/GAssets/RemoteGroup/Sphere.prefab");
+            //}
+            //if (Input.GetKeyDown(KeyCode.W))
+            //{
+            //    DestroyImmediate(obj2);
+            //}
+            //objList = null;
+            //if (Input.GetKeyDown(KeyCode.Z))
+            //{
+            //    objList = new List<GameObject>();
+            //    ResourceRequest req = Resources.LoadAsync("Cube");
+            //    await req;
+            //    GameObject obj = req.asset as GameObject;
+            //    objList.Add(Instantiate(obj));
+            //}
         }
     }
 }

@@ -26,13 +26,21 @@ namespace Ninth.HotUpdate
                 case AssetMode.LocalAB:
                 case AssetMode.RemoteAB:
                     {
-                        AssetRef assetRef = await LoadAssetRefAsync<GameObject>(assetPath);
+                        if (!m_ConfigAssetPath2AssetRef.TryGetValue(assetPath, out AssetRef assetRef))
+                        {
+                            throw new Exception("This path does not exist in the configuration");
+                        }
+                        assetRef.AssetStatus = AssetStatus.Loading;
+
+                        assetRef = await LoadAssetRefAsync<GameObject>(assetPath);
                         cloneObj = UnityEngine.Object.Instantiate(assetRef.Asset) as GameObject;
                         if (assetRef.BeGameObjectDependedList == null)
                         {
                             assetRef.BeGameObjectDependedList = new List<GameObject>();
                         }
                         assetRef.BeGameObjectDependedList.Add(cloneObj);
+
+                        assetRef.AssetStatus = AssetStatus.Loaded;
                         break;
                     }
             }
@@ -83,6 +91,9 @@ namespace Ninth.HotUpdate
             }
 
             // 处理依赖
+            List<string> bundleNames = new List<string>();
+            List<UniTask<AssetBundle>> waitTasks = new List<UniTask<AssetBundle>>();
+
             List<BundleRef> bundles = new List<BundleRef>();
             if (assetRef.Dependencies != null)
             {
@@ -125,11 +136,10 @@ namespace Ninth.HotUpdate
                         bundleRef.BeAssetRefDependedList = new List<AssetRef>();
                     }
                     bundleRef.BeAssetRefDependedList.Add(assetRef);
-
                     m_BundlePath2BundleRef.Add(bundleRef.BundleName, bundleRef);
 
-                    // 异步加载一定要放在添加依赖之后, 否则有可能被卸载掉!!
-                    bundleRef.Bundle = await AssetBundle.LoadFromFileAsync(bundlePath);
+                    bundleNames.Add(originBundleRef.BundleName);
+                    waitTasks.Add(AssetBundle.LoadFromFileAsync(bundlePath).ToUniTask());
                 }
                 else
                 {
@@ -139,21 +149,18 @@ namespace Ninth.HotUpdate
                         bundleRef.BeAssetRefDependedList = new List<AssetRef>();
                     }
                     bundleRef.BeAssetRefDependedList.Add(assetRef);
-
-                    if (bundleRef.Bundle != null)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        throw new Exception("Bundle is null");
-                    }
                 }
+            }
+
+            var tasks = await UniTask.WhenAll(waitTasks);
+            for(int index = 0; index < tasks.Length; index++)
+            {
+                m_BundlePath2BundleRef[bundleNames[index]].Bundle = tasks[index];
             }
 
             // 加载资源
             string bundleName = bundles[bundles.Count - 1].BundleName;
-            assetRef.Asset = await m_BundlePath2BundleRef[bundleName].Bundle.LoadAssetAsync(assetRef.AssetPath);
+            assetRef.Asset = m_BundlePath2BundleRef[bundleName].Bundle.LoadAsset(assetRef.AssetPath);
             return assetRef;
         }
     }

@@ -1,9 +1,9 @@
-using Cysharp.Threading.Tasks;
 using HybridCLR;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,6 +16,7 @@ namespace Ninth
             "mscorlib.dll",
             "System.dll",
             "System.Core.dll",
+            "UniTask.dll",
         };
 
         private static Dictionary<string, byte[]> s_assetDatas = new Dictionary<string, byte[]>();
@@ -27,63 +28,69 @@ namespace Ninth
 
         private System.Reflection.Assembly m_GameAss = null;
 
-        public async void EnterProcedure()
+        public void EnterProcedure()
         {
 #if !UNITY_EDITOR
-            m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+            GameEntry.Instance.StartCoroutine(LoadDllFromBytes());
 #else
             AssetMode assetMode = GlobalConfig.AssetMode;
             if (AssetBundleModuleConfig.ScriptMode.HasFlag(assetMode))
             {
                 m_GameAss = AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Assembly-CSharp");
+                ExitProcedure();
             }
-            else if(AssetBundleModuleConfig.DllMode.HasFlag(assetMode))
+            else if (AssetBundleModuleConfig.DllMode.HasFlag(assetMode))
             {
-                var assets = new List<string>
-                    {
-                        "Assembly-CSharp.dll",
-                    }.Concat(AOTMetaAssemblyNames);
-
-                foreach (var asset in assets)
-                {
-                    string dir = GlobalConfig.AssetMode switch
-                    {
-                        AssetMode.LocalAB => PathConfig.BunldeInDllInStreamingAssetPath(asset),
-                        AssetMode.RemoteAB => PathConfig.BundleInDllInPersistentDataPath(asset),
-                        _ => throw new NotImplementedException(),
-                    };
-                    string dllPath = GetWebRequestPath(dir);
-                    Debug.Log($"start download asset:{dllPath}");
-                    UnityWebRequest www = UnityWebRequest.Get(dllPath);
-                    await www.SendWebRequest();
-
-#if UNITY_2020_1_OR_NEWER
-                    if (www.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.Log(www.error);
-                    }
-#else
-                            if (www.isHttpError || www.isNetworkError)
-                            {
-                                Debug.Log(www.error);
-                            }
-#endif
-                    else
-                    {
-                        // Or retrieve results as binary data
-                        byte[] assetData = www.downloadHandler.data;
-                        Debug.Log($"dll:{asset}  size:{assetData.Length}");
-                        s_assetDatas[asset] = assetData;
-                    }
-                }
-                LoadMetadataForAOTAssemblies();
-                m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+                GameEntry.Instance.StartCoroutine(LoadDllFromBytes());
             }
             else
             {
                 throw new Exception($"未找到资源模式{assetMode}所对应的脚本加载模式, 请检查配置");
             }
 #endif
+        }
+
+        IEnumerator LoadDllFromBytes()
+        {
+            var assets = new List<string>
+                    {
+                        "Assembly-CSharp.dll",
+                    }.Concat(AOTMetaAssemblyNames);
+            foreach (var asset in assets)
+            {
+                string dir = GlobalConfig.AssetMode switch
+                {
+                    AssetMode.LocalAB => PathConfig.BunldeInDllInStreamingAssetPath(asset),
+                    AssetMode.RemoteAB => PathConfig.BundleInDllInPersistentDataPath(asset),
+                    _ => throw new NotImplementedException(),
+                };
+
+                string dllPath = GetWebRequestPath(dir);
+                Debug.Log($"start download asset:{dllPath}");
+                UnityWebRequest www = UnityWebRequest.Get(dllPath);
+                yield return www.SendWebRequest();
+
+#if UNITY_2020_1_OR_NEWER
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(www.error);
+                }
+#else
+                            if (www.isHttpError || www.isNetworkError)
+                            {
+                                Debug.Log(www.error);
+                            }
+#endif
+                else
+                {
+                    // Or retrieve results as binary data
+                    byte[] assetData = www.downloadHandler.data;
+                    Debug.Log($"dll:{asset}  size:{assetData.Length}");
+                    s_assetDatas[asset] = assetData;
+                }
+            }
+            LoadMetadataForAOTAssemblies();
+            m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
             ExitProcedure();
         }
 
