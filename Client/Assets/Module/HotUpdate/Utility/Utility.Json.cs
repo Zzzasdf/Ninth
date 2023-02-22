@@ -79,8 +79,8 @@ namespace Ninth.HotUpdate
 
         //    JsonTextReader jtr = new JsonTextReader(tr);
 
-        //    object obj = serializer.Deserialize(jtr);
-        //    if (obj != null)
+        //    object m_Obj = serializer.Deserialize(jtr);
+        //    if (m_Obj != null)
         //    {
         //        StringWriter textWriter = new StringWriter();
 
@@ -93,7 +93,7 @@ namespace Ninth.HotUpdate
         //            IndentChar = ' '
         //        };
 
-        //        serializer.Serialize(jsonWriter, obj);
+        //        serializer.Serialize(jsonWriter, m_Obj);
 
         //        return textWriter.ToString();
         //    }

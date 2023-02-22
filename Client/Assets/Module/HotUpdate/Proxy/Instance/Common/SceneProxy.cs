@@ -4,12 +4,12 @@ using UnityEngine.SceneManagement;
 
 namespace Ninth.HotUpdate
 {
-    public partial class AssetsMgr
+    public class SceneProxy
     {
         public async UniTask LoadSceneAsync(string path, IProgress<float> progress = null)
         {
             await SceneManager.LoadSceneAsync(path).ToUniTask(progress);
-            UnLoadAllAsync();
+            await AssetProxy.UnLoadAllAsync();
         }
 
         public async void TestLoadSceneAsync()
@@ -18,7 +18,6 @@ namespace Ninth.HotUpdate
             {
                 $"{p * 100:F2}%".Log("场景加载进度{0}");
             });
-
             await LoadSceneAsync("Assets/Scenes/HotUpdateScene.unity", progress);
         }
     }

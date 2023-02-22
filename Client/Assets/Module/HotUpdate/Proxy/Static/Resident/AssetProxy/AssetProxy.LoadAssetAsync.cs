@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    public partial class AssetsMgr
+    public static partial class AssetProxy
     {
-        public async UniTask<GameObject> CloneAsync(string assetPath)
+        public static async UniTask<GameObject> CloneAsync(string assetPath)
         {
             GameObject cloneObj = null;
             switch (GlobalConfig.AssetMode)
@@ -47,7 +47,7 @@ namespace Ninth.HotUpdate
             return cloneObj;
         }
 
-        public async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
+        public static async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
         {
             switch (GlobalConfig.AssetMode)
             {
@@ -75,7 +75,7 @@ namespace Ninth.HotUpdate
             throw new Exception("This mode is not defined");
         }
 
-        private async UniTask<AssetRef> LoadAssetRefAsync<T>(string assetPath) where T : UnityEngine.Object
+        private static async UniTask<AssetRef> LoadAssetRefAsync<T>(string assetPath) where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(assetPath))
             {
@@ -153,7 +153,7 @@ namespace Ninth.HotUpdate
             }
 
             var tasks = await UniTask.WhenAll(waitTasks);
-            for(int index = 0; index < tasks.Length; index++)
+            for (int index = 0; index < tasks.Length; index++)
             {
                 m_BundlePath2BundleRef[bundleNames[index]].Bundle = tasks[index];
             }

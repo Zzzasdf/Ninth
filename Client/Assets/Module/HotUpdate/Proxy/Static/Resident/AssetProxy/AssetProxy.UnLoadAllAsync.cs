@@ -1,21 +1,20 @@
 using Cysharp.Threading.Tasks;
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    public partial class AssetsMgr
+    public static partial class AssetProxy
     {
-        public void UnLoadAllAsync()
+        public static async UniTask UnLoadAllAsync()
         {
             List<string> removeBundleRef = null;
-            foreach(var item in m_BundlePath2BundleRef)
+            foreach (var item in m_BundlePath2BundleRef)
             {
                 BundleRef bundleRef = item.Value;
 
-                if(bundleRef == null)
+                if (bundleRef == null)
                 {
                     continue;
                 }
@@ -53,11 +52,11 @@ namespace Ninth.HotUpdate
                         beAssetRefDependedList.RemoveAt(index);
                     }
                 }
-                Resources.UnloadUnusedAssets();
+                await Resources.UnloadUnusedAssets();
 
                 if (beAssetRefDependedList.Count == 0)
                 {
-                    bundleRef.Bundle.Unload(true);
+                    await bundleRef.Bundle.UnloadAsync(true);
 
                     if (removeBundleRef == null)
                     {

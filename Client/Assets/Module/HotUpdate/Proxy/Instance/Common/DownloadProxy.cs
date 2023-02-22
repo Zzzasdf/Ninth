@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 namespace Ninth.HotUpdate
 {
-    public partial class AssetsMgr
+    public class DownloadProxy
     {
         public async UniTask<string> GetRequest(string url, float timeout)
         {
@@ -17,7 +17,7 @@ namespace Ninth.HotUpdate
                 .WithCancellation(cts.Token) // 注册取消
                 .SuppressCancellationThrow(); // 忽略异常
 
-            if(!cancelOrFailed)
+            if (!cancelOrFailed)
             {
                 return result.downloadHandler.text;
             }

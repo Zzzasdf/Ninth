@@ -15,29 +15,32 @@ namespace Ninth.HotUpdate
             new GameObject("GameDriver").AddComponent<GameDriver>();
         }
 
-        public static AssetsMgr AssetsMgr {  get ; private set; }
-
         private GameDriver() { }
 
-        GameObject obj1;
-        GameObject obj2;
-
-        int index = 0;
-
-        public PlayerLoopTiming TestYieldTiming = PlayerLoopTiming.PreUpdate;
+        public static ProxyCtrl ProxyCtrl { get; private set; }
 
         private async void Awake()
         {
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
 
-            // 资源加载
-            AssetsMgr = await AssetsMgr.Instance.Init();
+            ProxyCtrl = new ProxyCtrl();
+            await ProxyCtrl.StaticResidentProxyRegister();
+            "静态常驻代理登记表注册成功！！".Log();
+
+
+
+
+            // TODO .. 放在切换场景或者需要释放内存的时刻
+            GenericStaticProxyRegister.ClearAll();
+            "静态泛型代理登记表数据清空成功！！".Log();
+
+            //// 资源加载
+            //AssetsMgr = await AssetsMgr.Instance.Register();
 
             //AssetsMgr.TestRequest();
             //Utility.ToObjectWithLock<GameDriver>("AA").Forget();
             // Utility.ToJsonWithLock(new BundleRef(), Application.streamingAssetsPath + "/aaa/" + "jjj.json");
-
         }
 
         private void Update()
@@ -47,13 +50,13 @@ namespace Ninth.HotUpdate
             //    AssetsMgr.TestLoadSceneAsync();
             //}
             ////AssetsMgr.UnLoadAllAsync();
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                if(AssetsMgr != null)
-                {
-                    AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab").Forget();
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.Alpha1))
+            //{
+            //    if(AssetsMgr != null)
+            //    {
+            //        AssetsMgr.CloneAsync("Assets/GAssets/LocalGroup/Cube.prefab").Forget();
+            //    }
+            //}
             //AssetsMgr.UnLoadAllAsync();
             //await Load();
             //if (Input.GetKeyDown(KeyCode.Q))
@@ -74,8 +77,8 @@ namespace Ninth.HotUpdate
             //    objList = new List<GameObject>();
             //    ResourceRequest req = Resources.LoadAsync("Cube");
             //    await req;
-            //    GameObject obj = req.asset as GameObject;
-            //    objList.Add(Instantiate(obj));
+            //    GameObject m_Obj = req.asset as GameObject;
+            //    objList.Add(Instantiate(m_Obj));
             //}
         }
     }
