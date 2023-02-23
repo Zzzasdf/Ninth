@@ -24,16 +24,7 @@ namespace Ninth.HotUpdate
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
 
-            ProxyCtrl = new ProxyCtrl();
-            await ProxyCtrl.StaticResidentProxyRegister();
-            "静态常驻代理登记表注册成功！！".Log();
-
-
-
-
-            // TODO .. 放在切换场景或者需要释放内存的时刻
-            GenericStaticProxyRegister.ClearAll();
-            "静态泛型代理登记表数据清空成功！！".Log();
+           await  ProxyCtrl.JsonProxy.Set<LocalLoadConfig>();
 
             //// 资源加载
             //AssetsMgr = await AssetsMgr.Instance.Register();

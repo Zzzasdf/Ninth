@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace Ninth.HotUpdate
 {
-    public class LocalLoadConfig: LoadConfig, IJsonProxy
+    public class LocalLoadConfig: LoadConfig, IJson
     {
 
     }
 
-    public class RemoteLoadConfig: LoadConfig, IJsonProxy
+    public class RemoteLoadConfig: LoadConfig, IJson
     {
 
     }
 
-    public class DllLoadConfig: LoadConfig, IJsonProxy
+    public class DllLoadConfig: LoadConfig, IJson
     {
 
     }
