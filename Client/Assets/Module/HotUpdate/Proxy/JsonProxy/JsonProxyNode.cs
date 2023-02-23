@@ -3,10 +3,10 @@ using System.IO;
 
 namespace Ninth.HotUpdate
 {
-    public interface IJsonProxyNode { }
-
     public partial class JsonProxy
     {
+        private interface IJsonProxyNode { }
+
         private sealed partial class JsonProxyNode<T> : IJsonProxyNode
                 where T : IJson
         {

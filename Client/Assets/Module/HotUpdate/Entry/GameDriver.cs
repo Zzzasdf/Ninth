@@ -1,5 +1,3 @@
-
-
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,7 +23,6 @@ namespace Ninth.HotUpdate
             "热更部分启动成功！！".Log();
 
            await  ProxyCtrl.JsonProxy.Set<LocalLoadConfig>();
-
             //// 资源加载
             //AssetsMgr = await AssetsMgr.Instance.Register();
 

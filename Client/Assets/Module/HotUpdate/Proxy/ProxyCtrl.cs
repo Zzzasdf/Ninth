@@ -3,9 +3,9 @@ using System;
 
 namespace Ninth.HotUpdate
 {
-    public sealed partial class ProxyCtrl
+    public sealed class ProxyCtrl
     {
-        public static JsonProxy JsonProxy;
+        public static JsonProxy JsonProxy { get; private set; }
 
         static ProxyCtrl()
         {
