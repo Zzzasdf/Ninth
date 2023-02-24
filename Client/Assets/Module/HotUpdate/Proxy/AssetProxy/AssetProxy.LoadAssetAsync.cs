@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    public static partial class AssetProxy
+    public partial class AssetProxy
     {
-        public static async UniTask<GameObject> CloneAsync(string assetPath)
+        public async UniTask<GameObject> CloneAsync(string assetPath)
         {
             GameObject cloneObj = null;
             switch (GlobalConfig.AssetMode)
@@ -47,7 +47,7 @@ namespace Ninth.HotUpdate
             return cloneObj;
         }
 
-        public static async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
+        public async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
         {
             switch (GlobalConfig.AssetMode)
             {
@@ -75,7 +75,7 @@ namespace Ninth.HotUpdate
             throw new Exception("This mode is not defined");
         }
 
-        private static async UniTask<AssetRef> LoadAssetRefAsync<T>(string assetPath) where T : UnityEngine.Object
+        private async UniTask<AssetRef> LoadAssetRefAsync<T>(string assetPath) where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(assetPath))
             {

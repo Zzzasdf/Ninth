@@ -5,10 +5,13 @@ namespace Ninth.HotUpdate
 {
     public sealed class ProxyCtrl
     {
-        public static JsonProxy JsonProxy { get; private set; }
+        public static ModelProxy ModelProxy { get; private set; }
 
+        public static JsonProxy JsonProxy { get; private set; }
         static ProxyCtrl()
         {
+            ModelProxy = new ModelProxy();
+
             JsonProxy = new JsonProxy();
         }
     }

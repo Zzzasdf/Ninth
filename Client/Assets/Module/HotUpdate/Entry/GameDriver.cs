@@ -22,9 +22,9 @@ namespace Ninth.HotUpdate
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
 
-           await  ProxyCtrl.JsonProxy.Set<LocalLoadConfig>();
-            //// 资源加载
-            //AssetsMgr = await AssetsMgr.Instance.Register();
+            ModelTest modelTest = await ProxyCtrl.ModelProxy.Get<ModelTest>().Set();
+            modelTest.AAAA.Log();
+
 
             //AssetsMgr.TestRequest();
             //Utility.ToObjectWithLock<GameDriver>("AA").Forget();

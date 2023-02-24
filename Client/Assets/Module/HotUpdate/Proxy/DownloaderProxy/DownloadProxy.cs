@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 namespace Ninth.HotUpdate
 {
-    public class DownloadProxy
+    public class DownloaderProxy
     {
         public async UniTask<string> GetRequest(string url, float timeout)
         {

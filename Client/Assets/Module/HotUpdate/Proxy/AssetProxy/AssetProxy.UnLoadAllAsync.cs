@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    public static partial class AssetProxy
+    public partial class AssetProxy
     {
-        public static async UniTask UnLoadAllAsync()
+        public async UniTask UnLoadAllAsync()
         {
             List<string> removeBundleRef = null;
             foreach (var item in m_BundlePath2BundleRef)

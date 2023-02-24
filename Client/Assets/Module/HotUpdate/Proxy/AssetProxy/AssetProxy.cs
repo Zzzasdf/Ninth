@@ -4,21 +4,28 @@ using System.Collections.Generic;
 
 namespace Ninth.HotUpdate
 {
-    public static partial class AssetProxy
+    public partial class AssetProxy
     {
         // 资源配置
-        private static Dictionary<string, AssetRef> m_ConfigAssetPath2AssetRef;
+        private Dictionary<string, AssetRef> m_ConfigAssetPath2AssetRef;
 
         // 加载进内存的bundle, 确保只存在一个
-        public static Dictionary<string, BundleRef> m_BundlePath2BundleRef;
+        public Dictionary<string, BundleRef> m_BundlePath2BundleRef;
 
-        private static Func<string, string> m_LocalPathFunc;
-        private static Func<string, string> m_RemotePathFunc;
+        private Func<string, string> m_LocalPathFunc;
+        private Func<string, string> m_RemotePathFunc;
 
-        public static async UniTask Register()
+        public AssetProxy()
+        {
+            Init();
+        }
+
+
+        public async UniTask Init()
         {
             m_ConfigAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             m_BundlePath2BundleRef = new Dictionary<string, BundleRef>();
+
             LoadConfig localLoadConfig = await ProxyCtrl.JsonProxy.Get<LocalLoadConfig>();
             LoadConfig remoteLoadConfig = await ProxyCtrl.JsonProxy.Get<RemoteLoadConfig>();
 
@@ -30,7 +37,7 @@ namespace Ninth.HotUpdate
             "AssetProxy 初始化成功".Log();
         }
 
-        private static void SetPath2BundleName(LoadConfig loadConfig)
+        private void SetPath2BundleName(LoadConfig loadConfig)
         {
             if (loadConfig.AssetRefList == null)
             {

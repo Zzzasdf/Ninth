@@ -9,7 +9,7 @@ namespace Ninth.HotUpdate
         public async UniTask LoadSceneAsync(string path, IProgress<float> progress = null)
         {
             await SceneManager.LoadSceneAsync(path).ToUniTask(progress);
-            await AssetProxy.UnLoadAllAsync();
+            //await AssetProxy.UnLoadAllAsync();
         }
 
         public async void TestLoadSceneAsync()

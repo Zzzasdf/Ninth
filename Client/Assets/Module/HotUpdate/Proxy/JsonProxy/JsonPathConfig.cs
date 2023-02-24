@@ -1,68 +1,63 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
     public partial class JsonProxy
     {
-        private partial class JsonProxyNode<T>
+        private class JsonPathConfig
         {
-            private class JsonPathConfig
+            private static Dictionary<Type, string> m_Map;
+
+            static JsonPathConfig()
             {
-                private static Dictionary<Type, string> m_Map;
+                m_Map = new Dictionary<Type, string>();
 
-                static JsonPathConfig()
+                AllMode();
+
+                switch (GlobalConfig.AssetMode)
                 {
-                    m_Map = new Dictionary<Type, string>();
-
-                    AllMode();
-
-                    switch (GlobalConfig.AssetMode)
-                    {
-                        case AssetMode.NonAB:
-                            {
-                                NonABMode();
-                                break;
-                            }
-                        case AssetMode.LocalAB:
-                            {
-                                LocalABMode();
-                                break;
-                            }
-                        case AssetMode.RemoteAB:
-                            {
-                                RemoteABMode();
-                                break;
-                            }
-                    }
+                    case AssetMode.NonAB:
+                        {
+                            NonABMode();
+                            break;
+                        }
+                    case AssetMode.LocalAB:
+                        {
+                            LocalABMode();
+                            break;
+                        }
+                    case AssetMode.RemoteAB:
+                        {
+                            RemoteABMode();
+                            break;
+                        }
                 }
+            }
 
-                private static void AllMode()
-                {
-                    m_Map.Add(typeof(LocalLoadConfig), PathConfig.LoadConfigInLocalInStreamingAssetPath());
-                }
+            private static void AllMode()
+            {
+                m_Map.Add(typeof(LocalLoadConfig), PathConfig.LoadConfigInLocalInStreamingAssetPath());
+            }
 
-                private static void NonABMode()
-                {
+            private static void NonABMode()
+            {
 
-                }
+            }
 
-                private static void LocalABMode()
-                {
-                    m_Map.Add(typeof(RemoteLoadConfig), PathConfig.LoadConfigInRemoteInStreamingAssetPath());
-                }
+            private static void LocalABMode()
+            {
+                m_Map.Add(typeof(RemoteLoadConfig), PathConfig.LoadConfigInRemoteInStreamingAssetPath());
+            }
 
-                private static void RemoteABMode()
-                {
-                    m_Map.Add(typeof(RemoteLoadConfig), PathConfig.LoadConfigInRemoteInPersistentDataPath());
-                }
+            private static void RemoteABMode()
+            {
+                m_Map.Add(typeof(RemoteLoadConfig), PathConfig.LoadConfigInRemoteInPersistentDataPath());
+            }
 
-                public static string Get<T>()
-                {
-                    return m_Map[typeof(T)];
-                }
+            public static string Get<E>() where E : IJson
+            {
+                return m_Map[typeof(E)];
             }
         }
     }
