@@ -5,25 +5,14 @@ using System.IO;
 
 namespace Ninth.HotUpdate
 {
-    public sealed partial class JsonProxy
+    public static partial class JsonProxy
     {
-        private Dictionary<Type, IJson> m_Cache;
-
-        public JsonProxy()
-        {
-            m_Cache = new Dictionary<Type, IJson>();
-        }
-
-        public async UniTask<T> Get<T>() where T : IJson
+        public static async UniTask<T> Get<T>() where T : IModel, new()
         {
             Type type = typeof(T);
-            if (!m_Cache.ContainsKey(type))
-            {
-                string path = JsonPathConfig.Get<T>();
-                IJson json = await ToObject(path);
-                m_Cache.Add(type, json);
-            }
-            return (T)m_Cache[type];
+            string path = JsonPathConfig.Get<T>();
+            T json = await ToObject(path);
+            return json;
 
             async UniTask<T> ToObject(string path)
             {
@@ -33,28 +22,32 @@ namespace Ninth.HotUpdate
                     T t = LitJson.JsonMapper.ToObject<T>(fileContent);
                     return t;
                 }
+                catch(DirectoryNotFoundException e)
+                {
+                    e.Error();
+                }
                 catch (FileNotFoundException e)
                 {
                     e.Error();
                 }
-                return default(T);
+                return new T();
             }
         }
 
-        public async UniTask Set<T>() where T : IJson
+        public static async UniTask Store<T>(T obj) where T : IModel
         {
             try
             {
                 Type type = typeof(T);
                 string path = JsonPathConfig.Get<T>();
-                string jsonData = LitJson.JsonMapper.ToJson(m_Cache[type]);
+                string jsonData = LitJson.JsonMapper.ToJson(obj);
                 await File.WriteAllTextAsync(path, jsonData, GlobalConfig.Utf8);
             }
-            catch (KeyNotFoundException e)
+            catch (DirectoryNotFoundException e)
             {
                 e.Error();
             }
-            catch (DirectoryNotFoundException e)
+            catch (KeyNotFoundException e)
             {
                 e.Error();
             }

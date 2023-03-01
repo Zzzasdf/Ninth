@@ -26,8 +26,8 @@ namespace Ninth.HotUpdate
             m_ConfigAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             m_BundlePath2BundleRef = new Dictionary<string, BundleRef>();
 
-            LoadConfig localLoadConfig = await ProxyCtrl.JsonProxy.Get<LocalLoadConfig>();
-            LoadConfig remoteLoadConfig = await ProxyCtrl.JsonProxy.Get<RemoteLoadConfig>();
+            LoadConfig localLoadConfig = await ProxyCtrl.ModelProxy.Get<LocalLoadConfig>();
+            LoadConfig remoteLoadConfig = await ProxyCtrl.ModelProxy.Get<RemoteLoadConfig>();
 
             SetPath2BundleName(localLoadConfig);
             SetPath2BundleName(remoteLoadConfig);

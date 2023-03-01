@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public class ExcelEncoder
+    public sealed partial class ExcelEncoder
     {
         [MenuItem("Tools/Excels/Encode/All")]
         private static void Encode()

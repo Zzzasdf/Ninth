@@ -18,7 +18,7 @@ namespace Ninth.HotUpdate
 
     }
 
-    public class LoadConfig
+    public class LoadConfig: IModel
     {
         public List<AssetRef> AssetRefList;
     }

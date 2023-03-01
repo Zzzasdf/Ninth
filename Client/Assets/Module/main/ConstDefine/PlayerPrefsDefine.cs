@@ -25,6 +25,11 @@ namespace Ninth
         private readonly static string m_DownloadBundleStartPos = "DownloadBundleStartPos";
         #endregion
 
+        #region Excel
+        private readonly static string m_ExcelSearchPathDirectoryRoot = "ExcelSearchPathDirectoryRoot";
+        private readonly static string m_ExcelSearchResultShowMode = "ExcelSearchResultShowMode";
+        #endregion
+
         public static string BundleSourceDataDirectoryRoot
         {
             get => PlayerPrefs.GetString(m_BundleSourceDataDirectoryRoot, $"{Application.dataPath}/../../Bundles");
@@ -77,6 +82,18 @@ namespace Ninth
         {
             get => PlayerPrefs.GetInt(m_DownloadBundleStartPos, 0);
             set => PlayerPrefs.SetInt(m_DownloadBundleStartPos, value);
+        }
+
+        public static string ExcelSearchPathDirectoryRoot
+        {
+            get => PlayerPrefs.GetString(m_ExcelSearchPathDirectoryRoot, $"{Application.dataPath}/../../Excels");
+            set => PlayerPrefs.SetString(m_ExcelSearchPathDirectoryRoot, value);
+        }
+
+        public static int ExcelSearchResultShowMode
+        {
+            get => PlayerPrefs.GetInt(m_ExcelSearchResultShowMode, 0);
+            set => PlayerPrefs.SetInt(m_ExcelSearchResultShowMode, value);
         }
     }
 }

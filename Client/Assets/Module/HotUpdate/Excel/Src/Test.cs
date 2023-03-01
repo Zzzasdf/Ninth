@@ -6,6 +6,9 @@ namespace Ninth.HotUpdate
 {
     public class TestRow
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int K { get; private set; }
 
         public int A { get; private set; }

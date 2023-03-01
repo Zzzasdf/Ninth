@@ -19,12 +19,19 @@ namespace Ninth.HotUpdate
 
         private async void Awake()
         {
+
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
 
-            ModelTest modelTest = await ProxyCtrl.ModelProxy.Get<ModelTest>().Set();
-            modelTest.AAAA.Log();
+            //ModelTest modelTest = await ProxyCtrl.ModelProxy.Get<ModelTest>();
+            //await modelTest.Set();
+            //await modelTest.Store();
 
+            string tt = new string("List<10>");
+            int leftSymbol = tt.IndexOf("<");
+            int rightSymbol = tt.IndexOf(">");
+            tt[(leftSymbol + 1) .. rightSymbol].Log();
+            tt[.. leftSymbol].Log();
 
             //AssetsMgr.TestRequest();
             //Utility.ToObjectWithLock<GameDriver>("AA").Forget();

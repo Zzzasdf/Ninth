@@ -15,14 +15,34 @@ namespace Ninth.HotUpdate
             m_Cache = new Dictionary<Type, IModel>();
         }
 
-        public T Get<T>() where T : IModel, new()
+        public async UniTask<T> Get<T>() where T : IModel, new()
         {
             Type type = typeof(T);
             if(!m_Cache.ContainsKey(type))
             {
-                m_Cache.Add(type, new T());
+                if(JsonPathConfig.IsExist<T>())
+                {
+                    m_Cache.Add(type, await JsonProxy.Get<T>());
+                }
+                else
+                {
+                    m_Cache.Add(type, new T());
+                }
             }
             return (T)m_Cache[type];
+        }
+
+        public async UniTask<T> GetAlone<T>() where T : IModel, new()
+        {
+            Type type = typeof(T);
+            if (JsonPathConfig.IsExist<T>())
+            {
+                return await JsonProxy.Get<T>();
+            }
+            else
+            {
+                return new T();
+            }
         }
 
         public ModelProxy Remove<T>() where T: IModel, new()
