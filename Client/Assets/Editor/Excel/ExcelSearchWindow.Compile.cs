@@ -85,7 +85,7 @@ namespace Ninth.Editor
                 //    string tableName = m_Compile.Tables[index].TableName + ".Json";
                 //    Utility.ToJson(m_Compile.Tables[index], PlayerPrefsDefine.ExcelSearchCompileDirectoryRoot + "/" + tableName);
                 //}
-                m_SearchResultIntro = $"This search takes time,Milliseconds:{stopwatch.ElapsedMilliseconds},Ticks:{stopwatch.ElapsedTicks}";
+                m_SearchResultIntro = $"This compile takes time,Milliseconds:{stopwatch.ElapsedMilliseconds},Ticks:{stopwatch.ElapsedTicks}";
             }
             EditorGUILayout.EndVertical();
         }
