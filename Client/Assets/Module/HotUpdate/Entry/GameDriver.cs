@@ -22,7 +22,6 @@ namespace Ninth.HotUpdate
 
             DontDestroyOnLoad(this);
             "热更部分启动成功！！".Log();
-
             //ModelTest modelTest = await ProxyCtrl.ModelProxy.Get<ModelTest>();
             //await modelTest.Set();
             //await modelTest.Store();
