@@ -26,15 +26,22 @@ namespace Ninth.HotUpdate
             //await modelTest.Set();
             //await modelTest.Store();
 
-            string tt = new string("List<10>");
+            string tt = "List<10>";
+            1.Log();
             int leftSymbol = tt.IndexOf("<");
+            2.Log();
             int rightSymbol = tt.IndexOf(">");
+            3.Log();
             tt[(leftSymbol + 1) .. rightSymbol].Log();
+            4.Log();
             tt[.. leftSymbol].Log();
-
+            5.Log();
             //AssetsMgr.TestRequest();
             //Utility.ToObjectWithLock<GameDriver>("AA").Forget();
             // Utility.ToJsonWithLock(new BundleRef(), Application.streamingAssetsPath + "/aaa/" + "jjj.json");
+            ModelTest test = await ProxyCtrl.ModelProxy.Get<ModelTest>();
+            await test.Set();
+            test.AAAA.Log();
         }
 
         private void Update()

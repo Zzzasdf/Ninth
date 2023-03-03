@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using HybridCLR;
 using System;
 using System.Collections;
@@ -28,10 +29,10 @@ namespace Ninth
 
         private System.Reflection.Assembly m_GameAss = null;
 
-        public void EnterProcedure()
+        public async void EnterProcedure()
         {
 #if !UNITY_EDITOR
-            GameEntry.Instance.StartCoroutine(LoadDllFromBytes());
+            await LoadDllFromBytes();
 #else
             AssetMode assetMode = GlobalConfig.AssetMode;
             if (AssetBundleModuleConfig.ScriptMode.HasFlag(assetMode))
@@ -41,7 +42,7 @@ namespace Ninth
             }
             else if (AssetBundleModuleConfig.DllMode.HasFlag(assetMode))
             {
-                GameEntry.Instance.StartCoroutine(LoadDllFromBytes());
+                await LoadDllFromBytes();
             }
             else
             {
@@ -50,7 +51,7 @@ namespace Ninth
 #endif
         }
 
-        IEnumerator LoadDllFromBytes()
+        private async UniTask LoadDllFromBytes()
         {
             var assets = new List<string>
                     {
@@ -68,7 +69,7 @@ namespace Ninth
                 string dllPath = GetWebRequestPath(dir);
                 Debug.Log($"start download asset:{dllPath}");
                 UnityWebRequest www = UnityWebRequest.Get(dllPath);
-                yield return www.SendWebRequest();
+                await www.SendWebRequest();
 
 #if UNITY_2020_1_OR_NEWER
                 if (www.result != UnityWebRequest.Result.Success)

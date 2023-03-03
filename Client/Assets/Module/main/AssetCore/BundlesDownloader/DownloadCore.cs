@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -97,7 +98,7 @@ namespace Ninth
             request = null;
         }
 
-        public IEnumerator Download(string srcPath, string dstPath)
+        public async UniTask<bool> Download(string srcPath, string dstPath)
         {
             request = UnityWebRequest.Get(srcPath);
 
@@ -105,15 +106,15 @@ namespace Ninth
 
             UnityEngine.Debug.Log("原路径:" + srcPath + "请求下载到本地路径: " + dstPath);
 
-            yield return request.SendWebRequest();
+            await request.SendWebRequest();
 
             if (string.IsNullOrEmpty(request.error) == false)
             {
                 UnityEngine.Debug.LogError($"下载文件：{request.error}");
 
-                yield return false;
+                return false;
             }
-            yield return true;
+            return true;
         }
 
         #region Config

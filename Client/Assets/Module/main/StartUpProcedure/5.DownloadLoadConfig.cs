@@ -29,13 +29,13 @@ namespace Ninth
             int count = loadConfigInServerPathList.Count;
             for (int index = 0; index < count; index++)
             {
-                GameEntry.Instance.StartCoroutine(GameEntry.DownloadCore.Download(loadConfigInServerPathList[index](version), loadConfigInPersistentDataPathList[index]));
-                //if (!result)
-                //{
-                //    // TODO .. 弹窗提示 .. 资源服务器缺少加载配置  Y .. 重试
-                //    UnityEngine.Debug.LogError("资源服务器缺少加载配置!!");
-                //    return;
-                //}
+                bool result = await GameEntry.DownloadCore.Download(loadConfigInServerPathList[index](version), loadConfigInPersistentDataPathList[index]);
+                if (!result)
+                {
+                    // TODO .. 弹窗提示 .. 资源服务器缺少加载配置  Y .. 重试
+                    UnityEngine.Debug.LogError("资源服务器缺少加载配置!!");
+                    return;
+                }
             }
             ExitProcedure();
         }

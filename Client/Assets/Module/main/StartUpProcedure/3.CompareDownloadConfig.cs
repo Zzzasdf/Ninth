@@ -47,13 +47,13 @@ namespace Ninth
                 string serverDownloadConfigPath = serverDownloadConfigPathList[index];
                 string tempDownloadConfigPath = tempDownloadConfigPathList[index];
 
-                GameEntry.Instance.StartCoroutine(GameEntry.DownloadCore.Download(serverDownloadConfigPath, tempDownloadConfigPath));
-                //if (!result)
-                //{
-                //    // TODO .. 弹窗提示 .. 无法获取到最新的下载配置, 重新下载  Y .. 重试  N .. 退出  
-                //    UnityEngine.Debug.LogError("从资源服务器下载下载配置出错");
-                //    return;
-                //}
+                bool result = await GameEntry.DownloadCore.Download(serverDownloadConfigPath, tempDownloadConfigPath);
+                if (!result)
+                {
+                    // TODO .. 弹窗提示 .. 无法获取到最新的下载配置, 重新下载  Y .. 重试  N .. 退出  
+                    UnityEngine.Debug.LogError("从资源服务器下载下载配置出错");
+                    return;
+                }
             }
 
             int bundleIndex = 0;

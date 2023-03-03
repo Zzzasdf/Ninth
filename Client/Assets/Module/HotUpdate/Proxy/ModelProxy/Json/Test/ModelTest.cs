@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+
 namespace Ninth.HotUpdate
 {
     public class ModelTest: HandlerTest_Json<ModelTest>, IModel

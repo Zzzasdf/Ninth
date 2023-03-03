@@ -27,7 +27,6 @@ namespace Ninth
 
         #region Excel
         private readonly static string m_ExcelSearchPathDirectoryRoot = "ExcelSearchPathDirectoryRoot";
-        private readonly static string m_ExcelSearchCompileDirectoryRoot = "ExcelSearchCompileDirectoryRoot";
         private readonly static string m_ExcelSearchMode = "ExcelSearchMode";
         private readonly static string m_ExcelSearchResultShowMode = "ExcelSearchResultShowMode";
         #endregion
@@ -92,11 +91,6 @@ namespace Ninth
             set => PlayerPrefs.SetString(m_ExcelSearchPathDirectoryRoot, value);
         }
 
-        public static string ExcelSearchCompileDirectoryRoot
-        {
-            get => PlayerPrefs.GetString(m_ExcelSearchCompileDirectoryRoot, $"{Application.dataPath}/../../Excels/Compile");
-            set => PlayerPrefs.SetString(m_ExcelSearchCompileDirectoryRoot, value);
-        }
         public static int ExcelSearchMode
         {
             get => PlayerPrefs.GetInt(m_ExcelSearchMode, 0);

@@ -22,13 +22,19 @@ namespace Ninth.HotUpdate
                     T t = LitJson.JsonMapper.ToObject<T>(fileContent);
                     return t;
                 }
-                catch(DirectoryNotFoundException e)
+                catch (DirectoryNotFoundException e)
                 {
-                    e.Error();
+                    if (!JsonPathConfig.IsExist<T>())
+                    {
+                        e.Error();
+                    }
                 }
                 catch (FileNotFoundException e)
                 {
-                    e.Error();
+                    if (!JsonPathConfig.IsExist<T>())
+                    {
+                        e.Error();
+                    }
                 }
                 return new T();
             }
