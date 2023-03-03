@@ -5,7 +5,7 @@ namespace Ninth.Editor
 {
     public sealed partial class Utility
     {
-        public static T ToObject<T>(string path)
+        public static T Get<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -14,7 +14,7 @@ namespace Ninth.Editor
             return LitJson.JsonMapper.ToObject<T>(File.ReadAllText(path, GlobalConfig.Utf8));
         }
 
-        public static void ToJson<T>(T obj, string path)
+        public static void Store<T>(T obj, string path)
         {
             if (string.IsNullOrEmpty(path))
             {

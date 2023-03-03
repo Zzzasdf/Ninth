@@ -19,6 +19,10 @@ namespace Ninth.Editor
             GUILayout.FlexibleSpace();
             m_Count = EditorGUILayout.IntField("Count", Mathf.Max(1, m_Count));
 
+            if(m_SearchObjList == null)
+            {
+                m_SearchObjList = new List<string>();
+            }
             for (int index = m_SearchObjList.Count; index < m_Count; index++)
             {
                 m_SearchObjList.Add(string.Empty);

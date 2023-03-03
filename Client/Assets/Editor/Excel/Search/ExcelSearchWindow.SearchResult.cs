@@ -50,7 +50,14 @@ namespace Ninth.Editor
             if (!m_SearchResultInit)
             {
                 m_SearchResultInit = !m_SearchResultInit;
-                m_SearchResultDic.Clear();
+                if (m_SearchResultDic == null)
+                {
+                    m_SearchResultDic = new Dictionary<string, Dictionary<string, LinkedList<SearchResultCell>>>();
+                }
+                else
+                {
+                    m_SearchResultDic.Clear();
+                }
                 switch ((SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode)
                 {
                     case SearchResultMode.Table:
@@ -90,8 +97,22 @@ namespace Ninth.Editor
                             break;
                         }
                 }
-                m_FoldOutDic.Clear();
-                m_FoldOutDic2.Clear();
+                if (m_FoldOutDic == null)
+                {
+                    m_FoldOutDic = new Dictionary<string, bool>();
+                }
+                else
+                {
+                    m_FoldOutDic.Clear();
+                }
+                if (m_FoldOutDic2 == null)
+                {
+                    m_FoldOutDic2 = new Dictionary<string, Dictionary<string, bool>>();
+                }
+                else
+                {
+                    m_FoldOutDic2.Clear();
+                }
                 foreach (var item in m_SearchResultDic)
                 {
                     m_FoldOutDic.Add(item.Key, true);

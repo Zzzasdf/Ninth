@@ -93,51 +93,63 @@ namespace Ninth.Editor
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Search"))
             {
-                Search();
-            }
-            EditorGUILayout.EndVertical();
-        }
-
-        private static void Search()
-        {
-            List<string> NonEmptySearchObjectList = GetValidSearchObj();
-            if(NonEmptySearchObjectList.Count == 0)
-            {
-                return;
-            }
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            m_SearchObjResultList.Clear();
-            for (int index = 0; index < NonEmptySearchObjectList.Count; index++)
-            {
-                m_SearchObjResultList.Add(NonEmptySearchObjectList[index]);
-            }
-            m_SearchResult.Clear();
-            m_SearchResultInit = false;
-            
-            for(int tableIndex = 0; tableIndex < m_Compile.Tables.Count; tableIndex++)
-            {
-                CompileTable table = m_Compile.Tables[tableIndex];
-                for(int sheetIndex = 0; sheetIndex < table.CompileSheets.Count; sheetIndex++)
+                List<string> NonEmptySearchObjectList = GetValidSearchObj();
+                if (NonEmptySearchObjectList.Count == 0)
                 {
-                    CompileSheet sheet = table.CompileSheets[sheetIndex];
-                    for (int cellIndex = 0; cellIndex < sheet.Cells.Count; cellIndex++)
+                    m_SearchResultIntro = "Invalid Search Value!!";
+                }
+                else
+                {
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+
+                    if (m_SearchObjResultList == null)
                     {
-                        CompileCell cell = sheet.Cells[cellIndex];
-                        m_FilterFunc(cell, table.Path, sheet.SheetIndex);
+                        m_SearchObjResultList = new List<string>();
                     }
+                    else
+                    {
+                        m_SearchObjResultList.Clear();
+                    }
+                    for (int index = 0; index < NonEmptySearchObjectList.Count; index++)
+                    {
+                        m_SearchObjResultList.Add(NonEmptySearchObjectList[index]);
+                    }
+                    if (m_SearchResult == null)
+                    {
+                        m_SearchResult = new List<SearchResultCell>();
+                    }
+                    else
+                    {
+                        m_SearchResult.Clear();
+                    }
+                    m_SearchResultInit = false;
+
+                    for (int tableIndex = 0; tableIndex < m_Compile.Tables.Count; tableIndex++)
+                    {
+                        CompileTable table = m_Compile.Tables[tableIndex];
+                        for (int sheetIndex = 0; sheetIndex < table.CompileSheets.Count; sheetIndex++)
+                        {
+                            CompileSheet sheet = table.CompileSheets[sheetIndex];
+                            for (int cellIndex = 0; cellIndex < sheet.Cells.Count; cellIndex++)
+                            {
+                                CompileCell cell = sheet.Cells[cellIndex];
+                                m_FilterFunc(cell, table.Path, sheet.SheetIndex);
+                            }
+                        }
+                    }
+                    stopwatch.Stop();
+
+                    m_SearchResultTypeInfo = (SearchMode)PlayerPrefsDefine.ExcelSearchMode switch
+                    {
+                        SearchMode.Exact => "ExactSearchResult",
+                        SearchMode.Exist => "ExistSearchResult",
+                        _ => throw new System.NotImplementedException(),
+                    };
+
+                    m_SearchResultIntro = $"This Search Takes Time, Milliseconds:{stopwatch.ElapsedMilliseconds}, Ticks:{stopwatch.ElapsedTicks}";
                 }
             }
-            stopwatch.Stop();
-
-            m_SearchResultTypeInfo = (SearchMode)PlayerPrefsDefine.ExcelSearchMode switch
-            {
-                SearchMode.Exact => "ExactSearchResult",
-                SearchMode.Exist => "ExistSearchResult",
-                _ => throw new System.NotImplementedException(),
-            };
-
-            m_SearchResultIntro = $"This search takes time,Milliseconds:{stopwatch.ElapsedMilliseconds},Ticks:{stopwatch.ElapsedTicks}";
+            EditorGUILayout.EndVertical();
         }
         #endregion
     }

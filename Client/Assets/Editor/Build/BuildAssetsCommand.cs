@@ -61,7 +61,7 @@ namespace Ninth.Editor
         private static bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
         {
             PackConfig.BuildPlatform = target.ToString();
-            VersionConfig versionConfig = Utility.ToObject<VersionConfig>(PackConfig.BaseVersion());
+            VersionConfig versionConfig = Utility.Get<VersionConfig>(PackConfig.BaseVersion());
             if(versionConfig == null)
             {
                 UnityEngine.Debug.LogError($"在路径{PackConfig.BaseVersion()}下不存在版本配置文件, 请先打一个版本包！！");
@@ -170,7 +170,7 @@ namespace Ninth.Editor
                 }
                 else
                 {
-                    VersionConfig versionConfig = Utility.ToObject<VersionConfig>(PackConfig.ApplyVersionInSourceDataPath());
+                    VersionConfig versionConfig = Utility.Get<VersionConfig>(PackConfig.ApplyVersionInSourceDataPath());
                     if (versionConfig == null)
                     {
                         Debug.LogError($"路径{PackConfig.ApplyVersionInSourceDataPath()}下检测不到版本文件，请将版本文件复制到此处，或先打一个版本包并应用此版本!!");
@@ -440,7 +440,7 @@ namespace Ninth.Editor
         private static void SaveConfigs()
         {
             // 保存版本号
-            Utility.ToJson(m_VersionConfig, PackConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
+            Utility.Store(m_VersionConfig, PackConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
 
             // 空包也添加配置 =》解决拉取配置404问题
             List<AssetLocate> packAssetLocate = new List<AssetLocate>()
@@ -476,8 +476,8 @@ namespace Ninth.Editor
                     m_DownloadConfig.Add(assetLocate, new DownloadConfig());
                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
                 }
-                Utility.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
-                Utility.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
+                Utility.Store(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+                Utility.Store(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
             }
         }
 
