@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
         // SearchResults
         private static SearchCompile m_Compile;
@@ -28,7 +28,7 @@ namespace Ninth.Editor
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
                 m_Compile.Tables.Clear();
-                DirectoryInfo directory = new DirectoryInfo(PlayerPrefsDefine.ExcelSearchPathDirectoryRoot);
+                DirectoryInfo directory = new DirectoryInfo(m_ExcelSearchPathDirectoryRoot);
                 FileInfo[] fileInfos = directory.GetFiles();
                 for (int index = 0; index < fileInfos.Length; index++)
                 {

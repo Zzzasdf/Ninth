@@ -7,10 +7,6 @@ namespace Ninth.Editor
 {
     public sealed partial class ExcelEncoder
     {
-        [MenuItem("Tools/Excels/Encode/All")]
-        private static void Encode()
-        {
-            
-        }
+        
     }
 }

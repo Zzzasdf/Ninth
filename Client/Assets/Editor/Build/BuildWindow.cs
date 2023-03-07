@@ -30,8 +30,8 @@ namespace Ninth.Editor
 
         private void Awake()
         {
-            m_BigVersion = PlayerPrefsDefine.BigVersion;
-            m_SmallVersion = PlayerPrefsDefine.SmallVersion;
+            m_BigVersion = PlayerPrefsDefine.BigBaseVersion;
+            m_SmallVersion = PlayerPrefsDefine.SmallBaseVersion;
             m_HotUpdateVersion = PlayerPrefsDefine.HotUpdateVersion;
 
             m_HotUpdateIteration = PlayerPrefsDefine.HotUpdateIteration;
@@ -53,28 +53,28 @@ namespace Ninth.Editor
 
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            PlayerPrefsDefine.BundleSourceDataDirectoryRoot = EditorGUILayout.TextField("BundleSourceDataDirectoryRoot", PlayerPrefsDefine.BundleSourceDataDirectoryRoot);
+            PlayerPrefsDefine.BuildBundlesDirectoryRoot = EditorGUILayout.TextField("BundleSourceDataDirectoryRoot", PlayerPrefsDefine.BuildBundlesDirectoryRoot);
             GUI.enabled = true;
             if(GUILayout.Button("Browse"))
             {
-                string path = EditorUtility.OpenFolderPanel("Select a folder to store resources", PlayerPrefsDefine.BundleSourceDataDirectoryRoot, "Bundles");
+                string path = EditorUtility.OpenFolderPanel("Select a folder to store resources", PlayerPrefsDefine.BuildBundlesDirectoryRoot, "Bundles");
                 if(!string.IsNullOrEmpty(path))
                 {
-                    PlayerPrefsDefine.BundleSourceDataDirectoryRoot = path;
+                    PlayerPrefsDefine.BuildBundlesDirectoryRoot = path;
                 }
             }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            PlayerPrefsDefine.PlayerSourceDataDirectoryRoot = EditorGUILayout.TextField("PlayerSourceDataDirectoryRoot", PlayerPrefsDefine.PlayerSourceDataDirectoryRoot);
+            PlayerPrefsDefine.BuildPlayersDirectoryRoot = EditorGUILayout.TextField("PlayerSourceDataDirectoryRoot", PlayerPrefsDefine.BuildPlayersDirectoryRoot);
             GUI.enabled = true;
             if (GUILayout.Button("Browse"))
             {
-                string path = EditorUtility.OpenFolderPanel("Select a folder to store resources", PlayerPrefsDefine.PlayerSourceDataDirectoryRoot, "Players");
+                string path = EditorUtility.OpenFolderPanel("Select a folder to store resources", PlayerPrefsDefine.BuildPlayersDirectoryRoot, "Players");
                 if(!string.IsNullOrEmpty(path))
                 {
-                    PlayerPrefsDefine.PlayerSourceDataDirectoryRoot = path;
+                    PlayerPrefsDefine.BuildPlayersDirectoryRoot = path;
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -94,16 +94,16 @@ namespace Ninth.Editor
             if (Param.IsBase)
             {
                 m_BigVersion = EditorGUILayout.IntField("BigVersion", m_BigVersion);
-                if(m_BigVersion < PlayerPrefsDefine.BigVersion)
+                if(m_BigVersion < PlayerPrefsDefine.BigBaseVersion)
                 {
-                    m_BigVersion = PlayerPrefsDefine.BigVersion;
+                    m_BigVersion = PlayerPrefsDefine.BigBaseVersion;
                 }
                 
-                if (m_BigVersion == PlayerPrefsDefine.BigVersion)
+                if (m_BigVersion == PlayerPrefsDefine.BigBaseVersion)
                 {
-                    if(m_SmallVersion <= PlayerPrefsDefine.SmallVersion)
+                    if(m_SmallVersion <= PlayerPrefsDefine.SmallBaseVersion)
                     {
-                        m_SmallVersion = PlayerPrefsDefine.SmallVersion + 1;
+                        m_SmallVersion = PlayerPrefsDefine.SmallBaseVersion + 1;
                     }
                     m_SmallVersion = EditorGUILayout.IntField("SmallVersion", m_SmallVersion);
                 }
@@ -117,8 +117,8 @@ namespace Ninth.Editor
             else
             {
                 GUI.enabled = false;
-                m_BigVersion = EditorGUILayout.IntField("BigVersion", PlayerPrefsDefine.BigVersion);
-                m_SmallVersion = EditorGUILayout.IntField("SmallVersion", PlayerPrefsDefine.SmallVersion);
+                m_BigVersion = EditorGUILayout.IntField("BigVersion", PlayerPrefsDefine.BigBaseVersion);
+                m_SmallVersion = EditorGUILayout.IntField("SmallVersion", PlayerPrefsDefine.SmallBaseVersion);
                 GUI.enabled = true;
             }
         }
@@ -180,8 +180,8 @@ namespace Ninth.Editor
                 }
                 else
                 {
-                    PlayerPrefsDefine.BigVersion = m_BigVersion;
-                    PlayerPrefsDefine.SmallVersion = m_SmallVersion;
+                    PlayerPrefsDefine.BigBaseVersion = m_BigVersion;
+                    PlayerPrefsDefine.SmallBaseVersion = m_SmallVersion;
                     PlayerPrefsDefine.HotUpdateVersion = m_HotUpdateVersion;
                     PlayerPrefsDefine.BaseIteration = m_BaseIteration;
                     PlayerPrefsDefine.HotUpdateIteration = m_HotUpdateIteration;

@@ -6,8 +6,14 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
+        private static SearchResultMode m_ExcelSearchResultShowMode
+        {
+            get => (SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode;
+            set => PlayerPrefsDefine.ExcelSearchResultShowMode = (int)value;
+        }
+
         private static Dictionary<string, Dictionary<string, LinkedList<SearchResultCell>>> m_SearchResultDic;
         private static Dictionary<string, bool> m_FoldOutDic;
         private static Dictionary<string, Dictionary<string, bool>> m_FoldOutDic2;
@@ -16,31 +22,18 @@ namespace Ninth.Editor
 
         private static void ExchangeSearchResultMode()
         {
-            string btnName = (SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode switch
-            {
-                SearchResultMode.Table => "TableMode",
-                SearchResultMode.Value => "ValueMode",
-                _ => throw new System.NotImplementedException(),
-            };
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button(btnName, EditorStyles.miniButtonMid, GUILayout.Width(85)))
+            string[] barMenu = new string[]
             {
-                switch ((SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode)
-                {
-                    case SearchResultMode.Table:
-                        {
-                            PlayerPrefsDefine.ExcelSearchResultShowMode = (int)SearchResultMode.Value;
-                            m_SearchResultInit = false;
-                            break;
-                        }
-                    case SearchResultMode.Value:
-                        {
-                            PlayerPrefsDefine.ExcelSearchResultShowMode = (int)SearchResultMode.Table;
-                            m_SearchResultInit = false;
-                            break;
-                        }
-                }
+                "TableMode",
+                "ValueMode"
+            };
+            SearchResultMode mode = (SearchResultMode)GUILayout.Toolbar((int)m_ExcelSearchResultShowMode, barMenu);
+            if(mode != m_ExcelSearchResultShowMode)
+            {
+                m_ExcelSearchResultShowMode = mode;
+                m_SearchResultInit = false;
             }
             GUILayout.EndHorizontal();
         }
@@ -58,7 +51,7 @@ namespace Ninth.Editor
                 {
                     m_SearchResultDic.Clear();
                 }
-                switch ((SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode)
+                switch (m_ExcelSearchResultShowMode)
                 {
                     case SearchResultMode.Table:
                         {
@@ -125,7 +118,7 @@ namespace Ninth.Editor
             }
 
             m_SearchResultSV_V2 = EditorGUILayout.BeginScrollView(m_SearchResultSV_V2);
-            switch ((SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode)
+            switch (m_ExcelSearchResultShowMode)
             {
                 case SearchResultMode.Table:
                     {

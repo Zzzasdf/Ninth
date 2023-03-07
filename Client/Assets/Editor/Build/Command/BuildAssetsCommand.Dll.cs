@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public sealed partial class BuildAssetsCommand
+    public partial class BuildAssetsCommand
     {
         public static string ToRelativeAssetPath(string s)
         {

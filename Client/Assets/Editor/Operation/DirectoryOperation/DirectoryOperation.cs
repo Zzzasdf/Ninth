@@ -36,13 +36,13 @@ namespace NinthEditor
         [MenuItem("Tools/Directory/OutputBundles/Open")]
         public static void OutputBundlesPathOpen()
         {
-            Application.OpenURL(Ninth.PlayerPrefsDefine.BundleSourceDataDirectoryRoot);
+            Application.OpenURL(Ninth.PlayerPrefsDefine.BuildBundlesDirectoryRoot);
         }
 
         [MenuItem("Tools/Directory/OutputPlayer/Open")]
         public static void AssetBundleSourceDataPathOpen()
         {
-            Application.OpenURL(Ninth.PlayerPrefsDefine.PlayerSourceDataDirectoryRoot);
+            Application.OpenURL(Ninth.PlayerPrefsDefine.BuildPlayersDirectoryRoot);
         }
 
         [MenuItem("Tools/DeleteAllCache")]

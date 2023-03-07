@@ -8,8 +8,14 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
+        private static SearchMode m_ExcelSearchMode
+        {
+            get => (SearchMode)PlayerPrefsDefine.ExcelSearchMode;
+            set => PlayerPrefsDefine.ExcelSearchMode = (int)value;
+        }
+
         private static Action<CompileCell, string, int> m_FilterFunc;
         private static List<string> m_SearchObjResultList;
         private static List<SearchResultCell> m_SearchResult;
@@ -25,26 +31,21 @@ namespace Ninth.Editor
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Search", EditorStyles.boldLabel);
             GUILayout.FlexibleSpace();
-            switch ((SearchMode)PlayerPrefsDefine.ExcelSearchMode)
+            string[] barMenu = new string[]
             {
-                case SearchMode.Exact:
-                    {
-                        if (GUILayout.Button("ExactMode"))
-                        {
-                            PlayerPrefsDefine.ExcelSearchMode = (int)SearchMode.Exist;
-                            m_FilterFunc = ExistFunc;
-                        }
-                        break;
-                    }
-                case SearchMode.Exist:
-                    {
-                        if (GUILayout.Button("ExistMode"))
-                        {
-                            PlayerPrefsDefine.ExcelSearchMode = (int)SearchMode.Exact;
-                            m_FilterFunc = ExactFunc;
-                        }
-                        break;
-                    }
+                "ExactMode",
+                "ExistMode"
+            };
+            SearchMode mode = (SearchMode)GUILayout.Toolbar((int)m_ExcelSearchMode, barMenu);
+            if(mode != m_ExcelSearchMode)
+            {
+                m_ExcelSearchMode = mode;
+                m_FilterFunc = m_ExcelSearchMode switch
+                {
+                    SearchMode.Exact => ExactFunc,
+                    SearchMode.Exist => ExistFunc,
+                    _ => throw new NotImplementedException(),
+                };
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -139,7 +140,7 @@ namespace Ninth.Editor
                     }
                     stopwatch.Stop();
 
-                    m_SearchResultTypeInfo = (SearchMode)PlayerPrefsDefine.ExcelSearchMode switch
+                    m_SearchResultTypeInfo = m_ExcelSearchMode switch
                     {
                         SearchMode.Exact => "ExactSearchResult",
                         SearchMode.Exist => "ExistSearchResult",

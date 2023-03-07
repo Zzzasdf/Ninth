@@ -12,7 +12,7 @@ namespace Ninth.Editor
 {
     public sealed partial class BuildAssetsCommand
     {
-        // 打包模式哦
+        // 打包模式
         public static AssetMode m_PackAssetMode;
 
         // 版本配置
@@ -47,7 +47,7 @@ namespace Ninth.Editor
             m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
         }
 
-        private static bool BuildPlayerRepackage(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
+        public static bool BuildPlayerRepackage(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
         {
             bool result = BuildAllBundles(target, assetMode, newVersion);
             if (!result)
@@ -58,7 +58,7 @@ namespace Ninth.Editor
             return true;
         }
 
-        private static bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
+        public static bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
         {
             PackConfig.BuildPlatform = target.ToString();
             VersionConfig versionConfig = Utility.Get<VersionConfig>(PackConfig.BaseVersion());
@@ -93,7 +93,7 @@ namespace Ninth.Editor
             return true;
         }
 
-        private static bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public static bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
             PackConfig.BuildPlatform = target.ToString();
             m_PackAssetMode = assetMode;
@@ -109,7 +109,7 @@ namespace Ninth.Editor
             return true;
         }
 
-        private static bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public static bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
             PackConfig.BuildPlatform = target.ToString();
             m_PackAssetMode = assetMode;

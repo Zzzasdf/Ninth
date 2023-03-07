@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
         public enum SearchMode
         {

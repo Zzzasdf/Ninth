@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
         private static List<string> m_SearchObjList;
         private static int m_Count;
 
-        private static void SetSearchObj()
+        private static void SetSearchInputObj()
         {
             GUILayout.Space(20);
             EditorGUILayout.BeginVertical();

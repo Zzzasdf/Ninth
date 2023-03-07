@@ -5,8 +5,14 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelSearchWindow
+    public partial class ExcelSearch
     {
+        private static string m_ExcelSearchPathDirectoryRoot
+        {
+            get => PlayerPrefsDefine.ExcelSearchPathDirectoryRoot;
+            set => PlayerPrefsDefine.ExcelSearchPathDirectoryRoot = value;
+        }
+
         private static void SetSearchDirectory()
         {
             GUILayout.Space(20);
@@ -14,14 +20,14 @@ namespace Ninth.Editor
             GUILayout.Label("Search Target Directory Settings", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            PlayerPrefsDefine.ExcelSearchPathDirectoryRoot = EditorGUILayout.TextField("Directory", PlayerPrefsDefine.ExcelSearchPathDirectoryRoot);
+            m_ExcelSearchPathDirectoryRoot = EditorGUILayout.TextField("Directory", m_ExcelSearchPathDirectoryRoot);
             GUI.enabled = true;
             if (GUILayout.Button("Browse"))
             {
-                string path = EditorUtility.OpenFolderPanel("Select A Folder To Search", PlayerPrefsDefine.ExcelSearchPathDirectoryRoot, "Excels");
+                string path = EditorUtility.OpenFolderPanel("Select A Folder To Search", m_ExcelSearchPathDirectoryRoot, "Excels");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    PlayerPrefsDefine.ExcelSearchPathDirectoryRoot = path;
+                    m_ExcelSearchPathDirectoryRoot = path;
                 }
             }
             EditorGUILayout.EndHorizontal();
