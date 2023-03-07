@@ -20,7 +20,7 @@ namespace Ninth.Editor
             string[] barMenu = new string[]
             {
                 "Copy2StreamingAsset",
-                "ApplyRemoteCAsset"
+                "ApplyRemoteAsset"
             };
             m_BuildExportDirectoryType = (BuildExportDirectoryType)GUILayout.Toolbar((int)m_BuildExportDirectoryType, barMenu);
             GUILayout.EndHorizontal();

@@ -160,11 +160,11 @@ namespace Ninth.HotUpdate
             {
                 if (string.IsNullOrEmpty(format))
                 {
-                    return string.Join(',', message);
+                    return string.Concat(message, " ", string.Join(',', message));
                 }
                 else
                 {
-                    return string.Format(format, string.Join(',', message));
+                    return string.Concat(message, " ", string.Format(format, string.Join(',', message)));
                 }
             }
         }

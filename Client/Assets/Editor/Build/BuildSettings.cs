@@ -78,7 +78,7 @@ namespace Ninth.Editor
                         SetExport();
                         break;
                     }
-                case BuildSettingsType.Player: // Base
+                case BuildSettingsType.Player:
                     {
                         SetBrowseBundlesTargetDirectory();
                         SetBrowsePlayersTargetDirectory();

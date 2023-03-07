@@ -22,7 +22,7 @@ namespace Ninth.Editor
         private void SetBrowseBundlesTargetDirectory()
         {
             GUILayout.Space(10);
-            GUILayout.Label("Search Target Directory Settings", EditorStyles.boldLabel);
+            GUILayout.Label("Export Target Directory Settings", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;

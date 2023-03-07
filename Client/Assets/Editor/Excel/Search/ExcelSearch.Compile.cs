@@ -2,8 +2,6 @@ using NPOI.HSSF.UserModel;
 using NPOI.POIFS.FileSystem;
 using NPOI.SS.UserModel;
 using OfficeOpenXml;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
@@ -40,9 +38,9 @@ namespace Ninth.Editor
                     {
                         SearchXLSX(fileInfos[index]);
                     }
-                    catch(NotOLE2FileException e)
+                    catch (NotOLE2FileException)
                     {
-                        UnityEngine.Debug.LogError(e);
+                        UnityEngine.Debug.LogError($"Unable to resolve this file {fileInfos[index].Name}");
                     }
                 }
                 m_SearchResultIntro = $"This Compile Takes Time, Milliseconds:{stopwatch.ElapsedMilliseconds}, Ticks:{stopwatch.ElapsedTicks}";
@@ -50,7 +48,7 @@ namespace Ninth.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private static bool SearchXLS(FileInfo fileInfo)
+        private static void SearchXLS(FileInfo fileInfo)
         {
             using (FileStream fsRead = File.OpenRead(fileInfo.FullName))
             {
@@ -94,7 +92,6 @@ namespace Ninth.Editor
                     }
                 }
             }
-            return true;
         }
 
         private static void SearchXLSX(FileInfo fileInfo)
