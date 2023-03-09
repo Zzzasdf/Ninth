@@ -87,7 +87,7 @@ namespace Ninth.Editor
                 {
                     if (m_Helper.m_Keys[index].Values.Count > 0)
                     {
-                        m_Helper.m_TEnum = TEnumBitPlus(m_Helper.m_TEnum, m_Helper.m_TEnums[index]);
+                        m_Helper.m_TEnum = TEnumBitAnd(m_Helper.m_TEnum, m_Helper.m_TEnums[index]);
                         m_Tip = $"Data in use in this enumeration cannot be deleted";
                     }
                     else
@@ -118,7 +118,7 @@ namespace Ninth.Editor
             if (m_Lock) GUI.enabled = true;
         }
 
-        protected abstract TEnum TEnumBitPlus(TEnum tEnum1, TEnum tEnum2);
+        protected abstract TEnum TEnumBitAnd(TEnum tEnum1, TEnum tEnum2);
 
         private void SetScrollView()
         {
