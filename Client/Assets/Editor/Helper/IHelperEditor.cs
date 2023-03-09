@@ -134,7 +134,7 @@ namespace Ninth.Editor
                 }
                 barNames.Add(m_Helper.m_TEnums[index].ToString() + $"({m_Helper.m_Keys[index].Values.Count})");
             }
-            int modeIndex = GUILayout.Toolbar(m_Helper.m_TEnumIndex, barNames.ToArray());
+            int modeIndex = GUILayout.SelectionGrid(m_Helper.m_TEnumIndex, barNames.ToArray(), 3);
 
             if (modeIndex != m_Helper.m_TEnumIndex)
             {
@@ -161,10 +161,10 @@ namespace Ninth.Editor
         private void SetDictionary(List<string> names, List<UnityEngine.Object> objs, Type type)
         {
             // Items
+            EditorGUILayout.LabelField("Items", EditorStyles.boldLabel);
             if (names.Count != 0 && names.Count == objs.Count)
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Items", EditorStyles.boldLabel);
                 bool isHaveMissing = false;
                 for (int index = 0; index < objs.Count; index++)
                 {
