@@ -1001,21 +1001,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Lock: 0
-  m_UIHelperBarMode: -1
-  m_UIHelperBarModes: 0100000002000000
-  m_UIHelperBarModeIndex: 0
+  m_TEnum: 3
+  m_TEnums: 0100000002000000
+  m_TEnumIndex: 1
   m_DataBarModes: 0100000002000000
   m_Keys:
-  - Values:
-    - 1
-    - GameObject (1)
-    - GameObject (2)
+  - Values: []
   - Values: []
   m_Values:
-  - Values:
-    - {fileID: 1904622353}
-    - {fileID: 616041114}
-    - {fileID: 352905488}
+  - Values: []
   - Values: []
 --- !u!1 &2081203501
 GameObject:

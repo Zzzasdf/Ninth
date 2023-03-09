@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,36 +12,22 @@ namespace Ninth.HotUpdate
         Text = 1 << 1,
     }
 
-    public class UIHelper : MonoBehaviour
+    public class UIHelperMap : IHelperMap<UIHelperBarMode, UIHelperMap>
     {
-        public int m_Lock;
-        public UIHelperBarMode m_UIHelperBarMode;
-
-        public List<UIHelperBarMode> m_UIHelperBarModes;
-        public int m_UIHelperBarModeIndex;
-
-        public List<UIHelperBarMode> m_DataBarModes;
-        public List<KeyList> m_Keys;
-        public List<ValueList> m_Values;
-    }
-
-    [System.Serializable]
-    public class KeyList
-    {
-        public List<string> Values;
-        public KeyList()
+        protected override void Assembler()
         {
-            Values = new List<string>();
+            Assembler(
+                (UIHelperBarMode.Button, typeof(Button)),
+                (UIHelperBarMode.Text, typeof(Text))
+                );
         }
     }
 
-    [System.Serializable]
-    public class ValueList
+    public class UIHelper : IHelper<UIHelperBarMode, UIHelperMap>
     {
-        public List<Object> Values;
-        public ValueList()
+        public override UIHelperMap Map()
         {
-            Values = new List<Object>();
+            return UIHelperMap.Instance;
         }
     }
 }
