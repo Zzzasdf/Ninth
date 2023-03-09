@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Ninth.HotUpdate
 {
@@ -40,11 +41,19 @@ namespace Ninth.HotUpdate
 
         public T Get<T>(string key) where T : class
         {
-            if (m_Cache == null)
+            try
             {
-                Init();
+                if (m_Cache == null)
+                {
+                    Init();
+                }
+                return m_Cache[typeof(T)][key] as T;
             }
-            return m_Cache[typeof(T)][key] as T;
+            catch(KeyNotFoundException e)
+            {
+                e.Error();
+                return default(T);
+            }
         }
     }
 

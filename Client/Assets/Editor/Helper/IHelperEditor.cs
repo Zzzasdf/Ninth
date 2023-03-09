@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
 
 namespace Ninth.Editor
 {
@@ -50,8 +48,6 @@ namespace Ninth.Editor
             }
         }
 
-        
-
         public override void OnInspectorGUI()
         {
             SetLock();
@@ -82,6 +78,7 @@ namespace Ninth.Editor
             if (!tEnum.Equals(m_Helper.m_TEnum))
             {
                 m_Helper.m_TEnum = tEnum;
+
                 // Check
                 for (int index = m_Helper.m_TEnums.Count - 1; index >= 0; index--)
                 {
@@ -171,12 +168,12 @@ namespace Ninth.Editor
                 {
                     EditorGUILayout.BeginHorizontal();
                     string name = EditorGUILayout.TextField(names[index]);
-                    if (!names.Contains(name))
+                    if (!string.IsNullOrEmpty(name) && !names.Contains(name))
                     {
                         names[index] = name;
                     }
                     UnityEngine.Object obj = EditorGUILayout.ObjectField(objs[index], type, true);
-                    if (!objs.Contains(obj))
+                    if (obj != null && !objs.Contains(obj))
                     {
                         objs[index] = obj;
                     }
