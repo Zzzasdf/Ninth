@@ -28,6 +28,7 @@ namespace Ninth.HotUpdate
             Assembler(
                 (UIHelperBarMode.Canvas, typeof(Canvas)),
                 (UIHelperBarMode.Text, typeof(Text)),
+                (UIHelperBarMode.Image, typeof(Image)),
                 (UIHelperBarMode.Button, typeof(Button)),
                 (UIHelperBarMode.Toggle, typeof(Toggle)),
                 (UIHelperBarMode.Slider, typeof(Slider)),

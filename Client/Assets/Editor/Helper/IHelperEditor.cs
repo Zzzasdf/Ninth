@@ -163,7 +163,33 @@ namespace Ninth.Editor
             // Items
             if (names.Count != 0 && names.Count == objs.Count)
             {
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Items", EditorStyles.boldLabel);
+                bool isHaveMissing = false;
+                for (int index = 0; index < objs.Count; index++)
+                {
+                    if (objs[index] == null)
+                    {
+                        isHaveMissing = true;
+                        break;
+                    }
+                }
+                if (isHaveMissing)
+                {
+                    if (GUILayout.Button("ClearMissing"))
+                    {
+                        for (int index = objs.Count - 1; index >= 0; index--)
+                        {
+                            if (objs[index] == null)
+                            {
+                                names.RemoveAt(index);
+                                objs.RemoveAt(index);
+                            }
+                        }
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+
                 for (int index = names.Count - 1; index >= 0; index--)
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -187,75 +213,78 @@ namespace Ninth.Editor
             }
 
             // AddArea
-            GUILayout.Space(20);
-            EditorGUILayout.LabelField("AddItem", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
+            if (!m_Lock)
+            {
+                GUILayout.Space(20);
+                EditorGUILayout.LabelField("AddItem", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
 
-            // Add
-            int modeIndex = m_Helper.m_TEnumIndex;
-            if (m_AddKeys == null)
-            {
-                m_AddKeys = new List<string>();
-            }
-            int count = m_AddKeys.Count;
-            for (int index = count; index <= modeIndex; index++)
-            {
-                m_AddKeys.Add(null);
-            }
-            m_AddKeys[modeIndex] = EditorGUILayout.TextField(m_AddKeys[modeIndex]);
+                // Add
+                int modeIndex = m_Helper.m_TEnumIndex;
+                if (m_AddKeys == null)
+                {
+                    m_AddKeys = new List<string>();
+                }
+                int count = m_AddKeys.Count;
+                for (int index = count; index <= modeIndex; index++)
+                {
+                    m_AddKeys.Add(null);
+                }
+                m_AddKeys[modeIndex] = EditorGUILayout.TextField(m_AddKeys[modeIndex]);
 
-            if (m_AddValues == null)
-            {
-                m_AddValues = new List<UnityEngine.Object>();
-            }
-            count = m_AddValues.Count;
-            for (int index = count; index <= modeIndex; index++)
-            {
-                m_AddValues.Add(null);
-            }
-            m_AddValues[modeIndex] = EditorGUILayout.ObjectField(m_AddValues[modeIndex], type, true);
+                if (m_AddValues == null)
+                {
+                    m_AddValues = new List<UnityEngine.Object>();
+                }
+                count = m_AddValues.Count;
+                for (int index = count; index <= modeIndex; index++)
+                {
+                    m_AddValues.Add(null);
+                }
+                m_AddValues[modeIndex] = EditorGUILayout.ObjectField(m_AddValues[modeIndex], type, true);
 
-            // Check
-            if (m_AddValues[modeIndex] != null)
-            {
-                var checkValue = m_AddValues[modeIndex];
-                if (objs.Contains(checkValue))
+                // Check
+                if (m_AddValues[modeIndex] != null)
                 {
-                    m_AddValues[modeIndex] = null;
-                    int keyIndex = objs.IndexOf(checkValue);
-                    m_Tip = $"This value already exists, key is {names[keyIndex]}";
+                    var checkValue = m_AddValues[modeIndex];
+                    if (objs.Contains(checkValue))
+                    {
+                        m_AddValues[modeIndex] = null;
+                        int keyIndex = objs.IndexOf(checkValue);
+                        m_Tip = $"This value already exists, key is {names[keyIndex]}";
+                    }
                 }
-            }
-            if (m_AddValues[modeIndex] != null && string.IsNullOrEmpty(m_AddKeys[modeIndex]))
-            {
-                m_AddKeys[modeIndex] = m_AddValues[modeIndex].name;
-            }
+                if (m_AddValues[modeIndex] != null && string.IsNullOrEmpty(m_AddKeys[modeIndex]))
+                {
+                    m_AddKeys[modeIndex] = m_AddValues[modeIndex].name;
+                }
 
-            // AddFunc
-            if (GUILayout.Button("Confirm"))
-            {
-                if (m_AddValues[modeIndex] == null)
+                // AddFunc
+                if (GUILayout.Button("Confirm"))
                 {
-                    m_Tip = "Value cannot be empty!!";
+                    if (m_AddValues[modeIndex] == null)
+                    {
+                        m_Tip = "Value cannot be empty!!";
+                    }
+                    else if (string.IsNullOrEmpty(m_AddKeys[modeIndex]))
+                    {
+                        m_Tip = "Key cannot be empty!!";
+                    }
+                    else if (names.Contains(m_AddKeys[modeIndex]))
+                    {
+                        m_Tip = "This key already exists!!";
+                    }
+                    else
+                    {
+                        names.Add(m_AddKeys[modeIndex]);
+                        objs.Add(m_AddValues[modeIndex]);
+                        m_AddKeys[modeIndex] = null;
+                        m_AddValues[modeIndex] = null;
+                        m_Tip = null;
+                    }
                 }
-                else if (string.IsNullOrEmpty(m_AddKeys[modeIndex]))
-                {
-                    m_Tip = "Key cannot be empty!!";
-                }
-                else if (names.Contains(m_AddKeys[modeIndex]))
-                {
-                    m_Tip = "This key already exists!!";
-                }
-                else
-                {
-                    names.Add(m_AddKeys[modeIndex]);
-                    objs.Add(m_AddValues[modeIndex]);
-                    m_AddKeys[modeIndex] = null;
-                    m_AddValues[modeIndex] = null;
-                    m_Tip = null;
-                }
+                EditorGUILayout.EndHorizontal();
             }
-            EditorGUILayout.EndHorizontal();
         }
 
         private void SetTip()
