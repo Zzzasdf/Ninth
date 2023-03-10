@@ -32,6 +32,12 @@ namespace NinthEditor
             Process.Start("https://docs.qq.com/sheet/DZVZ4b1F0eUFrcktJ?tab=BB08J2");
         }
 
+        [MenuItem("Tools/Browser/Work/需求")]
+        private static void BrowsersiteRequirement()
+        {
+            Process.Start("https://tapd.tencent.com/tapd_fe/10124851/story/list?categoryId=-1&sort_name=priority&order=desc&useScene=storyList&conf_id=1110124851041679764&page=1&queryToken=53ae62eef74241f1635fc6c0cbf223bf");
+        }
+
         [MenuItem("Tools/Browser/Work/TAPD .. 缺陷")]
         private static void BrowsersiteTAPDBug()
         {
