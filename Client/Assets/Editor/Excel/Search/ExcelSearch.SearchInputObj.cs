@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 namespace Ninth.Editor
 {
@@ -27,26 +28,47 @@ namespace Ninth.Editor
             {
                 m_SearchObjList.Add(string.Empty);
             }
-            for (int index = m_Count; index < m_SearchObjList.Count; index++)
+            List<string> newSearchObjs = new List<string>();
+            for (int index = 0; index < m_Count; index++)
             {
-                if (m_SearchObjList.Count >= 1)
-                {
-                    m_SearchObjList.RemoveAt(m_SearchObjList.Count - 1);
-                }
+                newSearchObjs.Add(m_SearchObjList[index]);
             }
+            m_SearchObjList = newSearchObjs;
+
             EditorGUILayout.EndHorizontal();
 
             EditorGUI.indentLevel++;
+            List<string> newSearchObjList = null;
+            int newCount = 0;
+            bool isRemove = false;
             for (int index = 0; index < m_SearchObjList.Count; index++)
             {
                 EditorGUILayout.BeginHorizontal();
-                m_SearchObjList[index] = EditorGUILayout.TextField($"Value{index + 1}", m_SearchObjList[index]);
+                string searchObj = EditorGUILayout.TextField($"Value{index + 1}", m_SearchObjList[index]);
+                if (searchObj != m_SearchObjList[index] && !m_SearchObjList.Contains(searchObj))
+                {
+                    m_SearchObjList[index] = searchObj;
+                }
                 if (GUILayout.Button("Remove"))
                 {
-                    m_SearchObjList.RemoveAt(index);
-                    m_Count--;
+                    newSearchObjList = new List<string>();
+                    for (int i = 0; i < m_SearchObjList.Count; i++)
+                    {
+                        if (i == index)
+                        {
+                            continue;
+                        }
+                        newSearchObjList.Add(m_SearchObjList[i]);
+                        newCount++;
+                    }
+                    isRemove = true;
                 }
                 EditorGUILayout.EndHorizontal();
+            }
+            if(isRemove)
+            {
+                m_SearchObjList = newSearchObjList;
+                m_Count = newCount;
             }
             if (GUILayout.Button("Add"))
             {

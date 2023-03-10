@@ -80,20 +80,24 @@ namespace Ninth.Editor
                 m_Helper.m_TEnum = tEnum;
 
                 // Check
-                for (int index = m_Helper.m_TEnums.Count - 1; index >= 0; index--)
+                List<TEnum> tNewEnums = new List<TEnum>();
+                List<KeyList> newKeys = new List<KeyList>();
+                List<ValueList> newValues = new List<ValueList>();
+                for(int index = 0; index < m_Helper.m_TEnums.Count; index++)
                 {
                     if (m_Helper.m_Keys[index].Values.Count > 0)
                     {
+                        tNewEnums.Add(m_Helper.m_DataBarModes[index]);
+                        newKeys.Add(m_Helper.m_Keys[index]);
+                        newValues.Add(m_Helper.m_Values[index]);
                         m_Helper.m_TEnum = TEnumBitAnd(m_Helper.m_TEnum, m_Helper.m_TEnums[index]);
                         m_Tip = $"Data in use in this enumeration cannot be deleted";
                     }
-                    else
-                    {
-                        m_Helper.m_DataBarModes.RemoveAt(index);
-                        m_Helper.m_Keys.RemoveAt(index);
-                        m_Helper.m_Values.RemoveAt(index);
-                    }
                 }
+                m_Helper.m_DataBarModes = tNewEnums;
+                m_Helper.m_Keys = newKeys;
+                m_Helper.m_Values = newValues;
+
                 m_Helper.m_TEnums.Clear();
                 foreach (var item in Enum.GetValues(typeof(TEnum)))
                 {
@@ -153,12 +157,12 @@ namespace Ninth.Editor
             {
                 TEnum helperBarMode = m_Helper.m_TEnums[m_Helper.m_TEnumIndex];
                 Type type = m_Helper.Map().GetType(helperBarMode);
-                SetDictionary(m_Helper.m_Keys[m_Helper.m_TEnumIndex].Values, m_Helper.m_Values[m_Helper.m_TEnumIndex].Values, type);
+                SetDictionary(ref m_Helper.m_Keys[m_Helper.m_TEnumIndex].Values, ref m_Helper.m_Values[m_Helper.m_TEnumIndex].Values, type);
             }
             if (m_Lock) GUI.enabled = true;
         }
 
-        private void SetDictionary(List<string> names, List<UnityEngine.Object> objs, Type type)
+        private void SetDictionary(ref List<string> names, ref List<UnityEngine.Object> objs, Type type)
         {
             // Items
             EditorGUILayout.LabelField("Items", EditorStyles.boldLabel);
@@ -178,19 +182,26 @@ namespace Ninth.Editor
                 {
                     if (GUILayout.Button("ClearMissing"))
                     {
-                        for (int index = objs.Count - 1; index >= 0; index--)
+                        List<string> newNames = new List<string>();
+                        List<UnityEngine.Object> newObjs = new List<UnityEngine.Object>();
+                        for(int index = 0; index < objs.Count; index++)
                         {
-                            if (objs[index] == null)
+                            if (objs[index] != null)
                             {
-                                names.RemoveAt(index);
-                                objs.RemoveAt(index);
+                                newNames.Add(names[index]);
+                                newObjs.Add(objs[index]);
                             }
                         }
+                        names = newNames;
+                        objs = newObjs;
                     }
                 }
                 EditorGUILayout.EndHorizontal();
 
-                for (int index = names.Count - 1; index >= 0; index--)
+                List<string> newNameList = null;
+                List<UnityEngine.Object> newObjList = null;
+               bool IsRemove = false;
+                for (int index = 0; index < names.Count; index++)
                 {
                     EditorGUILayout.BeginHorizontal();
                     string name = EditorGUILayout.TextField(names[index]);
@@ -205,10 +216,25 @@ namespace Ninth.Editor
                     }
                     if (GUILayout.Button("Remove"))
                     {
-                        names.RemoveAt(index);
-                        objs.RemoveAt(index);
+                        newNameList = new List<string>();
+                        newObjList = new List<UnityEngine.Object>();
+                        for(int i = 0; i < names.Count; i++)
+                        {
+                            if (i == index)
+                            {
+                                continue;
+                            }
+                            newNameList.Add(names[i]);
+                            newObjList.Add(objs[i]);
+                        }
+                        IsRemove = true;
                     }
                     EditorGUILayout.EndHorizontal();
+                }
+                if(IsRemove)
+                {
+                    names = newNameList;
+                    objs = newObjList;
                 }
             }
 

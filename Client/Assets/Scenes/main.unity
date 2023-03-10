@@ -1255,8 +1255,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1904622351}
-  - component: {fileID: 1904622355}
-  - component: {fileID: 1904622356}
+  - component: {fileID: 1904622352}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1279,7 +1278,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1904622355
+--- !u!114 &1904622352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1291,49 +1290,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 808934c83d5dcfd418bc302d0c54dce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1904622356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1904622349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1668d9c1a0b0b64c9b82b94861265bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Lock: 1
-  m_TEnum: -1
-  m_TEnums: 01000000020000000400000008000000100000002000000040000000800000000001000000000080
-  m_TEnumIndex: 2
-  m_DataBarModes: 01000000020000000400000008000000100000002000000040000000800000000001000000000080
+  m_Lock: 0
+  m_TEnum: 8
+  m_TEnums: 08000000
+  m_TEnumIndex: 0
+  m_DataBarModes: 08000000
   m_Keys:
-  - Values: []
-  - Values: []
   - Values:
-    - Button (Legacy)
-    - Button (Legacy) (1)
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
+    - btnTest
   m_Values:
-  - Values: []
-  - Values: []
   - Values:
-    - {fileID: 2127887692}
-    - {fileID: 380265493}
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
-  - Values: []
+    - {fileID: 2127887690}
 --- !u!1 &2081203501
 GameObject:
   m_ObjectHideFlags: 0

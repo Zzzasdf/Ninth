@@ -11,7 +11,13 @@ namespace NinthEditor
         [MenuItem("Tools/Browser/Work/日报")]
         private static void BrowsersiteDailyPaper()
         {
-            Process.Start("https://docs.qq.com/sheet/DRFZIdFVRVHhCZWFo?from_account_guide=1&tab=juetvi&_t=1670580029173");
+            Process.Start("https://docs.qq.com/sheet/DRFZIdFVRVHhCZWFo?from_account_guide=1&tab=pj4pdf&_t=1670580029173");
+        }
+
+        [MenuItem("Tools/Browser/Work/日报1")]
+        private static void BrowsersiteDailyPaper1()
+        {
+            Process.Start("https://doc.weixin.qq.com/sheet/e3_AUkA7gZjAMMGprHaH0vSG6W6a6Vlb?scode=AJEAIQdfAAoPheliJhAZQA9AYHAEU&tab=l5iz9j");
         }
 
         [MenuItem("Tools/Browser/Work/周报")]
