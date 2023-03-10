@@ -23,7 +23,7 @@ namespace Ninth.HotUpdate
             }
             return "取消或超时";
         }
-
+         
         public async void TestRequest()
         {
             string text = await GetRequest("https://fanyi.baidu.com/translate?aldtype=16047&query=Unloaded&keyfrom=baidu&smartresult=dict&lang=auto2zh#en/zh/pending", 5);

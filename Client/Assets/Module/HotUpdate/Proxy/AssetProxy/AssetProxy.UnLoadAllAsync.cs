@@ -9,6 +9,7 @@ namespace Ninth.HotUpdate
     {
         public async UniTask UnLoadAllAsync()
         {
+            // TODO: 使用新集合代替Remove
             List<string> removeBundleRef = null;
             foreach (var item in m_BundlePath2BundleRef)
             {
