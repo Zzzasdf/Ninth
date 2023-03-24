@@ -9,8 +9,8 @@ namespace Ninth.Editor
     {
         private BuildExportDirectoryType m_BuildExportDirectoryType
         {
-            get => (BuildExportDirectoryType)PlayerPrefsDefine.BuildExportDirectoryType;
-            set => PlayerPrefsDefine.BuildExportDirectoryType = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildExportDirectoryType;
+            set => EditorSOCore.GetBuildConfig().BuildExportDirectoryType = value;
         }
 
         private void SetBtnExchangeExportDirectory()
@@ -24,12 +24,6 @@ namespace Ninth.Editor
             };
             m_BuildExportDirectoryType = (BuildExportDirectoryType)GUILayout.Toolbar((int)m_BuildExportDirectoryType, barMenu);
             GUILayout.EndHorizontal();
-        }
-
-        public enum BuildExportDirectoryType
-        {
-            Local,
-            Remote
         }
     }
 }

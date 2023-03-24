@@ -26,7 +26,7 @@ namespace Ninth.HotUpdate
                 {
                     lock (m_ObjDic[path])
                     {
-                        string fileContent = File.ReadAllText(path, GlobalConfig.Utf8);
+                        string fileContent = File.ReadAllText(path, SOCore.GetGlobalConfig().Encoding);
                         T t = LitJson.JsonMapper.ToObject<T>(fileContent);
                         return t;
                     }
@@ -56,7 +56,7 @@ namespace Ninth.HotUpdate
                     lock (m_ObjDic[path])
                     {
                         string jsonData = LitJson.JsonMapper.ToJson(obj);
-                        File.WriteAllText(path, jsonData, GlobalConfig.Utf8);
+                        File.WriteAllText(path, jsonData, SOCore.GetGlobalConfig().Encoding);
                     }
                 }
                 catch (DirectoryNotFoundException e)

@@ -11,7 +11,7 @@ namespace Ninth
             {
                 return default(T);
             }
-            return LitJson.JsonMapper.ToObject<T>(File.ReadAllText(path, GlobalConfig.Utf8));
+            return LitJson.JsonMapper.ToObject<T>(File.ReadAllText(path, SOCore.GetGlobalConfig().Encoding));
         }
 
         public static void ToJson<T>(T obj, string path)
@@ -30,8 +30,8 @@ namespace Ninth
 
             string jsonData = LitJson.JsonMapper.ToJson(obj);
 
-            //File.WriteAllText(path, ConvertJsonString(jsonData), GlobalConfig.Utf8);
-            File.WriteAllText(path, jsonData, GlobalConfig.Utf8);
+            //File.WriteAllText(path, ConvertJsonString(jsonData), GlobalConfig.Encoding);
+            File.WriteAllText(path, jsonData, SOCore.GetGlobalConfig().Encoding);
         }
 
         ///// <summary>

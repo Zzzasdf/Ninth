@@ -8,7 +8,7 @@ namespace Ninth
     {
         public void EnterProcedure()
         {
-            if (GlobalConfig.AssetMode == AssetMode.RemoteAB)
+            if (SOCore.GetGlobalConfig().AssetMode == AssetMode.RemoteAB)
             {
                 ExitProcedure();
             }

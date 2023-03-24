@@ -6,6 +6,11 @@ namespace Ninth.Editor
 {
     public partial class PackConfig
     {
+        public static NameConfig NameConfig
+        {
+            get => SOCore.GetNameConfig();
+        }
+
         // Temp
         public static string SourceDataTempPathDirectory(string version)
         {

@@ -11,7 +11,7 @@ namespace Ninth.HotUpdate
         public async UniTask<GameObject> CloneAsync(string assetPath)
         {
             GameObject cloneObj = null;
-            switch (GlobalConfig.AssetMode)
+            switch (SOCore.GetGlobalConfig().AssetMode)
             {
                 case AssetMode.NonAB:
                     {
@@ -49,7 +49,7 @@ namespace Ninth.HotUpdate
 
         public async UniTask<T> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
         {
-            switch (GlobalConfig.AssetMode)
+            switch (SOCore.GetGlobalConfig().AssetMode)
             {
                 case AssetMode.NonAB:
                     {

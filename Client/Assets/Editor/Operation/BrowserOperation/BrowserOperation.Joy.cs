@@ -4,9 +4,9 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-namespace NinthEditor
+namespace Ninth.Editor
 {
-    public partial class BrowserOperation : Editor
+    public partial class BrowserOperation : UnityEditor.Editor
     {
         [MenuItem("Tools/Browser/Joy/网易云音乐")]
         private static void WebsiteWangYiYunMusic()

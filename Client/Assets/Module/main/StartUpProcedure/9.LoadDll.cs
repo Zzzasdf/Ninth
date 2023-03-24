@@ -34,13 +34,13 @@ namespace Ninth
 #if !UNITY_EDITOR
             await LoadDllFromBytes();
 #else
-            AssetMode assetMode = GlobalConfig.AssetMode;
-            if (AssetBundleModuleConfig.ScriptMode.HasFlag(assetMode))
+            AssetMode assetMode = SOCore.GetGlobalConfig().AssetMode;
+            if (SOCore.GetGlobalConfig().ScriptMode.HasFlag(assetMode))
             {
                 m_GameAss = AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Assembly-CSharp");
                 ExitProcedure();
             }
-            else if (AssetBundleModuleConfig.DllMode.HasFlag(assetMode))
+            else if (SOCore.GetGlobalConfig().DllMode.HasFlag(assetMode))
             {
                 await LoadDllFromBytes();
             }
@@ -59,7 +59,7 @@ namespace Ninth
                     }.Concat(AOTMetaAssemblyNames);
             foreach (var asset in assets)
             {
-                string dir = GlobalConfig.AssetMode switch
+                string dir = SOCore.GetGlobalConfig().AssetMode switch
                 {
                     AssetMode.LocalAB => PathConfig.BunldeInDllInStreamingAssetPath(asset),
                     AssetMode.RemoteAB => PathConfig.BundleInDllInPersistentDataPath(asset),

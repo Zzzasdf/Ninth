@@ -16,10 +16,10 @@ namespace Ninth.Editor
                 m_BuildPlatform = value;
 
                 BundleSourceDataVersionRoot =
-                    string.Format("{0}/{1}/{2}", PlayerPrefsDefine.BuildBundlesDirectoryRoot, PlatformConfig.ProduceName, BuildPlatform);
+                    string.Format("{0}/{1}/{2}", EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot, PlatformConfig.ProduceName, BuildPlatform);
 
                 PlayerSourceDataVersionRoot =
-                    string.Format("{0}/{1}/{2}", PlayerPrefsDefine.BuildPlayersDirectoryRoot, PlatformConfig.ProduceName, BuildPlatform);
+                    string.Format("{0}/{1}/{2}", EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot, PlatformConfig.ProduceName, BuildPlatform);
             }
         }
 

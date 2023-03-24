@@ -12,6 +12,18 @@ namespace Ninth.Editor
 {
     public sealed partial class BuildAssetsCommand
     {
+        public static List<string> LocalGroup
+        {
+            get => SOCore.GetGlobalConfig().LocalGroup;
+            set => SOCore.GetGlobalConfig().LocalGroup = value;
+        }
+
+        public static List<string> RemoteGroup
+        {
+            get => SOCore.GetGlobalConfig().RemoteGroup;
+            set => SOCore.GetGlobalConfig().RemoteGroup = value;
+        }
+
         // 打包模式
         public static AssetMode m_PackAssetMode;
 
@@ -99,8 +111,8 @@ namespace Ninth.Editor
             m_PackAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
-                (AssetBundleModuleConfig.LocalGroup, AssetLocate.Local),
-                (AssetBundleModuleConfig.RemoteGroup, AssetLocate.Remote));
+                (LocalGroup, AssetLocate.Local),
+                (RemoteGroup, AssetLocate.Remote));
             if(!result)
             {
                 return false;
@@ -115,7 +127,7 @@ namespace Ninth.Editor
             m_PackAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
-                (AssetBundleModuleConfig.RemoteGroup, AssetLocate.Remote));
+                (RemoteGroup, AssetLocate.Remote));
             if(!result)
             {
                 return false;

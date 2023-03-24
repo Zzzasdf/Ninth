@@ -2,14 +2,19 @@ using UnityEngine;
 
 namespace Ninth
 {
-    public class PathConfig
+    public sealed class PathConfig
     {
+        public static NameConfig NameConfig
+        {
+            get => SOCore.GetNameConfig();
+        }
+
         // 版本
         private static string m_BaseVersionPath { get; }
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.VersionConfigName);
 
         private static string m_VersionInServerPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}", GlobalConfig.Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);
+            = string.Format("{0}/{1}/{2}/{3}", SOCore.GetGlobalConfig(), PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);
 
         private static string m_VersionInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);
@@ -19,7 +24,7 @@ namespace Ninth
 
         // 下载配置
         private static string m_DownloadConfigRootInServerPath { get; }
-            = string.Format("{0}/{1}/{2}", GlobalConfig.Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
+            = string.Format("{0}/{1}/{2}", SOCore.GetGlobalConfig().Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
 
         private static string m_DownloadConfigInRemoteInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}/{4}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.RemoteDirectory, NameConfig.DownloadConfigNameInRemote);
@@ -35,7 +40,7 @@ namespace Ninth
 
         // 加载配置
         private static string m_LoadConfigRootInServerPath { get; }
-            = string.Format("{0}/{1}/{2}", GlobalConfig.Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
+            = string.Format("{0}/{1}/{2}", SOCore.GetGlobalConfig().Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
 
         private static string m_LoadConfigInLocalInStreamingAssetPath { get; }
             = string.Format("{0}/{1}/{2}", Application.streamingAssetsPath, NameConfig.LocalDirectory, NameConfig.LoadConfigNameInLocal);
@@ -51,7 +56,7 @@ namespace Ninth
 
         // 资源
         private static string m_BundleRootInServerPath { get; }
-            = string.Format("{0}/{1}/{2}", GlobalConfig.Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
+            = string.Format("{0}/{1}/{2}", SOCore.GetGlobalConfig().Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName);
 
         private static string m_BundleRootInLocalInStreamingAssetPath { get; }
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.LocalDirectory);

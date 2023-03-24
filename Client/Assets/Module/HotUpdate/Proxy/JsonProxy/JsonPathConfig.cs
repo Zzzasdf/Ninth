@@ -24,7 +24,7 @@ namespace Ninth.HotUpdate
 
             AllMode();
 
-            switch (GlobalConfig.AssetMode)
+            switch (SOCore.GetGlobalConfig().AssetMode)
             {
                 case AssetMode.NonAB:
                     {

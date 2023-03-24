@@ -9,20 +9,20 @@ namespace Ninth.Editor
     {
         private ActiveTargetMode m_ActiveTargetMode
         {
-            get => (ActiveTargetMode)PlayerPrefsDefine.ActiveTargetMode;
-            set => PlayerPrefsDefine.ActiveTargetMode = (int)value;
+            get => EditorSOCore.GetBuildConfig().ActiveTargetMode;
+            set => EditorSOCore.GetBuildConfig().ActiveTargetMode = value;
         }
 
         private BuildTarget m_BuildTarget
         {
-            get => (BuildTarget)PlayerPrefsDefine.BuildTarget;
-            set => PlayerPrefsDefine.BuildTarget = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildTarget;
+            set => EditorSOCore.GetBuildConfig().BuildTarget = value;
         }
 
         private BuildTargetGroup m_BuildTargetGroup
         {
-            get => (BuildTargetGroup)PlayerPrefsDefine.BuildTargetGroup;
-            set => PlayerPrefsDefine.BuildTargetGroup = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildTargetGroup;
+            set => EditorSOCore.GetBuildConfig().BuildTargetGroup = value;
         }
 
         private void SetToggleActiveTarget()
@@ -93,12 +93,6 @@ namespace Ninth.Editor
             }
             m_BuildTargetGroup = (BuildTargetGroup)EditorGUILayout.EnumPopup("BuildTargetGroup", m_BuildTargetGroup);
             GUI.enabled = true;
-        }
-
-        public enum ActiveTargetMode
-        {
-            ActiveTarget,
-            InactiveTarget
         }
     }
 }

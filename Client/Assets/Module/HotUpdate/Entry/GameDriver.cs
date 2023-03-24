@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -19,7 +20,6 @@ namespace Ninth.HotUpdate
 
         private async void Awake()
         {
-
             DontDestroyOnLoad(this);
             "热更部分启动成功24！！".Log();
             //ModelTest modelTest = await ProxyCtrl.ModelProxy.Get<ModelTest>();
@@ -34,6 +34,8 @@ namespace Ninth.HotUpdate
             //ModelTest test = await ProxyCtrl.ModelProxy.Get<ModelTest>();
             //await test.Set();
             //test.AAAA.Log();
+
+            
         }
 
         private void Update()

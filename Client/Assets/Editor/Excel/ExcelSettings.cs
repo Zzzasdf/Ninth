@@ -13,10 +13,10 @@ namespace Ninth.Editor
             GetWindow<ExcelSettings>();
         }
 
-        private ExcelSettingsType m_ExcelSettingsType
+        private ExcelSettingsType ExcelSettingsType
         {
-            get => (ExcelSettingsType)PlayerPrefsDefine.ExcelSettingsType;
-            set => PlayerPrefsDefine.ExcelSettingsType = (int)value;
+            get => EditorSOCore.GetExcelConfig().ExcelSettingsType;
+            set => EditorSOCore.GetExcelConfig().ExcelSettingsType = value;
         }
 
         private void OnGUI()
@@ -26,8 +26,8 @@ namespace Ninth.Editor
                 ExcelSettingsType.Encoder.ToString(),
                 ExcelSettingsType.Search.ToString()
             };
-            m_ExcelSettingsType = (ExcelSettingsType)GUILayout.Toolbar((int)m_ExcelSettingsType, barMenu);
-            switch(m_ExcelSettingsType)
+            ExcelSettingsType = (ExcelSettingsType)GUILayout.Toolbar((int)ExcelSettingsType, barMenu);
+            switch(ExcelSettingsType)
             {
                 case ExcelSettingsType.Encoder:
                     {
@@ -40,12 +40,5 @@ namespace Ninth.Editor
                     }
             }
         }
-    }
-
-
-    public enum ExcelSettingsType
-    {
-        Encoder,
-        Search,
     }
 }

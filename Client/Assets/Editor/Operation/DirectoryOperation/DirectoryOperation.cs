@@ -4,9 +4,9 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace NinthEditor
+namespace Ninth.Editor
 {
-    public class DirectoryOperation : Editor
+    public class DirectoryOperation : UnityEditor.Editor
     {
         [MenuItem("Tools/Directory/StreamingAssets/Open")]
         public static void StreamingAssetsPathOpen()
@@ -36,13 +36,13 @@ namespace NinthEditor
         [MenuItem("Tools/Directory/OutputBundles/Open")]
         public static void OutputBundlesPathOpen()
         {
-            Application.OpenURL(Ninth.PlayerPrefsDefine.BuildBundlesDirectoryRoot);
+            Application.OpenURL(EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot);
         }
 
         [MenuItem("Tools/Directory/OutputPlayer/Open")]
         public static void AssetBundleSourceDataPathOpen()
         {
-            Application.OpenURL(Ninth.PlayerPrefsDefine.BuildPlayersDirectoryRoot);
+            Application.OpenURL(EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot);
         }
 
         [MenuItem("Tools/DeleteAllCache")]

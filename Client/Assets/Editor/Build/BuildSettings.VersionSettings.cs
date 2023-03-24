@@ -11,43 +11,43 @@ namespace Ninth.Editor
 
         private static BuildMode m_BuildMode
         {
-            get => (BuildMode)PlayerPrefsDefine.BuildMode;
-            set => PlayerPrefsDefine.BuildMode = (int)value;
+            get => SOCore.GetGlobalConfig().BuildMode;
+            set => SOCore.GetGlobalConfig().BuildMode = value;
         }
 
         private static int m_BigBaseVersionTemp;
         private static int m_BigBaseVersion
         {
-            get => PlayerPrefsDefine.BigBaseVersion;
-            set => PlayerPrefsDefine.BigBaseVersion = value;
+            get => EditorSOCore.GetBuildConfig().BigBaseVersion;
+            set => EditorSOCore.GetBuildConfig().BigBaseVersion = value;
         }
 
         private static int m_SmallBaseVersionTemp;
         private static int m_SmallBaseVersion
         {
-            get => PlayerPrefsDefine.SmallBaseVersion;
-            set => PlayerPrefsDefine.SmallBaseVersion = value;
+            get => EditorSOCore.GetBuildConfig().SmallBaseVersion;
+            set => EditorSOCore.GetBuildConfig().SmallBaseVersion = value;
         }
 
         private static int m_HotUpdateVersionTemp;
         private static int m_HotUpdateVersion
         {
-            get => PlayerPrefsDefine.HotUpdateVersion;
-            set => PlayerPrefsDefine.HotUpdateVersion = value;
+            get => EditorSOCore.GetBuildConfig().HotUpdateVersion;
+            set => EditorSOCore.GetBuildConfig().HotUpdateVersion = value;
         }
 
         private static int m_BaseIterationTemp;
         private static int m_BaseIteration
         {
-            get => PlayerPrefsDefine.BaseIteration;
-            set => PlayerPrefsDefine.BaseIteration = value;
+            get => EditorSOCore.GetBuildConfig().BaseIteration;
+            set => EditorSOCore.GetBuildConfig().BaseIteration = value;
         }
 
         private static int m_HotUpdateIterationTemp;
         private static int m_HotUpdateIteration
         {
-            get => PlayerPrefsDefine.HotUpdateIteration;
-            set => PlayerPrefsDefine.HotUpdateIteration = value;
+            get => EditorSOCore.GetBuildConfig().HotUpdateIteration;
+            set => EditorSOCore.GetBuildConfig().HotUpdateIteration = value;
         }
 
         private void SetVersionInit()
@@ -232,12 +232,6 @@ namespace Ninth.Editor
                     SetVersionInit();
                 }
             }
-        }
-
-        public enum BuildMode
-        {
-            Test,
-            Formal
         }
     }
 }

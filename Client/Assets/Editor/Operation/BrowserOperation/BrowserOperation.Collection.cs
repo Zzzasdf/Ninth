@@ -4,9 +4,9 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-namespace NinthEditor
+namespace Ninth.Editor
 {
-    public partial class BrowserOperation : Editor
+    public partial class BrowserOperation : UnityEditor.Editor
     {
         [MenuItem("Tools/Browser/Collection/SharpLab")]
         private static void WebsiteSharpLab()

@@ -1,23 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        public enum SearchMode
-        {
-            Exact,
-            Exist,
-        }
-
-        public enum SearchResultMode
-        {
-            Table,
-            Value
-        }
-
         public class CompileTable
         {
             public string TableName;

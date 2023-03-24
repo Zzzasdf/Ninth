@@ -10,12 +10,6 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static SearchMode m_ExcelSearchMode
-        {
-            get => (SearchMode)PlayerPrefsDefine.ExcelSearchMode;
-            set => PlayerPrefsDefine.ExcelSearchMode = (int)value;
-        }
-
         private static Action<CompileCell, string, int> m_FilterFunc;
         private static List<string> m_SearchObjResultList;
         private static List<SearchResultCell> m_SearchResult;
@@ -36,14 +30,14 @@ namespace Ninth.Editor
                 "ExactMode",
                 "ExistMode"
             };
-            SearchMode mode = (SearchMode)GUILayout.Toolbar((int)m_ExcelSearchMode, barMenu);
-            if(mode != m_ExcelSearchMode)
+            ExcelSearchMode mode = (ExcelSearchMode)GUILayout.Toolbar((int)ExcelSearchMode, barMenu);
+            if(mode != ExcelSearchMode)
             {
-                m_ExcelSearchMode = mode;
-                m_FilterFunc = m_ExcelSearchMode switch
+                ExcelSearchMode = mode;
+                m_FilterFunc = ExcelSearchMode switch
                 {
-                    SearchMode.Exact => ExactFunc,
-                    SearchMode.Exist => ExistFunc,
+                    ExcelSearchMode.Exact => ExactFunc,
+                    ExcelSearchMode.Exist => ExistFunc,
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -140,10 +134,10 @@ namespace Ninth.Editor
                     }
                     stopwatch.Stop();
 
-                    m_SearchResultTypeInfo = m_ExcelSearchMode switch
+                    m_SearchResultTypeInfo = ExcelSearchMode switch
                     {
-                        SearchMode.Exact => "ExactSearchResult",
-                        SearchMode.Exist => "ExistSearchResult",
+                        ExcelSearchMode.Exact => "ExactSearchResult",
+                        ExcelSearchMode.Exist => "ExistSearchResult",
                         _ => throw new System.NotImplementedException(),
                     };
 

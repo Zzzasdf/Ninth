@@ -8,10 +8,10 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static SearchResultMode m_ExcelSearchResultShowMode
+        private static ExcelSearchResultMode ExcelSearchResultMode
         {
-            get => (SearchResultMode)PlayerPrefsDefine.ExcelSearchResultShowMode;
-            set => PlayerPrefsDefine.ExcelSearchResultShowMode = (int)value;
+            get => EditorSOCore.GetExcelConfig().ExcelSearchResultMode;
+            set => EditorSOCore.GetExcelConfig().ExcelSearchResultMode = value;
         }
 
         private static Dictionary<string, Dictionary<string, LinkedList<SearchResultCell>>> m_SearchResultDic;
@@ -29,10 +29,10 @@ namespace Ninth.Editor
                 "TableMode",
                 "ValueMode"
             };
-            SearchResultMode mode = (SearchResultMode)GUILayout.Toolbar((int)m_ExcelSearchResultShowMode, barMenu);
-            if(mode != m_ExcelSearchResultShowMode)
+            ExcelSearchResultMode mode = (ExcelSearchResultMode)GUILayout.Toolbar((int)ExcelSearchResultMode, barMenu);
+            if(mode != ExcelSearchResultMode)
             {
-                m_ExcelSearchResultShowMode = mode;
+                ExcelSearchResultMode = mode;
                 m_SearchResultInit = false;
             }
             GUILayout.EndHorizontal();
@@ -51,9 +51,9 @@ namespace Ninth.Editor
                 {
                     m_SearchResultDic.Clear();
                 }
-                switch (m_ExcelSearchResultShowMode)
+                switch (ExcelSearchResultMode)
                 {
-                    case SearchResultMode.Table:
+                    case ExcelSearchResultMode.Table:
                         {
                             for (int index = 0; index < m_SearchResult.Count; index++)
                             {
@@ -71,7 +71,7 @@ namespace Ninth.Editor
                             }
                             break;
                         }
-                    case SearchResultMode.Value:
+                    case ExcelSearchResultMode.Value:
                         {
                             for (int index = 0; index < m_SearchResult.Count; index++)
                             {
@@ -118,14 +118,14 @@ namespace Ninth.Editor
             }
 
             m_SearchResultSV_V2 = EditorGUILayout.BeginScrollView(m_SearchResultSV_V2);
-            switch (m_ExcelSearchResultShowMode)
+            switch (ExcelSearchResultMode)
             {
-                case SearchResultMode.Table:
+                case ExcelSearchResultMode.Table:
                     {
                         SetSearchResultTableMode();
                         break;
                     }
-                case SearchResultMode.Value:
+                case ExcelSearchResultMode.Value:
                     {
                         SetSearchResultValueMode();
                         break;

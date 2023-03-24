@@ -15,20 +15,20 @@ namespace Ninth.Editor
 
         private BuildSettingsType m_BuildSettingsType
         {
-            get => (BuildSettingsType)PlayerPrefsDefine.BuildSettingsType;
-            set => PlayerPrefsDefine.BuildSettingsType = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildSettingsType;
+            set => EditorSOCore.GetBuildConfig().BuildSettingsType = value;
         }
 
         private BuildBundleMode m_BuildBundleMode
         {
-            get => (BuildBundleMode)PlayerPrefsDefine.BuildBundleMode;
-            set => PlayerPrefsDefine.BuildBundleMode = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildBundleMode;
+            set => EditorSOCore.GetBuildConfig().BuildBundleMode = value;
         }
 
         private BuildPlayerMode m_BuildPlayerMode
         {
-            get => (BuildPlayerMode)PlayerPrefsDefine.BuildPlayerMode;
-            set => PlayerPrefsDefine.BuildPlayerMode = (int)value;
+            get => EditorSOCore.GetBuildConfig().BuildPlayerMode;
+            set => EditorSOCore.GetBuildConfig().BuildPlayerMode = value;
         }
 
         private void Awake()
@@ -110,24 +110,6 @@ namespace Ninth.Editor
                     }
             }
             EditorGUILayout.EndVertical();
-        }
-
-        public enum BuildSettingsType
-        {
-            Bundle,
-            Player
-        }
-
-        public enum BuildBundleMode
-        {
-            HotUpdateBundles,
-            AllBundles
-        }
-
-        public enum BuildPlayerMode
-        {
-            InoperationBundle,
-            RepackageBundle
         }
     }
 }

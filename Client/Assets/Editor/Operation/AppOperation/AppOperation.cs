@@ -4,9 +4,9 @@ using UnityEditor;
 using UnityEngine;
 using System.Diagnostics;
 
-namespace NinthEditor
+namespace Ninth.Editor
 {
-    public class ApplyOperation : Editor
+    public class ApplyOperation : UnityEditor.Editor
     {
         [MenuItem("Tools/App/Work/腾讯会议")]
         private static void App()

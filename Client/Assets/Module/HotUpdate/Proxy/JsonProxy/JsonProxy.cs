@@ -18,7 +18,7 @@ namespace Ninth.HotUpdate
             {
                 try
                 {
-                    string fileContent = await File.ReadAllTextAsync(path, GlobalConfig.Utf8);
+                    string fileContent = await File.ReadAllTextAsync(path, SOCore.GetGlobalConfig().Encoding);
                     T t = LitJson.JsonMapper.ToObject<T>(fileContent);
                     return t;
                 }
@@ -47,7 +47,7 @@ namespace Ninth.HotUpdate
                 Type type = typeof(T);
                 string path = JsonPathConfig.Get<T>();
                 string jsonData = LitJson.JsonMapper.ToJson(obj);
-                await File.WriteAllTextAsync(path, jsonData, GlobalConfig.Utf8);
+                await File.WriteAllTextAsync(path, jsonData, SOCore.GetGlobalConfig().Encoding);
             }
             catch (DirectoryNotFoundException e)
             {

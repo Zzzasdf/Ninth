@@ -19,14 +19,14 @@ namespace Ninth.Editor
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Compile"))
             {
-                if(m_Compile == null)
+                if (m_Compile == null)
                 {
                     m_Compile = new SearchCompile();
                 }
-                Stopwatch stopwatch = Stopwatch.StartNew();
 
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 m_Compile.Tables.Clear();
-                DirectoryInfo directory = new DirectoryInfo(m_ExcelSearchPathDirectoryRoot);
+                DirectoryInfo directory = new DirectoryInfo(ExcelSearchPathDirectoryRoot);
                 FileInfo[] fileInfos = directory.GetFiles();
                 for (int index = 0; index < fileInfos.Length; index++)
                 {
