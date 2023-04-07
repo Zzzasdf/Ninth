@@ -60,11 +60,10 @@ namespace Ninth
 
     public enum BuildMode
     {
-        Test,
-        Formal
+        Debug,
+        Release
     }
 
-    [System.Flags]
     public enum AssetMode
     {
         NonAB = 1 << 0,

@@ -7,19 +7,19 @@ namespace Ninth.Editor
 {
     public partial class BuildSettings
     {
-        private ActiveTargetMode m_ActiveTargetMode
+        private ActiveTargetMode ActiveTargetMode
         {
             get => EditorSOCore.GetBuildConfig().ActiveTargetMode;
             set => EditorSOCore.GetBuildConfig().ActiveTargetMode = value;
         }
 
-        private BuildTarget m_BuildTarget
+        private BuildTarget BuildTarget
         {
             get => EditorSOCore.GetBuildConfig().BuildTarget;
             set => EditorSOCore.GetBuildConfig().BuildTarget = value;
         }
 
-        private BuildTargetGroup m_BuildTargetGroup
+        private BuildTargetGroup BuildTargetGroup
         {
             get => EditorSOCore.GetBuildConfig().BuildTargetGroup;
             set => EditorSOCore.GetBuildConfig().BuildTargetGroup = value;
@@ -34,36 +34,34 @@ namespace Ninth.Editor
                 "ActiveTarget",
                 "InactiveTarget"
             };
-            m_ActiveTargetMode = (ActiveTargetMode)GUILayout.Toolbar((int)m_ActiveTargetMode, barMenu);
-            if (m_ActiveTargetMode == ActiveTargetMode.ActiveTarget)
+            ActiveTargetMode = (ActiveTargetMode)GUILayout.Toolbar((int)ActiveTargetMode, barMenu);
+            if (ActiveTargetMode == ActiveTargetMode.ActiveTarget)
             {
-                m_BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                BuildTarget = EditorUserBuildSettings.activeBuildTarget;
             }
             EditorGUILayout.EndHorizontal();
         }
 
         private void SetBuildTarget()
         {
-            if(m_ActiveTargetMode == ActiveTargetMode.ActiveTarget)
+            if (ActiveTargetMode == ActiveTargetMode.ActiveTarget)
             {
                 GUI.enabled = false;
             }
             string[] sArray = new string[]
             {
                  BuildTarget.StandaloneWindows64.ToString(),
-                 BuildTarget.StandaloneWindows.ToString(),
                  BuildTarget.Android.ToString(),
                  BuildTarget.iOS.ToString(),
             };
             int[] iArray = new int[]
             {
                 (int)BuildTarget.StandaloneWindows64,
-                (int)BuildTarget.StandaloneWindows,
                 (int)BuildTarget.Android,
                 (int)BuildTarget.iOS,
             };
-            m_BuildTarget = (BuildTarget)EditorGUILayout.IntPopup("BuildTarget", (int)m_BuildTarget, sArray, iArray);
-            if (m_ActiveTargetMode == ActiveTargetMode.ActiveTarget)
+            BuildTarget = (BuildTarget)EditorGUILayout.IntPopup("BuildTarget", (int)BuildTarget, sArray, iArray);
+            if (ActiveTargetMode == ActiveTargetMode.ActiveTarget)
             {
                 GUI.enabled = true;
             }
@@ -72,26 +70,26 @@ namespace Ninth.Editor
         private void SetBuildTargetGroup()
         {
             GUI.enabled = false;
-            switch(m_BuildTarget)
+            switch (BuildTarget)
             {
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneWindows:
                     {
-                        m_BuildTargetGroup = BuildTargetGroup.Standalone;
+                        BuildTargetGroup = BuildTargetGroup.Standalone;
                         break;
                     }
                 case BuildTarget.Android:
                     {
-                        m_BuildTargetGroup = BuildTargetGroup.Android;
+                        BuildTargetGroup = BuildTargetGroup.Android;
                         break;
                     }
                 case BuildTarget.iOS:
                     {
-                        m_BuildTargetGroup = BuildTargetGroup.iOS;
+                        BuildTargetGroup = BuildTargetGroup.iOS;
                         break;
                     }
             }
-            m_BuildTargetGroup = (BuildTargetGroup)EditorGUILayout.EnumPopup("BuildTargetGroup", m_BuildTargetGroup);
+            BuildTargetGroup = (BuildTargetGroup)EditorGUILayout.EnumPopup("BuildTargetGroup", BuildTargetGroup);
             GUI.enabled = true;
         }
     }

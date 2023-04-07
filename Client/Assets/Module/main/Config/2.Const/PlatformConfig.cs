@@ -12,6 +12,11 @@ namespace Ninth
         /// <summary>
         /// 平台名称
         /// </summary>
-        public static string PlatformName { get; } = Application.platform.ToString();
+        public static string PlatformName { get; } = Application.platform switch
+        {
+            RuntimePlatform.Android => "Android",
+            RuntimePlatform.IPhonePlayer => "iOS",
+            _ => "StandaloneWindows64"
+        };
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68d65e3e43efe34b967b9fdeab120ea, type: 3}
   m_Name: ExcelConfigSO
   m_EditorClassIdentifier: 
-  ExcelSettingsType: 1
-  ExcelSearchPathDirectoryRoot: D:/unityHub
-  ExcelSearchMode: 1
-  ExcelSearchResultMode: 1
+  excelSettingsType: 1
+  excelSearchPathDirectoryRoot: F:/git/HxMobileDesign/xls
+  excelSearchMode: 1
+  excelSearchResultMode: 1

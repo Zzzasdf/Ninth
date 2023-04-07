@@ -7,25 +7,25 @@ namespace Ninth.Editor
 {
     public sealed partial class BuildSettings: EditorWindow
     {
-        [MenuItem("Tools/Build/Settings")]
+        [MenuItem("Tools/BuildSettings")]
         private static void PanelOpen()
         {
             GetWindow<BuildSettings>();
         }
 
-        private BuildSettingsType m_BuildSettingsType
+        private BuildSettingsType BuildSettingsType
         {
             get => EditorSOCore.GetBuildConfig().BuildSettingsType;
             set => EditorSOCore.GetBuildConfig().BuildSettingsType = value;
         }
 
-        private BuildBundleMode m_BuildBundleMode
+        private BuildBundleMode BuildBundleMode
         {
             get => EditorSOCore.GetBuildConfig().BuildBundleMode;
             set => EditorSOCore.GetBuildConfig().BuildBundleMode = value;
         }
 
-        private BuildPlayerMode m_BuildPlayerMode
+        private BuildPlayerMode BuildPlayerMode
         {
             get => EditorSOCore.GetBuildConfig().BuildPlayerMode;
             set => EditorSOCore.GetBuildConfig().BuildPlayerMode = value;
@@ -33,7 +33,7 @@ namespace Ninth.Editor
 
         private void Awake()
         {
-            SetVersionInit();
+            VersionInit();
         }
 
         private void OnGUI()
@@ -44,14 +44,14 @@ namespace Ninth.Editor
                 BuildSettingsType.Bundle.ToString(),
                 BuildSettingsType.Player.ToString()
             };
-            BuildSettingsType buildSettingsType = (BuildSettingsType)GUILayout.Toolbar((int)m_BuildSettingsType, barMenu);
+            BuildSettingsType buildSettingsType = (BuildSettingsType)GUILayout.Toolbar((int)BuildSettingsType, barMenu);
 
-            if(buildSettingsType != m_BuildSettingsType)
+            if(buildSettingsType != BuildSettingsType)
             {
-                SetVersionInit();
-                m_BuildSettingsType = buildSettingsType;
+                VersionInit();
+                BuildSettingsType = buildSettingsType;
             }
-            switch (m_BuildSettingsType)
+            switch (BuildSettingsType)
             {
                 case BuildSettingsType.Bundle:
                     {
@@ -63,11 +63,11 @@ namespace Ninth.Editor
                             BuildBundleMode.HotUpdateBundles.ToString(),
                             BuildBundleMode.AllBundles.ToString()
                         };
-                        BuildBundleMode buildBundleMode = (BuildBundleMode)GUILayout.Toolbar((int)m_BuildBundleMode, barMenuBundle);
-                        if(buildBundleMode != m_BuildBundleMode)
+                        BuildBundleMode buildBundleMode = (BuildBundleMode)GUILayout.Toolbar((int)BuildBundleMode, barMenuBundle);
+                        if(buildBundleMode != BuildBundleMode)
                         {
-                            SetVersionInit();
-                            m_BuildBundleMode = buildBundleMode;
+                            VersionInit();
+                            BuildBundleMode = buildBundleMode;
                         }
                         EditorGUILayout.EndHorizontal();
                         
@@ -89,11 +89,11 @@ namespace Ninth.Editor
                             BuildPlayerMode.InoperationBundle.ToString(),
                             BuildPlayerMode.RepackageBundle.ToString()
                         };
-                        BuildPlayerMode buildPlayerMode = (BuildPlayerMode)GUILayout.Toolbar((int)m_BuildPlayerMode, barMenuPlayer);
-                        if(buildPlayerMode != m_BuildPlayerMode)
+                        BuildPlayerMode buildPlayerMode = (BuildPlayerMode)GUILayout.Toolbar((int)BuildPlayerMode, barMenuPlayer);
+                        if(buildPlayerMode != BuildPlayerMode)
                         {
-                            SetVersionInit();
-                            m_BuildPlayerMode = buildPlayerMode;
+                            VersionInit();
+                            BuildPlayerMode = buildPlayerMode;
                         }
                         EditorGUILayout.EndHorizontal();
 
@@ -101,7 +101,7 @@ namespace Ninth.Editor
                         SetToggleActiveTarget();
                         SetBuildTarget();
                         SetBuildTargetGroup();
-                        if(m_BuildPlayerMode == BuildPlayerMode.RepackageBundle)
+                        if(BuildPlayerMode == BuildPlayerMode.RepackageBundle)
                         {
                             SetVersion();
                         }

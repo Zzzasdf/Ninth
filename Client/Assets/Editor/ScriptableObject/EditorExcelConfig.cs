@@ -1,31 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Ninth.Editor
 {
     [CreateAssetMenu(fileName = "ExcelConfigSO", menuName = "EditorConfig/ExcelConfigSO")]
-    public class EditorExcelConfig: ScriptableObject
+    public class EditorExcelConfig : ScriptableObject
     {
-        public ExcelSettingsType ExcelSettingsType;
-        // Encoder
+        [SerializeField] private ExcelSettingsType excelSettingsType;
+        [SerializeField] private string excelSearchPathDirectoryRoot;
+        [SerializeField] private ExcelSearchMode excelSearchMode;
+        [SerializeField] private ExcelSearchResultMode excelSearchResultMode;
 
-        // Search
-        public string ExcelSearchPathDirectoryRoot;
-        public ExcelSearchMode ExcelSearchMode;
-        public ExcelSearchResultMode ExcelSearchResultMode;
+        public ExcelSettingsType ExcelSettingsType
+        {
+            get => excelSettingsType;
+            set => SetProperty(ref excelSettingsType, value);
+        }
+        public string ExcelSearchPathDirectoryRoot
+        {
+            get => excelSearchPathDirectoryRoot;
+            set => SetProperty(ref excelSearchPathDirectoryRoot, value);
+        }
+        public ExcelSearchMode ExcelSearchMode
+        {
+            get => excelSearchMode;
+            set => SetProperty(ref excelSearchMode, value);
+        }
+        public ExcelSearchResultMode ExcelSearchResultMode
+        {
+            get => excelSearchResultMode;
+            set => SetProperty(ref excelSearchResultMode, value);
+        }
 
         private void OnEnable()
         {
-            if (ExcelSearchPathDirectoryRoot == null)
+            SetDefaultExcelSearchPathDirectoryRoot();
+        }
+
+        private void SetDefaultExcelSearchPathDirectoryRoot()
+        {
+            if (string.IsNullOrEmpty(ExcelSearchPathDirectoryRoot))
             {
                 ExcelSearchPathDirectoryRoot = $"{Application.dataPath}/../../Excels";
             }
         }
 
-        private void OnValidate()
+        private void SetProperty<T>(ref T field, T value)
         {
+            if (!Equals(field, value))
+            {
+                field = value;
+                SaveAssets();
+            }
+        }
+
+        private void SaveAssets()
+        {
+            EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssetIfDirty(this);
         }
     }
@@ -41,9 +72,10 @@ namespace Ninth.Editor
         Exact,
         Exist,
     }
+
     public enum ExcelSearchResultMode
     {
         Table,
-        Value
+        Value,
     }
 }

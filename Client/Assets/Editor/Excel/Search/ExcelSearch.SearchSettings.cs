@@ -86,7 +86,7 @@ namespace Ninth.Editor
         private static void SetSearch()
         {
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("Search"))
+            if (GUILayout.Button("Search") || Event.current.keyCode == KeyCode.Return) 
             {
                 List<string> NonEmptySearchObjectList = GetValidSearchObj();
                 if (NonEmptySearchObjectList.Count == 0)

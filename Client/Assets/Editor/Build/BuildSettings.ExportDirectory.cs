@@ -7,13 +7,13 @@ namespace Ninth.Editor
 {
     public partial class BuildSettings
     {
-        private string m_BuildBundlesDirectoryRoot
+        private string BuildBundlesDirectoryRoot
         {
             get => EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot;
             set => EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot = value;
         }
 
-        private string m_BuildPlayersDirectoryRoot
+        private string BuildPlayersDirectoryRoot
         {
             get => EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot;
             set => EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot = value;
@@ -26,14 +26,14 @@ namespace Ninth.Editor
 
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            m_BuildBundlesDirectoryRoot = EditorGUILayout.TextField("BundlesTargetDirectoryRoot", m_BuildBundlesDirectoryRoot);
+            BuildBundlesDirectoryRoot = EditorGUILayout.TextField("BundlesTargetDirectoryRoot", BuildBundlesDirectoryRoot);
             GUI.enabled = true;
             if (GUILayout.Button("Browse"))
             {
-                string path = EditorUtility.OpenFolderPanel("Select A Folder To Export", m_BuildBundlesDirectoryRoot, "Bundles");
+                string path = EditorUtility.OpenFolderPanel("Select A Folder To Export", BuildBundlesDirectoryRoot, "Bundles");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    m_BuildBundlesDirectoryRoot = path;
+                    BuildBundlesDirectoryRoot = path;
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -43,14 +43,14 @@ namespace Ninth.Editor
         {
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            m_BuildPlayersDirectoryRoot = EditorGUILayout.TextField("PlayersDirectoryRoot", m_BuildPlayersDirectoryRoot);
+            BuildPlayersDirectoryRoot = EditorGUILayout.TextField("PlayersDirectoryRoot", BuildPlayersDirectoryRoot);
             GUI.enabled = true;
             if (GUILayout.Button("Browse"))
             {
-                string path = EditorUtility.OpenFilePanel("Select A Folder To Export", m_BuildPlayersDirectoryRoot, "Players");
+                string path = EditorUtility.OpenFilePanel("Select A Folder To Export", BuildPlayersDirectoryRoot, "Players");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    m_BuildPlayersDirectoryRoot = path;
+                    BuildPlayersDirectoryRoot = path;
                 }
             }
             EditorGUILayout.EndHorizontal();

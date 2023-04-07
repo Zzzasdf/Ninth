@@ -7,7 +7,7 @@ namespace Ninth.Editor
 {
     public partial class BuildSettings
     {
-        private BuildExportDirectoryType m_BuildExportDirectoryType
+        private BuildExportDirectoryType BuildExportDirectoryType
         {
             get => EditorSOCore.GetBuildConfig().BuildExportDirectoryType;
             set => EditorSOCore.GetBuildConfig().BuildExportDirectoryType = value;
@@ -22,7 +22,7 @@ namespace Ninth.Editor
                 "Copy2StreamingAsset",
                 "ApplyRemoteAsset"
             };
-            m_BuildExportDirectoryType = (BuildExportDirectoryType)GUILayout.Toolbar((int)m_BuildExportDirectoryType, barMenu);
+            BuildExportDirectoryType = (BuildExportDirectoryType)GUILayout.Toolbar((int)BuildExportDirectoryType, barMenu);
             GUILayout.EndHorizontal();
         }
     }

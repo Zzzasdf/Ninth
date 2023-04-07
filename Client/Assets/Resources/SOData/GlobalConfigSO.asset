@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fb317c6ccebaa04d82ddb4790e24af7, type: 3}
   m_Name: GlobalConfigSO
   m_EditorClassIdentifier: 
-  AssetMode: 2
+  BuildMode: 0
+  AssetMode: 1
   Url: http://192.168.8.197:80
   LocalGroup:
   - LocalGroup

@@ -7,7 +7,7 @@ namespace Ninth.Editor
 {
     public class ExcelSettings: EditorWindow
     {
-        [MenuItem("Tools/Excels/Settings")]
+        [MenuItem("Tools/ExcelSettings")]
         private static void PanelOpen()
         {
             GetWindow<ExcelSettings>();

@@ -12,17 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8132ffa09586974eb3e0aaee0972034, type: 3}
   m_Name: BuildConfigSO
   m_EditorClassIdentifier: 
-  BuildBundlesDirectoryRoot: F:/Ninth/Client/Assets/../../Bundles
-  BuildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
-  BuildSettingsType: 1
-  BuildBundleMode: 0
-  BuildPlayerMode: 1
-  BigBaseVersion: 0
-  SmallBaseVersion: 0
-  HotUpdateVersion: 0
-  BaseIteration: 16
-  HotUpdateIteration: 0
-  BuildExportDirectoryType: 0
-  ActiveTargetMode: 0
-  BuildTarget: 19
-  BuildTargetGroup: 1
+  buildBundlesDirectoryRoot: F:/Ninth/Client/Assets/../../Bundles
+  buildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
+  buildSettingsType: 1
+  buildBundleMode: 0
+  buildPlayerMode: 1
+  majorVersion: 1
+  minorVersion: 0
+  revisionNumber: 3
+  buildExportDirectoryType: 1
+  activeTargetMode: 0
+  buildTarget: 19
+  buildTargetGroup: 1

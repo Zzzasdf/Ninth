@@ -14,7 +14,7 @@ namespace Ninth
             = string.Format("{0}/{1}", Application.streamingAssetsPath, NameConfig.VersionConfigName);
 
         private static string m_VersionInServerPath { get; }
-            = string.Format("{0}/{1}/{2}/{3}", SOCore.GetGlobalConfig(), PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);
+            = string.Format("{0}/{1}/{2}/{3}", SOCore.GetGlobalConfig().Url, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);
 
         private static string m_VersionInPersistentDataPath { get; }
             = string.Format("{0}/{1}/{2}/{3}", Application.persistentDataPath, PlatformConfig.ProduceName, PlatformConfig.PlatformName, NameConfig.VersionConfigName);

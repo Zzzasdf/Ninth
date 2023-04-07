@@ -8,11 +8,11 @@ namespace Ninth.Editor
     {
         private void SetExport()
         {
-            if (m_BuildSettingsType == BuildSettingsType.Player && m_BuildPlayerMode == BuildPlayerMode.InoperationBundle)
+            if (BuildSettingsType == BuildSettingsType.Player && BuildPlayerMode == BuildPlayerMode.InoperationBundle)
             {
-                m_SetVersion = true;
+                bSetVersion = true;
             }
-            if (!m_SetVersion)
+            if (!bSetVersion)
             {
                 GUI.enabled = false;
                 if (GUILayout.Button("Please Adjust The Version"))
@@ -26,19 +26,19 @@ namespace Ninth.Editor
                 if (GUILayout.Button("Export"))
                 {
                     UnityEngine.Debug.Log("Exporting！！");
-                    switch (m_BuildSettingsType)
+                    switch (BuildSettingsType)
                     {
                         case BuildSettingsType.Bundle:
                             {
-                                switch(m_BuildBundleMode)
+                                switch(BuildBundleMode)
                                 {
                                     case BuildBundleMode.HotUpdateBundles:
                                         {
-                                            BuildAssetsCommand.BuildHotUpdateBundles(m_BuildTarget,
-                                                m_BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                                string.Join(".", m_BigBaseVersionTemp, m_SmallBaseVersionTemp, m_HotUpdateVersion, m_BaseIterationTemp, m_HotUpdateIterationTemp));
+                                            BuildAssetsCommand.BuildHotUpdateBundles(BuildTarget,
+                                                BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
+                                                string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
 
-                                            if(m_BuildExportDirectoryType == BuildExportDirectoryType.Remote)
+                                            if(BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
                                                 BuildAssetsCommand.RemoteApply();
                                             }
@@ -46,11 +46,11 @@ namespace Ninth.Editor
                                         }
                                     case BuildBundleMode.AllBundles:
                                         {
-                                            BuildAssetsCommand.BuildAllBundles(m_BuildTarget,
-                                                m_BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                                string.Join(".", m_BigBaseVersionTemp, m_SmallBaseVersionTemp, m_HotUpdateVersion, m_BaseIterationTemp, m_HotUpdateIterationTemp));
+                                            BuildAssetsCommand.BuildAllBundles(BuildTarget,
+                                                BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
+                                                string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
                                             
-                                            if (m_BuildExportDirectoryType == BuildExportDirectoryType.Remote)
+                                            if (BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
                                                 BuildAssetsCommand.RemoteApply();
                                             }
@@ -61,20 +61,20 @@ namespace Ninth.Editor
                             }
                         case BuildSettingsType.Player:
                             {
-                                switch(m_BuildPlayerMode)
+                                switch(BuildPlayerMode)
                                 {
                                     case BuildPlayerMode.InoperationBundle:
                                         {
-                                            BuildAssetsCommand.BuildPlayer(m_BuildTargetGroup, m_BuildTarget);
+                                            BuildAssetsCommand.BuildPlayer(BuildTargetGroup, BuildTarget);
                                             break;
                                         }
                                     case BuildPlayerMode.RepackageBundle:
                                         {
-                                            BuildAssetsCommand.BuildPlayerRepackage(m_BuildTargetGroup, m_BuildTarget,
-                                                m_BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                                string.Join(".", m_BigBaseVersionTemp, m_SmallBaseVersionTemp, m_HotUpdateVersion, m_BaseIterationTemp, m_HotUpdateIterationTemp));
+                                            BuildAssetsCommand.BuildPlayerRepackage(BuildTargetGroup, BuildTarget,
+                                                BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
+                                                string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
                                             
-                                            if (m_BuildExportDirectoryType == BuildExportDirectoryType.Remote)
+                                            if (BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
                                                 BuildAssetsCommand.RemoteApply();
                                             }
@@ -84,8 +84,8 @@ namespace Ninth.Editor
                                 break;
                             }
                     }
-                    VersionStore();
-                    SetVersionInit();
+                    VersionSave();
+                    VersionInit();
                     UnityEngine.Debug.Log("Export completed！！");
                 }
             }

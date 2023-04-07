@@ -17,20 +17,14 @@ namespace Ninth.HotUpdate
 
         public AssetProxy()
         {
-            Init();
-        }
-
-
-        public async UniTask Init()
-        {
             m_ConfigAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             m_BundlePath2BundleRef = new Dictionary<string, BundleRef>();
 
-            LoadConfig localLoadConfig = await ProxyCtrl.ModelProxy.Get<LocalLoadConfig>();
-            LoadConfig remoteLoadConfig = await ProxyCtrl.ModelProxy.Get<RemoteLoadConfig>();
+            // LoadConfig localLoadConfig = await ProxyCtrl.ModelProxy.Get<LocalLoadConfig>();
+            // LoadConfig remoteLoadConfig = await ProxyCtrl.ModelProxy.Get<RemoteLoadConfig>();
 
-            SetPath2BundleName(localLoadConfig);
-            SetPath2BundleName(remoteLoadConfig);
+            // SetPath2BundleName(localLoadConfig);
+            // SetPath2BundleName(remoteLoadConfig);
 
             m_LocalPathFunc = (assetName) => PathConfig.BundleInLocalInStreamingAssetPath(assetName);
             m_RemotePathFunc = (assetName) => PathConfig.BundleInRemoteInPersistentDataPath(assetName);

@@ -25,14 +25,14 @@ namespace Ninth.HotUpdate
 
         private async Task Update1()
         {
-             (++asyncIndex).Log("异步{0}");
-            Time.deltaTime.Log("异步{0}");
+            //  (++asyncIndex).Log("异步{0}");
+            // Time.deltaTime.Log("异步{0}");
         }
 
         private void Update()
         {
-            (++index).Log("同步{0}");
-            Time.deltaTime.Log("同步{0}");
+            // (++index).Log("同步{0}");
+            // Time.deltaTime.Log("同步{0}");
         }
     }
 }
