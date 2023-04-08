@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Ninth
 {
     public partial class GameEntry : MonoBehaviour
     {
-        public static GameEntry Instance {  get ; private set; }
-        
+        public static GameEntry Instance { get; private set; }
+
         public static DownloadCore DownloadCore;
 
         private void Awake()

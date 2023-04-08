@@ -43,10 +43,10 @@ namespace Ninth.Editor
                     {
                         break;
                     }
-                    T[] Ts = obj.GetComponentsInChildren<T>(true);
-                    for (int index = 0; index < Ts.Length; index++)
+                    T[] ts = obj.GetComponentsInChildren<T>(true);
+                    for (int index = 0; index < ts.Length; index++)
                     {
-                        T T = Ts[index];
+                        T T = ts[index];
                         if (T == null)
                         {
                             break;
@@ -101,7 +101,7 @@ namespace Ninth.Editor
             }
             if (!cache[tEnum][prefabPath].ContainsKey(scanLog))
             {
-                ScanInfoItem<T> scanInfoItem = new ScanInfoItem<T>(prefabPath, scanLog, handle);
+                ScanInfoItem<T> scanInfoItem = new ScanInfoItem<T>(prefabPath, prefabName, scanLog, handle);
                 cache[tEnum][prefabPath].Add(scanLog, scanInfoItem);
             }
             cache[tEnum][prefabPath][scanLog].ComponentObjsPath.Add(componentObjPath);

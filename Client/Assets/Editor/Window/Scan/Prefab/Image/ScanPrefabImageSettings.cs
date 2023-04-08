@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,12 +20,12 @@ namespace Ninth.Editor
         // 是否是白色
         private bool WhiteColor(Image image)
         {
-            return image.color == Color.white;
+            return image.color == Color.red;
         }
 
         private void WhiteColorHandle(Image image)
         {
-            image.color = Color.red;
+            image.color = Color.white;
         }
 
         // 实现抽象方法

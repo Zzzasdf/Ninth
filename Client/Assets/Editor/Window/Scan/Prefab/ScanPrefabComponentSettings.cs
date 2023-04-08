@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Ninth.Editor
 {
@@ -84,6 +79,7 @@ namespace Ninth.Editor
     public class ScanInfoItem<T>
     {
         public string PrefabPath { get; private set; }
+        public string PrefabName { get; private set; }
         public string ScanLog { get; private set; }
         public Action<T> Handle { get; private set; }
 
@@ -91,9 +87,10 @@ namespace Ninth.Editor
         public List<string> ComponentObjsPath { get; set; }
         public List<string> ComponentObjsName { get; set; }
 
-        public ScanInfoItem(string prefabPath, string scanLog, Action<T> handle)
+        public ScanInfoItem(string prefabPath, string prefabName, string scanLog, Action<T> handle)
         {
             PrefabPath = prefabPath;
+            PrefabName = prefabName;
             ScanLog = scanLog;
             Handle = handle;
 

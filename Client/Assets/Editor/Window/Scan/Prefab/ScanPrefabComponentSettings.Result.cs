@@ -73,7 +73,7 @@ namespace Ninth.Editor
                     {
                         if (GUILayout.Button($"暴力修复({scanLog})"))
                         {
-                            Debug.Log($"TODO 暴力修复({scanLog})");
+                            ForceRepair(scanInfoItems);
                         }
                     }
                 }
@@ -137,21 +137,7 @@ namespace Ninth.Editor
                     }
                     if (GUILayout.Button("拷打"))
                     {
-                        GameObject destoryObj = null;
-                        do
-                        {
-                            if (destoryObj != null)
-                            {
-                                UnityEngine.Object.DestroyImmediate(destoryObj);
-                            }
-                            destoryObj = GameObject.Find(prefabName);
-                            if (destoryObj == null)
-                            {
-                                destoryObj = GameObject.Find(prefabName + "(Clone)");
-                            }
-                        } while (destoryObj != null);
-                        GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-                        UnityEngine.Object.Instantiate(obj);
+                        InstantiateInHierarchy(prefabPath, prefabName);
                     }
                     GUILayout.EndHorizontal();
 
@@ -194,6 +180,47 @@ namespace Ninth.Editor
                     GUILayout.Space(20);
                 }
                 GUILayout.EndScrollView();
+            }
+        }
+
+        private GameObject InstantiateInHierarchy(string prefabPath, string prefabName)
+        {
+            GameObject destoryObj = null;
+            do
+            {
+                if (destoryObj != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(destoryObj);
+                }
+                destoryObj = GameObject.Find(prefabName);
+            } while (destoryObj != null);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            // PrefabUtility.InstantiatePrefab 与预制体保持关联, 以便使用PrefabUtility.GetPrefabParent获取到对应的预制体
+            GameObject go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            return go;
+        }
+
+        private void ForceRepair(List<ScanInfoItem<T>> scanInfoItems)
+        {
+            for (int index = 0; index < scanInfoItems.Count; index++)
+            {
+                ScanInfoItem<T> scanInfoItem = scanInfoItems[index];
+                GameObject go = InstantiateInHierarchy(scanInfoItem.PrefabPath, scanInfoItem.PrefabName);
+                Action<T> handle = scanInfoItem.Handle;
+                T[] ts = go.GetComponentsInChildren<T>(true);
+                for (int i = 0; i < ts.Length; i++)
+                {
+                    T t = ts[i];
+                    string relativePath = GetRelativePathOfComponentOfPrefab(t, go.transform);
+                    if (scanInfoItem.ComponentObjsPath.Contains(relativePath))
+                    {
+                        handle.Invoke(t);
+                    }
+                }
+                PrefabUtility.SaveAsPrefabAssetAndConnect(go, scanInfoItem.PrefabPath, InteractionMode.AutomatedAction);
+                // 过时
+                // PrefabUtility.ReplacePrefab(go, PrefabUtility.GetPrefabParent(go), ReplacePrefabOptions.ConnectToPrefab);
+                UnityEngine.Object.DestroyImmediate(go);
             }
         }
     }
