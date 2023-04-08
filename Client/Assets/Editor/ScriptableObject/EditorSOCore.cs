@@ -19,9 +19,14 @@ namespace Ninth.Editor
             return Get<EditorExcelConfig>("ExcelConfigSO");
         }
 
+        public static EditorScanConfig GetScanConfig()
+        {
+            return Get<EditorScanConfig>("ScanConfigSO");
+        }
+
         private static T Get<T>(string soName) where T : UnityEngine.Object
         {
-            if(!m_Cache.ContainsKey(soName))
+            if (!m_Cache.ContainsKey(soName))
             {
                 T t = AssetDatabase.LoadAssetAtPath<T>(string.Format("Assets/Editor/ScriptableObject/SOData/{0}.asset", soName));
                 m_Cache.Add(soName, t);
