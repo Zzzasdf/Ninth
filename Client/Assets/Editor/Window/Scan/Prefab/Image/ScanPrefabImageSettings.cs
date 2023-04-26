@@ -20,12 +20,12 @@ namespace Ninth.Editor
         // 是否是白色
         private bool WhiteColor(Image image)
         {
-            return image.color == Color.red;
+            return image.color == Color.white;
         }
 
         private void WhiteColorHandle(Image image)
         {
-            image.color = Color.white;
+            image.color = Color.red;
         }
 
         // 实现抽象方法

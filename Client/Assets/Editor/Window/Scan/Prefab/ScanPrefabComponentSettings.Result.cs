@@ -26,7 +26,7 @@ namespace Ninth.Editor
 
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("“ªº¸’πø™"))
+                if (GUILayout.Button("‰∏ÄÈîÆÂ±ïÂºÄ"))
                 {
                     scanInfos.ForEach(x =>
                     {
@@ -35,7 +35,7 @@ namespace Ninth.Editor
                             y.IsComponentObjsFoldout = false);
                     });
                 }
-                if (GUILayout.Button("“ªº¸’€µ˛"))
+                if (GUILayout.Button("‰∏ÄÈîÆÊäòÂè†"))
                 {
                     scanInfos.ForEach(x =>
                     {
@@ -44,8 +44,8 @@ namespace Ninth.Editor
                             y.IsComponentObjsFoldout = true);
                     });
                 }
-                string bStatus = bLog ? "ø™" : "πÿ";
-                if (GUILayout.Button($"»’÷æ: {bStatus}"))
+                string bStatus = bLog ? "ÂºÄ" : "ÂÖ≥";
+                if (GUILayout.Button($"Êó•Âøó: {bStatus}"))
                 {
                     bLog = !bLog;
                 }
@@ -71,7 +71,7 @@ namespace Ninth.Editor
                     List<ScanInfoItem<T>> scanInfoItems = item.Value;
                     if (scanInfoItems.Where(x => x.Handle != null).ToList().Count != 0)
                     {
-                        if (GUILayout.Button($"±©¡¶–ﬁ∏¥({scanLog})"))
+                        if (GUILayout.Button($"Êö¥Âäõ‰øÆÂ§ç({scanLog})"))
                         {
                             ForceRepair(scanInfoItems);
                         }
@@ -79,14 +79,15 @@ namespace Ninth.Editor
                 }
                 EditorGUILayout.EndHorizontal();
 
+                sV = GUILayout.BeginScrollView(sV);
                 if (bLog)
                 {
                     StringBuilder sb = new StringBuilder();
                     for (int index = 0; index < scanInfos.Count; index++)
                     {
                         ScanInfo<T> scanInfo = scanInfos[index];
-                        sb.Append($"[{index}] => ¬∑æ∂£∫").Append(scanInfo.PrefabPath)
-                                .Append(" => ‘§÷∆ÃÂ£∫").Append(scanInfo.PrefabName)
+                        sb.Append($"[{index}] => È¢ÑÂà∂‰ΩìÔºö").Append(scanInfo.PrefabName)
+                                .Append(" => Ë∑ØÂæÑÔºö").Append(scanInfo.PrefabPath)
                                 .AppendLine();
                         sb.Append("{")
                             .AppendLine();
@@ -98,8 +99,8 @@ namespace Ninth.Editor
                                 .AppendLine();
                             for (int j = 0; j < scanInfoItem.ComponentObjsPath.Count; j++)
                             {
-                                sb.Append("    ◊Èº˛√˚£∫").Append(scanInfoItem.ComponentObjsName[j])
-                                    .Append("    œ‡∂‘¬∑æ∂£∫").Append(scanInfoItem.ComponentObjsPath[j])
+                                sb.Append("    ÁªÑ‰ª∂ÂêçÔºö").Append(scanInfoItem.ComponentObjsName[j])
+                                    .Append("    Áõ∏ÂØπË∑ØÂæÑÔºö").Append(scanInfoItem.ComponentObjsPath[j])
                                     .AppendLine();
                             }
                             if (i != scanInfoItems.Count - 1)
@@ -116,7 +117,6 @@ namespace Ninth.Editor
                     EditorGUILayout.TextArea(sb.ToString());
                 }
 
-                sV = GUILayout.BeginScrollView(sV);
                 for (int index = 0; index < scanInfos.Count; index++)
                 {
                     ScanInfo<T> scanInfo = scanInfos[index];
@@ -127,7 +127,7 @@ namespace Ninth.Editor
                     string prefabName = scanInfo.PrefabName;
                     GUILayout.Label($"[{index}] => ========================================================================================================");
                     GUILayout.BeginHorizontal();
-                    EditorGUILayout.TextField("‘§÷∆ÃÂ:", prefabName);
+                    EditorGUILayout.TextField("È¢ÑÂà∂‰Ωì:", prefabName);
 
                     int count = 0;
                     scanInfoItems.Select(x => x.ComponentObjsPath.Count).ToList().ForEach(x => count += x);
@@ -135,7 +135,7 @@ namespace Ninth.Editor
                     {
                         scanInfo.IsFoldout = !scanInfo.IsFoldout;
                     }
-                    if (GUILayout.Button("øΩ¥Ú"))
+                    if (GUILayout.Button("Êã∑Êâì"))
                     {
                         InstantiateInHierarchy(prefabPath, prefabName);
                     }
@@ -143,7 +143,7 @@ namespace Ninth.Editor
 
                     if (!isFoldout)
                     {
-                        EditorGUILayout.TextField("¬∑æ∂:", prefabPath);
+                        EditorGUILayout.TextField("Ë∑ØÂæÑ:", prefabPath);
                         for (int i = 0; i < scanInfoItems.Count; i++)
                         {
                             ScanInfoItem<T> scanInfoItem = scanInfoItems[i];
@@ -153,7 +153,7 @@ namespace Ninth.Editor
                             string scanLog = scanInfoItem.ScanLog;
 
                             GUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField($"◊Èº˛ºØ∫œ => ({scanLog})");
+                            EditorGUILayout.LabelField($"ÁªÑ‰ª∂ÈõÜÂêà => ({scanLog})");
 
                             bool isComponentObjFoldout = isComponentObjsFoldout;
                             if (GUILayout.Button(isComponentObjFoldout ? $"Foldout({componentObjsName.Count})" : $"Unfold({componentObjsName.Count})"))
@@ -169,8 +169,8 @@ namespace Ninth.Editor
                                 {
                                     GUILayout.BeginHorizontal();
                                     EditorGUI.indentLevel += indentLevel;
-                                    EditorGUILayout.TextField("◊Èº˛√˚£∫", componentObjsName[j]);
-                                    EditorGUILayout.TextField("œ‡∂‘¬∑æ∂£∫", componentObjsPath[j]);
+                                    EditorGUILayout.TextField("ÁªÑ‰ª∂ÂêçÔºö", componentObjsName[j]);
+                                    EditorGUILayout.TextField("Áõ∏ÂØπË∑ØÂæÑÔºö", componentObjsPath[j]);
                                     EditorGUI.indentLevel -= indentLevel;
                                     GUILayout.EndHorizontal();
                                 }
@@ -195,9 +195,31 @@ namespace Ninth.Editor
                 destoryObj = GameObject.Find(prefabName);
             } while (destoryObj != null);
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            // PrefabUtility.InstantiatePrefab ”Î‘§÷∆ÃÂ±£≥÷πÿ¡™, “‘±„ π”√PrefabUtility.GetPrefabParentªÒ»°µΩ∂‘”¶µƒ‘§÷∆ÃÂ
+            // PrefabUtility.InstantiatePrefab ‰∏éÈ¢ÑÂà∂‰Ωì‰øùÊåÅÂÖ≥ËÅî, ‰ª•‰æø‰ΩøÁî®PrefabUtility.GetPrefabParentËé∑ÂèñÂà∞ÂØπÂ∫îÁöÑÈ¢ÑÂà∂‰Ωì
             GameObject go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             return go;
+        }
+
+        private void SetUIPrefab(string prefabPath, GameObject go)
+        {
+            // Ê£ÄÊü•ÊòØÂê¶‰∏∫UI
+            if (prefabPath.Contains("Assets/Resources/Prefab/UILayout/"))
+            {
+                // ÂÆû‰æãÂåñUIFrame
+                GameObject uiFrame = GameObject.Find("UI");
+                if (uiFrame == null)
+                {
+                    GameObject uiFramePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/UILayout/UI.prefab");
+                    uiFrame = PrefabUtility.InstantiatePrefab(uiFramePrefab) as GameObject;
+                }
+                Transform trans = uiFrame.transform.Find("CanvasFrame");
+                if (trans != null)
+                {
+                    go.transform.SetParent(trans, false);
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
+                }
+            }
         }
 
         private void ForceRepair(List<ScanInfoItem<T>> scanInfoItems)
@@ -218,7 +240,7 @@ namespace Ninth.Editor
                     }
                 }
                 PrefabUtility.SaveAsPrefabAssetAndConnect(go, scanInfoItem.PrefabPath, InteractionMode.AutomatedAction);
-                // π˝ ±
+                // ËøáÊó∂
                 // PrefabUtility.ReplacePrefab(go, PrefabUtility.GetPrefabParent(go), ReplacePrefabOptions.ConnectToPrefab);
                 UnityEngine.Object.DestroyImmediate(go);
             }

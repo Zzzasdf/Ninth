@@ -23,7 +23,7 @@ namespace Ninth.Editor
             GUILayout.Label("Scan Target Directory Settings", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             GUI.enabled = false;
-            PathDirectoryRoot = EditorGUILayout.TextField("Directory", PathDirectoryRoot);
+            EditorGUILayout.TextField("Directory", PathDirectoryRoot);
             GUI.enabled = true;
             if (GUILayout.Button("Browse"))
             {

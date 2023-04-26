@@ -15,4 +15,4 @@ MonoBehaviour:
   excelSettingsType: 1
   excelSearchPathDirectoryRoot: F:/git/HxMobileDesign/xls
   excelSearchMode: 1
-  excelSearchResultMode: 1
+  excelSearchResultMode: 0
