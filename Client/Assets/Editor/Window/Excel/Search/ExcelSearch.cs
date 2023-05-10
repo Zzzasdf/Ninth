@@ -13,14 +13,14 @@ namespace Ninth.Editor
 {
     public sealed partial class ExcelSearch
     {
-        private static ExcelSearchMode ExcelSearchMode
+        private ExcelSearchMode ExcelSearchMode
         {
             get => EditorSOCore.GetExcelConfig().ExcelSearchMode;
             set => EditorSOCore.GetExcelConfig().ExcelSearchMode = value;
         }
-        private static bool m_Init;
+        private bool m_Init;
 
-        public static void OnDraw()
+        public void OnDraw()
         {
             if (!m_Init)
             {
@@ -54,7 +54,7 @@ namespace Ninth.Editor
             }
         }
 
-        private static void Init()
+        private void Init()
         {
             if (m_FoldOutDic != null)
             {

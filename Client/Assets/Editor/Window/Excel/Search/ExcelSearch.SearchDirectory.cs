@@ -7,15 +7,14 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static string ExcelSearchPathDirectoryRoot
+        private string ExcelSearchPathDirectoryRoot
         {
             get => EditorSOCore.GetExcelConfig().ExcelSearchPathDirectoryRoot;
             set => EditorSOCore.GetExcelConfig().ExcelSearchPathDirectoryRoot = value;
         }
 
-        private static void SetSearchDirectory()
+        private void SetSearchDirectory()
         {
-            GUILayout.Space(20);
             EditorGUILayout.BeginVertical();
             GUILayout.Label("Search Target Directory Settings", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();

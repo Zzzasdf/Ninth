@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,32 +14,34 @@ namespace Ninth.Editor
         {
             GetWindow<ExcelSettings>();
         }
-
-        private ExcelSettingsType ExcelSettingsType
+        private Dictionary<ExcelMode, Action> cache;
+        private Dictionary<ExcelMode, Action> Cache
         {
-            get => EditorSOCore.GetExcelConfig().ExcelSettingsType;
-            set => EditorSOCore.GetExcelConfig().ExcelSettingsType = value;
+            get
+            {
+                if(cache == null)
+                {
+                    cache = new Dictionary<ExcelMode, Action>();
+                    cache.Add(ExcelMode.Encode, new ExcelEncode().OnDraw);
+                    cache.Add(ExcelMode.Search, new ExcelSearch().OnDraw);
+                }
+                return cache;
+            }
+        }
+
+        private ExcelMode ExcelMode
+        {
+            get => EditorSOCore.GetExcelConfig().ExcelMode;
+            set => EditorSOCore.GetExcelConfig().ExcelMode = value;
         }
 
         private void OnGUI()
         {
-            string[] barMenu = new string[]
+            string[] barMenu = Cache.Keys.Select(x => x.ToString()).ToArray();
+            ExcelMode = (ExcelMode)GUILayout.Toolbar((int)ExcelMode, barMenu);
+            if(Cache.TryGetValue(ExcelMode, out Action action))
             {
-                ExcelSettingsType.Encoder.ToString(),
-                ExcelSettingsType.Search.ToString()
-            };
-            ExcelSettingsType = (ExcelSettingsType)GUILayout.Toolbar((int)ExcelSettingsType, barMenu);
-            switch(ExcelSettingsType)
-            {
-                case ExcelSettingsType.Encoder:
-                    {
-                        break;
-                    }
-                case ExcelSettingsType.Search:
-                    {
-                        ExcelSearch.OnDraw();
-                        break;
-                    }
+                action?.Invoke();
             }
         }
     }

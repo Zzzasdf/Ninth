@@ -13,7 +13,7 @@ namespace Ninth.Editor
 
         // Prefab
         [SerializeField] private ScanPrefabMode scanPrefabMode;
-        // Image
+        // Prefab => Image
         [SerializeField] private string prefabImageScanPathDirectoryRoot;
 
         public ScanMode ScanMode
@@ -22,12 +22,13 @@ namespace Ninth.Editor
             set => SetProperty(ref scanMode, value);
         }
 
+        // Prefab
         public ScanPrefabMode ScanPrefabMode
         {
             get => scanPrefabMode;
             set => SetProperty(ref scanPrefabMode, value);
         }
-
+        // Prefab => Image
         public string PrefabImageScanPathDirectoryRoot
         {
             get => prefabImageScanPathDirectoryRoot;

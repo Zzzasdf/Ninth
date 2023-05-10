@@ -8,10 +8,10 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static List<string> m_SearchObjList;
-        private static int m_Count;
+        private List<string> m_SearchObjList;
+        private int m_Count;
 
-        private static void SetSearchInputObj()
+        private void SetSearchInputObj()
         {
             GUILayout.Space(20);
             EditorGUILayout.BeginVertical();
@@ -78,7 +78,7 @@ namespace Ninth.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private static List<string> GetValidSearchObj()
+        private List<string> GetValidSearchObj()
         {
             List<string> NonEmptySearchObjectList = new List<string>();
             for (int index = 0; index < m_SearchObjList.Count; index++)

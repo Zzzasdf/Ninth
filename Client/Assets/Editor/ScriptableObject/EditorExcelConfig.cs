@@ -6,16 +6,30 @@ namespace Ninth.Editor
     [CreateAssetMenu(fileName = "ExcelConfigSO", menuName = "EditorConfig/ExcelConfigSO")]
     public class EditorExcelConfig : ScriptableObject
     {
-        [SerializeField] private ExcelSettingsType excelSettingsType;
+        [SerializeField] private ExcelMode excelMode;
+
+        // Encode
+        [SerializeField] private string excelEncodePathDirectoryRoot;
+
+        // Search
         [SerializeField] private string excelSearchPathDirectoryRoot;
         [SerializeField] private ExcelSearchMode excelSearchMode;
         [SerializeField] private ExcelSearchResultMode excelSearchResultMode;
 
-        public ExcelSettingsType ExcelSettingsType
+        public ExcelMode ExcelMode
         {
-            get => excelSettingsType;
-            set => SetProperty(ref excelSettingsType, value);
+            get => excelMode;
+            set => SetProperty(ref excelMode, value);
         }
+        
+        // Encode
+        public string ExcelEncodePathDirectoryRoot
+        {
+            get => excelEncodePathDirectoryRoot;
+            set => SetProperty(ref excelEncodePathDirectoryRoot, value);
+        }
+
+        // Search
         public string ExcelSearchPathDirectoryRoot
         {
             get => excelSearchPathDirectoryRoot;
@@ -34,6 +48,7 @@ namespace Ninth.Editor
 
         private void OnEnable()
         {
+            SetDefaultExcelEncodePathDirectoryRoot();
             SetDefaultExcelSearchPathDirectoryRoot();
         }
 
@@ -42,6 +57,14 @@ namespace Ninth.Editor
             if (string.IsNullOrEmpty(ExcelSearchPathDirectoryRoot))
             {
                 ExcelSearchPathDirectoryRoot = $"{Application.dataPath}/../../Excels";
+            }
+        }
+
+        private void SetDefaultExcelEncodePathDirectoryRoot()
+        {
+            if (string.IsNullOrEmpty(ExcelEncodePathDirectoryRoot))
+            {
+                ExcelEncodePathDirectoryRoot = $"{Application.dataPath}/../../Excels";
             }
         }
 
@@ -61,9 +84,9 @@ namespace Ninth.Editor
         }
     }
 
-    public enum ExcelSettingsType
+    public enum ExcelMode
     {
-        Encoder,
+        Encode,
         Search,
     }
 

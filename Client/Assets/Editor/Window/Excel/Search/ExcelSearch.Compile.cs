@@ -11,10 +11,10 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        // SearchResults
-        private static SearchCompile m_Compile;
+        // SearchCompile
+        private SearchCompile m_Compile;
 
-        private static void SetCompile()
+        private void SetCompile()
         {
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Compile"))
@@ -23,9 +23,12 @@ namespace Ninth.Editor
                 {
                     m_Compile = new SearchCompile();
                 }
+                else
+                {
+                    m_Compile.Tables.Clear();
+                }
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                m_Compile.Tables.Clear();
                 DirectoryInfo directory = new DirectoryInfo(ExcelSearchPathDirectoryRoot);
                 FileInfo[] fileInfos = directory.GetFiles();
                 for (int index = 0; index < fileInfos.Length; index++)
@@ -48,11 +51,11 @@ namespace Ninth.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private static void SearchXLS(FileInfo fileInfo)
+        private void SearchXLS(FileInfo fileInfo)
         {
             using (FileStream fsRead = File.OpenRead(fileInfo.FullName))
             {
-                CompileTable tableData = new CompileTable();
+                SearchCompileTable tableData = new SearchCompileTable();
                 tableData.TableName = fileInfo.Name;
                 tableData.Path = fileInfo.FullName;
                 m_Compile.Tables.Add(tableData);
@@ -94,11 +97,11 @@ namespace Ninth.Editor
             }
         }
 
-        private static void SearchXLSX(FileInfo fileInfo)
+        private void SearchXLSX(FileInfo fileInfo)
         {
             using (ExcelPackage excelPackage = new ExcelPackage(fileInfo))
             {
-                CompileTable tableData = new CompileTable();
+                SearchCompileTable tableData = new SearchCompileTable();
                 tableData.TableName = fileInfo.Name;
                 tableData.Path = fileInfo.FullName;
                 m_Compile.Tables.Add(tableData);

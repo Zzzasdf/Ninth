@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelEncoder
+    public partial class ExcelEncode
     {
         private static string AddRowSummary(string summary)
         {

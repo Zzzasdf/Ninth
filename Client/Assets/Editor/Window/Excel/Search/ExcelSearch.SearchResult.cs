@@ -8,19 +8,19 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static ExcelSearchResultMode ExcelSearchResultMode
+        private ExcelSearchResultMode ExcelSearchResultMode
         {
             get => EditorSOCore.GetExcelConfig().ExcelSearchResultMode;
             set => EditorSOCore.GetExcelConfig().ExcelSearchResultMode = value;
         }
 
-        private static Dictionary<string, Dictionary<string, LinkedList<SearchResultCell>>> m_SearchResultDic;
-        private static Dictionary<string, bool> m_FoldOutDic;
-        private static Dictionary<string, Dictionary<string, bool>> m_FoldOutDic2;
+        private Dictionary<string, Dictionary<string, LinkedList<SearchResultCell>>> m_SearchResultDic;
+        private Dictionary<string, bool> m_FoldOutDic;
+        private Dictionary<string, Dictionary<string, bool>> m_FoldOutDic2;
 
-        private static Vector2 m_SearchResultSV_V2;
+        private Vector2 m_SearchResultSV_V2;
 
-        private static void ExchangeSearchResultMode()
+        private void ExchangeSearchResultMode()
         {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -38,7 +38,7 @@ namespace Ninth.Editor
             GUILayout.EndHorizontal();
         }
 
-        private static void SetSearchResult()
+        private void SetSearchResult()
         {
             if (!m_SearchResultInit)
             {
@@ -134,7 +134,7 @@ namespace Ninth.Editor
             EditorGUILayout.EndScrollView();
         }
 
-        private static void SetSearchResultTableMode()
+        private void SetSearchResultTableMode()
         {
             EditorGUILayout.BeginVertical();
             foreach (var item in m_SearchResultDic)
@@ -193,7 +193,7 @@ namespace Ninth.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private static void SetSearchResultValueMode()
+        private void SetSearchResultValueMode()
         {
             EditorGUILayout.BeginVertical();
             for (int index = 0; index < m_SearchObjResultList.Count; index++)

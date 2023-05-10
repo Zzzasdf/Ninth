@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public partial class ExcelEncoder
+    public partial class ExcelEncode
     {
         public enum CollectType
         { 

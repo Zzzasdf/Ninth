@@ -10,16 +10,16 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        private static Action<CompileCell, string, int> m_FilterFunc;
-        private static List<string> m_SearchObjResultList;
-        private static List<SearchResultCell> m_SearchResult;
-        private static bool m_SearchResultInit;
+        private Action<CompileCell, string, int> m_FilterFunc;
+        private List<string> m_SearchObjResultList;
+        private List<SearchResultCell> m_SearchResult;
+        private bool m_SearchResultInit;
 
-        private static string m_SearchResultTypeInfo;
-        private static string m_SearchResultIntro;
+        private string m_SearchResultTypeInfo;
+        private string m_SearchResultIntro;
 
         #region SearchMode
-        private static void ExchangeSearchMode()
+        private void ExchangeSearchMode()
         {
             GUILayout.Space(20);
             EditorGUILayout.BeginHorizontal();
@@ -44,7 +44,7 @@ namespace Ninth.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        private static void ExactFunc(CompileCell compileCell, string path, int sheetIndex)
+        private void ExactFunc(CompileCell compileCell, string path, int sheetIndex)
         {
             if (m_SearchObjResultList.Contains(compileCell.CellValue))
             {
@@ -61,7 +61,7 @@ namespace Ninth.Editor
             }
         }
 
-        private static void ExistFunc(CompileCell compileCell, string path, int sheetIndex)
+        private void ExistFunc(CompileCell compileCell, string path, int sheetIndex)
         {
             for (int index = 0; index < m_SearchObjResultList.Count; index++)
             {
@@ -83,7 +83,7 @@ namespace Ninth.Editor
         #endregion
 
         #region Search
-        private static void SetSearch()
+        private void SetSearch()
         {
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Search") || Event.current.keyCode == KeyCode.Return) 
@@ -121,7 +121,7 @@ namespace Ninth.Editor
 
                     for (int tableIndex = 0; tableIndex < m_Compile.Tables.Count; tableIndex++)
                     {
-                        CompileTable table = m_Compile.Tables[tableIndex];
+                        SearchCompileTable table = m_Compile.Tables[tableIndex];
                         for (int sheetIndex = 0; sheetIndex < table.CompileSheets.Count; sheetIndex++)
                         {
                             CompileSheet sheet = table.CompileSheets[sheetIndex];

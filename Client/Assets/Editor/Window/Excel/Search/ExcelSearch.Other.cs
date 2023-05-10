@@ -7,12 +7,12 @@ namespace Ninth.Editor
 {
     public partial class ExcelSearch
     {
-        public class CompileTable
+        public class SearchCompileTable
         {
             public string TableName;
             public string Path;
             public List<CompileSheet> CompileSheets;
-            public CompileTable()
+            public SearchCompileTable()
             {
                 CompileSheets = new List<CompileSheet>();
             }
@@ -44,11 +44,11 @@ namespace Ninth.Editor
 
         public class SearchCompile
         {
-            public List<CompileTable> Tables;
+            public List<SearchCompileTable> Tables;
 
             public SearchCompile()
             {
-                Tables = new List<CompileTable>();
+                Tables = new List<SearchCompileTable>();
             }
         }
     }
