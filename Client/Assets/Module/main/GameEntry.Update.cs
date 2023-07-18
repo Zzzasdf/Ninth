@@ -20,6 +20,7 @@ namespace Ninth
         void Update()
         {
             m_RegisterUpdate?.Invoke(Time.deltaTime);
+            Test();
         }
     }
 }

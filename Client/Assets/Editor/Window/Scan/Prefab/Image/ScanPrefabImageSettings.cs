@@ -7,17 +7,17 @@ namespace Ninth.Editor
     {
         protected override void ClassifiesAssembler()
         {
-            AssembleClassify(ScanPrefabImageMode.LackMaterial, LackMaterial, "È±ÉÙ²ÄÖÊ", null);
-            AssembleClassify(ScanPrefabImageMode.WhiteColor, WhiteColor, "°×É«", WhiteColorHandle);
+            AssembleClassify(ScanPrefabImageMode.LackMaterial, LackMaterial, "ç¼ºå°‘æè´¨", null);
+            AssembleClassify(ScanPrefabImageMode.WhiteColor, WhiteColor, "ç™½è‰²", WhiteColorHandle);
         }
 
-        // ÊÇ·ñÈ±ÉÙ²ÄÖÊ
+        // æ˜¯å¦ç¼ºå°‘æè´¨
         private bool LackMaterial(Image image)
         {
             return image.material.name == "Default UI Material";
         }
 
-        // ÊÇ·ñÊÇ°×É«
+        // æ˜¯å¦æ˜¯ç™½è‰²
         private bool WhiteColor(Image image)
         {
             return image.color == Color.white;
@@ -28,15 +28,15 @@ namespace Ninth.Editor
             image.color = Color.red;
         }
 
-        // ÊµÏÖ³éÏó·½·¨
+        // å®ç°æŠ½è±¡æ–¹æ³•
         protected override string GetPathDirectoryRoot()
         {
-            return EditorSOCore.GetScanConfig().PrefabImageScanPathDirectoryRoot;
+            return WindowSOCore.Get<WindowScanConfig>().PrefabImageScanPathDirectoryRoot;
         }
 
         protected override void SetPathDirectoryRoot(string value)
         {
-            EditorSOCore.GetScanConfig().PrefabImageScanPathDirectoryRoot = value;
+            WindowSOCore.Get<WindowScanConfig>().PrefabImageScanPathDirectoryRoot = value;
         }
 
         protected override int EnumToInt(ScanPrefabImageMode tEnum)

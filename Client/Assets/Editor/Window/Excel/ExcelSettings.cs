@@ -7,39 +7,21 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public class ExcelSettings: EditorWindow
+    public class ExcelSettings<T>
+        where T : IExcelSettingsData, new()
     {
-        [MenuItem("Tools/ExcelSettings")]
-        private static void PanelOpen()
+        private T data;
+
+        public ExcelSettings()
         {
-            GetWindow<ExcelSettings>();
-        }
-        private Dictionary<ExcelMode, Action> cache;
-        private Dictionary<ExcelMode, Action> Cache
-        {
-            get
-            {
-                if(cache == null)
-                {
-                    cache = new Dictionary<ExcelMode, Action>();
-                    cache.Add(ExcelMode.Encode, new ExcelEncode().OnDraw);
-                    cache.Add(ExcelMode.Search, new ExcelSearch().OnDraw);
-                }
-                return cache;
-            }
+            data = new T();
         }
 
-        private ExcelMode ExcelMode
+        public void OnGUI()
         {
-            get => EditorSOCore.GetExcelConfig().ExcelMode;
-            set => EditorSOCore.GetExcelConfig().ExcelMode = value;
-        }
-
-        private void OnGUI()
-        {
-            string[] barMenu = Cache.Keys.Select(x => x.ToString()).ToArray();
-            ExcelMode = (ExcelMode)GUILayout.Toolbar((int)ExcelMode, barMenu);
-            if(Cache.TryGetValue(ExcelMode, out Action action))
+            string[] barMenu = data.TabDic.Keys.Select(x => x.ToString()).ToArray();
+            data.ExcelMode = (ExcelMode)GUILayout.Toolbar((int)data.ExcelMode, barMenu);
+            if (data.TabDic.TryGetValue(data.ExcelMode, out Action action))
             {
                 action?.Invoke();
             }

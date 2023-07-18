@@ -9,20 +9,20 @@ namespace Ninth.Editor
     {
         private ActiveTargetMode ActiveTargetMode
         {
-            get => EditorSOCore.GetBuildConfig().ActiveTargetMode;
-            set => EditorSOCore.GetBuildConfig().ActiveTargetMode = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().ActiveTargetMode;
+            set => WindowSOCore.Get<WindowBuildConfig>().ActiveTargetMode = value;
         }
 
         private BuildTarget BuildTarget
         {
-            get => EditorSOCore.GetBuildConfig().BuildTarget;
-            set => EditorSOCore.GetBuildConfig().BuildTarget = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildTarget;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildTarget = value;
         }
 
         private BuildTargetGroup BuildTargetGroup
         {
-            get => EditorSOCore.GetBuildConfig().BuildTargetGroup;
-            set => EditorSOCore.GetBuildConfig().BuildTargetGroup = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildTargetGroup;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildTargetGroup = value;
         }
 
         private void SetToggleActiveTarget()

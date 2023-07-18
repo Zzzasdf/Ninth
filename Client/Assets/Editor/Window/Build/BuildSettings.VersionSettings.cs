@@ -14,18 +14,18 @@ namespace Ninth.Editor
 
         private static int MajorVersion
         {
-            get => EditorSOCore.GetBuildConfig().MajorVersion;
-            set => EditorSOCore.GetBuildConfig().MajorVersion = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().MajorVersion;
+            set => WindowSOCore.Get<WindowBuildConfig>().MajorVersion = value;
         }
         private static int MinorVersion
         {
-            get => EditorSOCore.GetBuildConfig().MinorVersion;
-            set => EditorSOCore.GetBuildConfig().MinorVersion = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().MinorVersion;
+            set => WindowSOCore.Get<WindowBuildConfig>().MinorVersion = value;
         }
         private static int RevisionNumber
         {
-            get => EditorSOCore.GetBuildConfig().RevisionNumber;
-            set => EditorSOCore.GetBuildConfig().RevisionNumber = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().RevisionNumber;
+            set => WindowSOCore.Get<WindowBuildConfig>().RevisionNumber = value;
         }
 
         private void VersionInit()

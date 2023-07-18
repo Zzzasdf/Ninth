@@ -5,39 +5,35 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public sealed partial class BuildSettings: EditorWindow
+    public sealed partial class BuildSettings
     {
-        [MenuItem("Tools/BuildSettings")]
-        private static void PanelOpen()
-        {
-            GetWindow<BuildSettings>();
-        }
-
         private BuildSettingsType BuildSettingsType
         {
-            get => EditorSOCore.GetBuildConfig().BuildSettingsType;
-            set => EditorSOCore.GetBuildConfig().BuildSettingsType = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildSettingsType;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildSettingsType = value;
         }
 
         private BuildBundleMode BuildBundleMode
         {
-            get => EditorSOCore.GetBuildConfig().BuildBundleMode;
-            set => EditorSOCore.GetBuildConfig().BuildBundleMode = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildBundleMode;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildBundleMode = value;
         }
 
         private BuildPlayerMode BuildPlayerMode
         {
-            get => EditorSOCore.GetBuildConfig().BuildPlayerMode;
-            set => EditorSOCore.GetBuildConfig().BuildPlayerMode = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildPlayerMode;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildPlayerMode = value;
         }
 
-        private void Awake()
-        {
-            VersionInit();
-        }
+        private bool bVersionInit;
 
-        private void OnGUI()
+        public void OnGUI()
         {
+            if(bVersionInit)
+            {
+                VersionInit();
+                bVersionInit = !bVersionInit;
+            }
             EditorGUILayout.BeginVertical();
             string[] barMenu = new string[]
             {

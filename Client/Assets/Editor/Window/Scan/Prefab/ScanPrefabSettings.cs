@@ -10,8 +10,8 @@ namespace Ninth.Editor
     {
         private ScanPrefabMode ScanPrefabMode
         {
-            get => EditorSOCore.GetScanConfig().ScanPrefabMode;
-            set => EditorSOCore.GetScanConfig().ScanPrefabMode = value;
+            get => WindowSOCore.Get<WindowScanConfig>().ScanPrefabMode;
+            set => WindowSOCore.Get<WindowScanConfig>().ScanPrefabMode = value;
         }
 
         private Dictionary<ScanPrefabMode, Action> cache;

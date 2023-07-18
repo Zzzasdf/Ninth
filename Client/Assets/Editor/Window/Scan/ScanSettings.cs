@@ -7,13 +7,8 @@ using System.Linq;
 
 namespace Ninth.Editor
 {
-    public class ScanSettings : EditorWindow
+    public class ScanSettings
     {
-        [MenuItem("Tools/ScanSettings")]
-        private static void PanelOpen()
-        {
-            GetWindow<ScanSettings>();
-        }
         private Dictionary<ScanMode, Action> cache;
         private Dictionary<ScanMode, Action> Cache
         {
@@ -31,11 +26,11 @@ namespace Ninth.Editor
 
         private ScanMode ScanMode
         {
-            get => EditorSOCore.GetScanConfig().ScanMode;
-            set => EditorSOCore.GetScanConfig().ScanMode = value;
+            get => WindowSOCore.Get<WindowScanConfig>().ScanMode;
+            set => WindowSOCore.Get<WindowScanConfig>().ScanMode = value;
         }
 
-        private void OnGUI()
+        public void OnGUI()
         {
             string[] barMenu = Cache.Keys.Select(x => x.ToString()).ToArray();
             ScanMode = (ScanMode)GUILayout.Toolbar((int)ScanMode, barMenu);

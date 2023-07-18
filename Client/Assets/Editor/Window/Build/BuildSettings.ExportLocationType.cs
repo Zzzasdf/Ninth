@@ -9,8 +9,8 @@ namespace Ninth.Editor
     {
         private BuildExportDirectoryType BuildExportDirectoryType
         {
-            get => EditorSOCore.GetBuildConfig().BuildExportDirectoryType;
-            set => EditorSOCore.GetBuildConfig().BuildExportDirectoryType = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildExportDirectoryType;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildExportDirectoryType = value;
         }
 
         private void SetBtnExchangeExportDirectory()

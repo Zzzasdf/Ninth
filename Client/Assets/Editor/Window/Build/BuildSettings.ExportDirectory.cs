@@ -9,14 +9,14 @@ namespace Ninth.Editor
     {
         private string BuildBundlesDirectoryRoot
         {
-            get => EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot;
-            set => EditorSOCore.GetBuildConfig().BuildBundlesDirectoryRoot = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildBundlesDirectoryRoot;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildBundlesDirectoryRoot = value;
         }
 
         private string BuildPlayersDirectoryRoot
         {
-            get => EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot;
-            set => EditorSOCore.GetBuildConfig().BuildPlayersDirectoryRoot = value;
+            get => WindowSOCore.Get<WindowBuildConfig>().BuildPlayersDirectoryRoot;
+            set => WindowSOCore.Get<WindowBuildConfig>().BuildPlayersDirectoryRoot = value;
         }
 
         private void SetBrowseBundlesTargetDirectory()
