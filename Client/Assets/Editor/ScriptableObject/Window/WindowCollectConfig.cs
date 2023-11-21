@@ -9,11 +9,19 @@ namespace Ninth.Editor
     public class WindowCollectConfig : ScriptableObject
     {
         [SerializeField] private NinthWindowTab ninthWindowTab;
-        
+
+        [SerializeField] private ExcelMode excelMode;
+
         public NinthWindowTab NinthWindowTab
         {
             get => ninthWindowTab;
             set => SetProperty(ref ninthWindowTab, value);
+        }
+
+        public ExcelMode ExcelMode
+        {
+            get => excelMode;
+            set => SetProperty(ref excelMode, value);
         }
 
         private void SetProperty<T>(ref T field, T value)

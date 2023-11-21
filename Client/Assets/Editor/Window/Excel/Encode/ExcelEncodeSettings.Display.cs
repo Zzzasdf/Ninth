@@ -17,7 +17,7 @@
 
 //         private void SetDisplay()
 //         {
-//             if(!Directory.Exists(ExcelEncodePathDirectoryRoot))
+//             if(!Directory.Exists(EncodePathDirectoryRoot))
 //             {
 //                 return;
 //             }
@@ -35,7 +35,7 @@
 //                 excelAllInDirInfos.Tables.Clear();
 //             }
 
-//             DirectoryInfo directory = new DirectoryInfo(ExcelEncodePathDirectoryRoot);
+//             DirectoryInfo directory = new DirectoryInfo(EncodePathDirectoryRoot);
 //             List<FileInfo> fileInfos = directory.GetFiles().Where(x => x.Name.StartsWith("~$")).ToList();
 //             fileInfos.ForEach(x => excelAllInDirInfos.Tables.Add(new EncodeCompileTable(x)));
 //             EncodeCompileTable table = null;

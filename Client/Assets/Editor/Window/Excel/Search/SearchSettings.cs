@@ -1,18 +1,21 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
 namespace Ninth.Editor.Excel.Search
 {
-    using Table = TableData.Table;
-    using Sheet = TableData.Table.Sheet;
-    using Cell = TableData.Table.Sheet.Cell;
+    using Table = TableCollect.Table;
+    using Sheet = TableCollect.Table.Sheet;
+    using Cell = TableCollect.Table.Sheet.Cell;
 
     public class SearchSettings
     {
         private SearchSettingsData data;
+        private Vector2 vec2SearchData;
 
         public SearchSettings()
         {
@@ -21,36 +24,61 @@ namespace Ninth.Editor.Excel.Search
 
         public void OnGUI()
         {
-            using (new EditorGUILayout.VerticalScope("frameBox"))
+            if (data.IsFoldoutSearchData)
             {
-                RenderCompileDirectoryRoot();
-                RenderBtnCompile();
-            }
+                using (new EditorGUILayout.VerticalScope("frameBox"))
+                {
+                    RenderCompileDirectoryRoot();
+                    RenderBtnCompile();
+                }
 
-            if (data?.CompileData?.Tables == null
-                || data.CompileData.Tables.Count == 0)
-            {
-                return;
-            }
+                if (data?.CompileData?.Tables == null
+                    || data.CompileData.Tables.Count == 0)
+                {
+                    return;
+                }
 
-            using (new EditorGUILayout.VerticalScope("frameBox"))
-            {
-                RenderSearchItems();
-                RenderSearchMode();
-                RenderBtnSearch();
-            }
+                using (new EditorGUILayout.VerticalScope("frameBox"))
+                {
+                    RenderCompileInfo();
+                }
 
-            if(data?.SearchCells == null
-                || data.SearchCells.Count == 0)
-            {
-                return;
+                using (new EditorGUILayout.VerticalScope("frameBox"))
+                {
+                    RenderSearchItems();
+                    RenderSearchIgnoreCase();
+                    RenderSearchMode();
+                    RenderBtnSearch();
+                }
+
+                if (data?.SearchCells == null
+                    || data.SearchCells.Count == 0)
+                {
+                    return;
+                }
+
+                using (new EditorGUILayout.VerticalScope("frameBox"))
+                {
+                    RenderSearchInfo();
+                }
             }
+            RenderBtnFolderSearchData();
 
             using (new EditorGUILayout.VerticalScope("frameBox"))
             {
                 RenderSearchDataMode();
-                RenderSearchData();
+                RenderSearchDataSelectionGrids();
+                using (new EditorGUILayout.HorizontalScope("frameBox"))
+                {
+                    RenderSearchDataGroups();
+                    using (var scrollView = new EditorGUILayout.ScrollViewScope(vec2SearchData))
+                    {
+                        vec2SearchData = scrollView.scrollPosition;
+                        RenderSearchData();
+                    }
+                }
             }
+
         }
 
         #region Compile
@@ -66,10 +94,15 @@ namespace Ninth.Editor.Excel.Search
         {
             if (GUILayout.Button("Compile"))
             {
-                data.CompileData = CompileCalculator.Get(data.CompileDirectoryRoot);
+                data.Compile();
             }
         }
         #endregion
+
+        private void RenderCompileInfo()
+        {
+            EditorGUILayout.TextArea(data.CompileInfo);
+        }
 
         #region Search
         private void RenderSearchItems()
@@ -112,6 +145,15 @@ namespace Ninth.Editor.Excel.Search
             }
         }
 
+        private void RenderSearchIgnoreCase()
+        {
+            using(new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.FlexibleSpace();
+                data.ComparisonType = (StringComparison)EditorGUILayout.EnumPopup(data.ComparisonType);
+            }
+        }
+
         private void RenderSearchMode()
         {
             using (new EditorGUILayout.HorizontalScope())
@@ -130,13 +172,32 @@ namespace Ninth.Editor.Excel.Search
         {
             if (GUILayout.Button("Search"))
             {
-                data.SearchCells = SearchCalculator.Get(data.CompileData, data.SearchItems, data.SearchMode);
+                data.Search();
                 ResetRenderSearchResult();
             }
         }
         #endregion
 
-        #region SearchResult
+        private void RenderSearchInfo()
+        {
+            EditorGUILayout.TextArea(data.SearchInfo);
+        }
+
+        #region SearchData
+        private void RenderBtnFolderSearchData()
+        {
+            char charTxt = data.IsFoldoutSearchData ? '∨' : '∧';
+            StringBuilder sb = new StringBuilder();
+            for (int index = 0; index < 65; index++)
+            {
+                sb.Append(charTxt);
+            }
+            if (GUILayout.Button(sb.ToString()))
+            {
+                data.IsFoldoutSearchData = !data.IsFoldoutSearchData;
+            }
+        }
+
         private void RenderSearchDataMode()
         {
             string[] barMenu = SearchDataModeCalculatorFactory.GetHeads().Select(x => x.ToString()).ToArray();
@@ -148,42 +209,107 @@ namespace Ninth.Editor.Excel.Search
             }
         }
 
-        private void RenderSearchData()
+        private void RenderSearchDataSelectionGrids()
         {
-            string[] texts = data.ExcelSearchResult.Select(x => SearchDataModeCalculatorFactory.Get(data.SearchDataMode).GridName(x)).ToArray();
-            if (data.SelectionGridIndex > data.ExcelSearchResult.Count - 1)
+            string[] texts = data.SearchData.Select(x => SearchDataModeCalculatorFactory.Get(data.SearchDataMode).GridName(x)).ToArray();
+            if (data.SelectionGridIndex > data.SearchData.Count - 1)
             {
-                data.SelectionGridIndex = data.ExcelSearchResult.Count - 1;
+                data.SelectionGridIndex = data.SearchData.Count - 1;
             }
             data.SelectionGridIndex = GUILayout.SelectionGrid(data.SelectionGridIndex, texts, 5);
-            TableData result = data.ExcelSearchResult.Values.ToList()[data.SelectionGridIndex];
+        }
+
+        private void RenderSearchDataGroups()
+        {
+            using (new GUILayout.VerticalScope())
+            {
+                using (new GUILayout.HorizontalScope())
+                {
+                    data.SearchDataTempGroupItems = EditorGUILayout.IntField(data.SearchDataTempGroupItems);
+                    if (GUILayout.Button("Confirm"))
+                    {
+                        if (data.SearchDataGroupItems != data.SearchDataTempGroupItems)
+                        {
+                            data.SearchDataGroupItems = data.SearchDataTempGroupItems;
+                            data.SearchDataTempGroupItems = data.SearchDataGroupItems;
+                        }
+                    }
+                    
+                }
+                TableCollect tableCollect = data.SearchData.Values.ToList()[data.SelectionGridIndex];
+                int count = 0;
+                foreach (var table in tableCollect.Tables)
+                {
+                    Table tableValue = table.Value;
+                    foreach (var sheet in tableValue.Sheets)
+                    {
+                        Sheet sheetValue = sheet.Value;
+                        foreach (var cell in sheetValue.Cells)
+                        {
+                            count++;
+                        }
+                    }
+                }
+                List<string> itemsName = new List<string>();
+                int wholeCount = count / data.SearchDataGroupItems;
+                bool isHavePart = count % data.SearchDataGroupItems != 0;
+                for (int index = 0; index < wholeCount; index++)
+                {
+                    itemsName.Add(string.Format("[{0}-{1}]", data.SearchDataGroupItems * index, data.SearchDataGroupItems * (index + 1) - 1));
+                }
+                if (isHavePart)
+                {
+                    itemsName.Add(string.Format("[{0}-{1}]", wholeCount * data.SearchDataGroupItems, count - 1));
+                }
+                int page = wholeCount + (isHavePart ? 1 : 0);
+                data.SearchDataPageIndex = Mathf.Min(data.SearchDataPageIndex, page - 1);
+                int tempPage = GUILayout.SelectionGrid(data.SearchDataPageIndex, itemsName.ToArray(), 1);
+                if (tempPage != data.SearchDataPageIndex)
+                {
+                    data.SearchDataPageIndex = tempPage;
+                    RenderSearchData();
+                }
+            }
+        }
+
+        private void RenderSearchData()
+        {
+            TableCollect result = data.SearchData.Values.ToList()[data.SelectionGridIndex];
+            int count = 0;
+            int startPos = data.SearchDataGroupItems * data.SearchDataPageIndex;
+            int endPos = data.SearchDataGroupItems * (data.SearchDataPageIndex + 1) - 1;
             foreach (var table in result.Tables)
             {
                 string tableKey = table.Key;
                 Table tableValue = table.Value;
-                result.SetFolder(tableKey, EditorGUILayout.Foldout(result.GetFolder(tableKey), tableValue.Name));
-                if(result.GetFolder(tableKey))
+                foreach (var sheet in tableValue.Sheets)
                 {
-                    foreach (var sheet in tableValue.Sheets)
+                    int sheetKey = sheet.Key;
+                    Sheet sheetValue = sheet.Value;
+                    foreach (var cell in sheetValue.Cells)
                     {
-                        int sheetKey = sheet.Key;
-                        Sheet sheetValue = sheet.Value;
-                        foreach (var cell in sheetValue.Cells)
+                        count++;
+                        if (count < startPos + 1)
                         {
-                            (int, int) cellKey = cell.Key;
-                            Cell cellValue = cell.Value;
-                            using (new EditorGUILayout.VerticalScope("frameBox"))
+                            continue;
+                        }
+                        if (count > endPos + 1)
+                        {
+                            return;
+                        }
+                        (int, int) cellKey = cell.Key;
+                        Cell cellValue = cell.Value;
+                        using (new EditorGUILayout.VerticalScope("frameBox"))
+                        {
+                            using (new EditorGUILayout.HorizontalScope())
                             {
-                                using (new EditorGUILayout.HorizontalScope())
+                                EditorGUILayout.LabelField(string.Format("Table:{0}, Sheet:{1}, Row:{2}, Col{3}", cellValue.Sheet.Table.Name, cellValue.Sheet.SheetIndex, cellValue.Row, cellValue.Col));
+                                if (GUILayout.Button("OpenExcel"))
                                 {
-                                    EditorGUILayout.LabelField(string.Format("Table:{0}, Sheet:{1}, Row:{2}, Col{3}", cellValue.Sheet.Table.Name, cellValue.Sheet.SheetIndex, cellValue.Row, cellValue.Col));
-                                    if (GUILayout.Button("OpenExcel"))
-                                    {
-                                        Process.Start(cellValue.Sheet.Table.FullName);
-                                    }
+                                    Process.Start(cellValue.Sheet.Table.FullName);
                                 }
-                                EditorGUILayout.TextArea(cellValue.Value);
                             }
+                            EditorGUILayout.TextArea(cellValue.Value);
                         }
                     }
                 }
@@ -193,13 +319,13 @@ namespace Ninth.Editor.Excel.Search
 
         private void ResetRenderSearchResult()
         {
-            if (data.ExcelSearchResult == null)
+            if (data.SearchData == null)
             {
-                data.ExcelSearchResult = new Dictionary<string, TableData>();
+                data.SearchData = new Dictionary<string, TableCollect>();
             }
             else
             {
-                data.ExcelSearchResult.Clear();
+                data.SearchData.Clear();
             }
             if (data.SearchCells == null)
             {
@@ -208,15 +334,19 @@ namespace Ninth.Editor.Excel.Search
             for (int index = 0; index < data.SearchCells.Count; index++)
             {
                 Cell cell = data.SearchCells[index];
-                string key = SearchDataModeCalculatorFactory.Get(data.SearchDataMode).GroupName(cell, data.SearchItems);
-                if (!data.ExcelSearchResult.TryGetValue(key, out TableData value))
+                List<string> keys = SearchDataModeCalculatorFactory.Get(data.SearchDataMode).GroupName(cell, data.SearchItems, data.ComparisonType);
+                foreach (var key in keys)
                 {
-                    value = new TableData();
-                    data.ExcelSearchResult.Add(key, value);
+                    if (!data.SearchData.TryGetValue(key, out TableCollect value))
+                    {
+                        value = new TableCollect();
+                        data.SearchData.Add(key, value);
+                    }
+                    value.AddCell(cell);
                 }
-                value.AddCell(cell);
             }
             data.SelectionGridIndex = 0;
+            data.SearchDataTempGroupItems = data.SearchDataGroupItems;
         }
     }
 }

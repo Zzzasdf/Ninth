@@ -14,8 +14,8 @@ namespace Ninth.Editor.Excel
 
         public ExcelMode ExcelMode
         {
-            get => WindowSOCore.Get<WindowExcelConfig>().ExcelMode;
-            set => WindowSOCore.Get<WindowExcelConfig>().ExcelMode = value;
+            get => WindowSOCore.Get<WindowCollectConfig>().ExcelMode;
+            set => WindowSOCore.Get<WindowCollectConfig>().ExcelMode = value;
         }
     }
 }

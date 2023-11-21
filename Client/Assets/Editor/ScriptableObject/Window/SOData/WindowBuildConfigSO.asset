@@ -15,12 +15,12 @@ MonoBehaviour:
   buildBundlesDirectoryRoot: F:/Ninth/Client/Assets/../../Bundles
   buildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
   buildSettingsType: 0
-  buildBundleMode: 0
+  buildBundleMode: 1
   buildPlayerMode: 0
-  majorVersion: 0
+  majorVersion: 1
   minorVersion: 0
-  revisionNumber: 0
+  revisionNumber: 1
   buildExportDirectoryType: 0
   activeTargetMode: 0
   buildTarget: 19
-  buildTargetGroup: 0
+  buildTargetGroup: 1

@@ -6,17 +6,14 @@ namespace Ninth.HotUpdate
 {
     public partial class AssetProxy
     {
-        // 资源配置
-        private Dictionary<string, AssetRef> m_ConfigAssetPath2AssetRef;
-
-        // 加载进内存的bundle, 确保只存在一个
-        public Dictionary<string, BundleRef> m_BundlePath2BundleRef;
-
-        private Func<string, string> m_LocalPathFunc;
-        private Func<string, string> m_RemotePathFunc;
-
-        public AssetProxy()
+        private readonly AssetConfig assetConfig;
+        private readonly PathConfig pathConfig;
+        
+        public AssetProxy(PathConfig pathConfig)
         {
+            this.assetConfig = assetConfig;
+            this.pathConfig = pathConfig;
+
             m_ConfigAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             m_BundlePath2BundleRef = new Dictionary<string, BundleRef>();
 
@@ -26,10 +23,21 @@ namespace Ninth.HotUpdate
             // SetPath2BundleName(localLoadConfig);
             // SetPath2BundleName(remoteLoadConfig);
 
-            m_LocalPathFunc = (assetName) => PathConfig.BundleInLocalInStreamingAssetPath(assetName);
-            m_RemotePathFunc = (assetName) => PathConfig.BundleInRemoteInPersistentDataPath(assetName);
+            m_LocalPathFunc = (assetName) => pathConfig.BundleInLocalInStreamingAssetPath(assetName);
+            m_RemotePathFunc = (assetName) => pathConfig.BundleInRemoteInPersistentDataPath(assetName);
             "AssetProxy 初始化成功".Log();
         }
+
+        // 资源配置
+        private Dictionary<string, AssetRef> m_ConfigAssetPath2AssetRef;
+
+        // 加载进内存的bundle, 确保只存在一个
+        public Dictionary<string, BundleRef> m_BundlePath2BundleRef;
+
+        private Func<string, string> m_LocalPathFunc;
+        private Func<string, string> m_RemotePathFunc;
+
+        
 
         private void SetPath2BundleName(LoadConfig loadConfig)
         {

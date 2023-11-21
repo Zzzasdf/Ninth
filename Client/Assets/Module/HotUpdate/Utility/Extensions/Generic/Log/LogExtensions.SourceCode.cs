@@ -20,6 +20,10 @@ namespace Ninth.HotUpdate
             #region Frame
             public static T FrameLog<T>(T message, string format = null)
             {
+                if(message == null)
+                {
+                    return default(T);
+                }
                 if (Validator.HasFlag(LogValidator.FrameLog))
                 {
                     Debug.LogFormat(FrameFormat(), MessageFormat(message, format));

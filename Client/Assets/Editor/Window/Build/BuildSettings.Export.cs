@@ -34,25 +34,25 @@ namespace Ninth.Editor
                                 {
                                     case BuildBundleMode.HotUpdateBundles:
                                         {
-                                            BuildAssetsCommand.BuildHotUpdateBundles(BuildTarget,
+                                            buildAssetsCmd.BuildHotUpdateBundles(BuildTarget,
                                                 BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
                                                 string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
 
                                             if(BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
-                                                BuildAssetsCommand.RemoteApply();
+                                                buildAssetsCmd.RemoteApply();
                                             }
                                             break;
                                         }
                                     case BuildBundleMode.AllBundles:
                                         {
-                                            BuildAssetsCommand.BuildAllBundles(BuildTarget,
+                                            buildAssetsCmd.BuildAllBundles(BuildTarget,
                                                 BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
                                                 string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
                                             
                                             if (BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
-                                                BuildAssetsCommand.RemoteApply();
+                                                buildAssetsCmd.RemoteApply();
                                             }
                                             break;
                                         }
@@ -65,18 +65,18 @@ namespace Ninth.Editor
                                 {
                                     case BuildPlayerMode.InoperationBundle:
                                         {
-                                            BuildAssetsCommand.BuildPlayer(BuildTargetGroup, BuildTarget);
+                                            buildAssetsCmd.BuildPlayer(BuildTargetGroup, BuildTarget);
                                             break;
                                         }
                                     case BuildPlayerMode.RepackageBundle:
                                         {
-                                            BuildAssetsCommand.BuildPlayerRepackage(BuildTargetGroup, BuildTarget,
+                                            buildAssetsCmd.BuildPlayerRepackage(BuildTargetGroup, BuildTarget,
                                                 BuildExportDirectoryType == BuildExportDirectoryType.Local ? AssetMode.LocalAB : AssetMode.RemoteAB,
                                                 string.Join(".", majorVersionTemp, minorVersionTemp, RevisionNumber));
                                             
                                             if (BuildExportDirectoryType == BuildExportDirectoryType.Remote)
                                             {
-                                                BuildAssetsCommand.RemoteApply();
+                                                buildAssetsCmd.RemoteApply();
                                             }
                                             break;
                                         }

@@ -2,11 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Ninth.Editor.Excel.Search
 {
-    using Cell = TableData.Table.Sheet.Cell;
+    using Cell = TableCollect.Table.Sheet.Cell;
+
+    public enum SearchDataMode
+    {
+        Value,
+        Table,
+    }
 
     public class SearchDataModeCalculatorFactory
     {
@@ -32,13 +39,13 @@ namespace Ninth.Editor.Excel.Search
 
         public interface ISearchDataModeCalculator
         {
-            string GroupName(Cell cell, List<string> searchItems);
-            string GridName(KeyValuePair<string, TableData> keyValuePair);
+            List<string> GroupName(Cell cell, List<string> searchItems, StringComparison comparisonType);
+            string GridName(KeyValuePair<string, TableCollect> keyValuePair);
         }
 
         public class SearchDataModeValueCalculator : ISearchDataModeCalculator
         {
-            public string GroupName(Cell cell, List<string> searchItems)
+            public List<string> GroupName(Cell cell, List<string> searchItems, StringComparison comparisonType)
             {
                 if (cell == null
                     || string.IsNullOrEmpty(cell.Value)
@@ -47,21 +54,24 @@ namespace Ninth.Editor.Excel.Search
                 {
                     throw new ArgumentNullException();
                 }
-                string result = string.Empty;
+                List<string> result = new List<string>();
                 for (int index = 0; index < searchItems.Count; index++)
                 {
-                    if (cell.Value.Contains(searchItems[index]))
+                    if (cell.Value.Contains(searchItems[index], comparisonType))
                     {
-                        result = searchItems[index];
-                        return result;
+                        result.Add(searchItems[index]);
                     }
                 }
-                throw new ArgumentOutOfRangeException();
+                if(result.Count == 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                return result;
             }
 
-            public string GridName(KeyValuePair<string, TableData> keyValuePair)
+            public string GridName(KeyValuePair<string, TableCollect> keyValuePair)
             {
-                if (keyValuePair.Equals(default(KeyValuePair<string, TableData>))
+                if (keyValuePair.Equals(default(KeyValuePair<string, TableCollect>))
                     || keyValuePair.Value?.Tables?.Values == null)
                 {
                     throw new ArgumentNullException();
@@ -84,18 +94,18 @@ namespace Ninth.Editor.Excel.Search
 
         public class SearchDataModeTableCalculator : ISearchDataModeCalculator
         {
-            public string GroupName(Cell cell, List<string> searchItems)
+            public List<string> GroupName(Cell cell, List<string> searchItems, StringComparison comparisonType)
             {
                 if (cell?.Sheet?.Table?.FullName == null)
                 {
                     throw new ArgumentNullException();
                 }
-                string result = cell.Sheet.Table.FullName;
+                List<string> result = new List<string> { cell.Sheet.Table.FullName };
                 return result;
             }
-            public string GridName(KeyValuePair<string, TableData> keyValuePair)
+            public string GridName(KeyValuePair<string, TableCollect> keyValuePair)
             {
-                if (keyValuePair.Equals(default(KeyValuePair<string, TableData>))
+                if (keyValuePair.Equals(default(KeyValuePair<string, TableCollect>))
                     || keyValuePair.Value?.Tables?.Values == null)
                 {
                     throw new ArgumentNullException();

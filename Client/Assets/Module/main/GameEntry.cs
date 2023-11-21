@@ -1,46 +1,26 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 namespace Ninth
 {
-    public partial class GameEntry : MonoBehaviour
+    [DisallowMultipleComponent]
+    public sealed partial class GameEntry : MonoBehaviour
     {
-        public static GameEntry Instance { get; private set; }
+        public static ConfigCore Config; // 配置
+        public static DownloadCore Download { get; private set; } // 下载
+        public static JsonCore Json { get; private set; } // Json
+        public static ProcedureCore Procedure { get; private set; } // 流程
 
-        public static DownloadCore DownloadCore;
         private void Awake()
         {
-            Instance = this;
-            DownloadCore = new DownloadCore();
+            Config = new ConfigCore();
+            Download = new DownloadCore();
+            Json = new JsonCore(Config.Encoding);
+            Procedure = new ProcedureCore(Config.AssetConfig, Config.PathConfig, Download);
         }
 
         void Start()
         {
-            new Launcher().EnterProcedure();
-        }
-
-        [SerializeField, Header("正则表达式")] private string regex;
-        [SerializeField, Header("测试字符串")] private string regStr;
-        void Test()
-        {
-            if(Input.GetKeyDown(KeyCode.R))
-            {
-                // Regex reg = new Regex(@regex);
-                // Match match = reg.Match(regStr);
-                // UnityEngine.Debug.LogFormat("Value匹配输出结果[{0}]", match.Value.Trim());
-                // UnityEngine.Debug.LogFormat("ToString匹配输出结果[{0}]", match.ToString().Trim());
-                if(byte.TryParse(regStr, out byte result))
-                {
-                    UnityEngine.Debug.LogFormat("[{0}]", result.ToString());
-                }
-                else
-                {
-                    UnityEngine.Debug.Log("转换失败!");
-                }
-            }
+            Procedure.Start();
         }
     }
 }

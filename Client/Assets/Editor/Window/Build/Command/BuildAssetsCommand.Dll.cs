@@ -11,12 +11,12 @@ namespace Ninth.Editor
 {
     public partial class BuildAssetsCommand
     {
-        public static string ToRelativeAssetPath(string s)
+        public string ToRelativeAssetPath(string s)
         {
             return s.Substring(s.IndexOf("Assets/"));
         }
 
-        public static void BuildDll(BuildTarget target, string dstDir)
+        public void BuildDll(BuildTarget target, string dstDir)
         {
             ScanAssembly(target, dstDir);
         }
@@ -25,14 +25,14 @@ namespace Ninth.Editor
         /// 打包程序集
         /// </summary>
         /// <param name="directoryInfo"></param>
-        private static void ScanAssembly(BuildTarget target, string dstDir)
+        private void ScanAssembly(BuildTarget target, string dstDir)
         {
             CompileDllCommand.CompileDll(target);
             CopyAOTAssemblies2SourceDataTempPath(dstDir);
             CopyHotUpdateAssemblies2SourceDataTempPath(dstDir);
         }
 
-        public static void CopyAOTAssemblies2SourceDataTempPath(string dstDir)
+        public void CopyAOTAssemblies2SourceDataTempPath(string dstDir)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
@@ -53,7 +53,7 @@ namespace Ninth.Editor
             }
         }
 
-        public static void CopyHotUpdateAssemblies2SourceDataTempPath(string dstDir)
+        public void CopyHotUpdateAssemblies2SourceDataTempPath(string dstDir)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
 
@@ -70,7 +70,7 @@ namespace Ninth.Editor
             }
         }
 
-        private static void DllSortOut(string dllName)
+        private void DllSortOut(string dllName)
         {
             AssetLocate assetLocate = AssetLocate.Dll;
             if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))

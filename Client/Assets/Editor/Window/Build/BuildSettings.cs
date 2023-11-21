@@ -7,6 +7,13 @@ namespace Ninth.Editor
 {
     public sealed partial class BuildSettings
     {
+        private readonly BuildAssetsCommand buildAssetsCmd;
+
+        public BuildSettings(BuildAssetsCommand buildAssetsCmd)
+        {
+            this.buildAssetsCmd = buildAssetsCmd;
+        }
+
         private BuildSettingsType BuildSettingsType
         {
             get => WindowSOCore.Get<WindowBuildConfig>().BuildSettingsType;

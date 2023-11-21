@@ -9,9 +9,10 @@ namespace Ninth.HotUpdate
     [DisallowMultipleComponent]
     public sealed class GameDriver : MonoBehaviour
     {
-        public static void Init()
+        public static async void Init(object pathConfig)
         {
-            new GameObject("GameDriver").AddComponent<GameDriver>();
+            GameDriver gameDriver = new GameObject("GameDriver").AddComponent<GameDriver>();
+            gameDriver.Init(pathConfig as Ninth.PathConfig);
         }
         private GameDriver() { }
 
@@ -20,16 +21,18 @@ namespace Ninth.HotUpdate
         public static DownloaderProxy DownloaderProxy { get; private set; }
         public static ViewCtrlProxy ViewCtrlProxy { get; private set; }
 
-        private async void Awake()
+        private void Awake()
         {
             DontDestroyOnLoad(this);
             "热更部分启动成功347!!".Log();
+        }
 
-            AssetProxy = new AssetProxy();
+        private async UniTask Init(PathConfig pathConfig)
+        {
+            AssetProxy = new AssetProxy(pathConfig);
             SceneProxy = new SceneProxy();
             DownloaderProxy = new DownloaderProxy();
             ViewCtrlProxy = new ViewCtrlProxy();
-
             await GameDriver.ViewCtrlProxy.Get<ControllerTest>().ShowViewTest();
         }
 

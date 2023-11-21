@@ -9,8 +9,8 @@ namespace Ninth.Editor
     {
         private string ExcelEncodePathDirectoryRoot
         {
-            get => WindowSOCore.Get<WindowExcelConfig>().ExcelEncodePathDirectoryRoot;
-            set => WindowSOCore.Get<WindowExcelConfig>().ExcelEncodePathDirectoryRoot = value;
+            get => WindowSOCore.Get<WindowExcelEncodeConfig>().EncodePathDirectoryRoot;
+            set => WindowSOCore.Get<WindowExcelEncodeConfig>().EncodePathDirectoryRoot = value;
         }
 
         private void SetEncodeDirectory()

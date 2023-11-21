@@ -7,47 +7,52 @@ using HybridCLR.Editor;
 using System.IO;
 using HybridCLR.Editor.Commands;
 using System.Linq;
+using System.Collections.ObjectModel;
+using JsonCore = Ninth.GameEntry.JsonCore;
 
 namespace Ninth.Editor
 {
     public sealed partial class BuildAssetsCommand
     {
-        public static List<string> LocalGroup
+        private readonly AssetConfig assetConfig;
+        private readonly PackConfig packConfig;
+        private readonly JsonCore jsonCore;
+
+        public BuildAssetsCommand(AssetConfig assetConfig, PackConfig packConfig, JsonCore jsonCore)
         {
-            get => SOCore.GetGlobalConfig().LocalGroup;
-            set => SOCore.GetGlobalConfig().LocalGroup = value;
+            this.assetConfig = assetConfig;
+            this.packConfig = packConfig;
+            this.jsonCore = jsonCore;
         }
 
-        public static List<string> RemoteGroup
-        {
-            get => SOCore.GetGlobalConfig().RemoteGroup;
-            set => SOCore.GetGlobalConfig().RemoteGroup = value;
-        }
+        public ReadOnlyCollection<string> LocalGroup => assetConfig.LocalGroup;
+
+        public ReadOnlyCollection<string> RemoteGroup => assetConfig.RemoteGroup;
 
         // 打包模式
-        public static AssetMode m_PackAssetMode;
+        public AssetMode m_PackAssetMode;
 
         // 版本配置
-        private static VersionConfig m_VersionConfig;
+        private VersionConfig m_VersionConfig;
 
         // AB包
-        private static List<AssetBundleBuild> m_AssetBundleBuildList;
+        private List<AssetBundleBuild> m_AssetBundleBuildList;
 
         // 加载配置
         // 整包 Local + Remote + Dll
         // eg!! Local 放在StreamingAssets文件夹下
         // 增量包 Remote + Dll
-        private static Dictionary<AssetLocate, LoadConfig> m_LoadConfig;
-        private static Dictionary<AssetLocate, List<string>> m_AssetLocate2AssetPathList;
-        private static Dictionary<string, AssetRef> m_AssetPath2AssetRef;
-        private static Dictionary<string, BundleRef> m_BundleName2BundleRef;
+        private Dictionary<AssetLocate, LoadConfig> m_LoadConfig;
+        private Dictionary<AssetLocate, List<string>> m_AssetLocate2AssetPathList;
+        private Dictionary<string, AssetRef> m_AssetPath2AssetRef;
+        private Dictionary<string, BundleRef> m_BundleName2BundleRef;
 
         // 下载配置 Remote + Dll
         // 与版本包对比需要热更的部分
-        private static Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
-        private static Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
+        private Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
+        private Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
 
-        static BuildAssetsCommand()
+        BuildAssetsCommand()
         {
             m_VersionConfig = new VersionConfig();
             m_AssetBundleBuildList = new List<AssetBundleBuild>();
@@ -59,7 +64,7 @@ namespace Ninth.Editor
             m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
         }
 
-        public static bool BuildPlayerRepackage(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildPlayerRepackage(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
         {
             bool result = BuildAllBundles(target, assetMode, newVersion);
             if (!result)
@@ -70,16 +75,16 @@ namespace Ninth.Editor
             return true;
         }
 
-        public static bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
+        public bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
         {
-            PackConfig.BuildPlatform = target.ToString();
-            VersionConfig versionConfig = Utility.Get<VersionConfig>(PackConfig.BaseVersion());
+            packConfig.BuildPlatform = target.ToString();
+            VersionConfig versionConfig = jsonCore.ToObject<VersionConfig>(packConfig.BaseVersion());
             if(versionConfig == null)
             {
-                UnityEngine.Debug.LogError($"在路径{PackConfig.BaseVersion()}下不存在版本配置文件, 请先打一个版本包！！");
+                UnityEngine.Debug.LogError($"在路径{packConfig.BaseVersion()}下不存在版本配置文件, 请先打一个版本包！！");
                 return false;
             }
-            string outputPath = PackConfig.PlayerSourceDirectory(versionConfig.BaseVersion);
+            string outputPath = packConfig.PlayerSourceDirectory(versionConfig.BaseVersion);
             var buildOptions = BuildOptions.None;
             string location = $"{outputPath}/HybridCLRTrial.exe";
             Debug.Log("====> Build App");
@@ -105,9 +110,9 @@ namespace Ninth.Editor
             return true;
         }
 
-        public static bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
-            PackConfig.BuildPlatform = target.ToString();
+            packConfig.BuildPlatform = target.ToString();
             m_PackAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
@@ -121,9 +126,9 @@ namespace Ninth.Editor
             return true;
         }
 
-        public static bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
-            PackConfig.BuildPlatform = target.ToString();
+            packConfig.BuildPlatform = target.ToString();
             m_PackAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
@@ -139,7 +144,7 @@ namespace Ninth.Editor
         /// <summary>
         /// 重置
         /// </summary>
-        private static void Init()
+        private void Init()
         {
             m_VersionConfig = new VersionConfig();
             m_AssetBundleBuildList.Clear();
@@ -156,7 +161,7 @@ namespace Ninth.Editor
         /// </summary>
         /// <param name="gAsset"></param>
         /// <param name="groupListArgs"></param>
-        private static bool Build(string newVersion, BuildTarget target, params (List<string> groupList, AssetLocate assetLocate)[] groupListArgs)
+        private bool Build(string newVersion, BuildTarget target, params (ReadOnlyCollection<string> groupList, AssetLocate assetLocate)[] groupListArgs)
         {
             try
             {
@@ -182,10 +187,10 @@ namespace Ninth.Editor
                 }
                 else
                 {
-                    VersionConfig versionConfig = Utility.Get<VersionConfig>(PackConfig.ApplyVersionInSourceDataPath());
+                    VersionConfig versionConfig = jsonCore.ToObject<VersionConfig>(packConfig.ApplyVersionInSourceDataPath());
                     if (versionConfig == null)
                     {
-                        Debug.LogError($"路径{PackConfig.ApplyVersionInSourceDataPath()}下检测不到版本文件，请将版本文件复制到此处，或先打一个版本包并应用此版本!!");
+                        Debug.LogError($"路径{packConfig.ApplyVersionInSourceDataPath()}下检测不到版本文件，请将版本文件复制到此处，或先打一个版本包并应用此版本!!");
                         return false;
                     }
                     string[] versionList = versionConfig.BaseVersion.Split(".");
@@ -202,15 +207,15 @@ namespace Ninth.Editor
                 }
 
                 // 临时源输出目录
-                string tempSourceOutPath = PackConfig.SourceDataTempPathDirectory(m_VersionConfig.Version);
+                string tempSourceOutPath = packConfig.SourceDataTempPathDirectory(m_VersionConfig.Version);
                 // 生成
                 Utility.DirectoryCreateNew(tempSourceOutPath);
 
                 // 打包资源
-                string gAssets = PackConfig.GAssets;
+                string gAssets = packConfig.GAssets;
                 for (int index = 0; index < groupListArgs.Length; index++)
                 {
-                    List<string> groupLst = groupListArgs[index].groupList;
+                    ReadOnlyCollection<string> groupLst = groupListArgs[index].groupList;
                     AssetLocate assetLocate = groupListArgs[index].assetLocate;
 
                     for (int i = 0; i < groupLst.Count; i++)
@@ -268,7 +273,7 @@ namespace Ninth.Editor
         /// 2. 并且递归遍历这个文件夹下的所有子文件夹
         /// </summary>
         /// <param name="directoryInfo"></param>
-        public static void ScanChildDireations(DirectoryInfo directoryInfo, AssetLocate assetLocate)
+        public void ScanChildDireations(DirectoryInfo directoryInfo, AssetLocate assetLocate)
         {
             // 收集当前路径下的文件 把它们打成一个AB包
             ScanCurrDirectory(directoryInfo, assetLocate);
@@ -287,7 +292,7 @@ namespace Ninth.Editor
         /// 遍历当前路径下的文件 把它们打成一个AB包
         /// </summary>
         /// <param name="directoryInfo"></param>
-        private static void ScanCurrDirectory(DirectoryInfo directoryInfo, AssetLocate assetLocate)
+        private void ScanCurrDirectory(DirectoryInfo directoryInfo, AssetLocate assetLocate)
         {
             List<string> assetPaths = new List<string>();
             FileInfo[] fileInfoList = directoryInfo.GetFiles();
@@ -313,7 +318,7 @@ namespace Ninth.Editor
         }
 
         // 分类
-        private static void SortOut(AssetLocate assetLocate, string bundleName, List<string> assetPaths)
+        private void SortOut(AssetLocate assetLocate, string bundleName, List<string> assetPaths)
         {
             if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
             {
@@ -370,7 +375,7 @@ namespace Ninth.Editor
         /// <summary>
         /// 下载配置
         /// </summary>
-        public static void DownloadConfig()
+        public void DownloadConfig()
         {
             foreach (var item in m_AssetLocate2BundleNameList)
             {
@@ -385,7 +390,7 @@ namespace Ninth.Editor
                 {
                     BundleName = bundleName,
                 };
-                string bundleFilePath = PackConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName);
+                string bundleFilePath = packConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName);
                 using (FileStream stream = File.OpenRead(bundleFilePath))
                 {
                     bundleInfo.Crc = Utility.GetCRC32Hash(stream);
@@ -399,7 +404,7 @@ namespace Ninth.Editor
         /// <summary>
         /// 计算每个资源所依赖的ab包文件列表
         /// </summary>
-        private static void CalculateDependencies()
+        private void CalculateDependencies()
         {
             foreach (string asset in m_AssetPath2AssetRef.Keys)
             {
@@ -449,10 +454,10 @@ namespace Ninth.Editor
         /// <summary>
         /// 保存配置
         /// </summary>
-        private static void SaveConfigs()
+        private void SaveConfigs()
         {
             // 保存版本号
-            Utility.Store(m_VersionConfig, PackConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
+            jsonCore.ToJson(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
 
             // 空包也添加配置 =》解决拉取配置404问题
             List<AssetLocate> packAssetLocate = new List<AssetLocate>()
@@ -465,17 +470,17 @@ namespace Ninth.Editor
             // 保存加载配置位置
             List<string> saveLoadConfigTempPath = new List<string>()
             {
-                 PackConfig.LoadConfigInLocalInSourceDataTempPath(m_VersionConfig.Version),
-                 PackConfig.LoadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version),
-                 PackConfig.LoadConfigInDllInSourceDataTempPath(m_VersionConfig.Version)
+                 packConfig.LoadConfigInLocalInSourceDataTempPath(m_VersionConfig.Version),
+                 packConfig.LoadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version),
+                 packConfig.LoadConfigInDllInSourceDataTempPath(m_VersionConfig.Version)
             };
 
             // 保存下载配置位置
             List<string> saveDownloadConfigTempPath = new List<string>()
             {
                 null,  // 本地资源不需要下载配置 
-                PackConfig.DownloadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version),
-                PackConfig.DownloadConfigInDllInSourceDataTempPath(m_VersionConfig.Version),
+                packConfig.DownloadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version),
+                packConfig.DownloadConfigInDllInSourceDataTempPath(m_VersionConfig.Version),
             };
 
             for (int index = 0; index < packAssetLocate.Count; index++)
@@ -488,20 +493,20 @@ namespace Ninth.Editor
                     m_DownloadConfig.Add(assetLocate, new DownloadConfig());
                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
                 }
-                Utility.Store(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
-                Utility.Store(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
+                jsonCore.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+                jsonCore.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
             }
         }
 
         // 从临时目录移动至源目录
-        private static void MoveFiles()
+        private void MoveFiles()
         {
             // 生成源目录
             List<string> increaseSouceDataDirectoty = new List<string>()
             {
-                PackConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version),
-                PackConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version),
-                PackConfig.SourceDataDllPathDirectory(m_VersionConfig.Version),
+                packConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version),
+                packConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version),
+                packConfig.SourceDataDllPathDirectory(m_VersionConfig.Version),
             };
             for (int index = 0; index < increaseSouceDataDirectoty.Count; index++)
             {
@@ -511,9 +516,9 @@ namespace Ninth.Editor
             // 移动AB包至源目录
             Dictionary<AssetLocate, Func<string, string>> locate2SourceDataPath = new Dictionary<AssetLocate, Func<string, string>>()
             {
-                { AssetLocate.Local, (bundleName) => PackConfig.BundleInLocalInSourceDataPath(m_VersionConfig.Version, bundleName) },
-                { AssetLocate.Remote, (bundleName) => PackConfig.BundleInRemoteInSourceDataPath(m_VersionConfig.Version, bundleName) },
-                { AssetLocate.Dll, (bundleName) => PackConfig.BundleInDllInSourceDataPath(m_VersionConfig.Version, bundleName) },
+                { AssetLocate.Local, (bundleName) => packConfig.BundleInLocalInSourceDataPath(m_VersionConfig.Version, bundleName) },
+                { AssetLocate.Remote, (bundleName) => packConfig.BundleInRemoteInSourceDataPath(m_VersionConfig.Version, bundleName) },
+                { AssetLocate.Dll, (bundleName) => packConfig.BundleInDllInSourceDataPath(m_VersionConfig.Version, bundleName) },
             };
             foreach(var item in m_AssetLocate2BundleNameList)
             {
@@ -525,7 +530,7 @@ namespace Ninth.Editor
                 for (int i = 0; i < bundleList.Count; i++)
                 {
                     string bundleName = bundleList[i];
-                    File.Move(PackConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName), locate2SourceDataPath[assetLocate].Invoke(bundleName).Log());
+                    File.Move(packConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName), locate2SourceDataPath[assetLocate].Invoke(bundleName).Log());
                 }
             }
 
@@ -533,16 +538,16 @@ namespace Ninth.Editor
             List<(string scrPath, string dstPath)> temp2SourceDataPath = new List<(string, string)>()
             {
                 // 版号
-                (PackConfig.VersionInSourceDataTempPath(m_VersionConfig.Version), PackConfig.VersionInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version), packConfig.VersionInSourceDataPath(m_VersionConfig.Version)),
 
                 // 加载配置
-                (PackConfig.LoadConfigInLocalInSourceDataTempPath(m_VersionConfig.Version), PackConfig.LoadConfigInLocalInSourceDataPath(m_VersionConfig.Version)),
-                (PackConfig.LoadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), PackConfig.LoadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
-                (PackConfig.LoadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), PackConfig.LoadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.LoadConfigInLocalInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInLocalInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.LoadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.LoadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
                 
                 // 下载配置
-                (PackConfig.DownloadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), PackConfig.DownloadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
-                (PackConfig.DownloadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), PackConfig.DownloadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.DownloadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), packConfig.DownloadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
+                (packConfig.DownloadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), packConfig.DownloadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
             };
             for (int index = 0; index < temp2SourceDataPath.Count; index++)
             {
@@ -553,10 +558,10 @@ namespace Ninth.Editor
         }
 
         // 删除无用文件
-        private static void DeleteFiles()
+        private void DeleteFiles()
         {
             // 删除所有manifest文件
-            string tempSourceOutPath = PackConfig.SourceDataTempPathDirectory(m_VersionConfig.Version);
+            string tempSourceOutPath = packConfig.SourceDataTempPathDirectory(m_VersionConfig.Version);
             FileInfo[] files = new DirectoryInfo(tempSourceOutPath).GetFiles();
             foreach (FileInfo file in files)
             {
@@ -573,7 +578,7 @@ namespace Ninth.Editor
         }
 
         // 复制文件
-        private static void CopyFiles(bool backPack)
+        private void CopyFiles(bool backPack)
         {
             switch(m_PackAssetMode)
             {
@@ -600,29 +605,29 @@ namespace Ninth.Editor
 
                 if (assetLocate.HasFlag(AssetLocate.Local))
                 {
-                    assetDirList.Add((PackConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version), PackConfig.CopyDataLocalPathDirectory()));
+                    assetDirList.Add((packConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version), packConfig.CopyDataLocalPathDirectory()));
                 }
                 if(assetLocate.HasFlag(AssetLocate.Remote))
                 {
-                    assetDirList.Add((PackConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version), PackConfig.CopyDataRemotePathDirectory()));
+                    assetDirList.Add((packConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version), packConfig.CopyDataRemotePathDirectory()));
                 }
                 if(assetLocate.HasFlag(AssetLocate.Dll))
                 {
-                    assetDirList.Add((PackConfig.SourceDataDllPathDirectory(m_VersionConfig.Version), PackConfig.CopyDataDllPathDirectory()));
+                    assetDirList.Add((packConfig.SourceDataDllPathDirectory(m_VersionConfig.Version), packConfig.CopyDataDllPathDirectory()));
                 }
                 for (int index = 0; index < assetDirList.Count; index++)
                 {
                     Utility.DirectoryCopy(assetDirList[index].srcPath, assetDirList[index].dstPath);
                 }
-                File.Copy(PackConfig.VersionInSourceDataPath(m_VersionConfig.Version), PackConfig.VersionInCopyDataPath(), true);
+                File.Copy(packConfig.VersionInSourceDataPath(m_VersionConfig.Version), packConfig.VersionInCopyDataPath(), true);
             }
         }
 
         // 远端应用
-        public static void RemoteApply()
+        public void RemoteApply()
         {
             // 将版本配置拷贝至外目录
-            File.Copy(PackConfig.VersionInSourceDataPath(m_VersionConfig.Version), PackConfig.ApplyVersionInSourceDataPath(), true);
+            File.Copy(packConfig.VersionInSourceDataPath(m_VersionConfig.Version), packConfig.ApplyVersionInSourceDataPath(), true);
         }
     }
 }

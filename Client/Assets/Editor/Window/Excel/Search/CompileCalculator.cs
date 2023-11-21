@@ -6,13 +6,13 @@ using System.IO;
 
 namespace Ninth.Editor.Excel.Search
 {
-    using Table = TableData.Table;
+    using Table = TableCollect.Table;
 
     public class CompileCalculator
     {
-        public static TableData Get(string compileDirectoryRoot)
+        public static TableCollect Get(string compileDirectoryRoot)
         {
-            TableData result = new TableData();
+            TableCollect result = new TableCollect();
             DirectoryInfo directory = new DirectoryInfo(compileDirectoryRoot);
             FileInfo[] fileInfos = directory.GetFiles();
             for (int index = 0; index < fileInfos.Length; index++)
@@ -29,10 +29,6 @@ namespace Ninth.Editor.Excel.Search
                 catch (NotOLE2FileException)
                 {
                     throw new NotOLE2FileException(nameof(fileInfo));
-                }
-                if (index == 0)
-                {
-                    break;
                 }
             }
             return result;

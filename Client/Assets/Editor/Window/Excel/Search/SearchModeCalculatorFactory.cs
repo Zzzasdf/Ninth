@@ -6,6 +6,13 @@ using UnityEngine;
 
 namespace Ninth.Editor.Excel.Search
 {
+
+    public enum SearchMode
+    {
+        Equals,
+        Contains,
+    }
+
     public class SearchModeCalculatorFactory
     {
         private readonly static Dictionary<SearchMode, ISearchModeCalculator> factory = new Dictionary<SearchMode, ISearchModeCalculator>()
@@ -30,12 +37,12 @@ namespace Ninth.Editor.Excel.Search
 
         public interface ISearchModeCalculator
         {
-            bool IsMatch(string cellValue, List<string> searchItems);
+            bool IsMatch(string cellValue, List<string> searchItems, StringComparison stringComparison);
         }
 
         public class SearchModeEqualsCalculator : ISearchModeCalculator
         {
-            public bool IsMatch(string cellValue, List<string> searchItems)
+            public bool IsMatch(string cellValue, List<string> searchItems, StringComparison stringComparison)
             {
                 bool result = false;
                 if (string.IsNullOrEmpty(cellValue)
@@ -50,7 +57,7 @@ namespace Ninth.Editor.Excel.Search
                     {
                         continue;
                     }
-                    bool isEquals = cellValue.Equals(searchItems[index]);
+                    bool isEquals = cellValue.Trim().Equals(searchItems[index], stringComparison);
                     if (isEquals)
                     {
                         result = isEquals;
@@ -63,7 +70,7 @@ namespace Ninth.Editor.Excel.Search
 
         public class SearchModeContainsCalculator : ISearchModeCalculator
         {
-            public bool IsMatch(string cellValue, List<string> searchItems)
+            public bool IsMatch(string cellValue, List<string> searchItems, StringComparison stringComparison)
             {
                 bool result = false;
                 if (string.IsNullOrEmpty(cellValue)
@@ -78,7 +85,7 @@ namespace Ninth.Editor.Excel.Search
                     {
                         continue;
                     }
-                    bool isEquals = cellValue.Contains(searchItems[index]);
+                    bool isEquals = cellValue.Contains(searchItems[index], stringComparison);
                     if (isEquals)
                     {
                         result = isEquals;
