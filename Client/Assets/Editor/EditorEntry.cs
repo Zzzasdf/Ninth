@@ -10,23 +10,12 @@ namespace Ninth.Editor
 {
     public class EditorEntry
     {
-        public static ConfigCore Config { get; } // 配置
-        public static DownloadCore Download { get; private set; } // 下载
-        public static JsonCore Json { get; private set; } // Json
-        public static ProcedureCore Procedure { get; private set; } // 流程
-
+        public static GameEntry GameEntry => Object.FindObjectOfType<GameEntry>();
+        public static ConfigCore Config => GameEntry.Config; // 配置
+        public static DownloadCore Download => GameEntry.Download; // 下载
+        public static JsonCore Json => GameEntry.Json;  // Json
+        public static ProcedureCore Procedure => GameEntry.Procedure; // 流程
         public static PackConfig PackConfig { get; }
         public static BuildAssetsCommand BuildAssetsCmd { get; }
-
-        static EditorEntry()
-        {
-            Config = new ConfigCore();
-            Download = new DownloadCore();
-            Json = new JsonCore(Config.Encoding);
-            Procedure = new ProcedureCore(Config.AssetConfig, Config.PathConfig, Download);
-
-            PackConfig = new PackConfig(Config.PlatformConfig, Config.NameConfig, Config.PathConfig);
-            BuildAssetsCmd = new BuildAssetsCommand(Config.AssetConfig, PackConfig, Json);
-        }
     }
 }

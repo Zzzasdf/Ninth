@@ -12,39 +12,29 @@ namespace Ninth.Editor
 
     public class WindowCollect : EditorWindow
     {
-        [MenuItem("Tools/WindowCollect")]
+        [MenuItem("Tools/WindowCollect/Open")]
         private static void PanelOpen()
         {
             WindowCollect window = GetWindow<WindowCollect>();
-            window.position = new Rect(200, 200, 800, 500);
+            //window.position = new Rect(200, 200, 800, 500);
+            window.position = new Rect(2200, 200, 1000, 700);
             window.splitterPos = 150;
         }
-        
-        [MenuItem("Tools/WindowCollectClose")]
+
+        [MenuItem("Tools/WindowCollect/Close")]
         private static void PanelClose()
         {
             GetWindow<WindowCollect>().Close();
         }
 
-        private ReadOnlyDictionary<NinthWindowTab, Action> tabActionDic;
-
-        public ReadOnlyDictionary<NinthWindowTab, Action> TabActionDic
+        private ReadOnlyDictionary<NinthWindowTab, Action> TabActionDic = new(new Dictionary<NinthWindowTab, Action>()
         {
-            get
-            {
-                if(tabActionDic == null)
-                {
-                    Dictionary<NinthWindowTab, Action> tempActionDic = new Dictionary<NinthWindowTab, Action>();
-                    tempActionDic.Add(NinthWindowTab.Excel, new ExcelSettings<ExcelSettingsData>().OnGUI);
-                    tempActionDic.Add(NinthWindowTab.Scan, new ScanSettings().OnGUI);
-                    tempActionDic.Add(NinthWindowTab.Build, new BuildSettings(EditorEntry.BuildAssetsCmd).OnGUI);
-                    tempActionDic.Add(NinthWindowTab.Review, new ReviewSettings().OnGUI);
-                    tempActionDic.Add(NinthWindowTab.Other, new OtherSettings<OtherSettingsData>().OnGUI);
-                    tabActionDic = new ReadOnlyDictionary<NinthWindowTab, Action>(tempActionDic);
-                }
-                return tabActionDic;
-            }
-        }
+             { NinthWindowTab.Build, new BuildSettings(EditorEntry.BuildAssetsCmd).OnGUI },
+             { NinthWindowTab.Excel, new ExcelSettings<ExcelSettingsData>().OnGUI },
+             { NinthWindowTab.Scan, new ScanSettings().OnGUI },
+             { NinthWindowTab.Review, new ReviewSettings().OnGUI },
+             { NinthWindowTab.Other, new OtherSettings<OtherSettingsData>().OnGUI },
+        });
 
         private NinthWindowTab NinthWindowTab
         {
@@ -62,11 +52,20 @@ namespace Ninth.Editor
         private bool dragging;
 
         // 页签内容
-        private Vector2 actionSrollView;
+        private Vector2 contentSrollView;
 
         private void OnGUI()
         {
-            EditorGUILayout.BeginHorizontal();
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                RenderLeftTag();
+                RenderSplitter();
+                RenderRightContent();
+            }
+        }
+
+        private void RenderLeftTag()
+        {
             // 页签
             tabScrollView = EditorGUILayout.BeginScrollView(tabScrollView,
                 GUILayout.Width(splitterPos),
@@ -76,7 +75,10 @@ namespace Ninth.Editor
             string[] barMenu = TabActionDic.Keys.Select(x => x.ToString()).ToArray();
             NinthWindowTab = (NinthWindowTab)GUILayout.SelectionGrid((int)NinthWindowTab, barMenu, 1);
             EditorGUILayout.EndScrollView();
+        }
 
+        private void RenderSplitter()
+        {
             // 分割线
             GUILayout.Box("",
                 GUILayout.Width(splitterWidth),
@@ -84,13 +86,6 @@ namespace Ninth.Editor
                 GUILayout.MinWidth(splitterWidth),
                 GUILayout.ExpandHeight(true));
             splitterRect = GUILayoutUtility.GetLastRect();
-
-            // 页签内容
-            actionSrollView = EditorGUILayout.BeginScrollView(actionSrollView, GUILayout.ExpandWidth(true));
-            TabActionDic[NinthWindowTab]?.Invoke();
-            EditorGUILayout.EndScrollView();
-            EditorGUILayout.EndHorizontal();
-
             // 分割线事件
             if (Event.current != null)
             {
@@ -118,13 +113,21 @@ namespace Ninth.Editor
                 }
             }
         }
+
+        private void RenderRightContent()
+        {
+            // 页签内容
+            contentSrollView = EditorGUILayout.BeginScrollView(contentSrollView, GUILayout.ExpandWidth(true));
+            TabActionDic[NinthWindowTab]?.Invoke();
+            EditorGUILayout.EndScrollView();
+        }
     }
 
     public enum NinthWindowTab
     {
+        Build,
         Excel,
         Scan,
-        Build,
         Review,
         Other
     }

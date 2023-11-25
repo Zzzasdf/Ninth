@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace Ninth
 {
     [CreateAssetMenu(fileName = "NameConfigSO", menuName = "Config/NameConfigSO")]
+    [Serializable]
     public sealed class NameConfig: ScriptableObject
     {
         /// <summary>

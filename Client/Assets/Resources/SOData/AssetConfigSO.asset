@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fb317c6ccebaa04d82ddb4790e24af7, type: 3}
   m_Name: AssetConfigSO
   m_EditorClassIdentifier: 
+  buildMode: 0
+  assetMode: 2
+  url: http://192.168.8.197:80
+  localGroup:
+  - LocalGroup
+  remoteGroup:
+  - RemoteGroup
+  scriptMode: 1
+  dllMode: 6

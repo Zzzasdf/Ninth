@@ -5,10 +5,12 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using System.Collections.ObjectModel;
+using System.Security.AccessControl;
 
 namespace Ninth
 {
     [CreateAssetMenu(fileName = "AssetConfigSO", menuName = "Config/AssetConfigSO")]
+    [Serializable]
     public sealed partial class AssetConfig : ScriptableObject
     {
         // 构建模式
@@ -72,6 +74,7 @@ namespace Ninth
         Release
     }
 
+    [Flags]
     public enum AssetMode
     {
         NonAB = 1 << 0,

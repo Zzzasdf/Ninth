@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dc0f9dc1ae0d9a4b86d8ecffe818aad, type: 3}
   m_Name: WindowOtherConfigSO
   m_EditorClassIdentifier: 
-  appFoldout: 1
-  browserFoldout: 1
-  directoryFoldout: 1
+  appFoldout: 0
+  browserFoldout: 0
+  directoryFoldout: 0
