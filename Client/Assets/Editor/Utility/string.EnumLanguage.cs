@@ -21,11 +21,8 @@ namespace Ninth.Editor
                 AddConvertibleTxtDefine(BuildBundleMode.HotUpdateBundles, "热更ab包", "HotUpdateBundles");
                 AddConvertibleTxtDefine(BuildBundleMode.AllBundles, "所有ab包", "AllBundles");
 
-                AddConvertibleTxtDefine(BuildPlayerMode.InoperationBundle, "重打本地ab包", "InoperationBundle");
-                AddConvertibleTxtDefine(BuildPlayerMode.RepackageAllBundle, "重打所有ab包", "RepackageAllBundle");
-
-                AddConvertibleTxtDefine(BuildExportCopyFolderMode.StreamingAssets, "拷贝ab包到StreamingAssets", "BundlesCopyToStreamingAssets");
-                AddConvertibleTxtDefine(BuildExportCopyFolderMode.Remote, "拷贝ab包到远端路径", "BundlesCopyToRemoteDir");
+                AddConvertibleTxtDefine(BuildExportCopyFolderMode.StreamingAssets, "{ 所有ab包 => StreamingAssets }", "{ AllBundles => StreamingAssets }");
+                AddConvertibleTxtDefine(BuildExportCopyFolderMode.Remote, "{ 本地ab包 => StreamingAssets }\n{ 热更ab包 => 远端路径 }", "{ LocalBundles => StreamingAssets }\n{ HotUpdateBundles => RemoteFolder }");
 
                 AddConvertibleTxtDefine(ActiveTargetMode.ActiveTarget, "Unity当前使用平台", "ActiveTarget");
                 AddConvertibleTxtDefine(ActiveTargetMode.InactiveTarget, "选择平台", "InactiveTarget");

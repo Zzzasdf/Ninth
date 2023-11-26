@@ -15,7 +15,7 @@ namespace Ninth.Editor
 
     public static partial class StringLanguage
     {
-        private static Language language = Language.Chinese;
+        private static Language language = Language.English;
         private static ReadOnlyDictionary<Language, string> undefinedDic = new(new Dictionary<Language, string>()
         {
             { Language.Chinese, "Œ¥∂®“Â" },

@@ -8,33 +8,6 @@ namespace Ninth.Editor
 {
     public partial class BuildSettings
     {
-        private ReadOnlyDictionary<BuildSettingsMode, ReadOnlyDictionary<Enum, Action>> _exportDic;
-        
-        private ReadOnlyDictionary<BuildSettingsMode, ReadOnlyDictionary<Enum, Action>> exportDic
-        {
-            get
-            {
-                if(_exportDic == null)
-                {
-                    _exportDic = new(new Dictionary<BuildSettingsMode, ReadOnlyDictionary<Enum, Action>>()
-                    {
-                        { BuildSettingsMode.Bundle, new(new Dictionary<Enum, Action>()
-                        {
-                            { BuildBundleMode.HotUpdateBundles, Bundle_HotUpdateBundles },
-                            { BuildBundleMode.AllBundles, Bundle_AllBundles },
-                        }) },
-                        { BuildSettingsMode.Player, new(new Dictionary<Enum, Action>()
-                        {
-                            { BuildPlayerMode.InoperationBundle, Player_InoperationBundle },
-                            { BuildPlayerMode.RepackageAllBundle, Player_RepackageAllBundle },
-                        }) }
-                    });
-                }
-                return _exportDic;
-            }
-        }
-        
-        
         private void RenderExport()
         {
             if (!bUpgradeVersion)
@@ -48,29 +21,32 @@ namespace Ninth.Editor
             }
             if (GUILayout.Button(CommonLanguage.Export.ToCurrLanguage()))
             {
-                if(exportDic.TryGetValue(buildSettingsMode, out ReadOnlyDictionary<Enum, Action> value))
+                Action action = buildSettingsMode switch
                 {
-                    return;
-                }
-                Enum enumType = buildSettingsMode switch
-                {
-                    BuildSettingsMode.Bundle => buildBundleMode,
-                    BuildSettingsMode.Player => buildPlayerMode,
-                    _ => throw new NotImplementedException(),
+                    BuildSettingsMode.Bundle => buildBundleMode switch
+                    {
+                        BuildBundleMode.HotUpdateBundles => CreateHotUpdateBundles,
+                        BuildBundleMode.AllBundles => CreateAllBundles,
+                        _ => null,
+                    },
+                    BuildSettingsMode.Player => CreatePlayerAndAllBundles,
+                    _ => null,
                 };
-                if(!value.TryGetValue(enumType, out Action action))
+                if(action == null)
                 {
+                    Debug.LogError(Log.FuncIsNull.ToCurrLanguage());
                     return;
                 }
                 Debug.Log(Log.Exporting.ToCurrLanguage());
-                action?.Invoke();
+                action.Invoke();
                 VersionSave();
                 VersionRefresh();
                 Debug.Log(Log.ExportCompleted);
             }
         }
 
-        private void Bundle_HotUpdateBundles()
+        // 构建热更ab
+        private void CreateHotUpdateBundles()
         {
             buildAssetsCmd.BuildHotUpdateBundles(buildTarget,
                                             buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,
@@ -82,7 +58,8 @@ namespace Ninth.Editor
             }
         }
 
-        private void Bundle_AllBundles()
+        // 构建所有ab
+        private void CreateAllBundles()
         {
             buildAssetsCmd.BuildAllBundles(buildTarget,
                                            buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,
@@ -94,12 +71,8 @@ namespace Ninth.Editor
             }
         }
 
-        private void Player_InoperationBundle()
-        {
-            buildAssetsCmd.BuildPlayer(buildTargetGroup, buildTarget);
-        }
-
-        private void Player_RepackageAllBundle()
+        // 构建客户端和所有ab
+        private void CreatePlayerAndAllBundles()
         {
             buildAssetsCmd.BuildPlayerAndAllBundles(buildTargetGroup, buildTarget,
                                             buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,

@@ -78,23 +78,16 @@ namespace Ninth.Editor
             }
         }
 
-        private BuildPlayerMode buildPlayerMode
-        {
-            get => WindowSOCore.Get<WindowBuildConfig>().BuildPlayerMode;
-            set => WindowSOCore.Get<WindowBuildConfig>().BuildPlayerMode = value;
-        }
-        private void RenderBuildPlayerMode()
+        private void RenderBuildAllBundles()
         {
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.FlexibleSpace();
-                string[] barMenuPlayer = (typeof(BuildPlayerMode).GetEnumValues() as BuildPlayerMode[]).ToCurrLanguage();
-                BuildPlayerMode buildPlayerModeTemp = (BuildPlayerMode)GUILayout.Toolbar((int)buildPlayerMode, barMenuPlayer);
-                if (buildPlayerModeTemp != buildPlayerMode)
+                GUI.enabled = false;
+                if(GUILayout.Button(BuildBundleMode.AllBundles.ToCurrLanguage()))
                 {
-                    VersionRefresh();
-                    buildPlayerMode = buildPlayerModeTemp;
                 }
+                GUI.enabled = true;
             }
         }
 
@@ -127,16 +120,10 @@ namespace Ninth.Editor
         }
         private void RenderToolbarByBuildExportCopyFolderMode()
         {
-            if(buildSettingsMode == BuildSettingsMode.Player)
-            {
-                if(buildPlayerMode == BuildPlayerMode.InoperationBundle)
-                {
-                    return;
-                }
-            }
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.FlexibleSpace();
+                GUILayout.Label(CommonLanguage.CopyOperate.ToCurrLanguage(), EditorStyles.boldLabel);
                 string[] barMenu = (typeof(BuildExportCopyFolderMode).GetEnumValues() as BuildExportCopyFolderMode[]).ToCurrLanguage();
                 buildExportCopyFolderMode = (BuildExportCopyFolderMode)GUILayout.Toolbar((int)buildExportCopyFolderMode, barMenu);
             }

@@ -4,6 +4,7 @@ namespace Ninth.Editor
     {
         Exporting,
         ExportCompleted,
+        FuncIsNull,
     }
 
     public enum LogFormat1
@@ -28,6 +29,7 @@ namespace Ninth.Editor
             {
                 AddConvertibleTxtDefine(Log.Exporting, "导出中 ..", "Exporting ..");
                 AddConvertibleTxtDefine(Log.ExportCompleted, "导出完成 !!", "Export Completed !!");
+                AddConvertibleTxtDefine(Log.FuncIsNull, " 方法为空 !!", "Func Is Null !!");
             }
 
             void LogFormat1Init()

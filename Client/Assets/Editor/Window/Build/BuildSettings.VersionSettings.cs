@@ -10,6 +10,7 @@ namespace Ninth.Editor
         private static bool bUpgradeVersion;
         private static int majorVersionTemp;
         private static int minorVersionTemp;
+        private static int versionRevisionNumberTemp;
         private static int revisionNumberTemp;
 
         private static int majorVersion
@@ -22,6 +23,11 @@ namespace Ninth.Editor
             get => WindowSOCore.Get<WindowBuildConfig>().MinorVersion;
             set => WindowSOCore.Get<WindowBuildConfig>().MinorVersion = value;
         }
+        private int versionRevisionNumber
+        {
+            get => WindowSOCore.Get<WindowBuildConfig>().VersionRevisionNumber;
+            set => WindowSOCore.Get<WindowBuildConfig>().VersionRevisionNumber = value;
+        }
         private static int revisionNumber
         {
             get => WindowSOCore.Get<WindowBuildConfig>().RevisionNumber;
@@ -32,6 +38,7 @@ namespace Ninth.Editor
         {
             majorVersionTemp = majorVersion;
             minorVersionTemp = minorVersion;
+            versionRevisionNumberTemp = versionRevisionNumber;
             revisionNumberTemp = revisionNumber;
             bUpgradeVersion = false;
         }
@@ -40,6 +47,7 @@ namespace Ninth.Editor
         {
             majorVersion = majorVersionTemp;
             minorVersion = minorVersionTemp;
+            versionRevisionNumber = versionRevisionNumberTemp;
             revisionNumber = revisionNumberTemp;
         }
 
@@ -47,6 +55,7 @@ namespace Ninth.Editor
         {
             RenderMajorVersion();
             RenderMinorVersion();
+            RenderVersionRevisionNumber();
             RenderRevisionNumber();
         }
 
@@ -75,6 +84,7 @@ namespace Ninth.Editor
                 {
                     majorVersionTemp++;
                     minorVersionTemp = 0;
+                    versionRevisionNumberTemp++;
                     revisionNumberTemp++;
                     bUpgradeVersion = !bUpgradeVersion;
                 }
@@ -106,6 +116,38 @@ namespace Ninth.Editor
                 if (GUILayout.Button("+1"))
                 {
                     minorVersionTemp++;
+                    versionRevisionNumberTemp++;
+                    revisionNumberTemp++;
+                    bUpgradeVersion = !bUpgradeVersion;
+                }
+            }
+        }
+
+        private void RenderVersionRevisionNumber()
+        {
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUI.enabled = false;
+                versionRevisionNumberTemp = EditorGUILayout.IntField(CommonLanguage.VersionRevisionNumber.ToCurrLanguage(), Mathf.Max(0, versionRevisionNumberTemp));
+                GUI.enabled = true;
+
+                if (bUpgradeVersion)
+                {
+                    return;
+                }
+                bool isActiveBtnAdd = buildSettingsMode switch
+                {
+                    BuildSettingsMode.Bundle => buildBundleMode == BuildBundleMode.AllBundles,
+                    BuildSettingsMode.Player => true,
+                    _ => false
+                };
+                if (!isActiveBtnAdd)
+                {
+                    return;
+                }
+                if (GUILayout.Button("+1"))
+                {
+                    versionRevisionNumberTemp++;
                     revisionNumberTemp++;
                     bUpgradeVersion = !bUpgradeVersion;
                 }
@@ -126,7 +168,7 @@ namespace Ninth.Editor
                 }
                 bool isActiveBtnAdd = buildSettingsMode switch
                 {
-                    BuildSettingsMode.Bundle => buildBundleMode == BuildBundleMode.HotUpdateBundles,
+                    BuildSettingsMode.Bundle => true,
                     _ => false
                 };
                 if (!isActiveBtnAdd)
@@ -145,6 +187,7 @@ namespace Ninth.Editor
         {
             if(majorVersionTemp == majorVersion
                 && minorVersionTemp == minorVersion
+                && versionRevisionNumberTemp == versionRevisionNumber
                 && revisionNumberTemp == revisionNumber)
             {
                 return;

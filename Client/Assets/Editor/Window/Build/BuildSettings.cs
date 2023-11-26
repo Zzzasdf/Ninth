@@ -96,7 +96,7 @@ namespace Ninth.Editor
             GUILayout.Label(CommonLanguage.ExportTargetFolderSettings.ToCurrLanguage(), EditorStyles.boldLabel);
             RenderBuildBundlesTargetFolderRootAndBrowse();
             RenderBuildPlayersTargetFolderRootAndBrowse();
-            RenderBuildPlayerMode();
+            RenderBuildAllBundles();
             RenderToolbarByBuildExportCopyFolderMode();
             RenderToolbarByActiveTarget();
             RenderPopupByBuildTarget();

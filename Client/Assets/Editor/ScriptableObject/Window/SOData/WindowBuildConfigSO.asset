@@ -16,11 +16,11 @@ MonoBehaviour:
   buildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
   buildSettingsType: 1
   buildBundleMode: 1
-  buildPlayerMode: 1
-  majorVersion: 1
+  majorVersion: 3
   minorVersion: 0
-  revisionNumber: 1
-  buildExportDirectoryType: 0
+  versionRevisionNumber: 0
+  revisionNumber: 6
+  buildExportDirectoryType: 1
   activeTargetMode: 1
   buildTarget: 19
   buildTargetGroup: 1

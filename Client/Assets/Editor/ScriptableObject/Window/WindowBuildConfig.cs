@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,9 +13,9 @@ namespace Ninth.Editor
         [SerializeField] private string buildPlayersDirectoryRoot;
         [SerializeField] private BuildSettingsMode buildSettingsType;
         [SerializeField] private BuildBundleMode buildBundleMode;
-        [SerializeField] private BuildPlayerMode buildPlayerMode;
         [SerializeField] private int majorVersion;
         [SerializeField] private int minorVersion;
+        [SerializeField] private int versionRevisionNumber;
         [SerializeField] private int revisionNumber;
         [SerializeField] private BuildExportCopyFolderMode buildExportDirectoryType;
         [SerializeField] private ActiveTargetMode activeTargetMode;
@@ -41,11 +42,6 @@ namespace Ninth.Editor
             get => buildBundleMode;
             set => SetProperty(ref buildBundleMode, value);
         }
-        public BuildPlayerMode BuildPlayerMode
-        {
-            get => buildPlayerMode;
-            set => SetProperty(ref buildPlayerMode, value);
-        }
         public int MajorVersion
         {
             get => majorVersion;
@@ -55,6 +51,11 @@ namespace Ninth.Editor
         {
             get => minorVersion;
             set => SetProperty(ref minorVersion, value);
+        }
+        public int VersionRevisionNumber
+        {
+            get => versionRevisionNumber;
+            set => SetProperty(ref versionRevisionNumber, value);
         }
         public int RevisionNumber
         {
@@ -130,12 +131,6 @@ namespace Ninth.Editor
     {
         HotUpdateBundles,
         AllBundles
-    }
-
-    public enum BuildPlayerMode
-    {
-        InoperationBundle,
-        RepackageAllBundle
     }
 
     public enum BuildExportCopyFolderMode
