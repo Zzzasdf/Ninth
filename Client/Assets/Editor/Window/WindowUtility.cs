@@ -9,13 +9,13 @@ namespace Ninth.Editor
     {
         public static string RenderDirectory(string directory, string containDirectory = null)
         {
-            GUILayout.Label("RenderBtnSearch Target Directory Settings", EditorStyles.boldLabel);
+            GUILayout.Label(CommonLanguage.SearchTargetFolderSettings.ToCurrLanguage(), EditorStyles.boldLabel);
             GUI.enabled = false;
             directory = EditorGUILayout.TextField(directory);
             GUI.enabled = true;
-            if (GUILayout.Button("Browse"))
+            if (GUILayout.Button(CommonLanguage.Browse.ToCurrLanguage()))
             {
-                string path = EditorUtility.OpenFolderPanel("Select A Folder To RenderBtnSearch", directory, "Excels");
+                string path = EditorUtility.OpenFolderPanel(CommonLanguage.SelectAFolderToSearch.ToCurrLanguage(), directory, "Excels");
                 if (string.IsNullOrEmpty(path))
                 {
                     return directory;
@@ -33,7 +33,7 @@ namespace Ninth.Editor
                     }
                     else
                     {
-                        Debug.LogErrorFormat("该路径未包含指定的目录{0}", containDirectory);
+                        Debug.LogErrorFormat(LogFormat1.PathNotIncludedAppointFolder.ToCurrLanguage(), containDirectory);
                     }
                 }
             }

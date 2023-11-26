@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: WindowCollectConfigSO
   m_EditorClassIdentifier: 
   ninthWindowTab: 0
-  excelMode: 0
+  excelMode: 1

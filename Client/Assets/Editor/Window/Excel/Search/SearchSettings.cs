@@ -26,7 +26,7 @@ namespace Ninth.Editor.Excel.Search
         {
             if (data.IsFoldoutSearchData)
             {
-                using (new EditorGUILayout.VerticalScope("frameBox"))
+                using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                 {
                     RenderCompileDirectoryRoot();
                     RenderBtnCompile();
@@ -38,12 +38,12 @@ namespace Ninth.Editor.Excel.Search
                     return;
                 }
 
-                using (new EditorGUILayout.VerticalScope("frameBox"))
+                using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                 {
                     RenderCompileInfo();
                 }
 
-                using (new EditorGUILayout.VerticalScope("frameBox"))
+                using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                 {
                     RenderSearchItems();
                     RenderSearchIgnoreCase();
@@ -57,18 +57,18 @@ namespace Ninth.Editor.Excel.Search
                     return;
                 }
 
-                using (new EditorGUILayout.VerticalScope("frameBox"))
+                using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                 {
                     RenderSearchInfo();
                 }
             }
             RenderBtnFolderSearchData();
 
-            using (new EditorGUILayout.VerticalScope("frameBox"))
+            using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
             {
                 RenderSearchDataMode();
                 RenderSearchDataSelectionGrids();
-                using (new EditorGUILayout.HorizontalScope("frameBox"))
+                using (new EditorGUILayout.HorizontalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                 {
                     RenderSearchDataGroups();
                     using (var scrollView = new EditorGUILayout.ScrollViewScope(vec2SearchData))
@@ -92,7 +92,7 @@ namespace Ninth.Editor.Excel.Search
 
         private void RenderBtnCompile()
         {
-            if (GUILayout.Button("Compile"))
+            if (GUILayout.Button(CommonLanguage.Compile.ToCurrLanguage()))
             {
                 data.Compile();
             }
@@ -299,7 +299,7 @@ namespace Ninth.Editor.Excel.Search
                         }
                         (int, int) cellKey = cell.Key;
                         Cell cellValue = cell.Value;
-                        using (new EditorGUILayout.VerticalScope("frameBox"))
+                        using (new EditorGUILayout.VerticalScope(CommonLanguage.FrameBox.ToCurrLanguage()))
                         {
                             using (new EditorGUILayout.HorizontalScope())
                             {

@@ -86,7 +86,7 @@ namespace Ninth.Editor
             },
             ["OutputBundles"] = new Dictionary<string, Action>()
             {
-                ["Open"] = () => Application.OpenURL(WindowSOCore.Get<WindowBuildConfig>().BuildBundlesDirectoryRoot),
+                ["Open"] = () => Application.OpenURL(WindowSOCore.Get<WindowBuildConfig>().BuildBundlesTargetFolderRoot),
             },
             ["OutputPlayer"] = new Dictionary<string, Action>()
             {

@@ -8,8 +8,6 @@ using System.Collections.ObjectModel;
 
 namespace Ninth.Editor
 {
-    using ExcelSettingsData = Excel.ExcelSettingsData;
-
     public class WindowCollect : EditorWindow
     {
         [MenuItem("Tools/WindowCollect/Open")]
@@ -27,56 +25,50 @@ namespace Ninth.Editor
             GetWindow<WindowCollect>().Close();
         }
 
-        private ReadOnlyDictionary<NinthWindowTab, Action> TabActionDic = new(new Dictionary<NinthWindowTab, Action>()
+        private ReadOnlyDictionary<NinthWindowTab, Action> tabActionDic = new(new Dictionary<NinthWindowTab, Action>()
         {
              { NinthWindowTab.Build, new BuildSettings(EditorEntry.BuildAssetsCmd).OnGUI },
-             { NinthWindowTab.Excel, new ExcelSettings<ExcelSettingsData>().OnGUI },
+             { NinthWindowTab.Excel, new ExcelSettings().OnGUI },
              { NinthWindowTab.Scan, new ScanSettings().OnGUI },
              { NinthWindowTab.Review, new ReviewSettings().OnGUI },
              { NinthWindowTab.Other, new OtherSettings<OtherSettingsData>().OnGUI },
         });
 
-        private NinthWindowTab NinthWindowTab
+        private NinthWindowTab ninthWindowTab
         {
             get => WindowSOCore.Get<WindowCollectConfig>().NinthWindowTab;
             set => WindowSOCore.Get<WindowCollectConfig>().NinthWindowTab = value;
         }
 
-        // 页签
-        private Vector2 tabScrollView;
-
-        // 分割线
         private float splitterPos;
-        private float splitterWidth = 5;
-        private Rect splitterRect;
-        private bool dragging;
-
-        // 页签内容
-        private Vector2 contentSrollView;
 
         private void OnGUI()
         {
-            using (new EditorGUILayout.HorizontalScope())
+            using (new GUILayout.HorizontalScope())
             {
-                RenderLeftTag();
+                RenderTag();
                 RenderSplitter();
-                RenderRightContent();
+                RenderContent();
             }
         }
 
-        private void RenderLeftTag()
+        private Vector2 tabScrollView;
+        private void RenderTag()
         {
             // 页签
-            tabScrollView = EditorGUILayout.BeginScrollView(tabScrollView,
+            tabScrollView = GUILayout.BeginScrollView(tabScrollView,
                 GUILayout.Width(splitterPos),
                 GUILayout.MaxWidth(splitterPos),
                 GUILayout.MinWidth(splitterPos));
 
-            string[] barMenu = TabActionDic.Keys.Select(x => x.ToString()).ToArray();
-            NinthWindowTab = (NinthWindowTab)GUILayout.SelectionGrid((int)NinthWindowTab, barMenu, 1);
-            EditorGUILayout.EndScrollView();
+            string[] barMenu = tabActionDic.Keys.ToArray().ToCurrLanguage();
+            ninthWindowTab = (NinthWindowTab)GUILayout.SelectionGrid((int)ninthWindowTab, barMenu, 1);
+            GUILayout.EndScrollView();
         }
 
+        private float splitterWidth = 5;
+        private Rect splitterRect;
+        private bool dragging;
         private void RenderSplitter()
         {
             // 分割线
@@ -114,12 +106,13 @@ namespace Ninth.Editor
             }
         }
 
-        private void RenderRightContent()
+        private Vector2 contentSrollView;
+        private void RenderContent()
         {
             // 页签内容
-            contentSrollView = EditorGUILayout.BeginScrollView(contentSrollView, GUILayout.ExpandWidth(true));
-            TabActionDic[NinthWindowTab]?.Invoke();
-            EditorGUILayout.EndScrollView();
+            contentSrollView = GUILayout.BeginScrollView(contentSrollView, GUILayout.ExpandWidth(true));
+            tabActionDic[ninthWindowTab]?.Invoke();
+            GUILayout.EndScrollView();
         }
     }
 

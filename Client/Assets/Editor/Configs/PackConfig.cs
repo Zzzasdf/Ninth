@@ -26,7 +26,7 @@ namespace Ninth.Editor
             {
                 m_BuildPlatform = value;
                 BundleSourceDataVersionRoot =
-                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildBundlesDirectoryRoot, platformConfig.ProduceName, BuildPlatform);
+                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildBundlesTargetFolderRoot, platformConfig.ProduceName, BuildPlatform);
                 PlayerSourceDataVersionRoot =
                     string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildPlayersDirectoryRoot, platformConfig.ProduceName, BuildPlatform);
             }

@@ -64,7 +64,7 @@ namespace Ninth.Editor
             m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
         }
 
-        public bool BuildPlayerRepackage(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
         {
             bool result = BuildAllBundles(target, assetMode, newVersion);
             if (!result)

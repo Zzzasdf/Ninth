@@ -7,127 +7,151 @@ namespace Ninth.Editor
 {
     public partial class BuildSettings
     {
-        private static bool bSetVersion;
+        private static bool bUpgradeVersion;
         private static int majorVersionTemp;
         private static int minorVersionTemp;
         private static int revisionNumberTemp;
 
-        private static int MajorVersion
+        private static int majorVersion
         {
             get => WindowSOCore.Get<WindowBuildConfig>().MajorVersion;
             set => WindowSOCore.Get<WindowBuildConfig>().MajorVersion = value;
         }
-        private static int MinorVersion
+        private static int minorVersion
         {
             get => WindowSOCore.Get<WindowBuildConfig>().MinorVersion;
             set => WindowSOCore.Get<WindowBuildConfig>().MinorVersion = value;
         }
-        private static int RevisionNumber
+        private static int revisionNumber
         {
             get => WindowSOCore.Get<WindowBuildConfig>().RevisionNumber;
             set => WindowSOCore.Get<WindowBuildConfig>().RevisionNumber = value;
         }
 
-        private void VersionInit()
+        private void VersionRefresh()
         {
-            majorVersionTemp = MajorVersion;
-            minorVersionTemp = MinorVersion;
-            revisionNumberTemp = RevisionNumber;
-            bSetVersion = false;
+            majorVersionTemp = majorVersion;
+            minorVersionTemp = minorVersion;
+            revisionNumberTemp = revisionNumber;
+            bUpgradeVersion = false;
         }
 
         private void VersionSave()
         {
-            MajorVersion = majorVersionTemp;
-            MinorVersion = minorVersionTemp;
-            RevisionNumber = revisionNumberTemp;
+            majorVersion = majorVersionTemp;
+            minorVersion = minorVersionTemp;
+            revisionNumber = revisionNumberTemp;
         }
 
-        private void SetVersion()
+        private void RenderVersion()
         {
-            SetBigBaseVersion();
-            SetSmallBaseVersion();
-            SetHotUpdateVersion();
-            ResetVersion();
+            RenderMajorVersion();
+            RenderMinorVersion();
+            RenderRevisionNumber();
         }
 
-        private void SetBigBaseVersion()
+        private void RenderMajorVersion()
         {
-            EditorGUILayout.BeginHorizontal();
-            GUI.enabled = false;
-            majorVersionTemp = EditorGUILayout.IntField("MajorVersion", Mathf.Max(0, majorVersionTemp));
-            GUI.enabled = true;
-
-            if (!bSetVersion)
+            using (new GUILayout.HorizontalScope())
             {
-                if ((BuildSettingsType == BuildSettingsType.Bundle && BuildBundleMode == BuildBundleMode.AllBundles)
-                    || BuildSettingsType == BuildSettingsType.Player && BuildPlayerMode == BuildPlayerMode.RepackageBundle)
+                GUI.enabled = false;
+                majorVersionTemp = EditorGUILayout.IntField(CommonLanguage.MajorVersion.ToCurrLanguage(), Mathf.Max(0, majorVersionTemp));
+                GUI.enabled = true;
+                if (bUpgradeVersion)
                 {
-                    if(GUILayout.Button("+1"))
-                    {
-                        majorVersionTemp++;
-                        minorVersionTemp = 0;
-                        revisionNumberTemp++;
-                        bSetVersion = !bSetVersion;
-                    }
+                    return;
+                }
+                bool isActiveBtnAdd = buildSettingsMode switch
+                {
+                    BuildSettingsMode.Bundle => buildBundleMode == BuildBundleMode.AllBundles,
+                    BuildSettingsMode.Player => true,
+                    _ => false
+                };
+                if(!isActiveBtnAdd)
+                {
+                    return;
+                }
+                if (GUILayout.Button("+1"))
+                {
+                    majorVersionTemp++;
+                    minorVersionTemp = 0;
+                    revisionNumberTemp++;
+                    bUpgradeVersion = !bUpgradeVersion;
                 }
             }
-            EditorGUILayout.EndHorizontal();
         }
 
-        private void SetSmallBaseVersion()
+        private void RenderMinorVersion()
         {
-            EditorGUILayout.BeginHorizontal();
-            GUI.enabled = false;
-            minorVersionTemp = EditorGUILayout.IntField("MinorVersion", Mathf.Max(0, minorVersionTemp));
-            GUI.enabled = true;
-
-            if (!bSetVersion)
+            using (new GUILayout.HorizontalScope())
             {
-                if ((BuildSettingsType == BuildSettingsType.Bundle && BuildBundleMode == BuildBundleMode.AllBundles)
-                    || BuildSettingsType == BuildSettingsType.Player && BuildPlayerMode == BuildPlayerMode.RepackageBundle)
+                GUI.enabled = false;
+                minorVersionTemp = EditorGUILayout.IntField(CommonLanguage.MinorVersion.ToCurrLanguage(), Mathf.Max(0, minorVersionTemp));
+                GUI.enabled = true;
+
+                if (bUpgradeVersion)
                 {
-                    if (GUILayout.Button("+1"))
-                    {
-                        minorVersionTemp++;
-                        revisionNumberTemp++;
-                        bSetVersion = !bSetVersion;
-                    }
+                    return;
+                }
+                bool isActiveBtnAdd = buildSettingsMode switch
+                {
+                    BuildSettingsMode.Bundle => buildBundleMode == BuildBundleMode.AllBundles,
+                    BuildSettingsMode.Player => true,
+                    _ => false
+                };
+                if(!isActiveBtnAdd)
+                {
+                    return;
+                }
+                if (GUILayout.Button("+1"))
+                {
+                    minorVersionTemp++;
+                    revisionNumberTemp++;
+                    bUpgradeVersion = !bUpgradeVersion;
                 }
             }
-            EditorGUILayout.EndHorizontal();
         }
 
-        private void SetHotUpdateVersion()
+        private void RenderRevisionNumber()
         {
-            EditorGUILayout.BeginHorizontal();
-            GUI.enabled = false;
-            revisionNumberTemp = EditorGUILayout.IntField("RevisionNumber", Mathf.Max(0, revisionNumberTemp));
-            GUI.enabled = true;
-
-            if (!bSetVersion)
+            using (new EditorGUILayout.HorizontalScope())
             {
-                if (BuildSettingsType == BuildSettingsType.Bundle && BuildBundleMode == BuildBundleMode.HotUpdateBundles)
+                GUI.enabled = false;
+                revisionNumberTemp = EditorGUILayout.IntField(CommonLanguage.RevisionNumber.ToCurrLanguage(), Mathf.Max(0, revisionNumberTemp));
+                GUI.enabled = true;
+
+                if (bUpgradeVersion)
                 {
-                    if (GUILayout.Button("+1"))
-                    {
-                        revisionNumberTemp++;
-                        bSetVersion = !bSetVersion;
-                    }
+                    return;
+                }
+                bool isActiveBtnAdd = buildSettingsMode switch
+                {
+                    BuildSettingsMode.Bundle => buildBundleMode == BuildBundleMode.HotUpdateBundles,
+                    _ => false
+                };
+                if (!isActiveBtnAdd)
+                {
+                    return;
+                }
+                if (GUILayout.Button("+1"))
+                {
+                    revisionNumberTemp++;
+                    bUpgradeVersion = !bUpgradeVersion;
                 }
             }
-            EditorGUILayout.EndHorizontal();
         }
 
-        private void ResetVersion()
+        private void RenderBtnResetByVersion()
         {
-            if(bSetVersion
-                && !(BuildSettingsType == BuildSettingsType.Player && BuildPlayerMode == BuildPlayerMode.InoperationBundle))
+            if(majorVersionTemp == majorVersion
+                && minorVersionTemp == minorVersion
+                && revisionNumberTemp == revisionNumber)
             {
-                if(GUILayout.Button("ResetVersion"))
-                {
-                    VersionInit();
-                }
+                return;
+            }
+            if (GUILayout.Button(CommonLanguage.ResetVersion.ToCurrLanguage()))
+            {
+                VersionRefresh();
             }
         }
     }

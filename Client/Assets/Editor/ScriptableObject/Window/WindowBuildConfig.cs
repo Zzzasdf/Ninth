@@ -10,18 +10,18 @@ namespace Ninth.Editor
     {
         [SerializeField] private string buildBundlesDirectoryRoot;
         [SerializeField] private string buildPlayersDirectoryRoot;
-        [SerializeField] private BuildSettingsType buildSettingsType;
+        [SerializeField] private BuildSettingsMode buildSettingsType;
         [SerializeField] private BuildBundleMode buildBundleMode;
         [SerializeField] private BuildPlayerMode buildPlayerMode;
         [SerializeField] private int majorVersion;
         [SerializeField] private int minorVersion;
         [SerializeField] private int revisionNumber;
-        [SerializeField] private BuildExportDirectoryType buildExportDirectoryType;
+        [SerializeField] private BuildExportCopyFolderMode buildExportDirectoryType;
         [SerializeField] private ActiveTargetMode activeTargetMode;
         [SerializeField] private BuildTarget buildTarget;
         [SerializeField] private BuildTargetGroup buildTargetGroup;
 
-        public string BuildBundlesDirectoryRoot
+        public string BuildBundlesTargetFolderRoot
         {
             get => buildBundlesDirectoryRoot;
             set => SetProperty(ref buildBundlesDirectoryRoot, value);
@@ -31,7 +31,7 @@ namespace Ninth.Editor
             get => buildPlayersDirectoryRoot;
             set => SetProperty(ref buildPlayersDirectoryRoot, value);
         }
-        public BuildSettingsType BuildSettingsType
+        public BuildSettingsMode BuildSettingsMode
         {
             get => buildSettingsType;
             set => SetProperty(ref buildSettingsType, value);
@@ -61,7 +61,7 @@ namespace Ninth.Editor
             get => revisionNumber;
             set => SetProperty(ref revisionNumber, value);
         }
-        public BuildExportDirectoryType BuildExportDirectoryType
+        public BuildExportCopyFolderMode BuildExportCopyFolderMode
         {
             get => buildExportDirectoryType;
             set => SetProperty(ref buildExportDirectoryType, value);
@@ -90,9 +90,9 @@ namespace Ninth.Editor
 
         private void SetDefaultBuildBundlesDirectoryRoot()
         {
-            if(string.IsNullOrEmpty(BuildBundlesDirectoryRoot))
+            if(string.IsNullOrEmpty(BuildBundlesTargetFolderRoot))
             {
-                BuildBundlesDirectoryRoot = $"{Application.dataPath}/../../Bundles";
+                BuildBundlesTargetFolderRoot = $"{Application.dataPath}/../../Bundles";
             }
         }
 
@@ -120,7 +120,7 @@ namespace Ninth.Editor
         }
     }
 
-    public enum BuildSettingsType
+    public enum BuildSettingsMode
     {
         Bundle,
         Player
@@ -135,12 +135,12 @@ namespace Ninth.Editor
     public enum BuildPlayerMode
     {
         InoperationBundle,
-        RepackageBundle
+        RepackageAllBundle
     }
 
-    public enum BuildExportDirectoryType
+    public enum BuildExportCopyFolderMode
     {
-        Local,
+        StreamingAssets,
         Remote
     }
     

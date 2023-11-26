@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildBundlesDirectoryRoot: F:/Ninth/Client/Assets/../../Bundles
   buildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
-  buildSettingsType: 0
+  buildSettingsType: 1
   buildBundleMode: 1
-  buildPlayerMode: 0
+  buildPlayerMode: 1
   majorVersion: 1
   minorVersion: 0
   revisionNumber: 1
   buildExportDirectoryType: 0
-  activeTargetMode: 0
+  activeTargetMode: 1
   buildTarget: 19
   buildTargetGroup: 1
