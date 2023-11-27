@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildBundlesDirectoryRoot: F:/Ninth/Client/Assets/../../Bundles
   buildPlayersDirectoryRoot: F:/Ninth/Client/Assets/../../Players
-  buildSettingsType: 1
+  buildSettingsType: 0
   buildBundleMode: 1
   majorVersion: 3
   minorVersion: 0

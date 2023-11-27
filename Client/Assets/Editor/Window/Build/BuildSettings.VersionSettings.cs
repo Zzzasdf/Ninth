@@ -84,7 +84,7 @@ namespace Ninth.Editor
                 {
                     majorVersionTemp++;
                     minorVersionTemp = 0;
-                    versionRevisionNumberTemp++;
+                    versionRevisionNumberTemp = 0;
                     revisionNumberTemp++;
                     bUpgradeVersion = !bUpgradeVersion;
                 }
@@ -116,7 +116,7 @@ namespace Ninth.Editor
                 if (GUILayout.Button("+1"))
                 {
                     minorVersionTemp++;
-                    versionRevisionNumberTemp++;
+                    versionRevisionNumberTemp = 0;
                     revisionNumberTemp++;
                     bUpgradeVersion = !bUpgradeVersion;
                 }
