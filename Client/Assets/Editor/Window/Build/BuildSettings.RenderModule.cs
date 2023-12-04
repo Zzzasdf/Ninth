@@ -69,7 +69,7 @@ namespace Ninth.Editor
                 GUI.enabled = true;
                 if (GUILayout.Button(CommonLanguage.Browse.ToCurrLanguage()))
                 {
-                    string path = EditorUtility.OpenFilePanel(CommonLanguage.SelectATargetFolderRootToExport.ToCurrLanguage(), buildPlayersTargetFolderRoot, "Players");
+                    string path = EditorUtility.OpenFolderPanel(CommonLanguage.SelectATargetFolderRootToExport.ToCurrLanguage(), buildPlayersTargetFolderRoot, "Players");
                     if (!string.IsNullOrEmpty(path))
                     {
                         buildPlayersTargetFolderRoot = path;

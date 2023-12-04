@@ -21,7 +21,7 @@ namespace Ninth.Editor
             }
             if (GUILayout.Button(CommonLanguage.Export.ToCurrLanguage()))
             {
-                Action action = buildSettingsMode switch
+                Action<string> action = buildSettingsMode switch
                 {
                     BuildSettingsMode.Bundle => buildBundleMode switch
                     {
@@ -38,7 +38,8 @@ namespace Ninth.Editor
                     return;
                 }
                 Debug.Log(Log.Exporting.ToCurrLanguage());
-                action.Invoke();
+                string version = string.Join(".", majorVersionTemp, minorVersionTemp, revisionNumber);
+                action.Invoke(version);
                 VersionSave();
                 VersionRefresh();
                 Debug.Log(Log.ExportCompleted);
@@ -46,12 +47,21 @@ namespace Ninth.Editor
         }
 
         // 构建热更ab
-        private void CreateHotUpdateBundles()
+        private void CreateHotUpdateBundles(string version)
         {
-            buildAssetsCmd.BuildHotUpdateBundles(buildTarget,
-                                            buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                            string.Join(".", majorVersionTemp, minorVersionTemp, revisionNumber));
-
+            AssetMode assetMode = buildExportCopyFolderMode switch
+            {
+                BuildExportCopyFolderMode.StreamingAssets => AssetMode.LocalAB,
+                BuildExportCopyFolderMode.Remote => AssetMode.RemoteAB,
+                _ => default,
+            };
+            if(assetMode == default)
+            {
+                Debug.LogError($"未找到该模式：{assetMode}");
+                return;
+            }
+            BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
+            buildAssetsCmd.BuildHotUpdateBundles(buildTarget, assetMode, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();
@@ -59,12 +69,21 @@ namespace Ninth.Editor
         }
 
         // 构建所有ab
-        private void CreateAllBundles()
+        private void CreateAllBundles(string version)
         {
-            buildAssetsCmd.BuildAllBundles(buildTarget,
-                                           buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                           string.Join(".", majorVersionTemp, minorVersionTemp, revisionNumber));
-
+            AssetMode assetMode = buildExportCopyFolderMode switch
+            {
+                BuildExportCopyFolderMode.StreamingAssets => AssetMode.LocalAB,
+                BuildExportCopyFolderMode.Remote => AssetMode.RemoteAB,
+                _ => default,
+            };
+            if (assetMode == default)
+            {
+                Debug.LogError($"未找到该模式：{assetMode}");
+                return;
+            }
+            BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
+            buildAssetsCmd.BuildAllBundles(buildTarget, assetMode, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();
@@ -72,12 +91,21 @@ namespace Ninth.Editor
         }
 
         // 构建客户端和所有ab
-        private void CreatePlayerAndAllBundles()
+        private void CreatePlayerAndAllBundles(string version)
         {
-            buildAssetsCmd.BuildPlayerAndAllBundles(buildTargetGroup, buildTarget,
-                                            buildExportCopyFolderMode == BuildExportCopyFolderMode.StreamingAssets ? AssetMode.LocalAB : AssetMode.RemoteAB,
-                                            string.Join(".", majorVersionTemp, minorVersionTemp, revisionNumber));
-
+            AssetMode assetMode = buildExportCopyFolderMode switch
+            {
+                BuildExportCopyFolderMode.StreamingAssets => AssetMode.LocalAB,
+                BuildExportCopyFolderMode.Remote => AssetMode.RemoteAB,
+                _ => default,
+            };
+            if (assetMode == default)
+            {
+                Debug.LogError($"未找到该模式：{assetMode}");
+                return;
+            }
+            BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
+            buildAssetsCmd.BuildPlayerAndAllBundles(buildTargetGroup, buildTarget, assetMode, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();

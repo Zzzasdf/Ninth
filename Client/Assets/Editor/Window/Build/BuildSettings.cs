@@ -11,13 +11,6 @@ namespace Ninth.Editor
 {
     public sealed partial class BuildSettings
     {
-        private readonly BuildAssetsCommand buildAssetsCmd;
-
-        public BuildSettings(BuildAssetsCommand buildAssetsCmd)
-        {
-            this.buildAssetsCmd = buildAssetsCmd;
-        }
-
         private ReadOnlyDictionary<BuildSettingsMode, UnityAction> _tabActionDic;
         private ReadOnlyDictionary<BuildSettingsMode, UnityAction> tabActionDic
         { 
@@ -45,7 +38,7 @@ namespace Ninth.Editor
 
         public void OnGUI()
         {
-            if (bVersionInit)
+            if (!bVersionInit)
             {
                 VersionRefresh();
                 bVersionInit = !bVersionInit;

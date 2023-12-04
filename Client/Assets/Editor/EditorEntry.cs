@@ -15,7 +15,11 @@ namespace Ninth.Editor
         public static DownloadCore Download => GameEntry.Download; // 下载
         public static JsonCore Json => GameEntry.Json;  // Json
         public static ProcedureCore Procedure => GameEntry.Procedure; // 流程
-        public static PackConfig PackConfig { get; }
-        public static BuildAssetsCommand BuildAssetsCmd { get; }
+
+        public static PlatformConfig PlatformConfig => new PlatformConfig();
+        public static NameConfig NameConfig => new NameConfig();
+        public static PathConfig PathConfig => new PathConfig(Config.AssetConfig, PlatformConfig, NameConfig);
+        public static PackConfig PackConfig => new PackConfig(PlatformConfig, NameConfig, PathConfig);
+        public static BuildAssetsCommand BuildAssetsCmd => new BuildAssetsCommand(Config.AssetConfig, PackConfig, Json);
     }
 }

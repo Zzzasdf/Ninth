@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using UnityEditor.Animations;
 using UnityEngine;
 using System;
 
@@ -12,7 +11,6 @@ namespace Ninth
         [Serializable]
         public class ConfigCore
         {
-            public UTF8Encoding Encoding = new UTF8Encoding(false);
             public AssetConfig AssetConfig;
             public NameConfig NameConfig;
             public PlatformConfig PlatformConfig { get; }

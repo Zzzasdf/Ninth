@@ -23,6 +23,14 @@ namespace Ninth.Editor
             this.assetConfig = assetConfig;
             this.packConfig = packConfig;
             this.jsonCore = jsonCore;
+            m_VersionConfig = new VersionConfig();
+            m_AssetBundleBuildList = new List<AssetBundleBuild>();
+            m_AssetLocate2BundleNameList = new Dictionary<AssetLocate, List<string>>();
+            m_LoadConfig = new Dictionary<AssetLocate, LoadConfig>();
+            m_AssetLocate2AssetPathList = new Dictionary<AssetLocate, List<string>>();
+            m_AssetPath2AssetRef = new Dictionary<string, AssetRef>();
+            m_BundleName2BundleRef = new Dictionary<string, BundleRef>();
+            m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
         }
 
         public ReadOnlyCollection<string> LocalGroup => assetConfig.LocalGroup;
@@ -30,7 +38,7 @@ namespace Ninth.Editor
         public ReadOnlyCollection<string> RemoteGroup => assetConfig.RemoteGroup;
 
         // 打包模式
-        public AssetMode m_PackAssetMode;
+        public AssetMode packAssetMode;
 
         // 版本配置
         private VersionConfig m_VersionConfig;
@@ -51,18 +59,6 @@ namespace Ninth.Editor
         // 与版本包对比需要热更的部分
         private Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
         private Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
-
-        BuildAssetsCommand()
-        {
-            m_VersionConfig = new VersionConfig();
-            m_AssetBundleBuildList = new List<AssetBundleBuild>();
-            m_AssetLocate2BundleNameList = new Dictionary<AssetLocate, List<string>>();
-            m_LoadConfig = new Dictionary<AssetLocate, LoadConfig>();
-            m_AssetLocate2AssetPathList = new Dictionary<AssetLocate, List<string>>();
-            m_AssetPath2AssetRef = new Dictionary<string, AssetRef>();
-            m_BundleName2BundleRef = new Dictionary<string, BundleRef>();
-            m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
-        }
 
         public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
         {
@@ -113,7 +109,7 @@ namespace Ninth.Editor
         public bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            m_PackAssetMode = assetMode;
+            packAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
                 (LocalGroup, AssetLocate.Local),
@@ -129,7 +125,7 @@ namespace Ninth.Editor
         public bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            m_PackAssetMode = assetMode;
+            packAssetMode = assetMode;
 
             bool result = Build(newVersion, target,
                 (RemoteGroup, AssetLocate.Remote));
@@ -580,7 +576,7 @@ namespace Ninth.Editor
         // 复制文件
         private void CopyFiles(bool backPack)
         {
-            switch(m_PackAssetMode)
+            switch(packAssetMode)
             {
                 case AssetMode.LocalAB:
                     {

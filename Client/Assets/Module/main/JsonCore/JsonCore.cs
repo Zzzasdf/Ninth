@@ -1,22 +1,26 @@
 //using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace Ninth
 {
     public partial class GameEntry
     {
+        [Serializable]
         public sealed partial class JsonCore
         {
-            private readonly UTF8Encoding encoding;
+            //private readonly UTF8Encoding encoding;
 
-            public JsonCore(UTF8Encoding encoding)
-            {
-                this.encoding = encoding;
-                pathMap = new Dictionary<JsonPath, string>();
-                PathMapInit();
-            }
+            [SerializeField] private UTF8Encoding encoding = new UTF8Encoding(false);
+            //public JsonCore(UTF8Encoding encoding)
+            //{
+            //    this.encoding = encoding;
+            //    pathMap = new Dictionary<JsonPath, string>();
+            //    PathMapInit();
+            //}
 
             public T ToObject<T>(string path)
             {

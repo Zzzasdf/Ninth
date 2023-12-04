@@ -27,7 +27,7 @@ namespace Ninth.Editor
 
         private ReadOnlyDictionary<NinthWindowTab, Action> tabActionDic = new(new Dictionary<NinthWindowTab, Action>()
         {
-             { NinthWindowTab.Build, new BuildSettings(EditorEntry.BuildAssetsCmd).OnGUI },
+             { NinthWindowTab.Build, new BuildSettings().OnGUI },
              { NinthWindowTab.Excel, new ExcelSettings().OnGUI },
              { NinthWindowTab.Scan, new ScanSettings().OnGUI },
              { NinthWindowTab.Review, new ReviewSettings().OnGUI },
