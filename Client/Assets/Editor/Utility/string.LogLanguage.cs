@@ -1,4 +1,4 @@
-namespace Ninth.Editor
+ï»¿namespace Ninth.Editor
 {
     public enum Log
     {
@@ -27,14 +27,14 @@ namespace Ninth.Editor
 
             void LogInit()
             {
-                AddConvertibleTxtDefine(Log.Exporting, "µ¼³öÖĞ ..", "Exporting ..");
-                AddConvertibleTxtDefine(Log.ExportCompleted, "µ¼³öÍê³É !!", "Export Completed !!");
-                AddConvertibleTxtDefine(Log.FuncIsNull, " ·½·¨Îª¿Õ !!", "Func Is Null !!");
+                AddConvertibleTxtDefine(Log.Exporting, "å¯¼å‡ºä¸­ ..", "Exporting ..");
+                AddConvertibleTxtDefine(Log.ExportCompleted, "å¯¼å‡ºå®Œæˆ !!", "Export Completed !!");
+                AddConvertibleTxtDefine(Log.FuncIsNull, " æ–¹æ³•ä¸ºç©º !!", "Func Is Null !!");
             }
 
             void LogFormat1Init()
             {
-                AddConvertibleTxtDefine(LogFormat1.PathNotIncludedAppointFolder, "¸ÃÂ·¾¶Î´°üº¬Ö¸¶¨µÄÄ¿Â¼{0}", "Path Not Included Appoint Folder {0}");
+                AddConvertibleTxtDefine(LogFormat1.PathNotIncludedAppointFolder, "è¯¥è·¯å¾„æœªåŒ…å«æŒ‡å®šçš„ç›®å½•{0}", "Path Not Included Appoint Folder {0}");
             }
 
             void LogFormat2Init()

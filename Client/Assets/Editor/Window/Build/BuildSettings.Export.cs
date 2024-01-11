@@ -1,4 +1,4 @@
-using System;
+锘縰sing System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,7 +46,7 @@ namespace Ninth.Editor
             }
         }
 
-        // 构建热更ab
+        // 鏋勫缓鐑洿ab
         private void CreateHotUpdateBundles(string version)
         {
             AssetMode assetMode = buildExportCopyFolderMode switch
@@ -57,7 +57,7 @@ namespace Ninth.Editor
             };
             if(assetMode == default)
             {
-                Debug.LogError($"未找到该模式：{assetMode}");
+                Debug.LogError($"鏈壘鍒拌妯″紡锛歿assetMode}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
@@ -68,7 +68,7 @@ namespace Ninth.Editor
             }
         }
 
-        // 构建所有ab
+        // 鏋勫缓鎵�鏈塧b
         private void CreateAllBundles(string version)
         {
             AssetMode assetMode = buildExportCopyFolderMode switch
@@ -79,7 +79,7 @@ namespace Ninth.Editor
             };
             if (assetMode == default)
             {
-                Debug.LogError($"未找到该模式：{assetMode}");
+                Debug.LogError($"鏈壘鍒拌妯″紡锛歿assetMode}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
@@ -90,7 +90,7 @@ namespace Ninth.Editor
             }
         }
 
-        // 构建客户端和所有ab
+        // 鏋勫缓瀹㈡埛绔拰鎵�鏈塧b
         private void CreatePlayerAndAllBundles(string version)
         {
             AssetMode assetMode = buildExportCopyFolderMode switch
@@ -101,7 +101,7 @@ namespace Ninth.Editor
             };
             if (assetMode == default)
             {
-                Debug.LogError($"未找到该模式：{assetMode}");
+                Debug.LogError($"鏈壘鍒拌妯″紡锛歿assetMode}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;

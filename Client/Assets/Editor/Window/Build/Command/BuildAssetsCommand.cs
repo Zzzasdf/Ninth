@@ -490,6 +490,10 @@ namespace Ninth.Editor
                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
                 }
                 jsonCore.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+                if(string.IsNullOrEmpty(saveDownloadConfigTempPath[index]))
+                {
+                    continue;
+                }
                 jsonCore.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
             }
         }

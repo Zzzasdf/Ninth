@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Ninth
 {
@@ -14,6 +15,11 @@ namespace Ninth
         public DownloadCore Download => _Download;
         public JsonCore Json => _Json;
         public ProcedureCore Procedure => _Procedure;
+
+        void Awake()
+        {
+            _Json = new JsonCore();
+        }
 
         void Start()
         {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7b25f79b36c2c64daffe4bc28e33422, type: 3}
   m_Name: WindowExcelSearchConfigSO
   m_EditorClassIdentifier: 
-  compileDirectoryRoot: F:/Ninth/Excels
+  compileDirectoryRoot: F:/git/HxMobileDesign/xls
   searchComparisonType: 4
   searchMode: 1
   searchDataMode: 0

@@ -1,11 +1,11 @@
-namespace Ninth.Editor
+ï»¿namespace Ninth.Editor
 {
     public enum CommonLanguage
     {
         Browse,
         FrameBox,
 
-        // ´ò°ü Build
+        // æ‰“åŒ… Build
         ExportTargetFolderSettings,
         BuildBundlesTargetFolderRoot,
         BuildPlayersTargetFolderRoot,
@@ -21,7 +21,7 @@ namespace Ninth.Editor
         PleaseAdjustTheVersion,
         Export,
 
-        // ±í¸ñ Excel
+        // è¡¨æ ¼ Excel
         SearchTargetFolderSettings,
         SelectAFolderToSearch,
         Compile,
@@ -31,34 +31,34 @@ namespace Ninth.Editor
     {
         static void CommonEnumInit()
         {
-            AddConvertibleTxtDefine(CommonLanguage.FrameBox, "frameBox", "frameBox"); // GUISkin¸ñÊ½
-            AddConvertibleTxtDefine(CommonLanguage.Browse, "ä¯ÀÀ", "Browse");
+            AddConvertibleTxtDefine(CommonLanguage.FrameBox, "frameBox", "frameBox"); // GUISkinæ ¼å¼
+            AddConvertibleTxtDefine(CommonLanguage.Browse, "æµè§ˆ", "Browse");
             BuildInit();
             ExcelInit();
 
             void BuildInit()
             {
-                AddConvertibleTxtDefine(CommonLanguage.ExportTargetFolderSettings, "Ñ¡Ôñµ¼³öµÄÄ¿±êÄ¿Â¼", "Export Target Folder Settings");
-                AddConvertibleTxtDefine(CommonLanguage.BuildBundlesTargetFolderRoot, "ab°üÊä³öµÄÄ¿Â¼", "BundlesTargetFolderRoot");
-                AddConvertibleTxtDefine(CommonLanguage.BuildPlayersTargetFolderRoot, "¿Í»§¶ËÊä³öµÄÄ¿Â¼", "PlayersTargetFolderRoot");
-                AddConvertibleTxtDefine(CommonLanguage.SelectATargetFolderRootToExport, "Ñ¡ÔñÒ»¸öÄ¿Â¼µ¼³ö", "Select A Folder To Export");
-                AddConvertibleTxtDefine(CommonLanguage.CopyOperate, "¿½±´\n²Ù×÷", "Copy\nOperate");
-                AddConvertibleTxtDefine(CommonLanguage.BuildTarget, "ab°ü¹¹½¨µÄÆ½Ì¨", "BuildTarget");
-                AddConvertibleTxtDefine(CommonLanguage.BuildTargetGroup, "¿Í»§¶Ë¹¹½¨µÄÆ½Ì¨", "BuildTargetGroup");
-                AddConvertibleTxtDefine(CommonLanguage.MajorVersion, "Ö÷°æ±¾", "MajorVersion");
-                AddConvertibleTxtDefine(CommonLanguage.MinorVersion, "´Î°æ±¾", "MinorVersion");
-                AddConvertibleTxtDefine(CommonLanguage.VersionRevisionNumber, "°æ±¾ĞŞ¶©ºÅ", "VersionRevisionNumber");
-                AddConvertibleTxtDefine(CommonLanguage.RevisionNumber, "ĞŞ¶©ºÅ", "RevisionNumber");
-                AddConvertibleTxtDefine(CommonLanguage.ResetVersion, "»¹Ô­°æ±¾", "ResetVersion");
-                AddConvertibleTxtDefine(CommonLanguage.PleaseAdjustTheVersion, "ÇëĞŞ¸Ä°æ±¾", "Adjust The Version, Please!!");
-                AddConvertibleTxtDefine(CommonLanguage.Export, "µ¼³ö", "Export");
+                AddConvertibleTxtDefine(CommonLanguage.ExportTargetFolderSettings, "é€‰æ‹©å¯¼å‡ºçš„ç›®æ ‡ç›®å½•", "Export Target Folder Settings");
+                AddConvertibleTxtDefine(CommonLanguage.BuildBundlesTargetFolderRoot, "abåŒ…è¾“å‡ºçš„ç›®å½•", "BundlesTargetFolderRoot");
+                AddConvertibleTxtDefine(CommonLanguage.BuildPlayersTargetFolderRoot, "å®¢æˆ·ç«¯è¾“å‡ºçš„ç›®å½•", "PlayersTargetFolderRoot");
+                AddConvertibleTxtDefine(CommonLanguage.SelectATargetFolderRootToExport, "é€‰æ‹©ä¸€ä¸ªç›®å½•å¯¼å‡º", "Select A Folder To Export");
+                AddConvertibleTxtDefine(CommonLanguage.CopyOperate, "æ‹·è´\næ“ä½œ", "Copy\nOperate");
+                AddConvertibleTxtDefine(CommonLanguage.BuildTarget, "abåŒ…æ„å»ºçš„å¹³å°", "BuildTarget");
+                AddConvertibleTxtDefine(CommonLanguage.BuildTargetGroup, "å®¢æˆ·ç«¯æ„å»ºçš„å¹³å°", "BuildTargetGroup");
+                AddConvertibleTxtDefine(CommonLanguage.MajorVersion, "ä¸»ç‰ˆæœ¬", "MajorVersion");
+                AddConvertibleTxtDefine(CommonLanguage.MinorVersion, "æ¬¡ç‰ˆæœ¬", "MinorVersion");
+                AddConvertibleTxtDefine(CommonLanguage.VersionRevisionNumber, "ç‰ˆæœ¬ä¿®è®¢å·", "VersionRevisionNumber");
+                AddConvertibleTxtDefine(CommonLanguage.RevisionNumber, "ä¿®è®¢å·", "RevisionNumber");
+                AddConvertibleTxtDefine(CommonLanguage.ResetVersion, "è¿˜åŸç‰ˆæœ¬", "ResetVersion");
+                AddConvertibleTxtDefine(CommonLanguage.PleaseAdjustTheVersion, "è¯·ä¿®æ”¹ç‰ˆæœ¬", "Adjust The Version, Please!!");
+                AddConvertibleTxtDefine(CommonLanguage.Export, "å¯¼å‡º", "Export");
             }
 
             void ExcelInit()
             {
-                AddConvertibleTxtDefine(CommonLanguage.SearchTargetFolderSettings, "Ñ¡ÔñËÑË÷µÄÄ¿±êÄ¿Â¼", "Search Target Folder Settings");
-                AddConvertibleTxtDefine(CommonLanguage.SelectAFolderToSearch, "Ñ¡ÔñÒ»¸öÄ¿Â¼ËÑË÷", "Select A Folder To Export Search");
-                AddConvertibleTxtDefine(CommonLanguage.Compile, "±àÒë", "Compile");
+                AddConvertibleTxtDefine(CommonLanguage.SearchTargetFolderSettings, "é€‰æ‹©æœç´¢çš„ç›®æ ‡ç›®å½•", "Search Target Folder Settings");
+                AddConvertibleTxtDefine(CommonLanguage.SelectAFolderToSearch, "é€‰æ‹©ä¸€ä¸ªç›®å½•æœç´¢", "Select A Folder To Export Search");
+                AddConvertibleTxtDefine(CommonLanguage.Compile, "ç¼–è¯‘", "Compile");
             }
         }
     }

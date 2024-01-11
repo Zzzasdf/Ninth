@@ -1,4 +1,4 @@
-namespace Ninth.Editor
+ï»¿namespace Ninth.Editor
 {
     public static partial class StringLanguage
     {
@@ -9,29 +9,29 @@ namespace Ninth.Editor
 
             void BuildInit()
             {
-                AddConvertibleTxtDefine(NinthWindowTab.Build, "´ò°ü", "Build");
-                AddConvertibleTxtDefine(NinthWindowTab.Excel, "±í¸ñ", "Excel");
-                AddConvertibleTxtDefine(NinthWindowTab.Scan, "É¨Ãè", "Scan");
+                AddConvertibleTxtDefine(NinthWindowTab.Build, "æ‰“åŒ…", "Build");
+                AddConvertibleTxtDefine(NinthWindowTab.Excel, "è¡¨æ ¼", "Excel");
+                AddConvertibleTxtDefine(NinthWindowTab.Scan, "æ‰«æ", "Scan");
                 AddConvertibleTxtDefine(NinthWindowTab.Review, "??", "Review");
-                AddConvertibleTxtDefine(NinthWindowTab.Other, "ÆäËû", "Other");
+                AddConvertibleTxtDefine(NinthWindowTab.Other, "å…¶ä»–", "Other");
 
-                AddConvertibleTxtDefine(BuildSettingsMode.Bundle, "¹¹½¨ab°ü", "Bundle");
-                AddConvertibleTxtDefine(BuildSettingsMode.Player, "¹¹½¨¿Í»§¶Ë", "Player");
+                AddConvertibleTxtDefine(BuildSettingsMode.Bundle, "æ„å»ºabåŒ…", "Bundle");
+                AddConvertibleTxtDefine(BuildSettingsMode.Player, "æ„å»ºå®¢æˆ·ç«¯", "Player");
 
-                AddConvertibleTxtDefine(BuildBundleMode.HotUpdateBundles, "ÈÈ¸üab°ü", "HotUpdateBundles");
-                AddConvertibleTxtDefine(BuildBundleMode.AllBundles, "ËùÓĞab°ü", "AllBundles");
+                AddConvertibleTxtDefine(BuildBundleMode.HotUpdateBundles, "çƒ­æ›´abåŒ…", "HotUpdateBundles");
+                AddConvertibleTxtDefine(BuildBundleMode.AllBundles, "æ‰€æœ‰abåŒ…", "AllBundles");
 
-                AddConvertibleTxtDefine(BuildExportCopyFolderMode.StreamingAssets, "{ ËùÓĞab°ü => StreamingAssets }", "{ AllBundles => StreamingAssets }");
-                AddConvertibleTxtDefine(BuildExportCopyFolderMode.Remote, "{ ±¾µØab°ü => StreamingAssets }\n{ ÈÈ¸üab°ü => Ô¶¶ËÂ·¾¶ }", "{ LocalBundles => StreamingAssets }\n{ HotUpdateBundles => RemoteFolder }");
+                AddConvertibleTxtDefine(BuildExportCopyFolderMode.StreamingAssets, "{ æ‰€æœ‰abåŒ… => StreamingAssets }", "{ AllBundles => StreamingAssets }");
+                AddConvertibleTxtDefine(BuildExportCopyFolderMode.Remote, "{ æœ¬åœ°abåŒ… => StreamingAssets }\n{ çƒ­æ›´abåŒ… => è¿œç«¯è·¯å¾„ }", "{ LocalBundles => StreamingAssets }\n{ HotUpdateBundles => RemoteFolder }");
 
-                AddConvertibleTxtDefine(ActiveTargetMode.ActiveTarget, "Unityµ±Ç°Ê¹ÓÃÆ½Ì¨", "ActiveTarget");
-                AddConvertibleTxtDefine(ActiveTargetMode.InactiveTarget, "Ñ¡ÔñÆ½Ì¨", "InactiveTarget");
+                AddConvertibleTxtDefine(ActiveTargetMode.ActiveTarget, "Unityå½“å‰ä½¿ç”¨å¹³å°", "ActiveTarget");
+                AddConvertibleTxtDefine(ActiveTargetMode.InactiveTarget, "é€‰æ‹©å¹³å°", "InactiveTarget");
             }
 
             void ExcelInit()
             {
-                AddConvertibleTxtDefine(ExcelMode.Encode, "±àÂë", "Encode");
-                AddConvertibleTxtDefine(ExcelMode.Search, "ËÑË÷", "Search");
+                AddConvertibleTxtDefine(ExcelMode.Encode, "ç¼–ç ", "Encode");
+                AddConvertibleTxtDefine(ExcelMode.Search, "æœç´¢", "Search");
             }
         }
     }

@@ -21,7 +21,7 @@ namespace Ninth.HotUpdate
         Object = 1 << 31,
     }
 
-    public class UIHelperMap : IHelperMap<UIHelperBarMode, UIHelperMap>
+    public class UIHelperMap : BaseHelperMap<UIHelperBarMode, UIHelperMap>
     {
         protected override void Assembler()
         {
@@ -40,7 +40,7 @@ namespace Ninth.HotUpdate
         }
     }
 
-    public class UIHelper : IHelper<UIHelperBarMode, UIHelperMap>
+    public class UIHelper : BaseHelper<UIHelperBarMode, UIHelperMap>
     {
         public override UIHelperMap Map()
         {

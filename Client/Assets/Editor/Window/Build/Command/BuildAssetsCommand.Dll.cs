@@ -1,4 +1,4 @@
-using HybridCLR.Editor;
+﻿using HybridCLR.Editor;
 using HybridCLR.Editor.Commands;
 using Ninth.HotUpdate;
 using System.Collections.Generic;

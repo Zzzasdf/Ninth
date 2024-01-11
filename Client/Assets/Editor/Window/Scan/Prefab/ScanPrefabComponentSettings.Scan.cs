@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace Ninth.Editor
         // key(string) => PrefabPath
         private Dictionary<TEnum, Dictionary<string, ScanInfo<T>>> cache = new Dictionary<TEnum, Dictionary<string, ScanInfo<T>>>();
 
-        // ¼ì²â·½·¨·ÖÀà
+        // æ£€æµ‹æ–¹æ³•åˆ†ç±»
         private List<(TEnum, Func<T, bool>, string, Action<T>)> classifies;
         private List<(TEnum, Func<T, bool>, string, Action<T>)> Classifies
         {
@@ -70,7 +70,7 @@ namespace Ninth.Editor
             }
         }
 
-        // ÏÈĞò±éÀú
+        // å…ˆåºéå†
         private List<string> GetAssetsAllChildDirectory(string dirPath)
         {
             List<string> dirs = new List<string>();
@@ -87,7 +87,7 @@ namespace Ninth.Editor
             return dirs;
         }
 
-        // ÉèÖÃ»º´æ
+        // è®¾ç½®ç¼“å­˜
         private void SetCache(TEnum tEnum, string prefabPath, string prefabName, string scanLog, Action<T> handle, string componentObjPath, string componentObjName)
         {
             if (!cache.ContainsKey(tEnum))
@@ -108,7 +108,7 @@ namespace Ninth.Editor
             cache[tEnum][prefabPath][scanLog].ComponentObjsName.Add(componentObjName);
         }
 
-        // »ñÈ¡×é¼ş¶ÔÏóÔÚÔ¤ÖÆÌåÖĞµÄÏà¶ÔÂ·¾¶
+        // è·å–ç»„ä»¶å¯¹è±¡åœ¨é¢„åˆ¶ä½“ä¸­çš„ç›¸å¯¹è·¯å¾„
         private string GetRelativePathOfComponentOfPrefab(T t, Transform prefabTran)
         {
             List<string> objsName = new List<string>();

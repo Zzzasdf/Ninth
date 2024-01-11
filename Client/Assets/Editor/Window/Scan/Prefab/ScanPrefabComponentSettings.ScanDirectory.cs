@@ -1,4 +1,4 @@
-using System.Collections;
+锘縰sing System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -30,7 +30,7 @@ namespace Ninth.Editor
                 string path = EditorUtility.OpenFolderPanel("Select A Folder To Scanf", PathDirectoryRoot, "Assets");
                 if (!path.Contains(Application.dataPath))
                 {
-                    Debug.LogError("请选择项目里的一个文件夹");
+                    Debug.LogError("璇烽�夋嫨椤圭洰閲岀殑涓�涓枃浠跺す");
                 }
                 else
                 {

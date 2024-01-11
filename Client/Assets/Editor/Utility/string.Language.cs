@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +18,7 @@ namespace Ninth.Editor
         private static Language language = Language.Chinese;
         private static ReadOnlyDictionary<Language, string> undefinedDic = new(new Dictionary<Language, string>()
         {
-            { Language.Chinese, "Î´¶¨Òå" },
+            { Language.Chinese, "æœªå®šä¹‰" },
             { Language.English, "undefined" },
         });
         
@@ -48,7 +48,7 @@ namespace Ninth.Editor
             }
         }
 
-        // ×ª»»³Éµ±Ç°µÄÓïÑÔ
+        // è½¬æ¢æˆå½“å‰çš„è¯­è¨€
         public static string[] ToCurrLanguage<T>(this T[] enumTypes) where T: Enum
         {
             if(enumTypes == null || enumTypes.Length == 0)
@@ -72,7 +72,7 @@ namespace Ninth.Editor
             return ToAppointLanguage(txt, language);
         }
 
-        // ×ª»»³ÉÖ¸¶¨µÄÓïÑÔ
+        // è½¬æ¢æˆæŒ‡å®šçš„è¯­è¨€
         public static string ToAppointLanguage(this Enum enumType, Language language)
         {
             if (!convertibleTxtDefineDic.TryGetValue(enumType, out string[] value))

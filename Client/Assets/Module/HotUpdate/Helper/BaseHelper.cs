@@ -7,32 +7,32 @@ using UnityEngine.UI;
 namespace Ninth.HotUpdate
 {
     [DisallowMultipleComponent]
-    public abstract class IHelper<TEnum, TMap> : MonoBehaviour
+    public abstract class BaseHelper<TEnum, TMap> : MonoBehaviour
         where TEnum: Enum
-        where TMap : IHelperMap<TEnum, TMap>, new()
+        where TMap : BaseHelperMap<TEnum, TMap>, new()
     {
-        public int m_Lock;
-        public TEnum m_TEnum;
+        public int EditLock;
+        public TEnum Enum;
 
-        public List<TEnum> m_TEnums;
-        public int m_TEnumIndex;
+        public List<TEnum> Enums;
+        public int EnumIndex;
 
-        public List<TEnum> m_DataBarModes;
-        public List<KeyList> m_Keys;
-        public List<ValueList> m_Values;
+        public List<TEnum> DataBarModes;
+        public List<KeyList> Keys;
+        public List<ValueList> Values;
 
-        private Dictionary<Type, Dictionary<string, UnityEngine.Object>> m_Cache;
+        private Dictionary<Type, Dictionary<string, UnityEngine.Object>> cache;
 
         private void Init()
         {
-            m_Cache = new Dictionary<Type, Dictionary<string, UnityEngine.Object>>();
-            for (int index = 0; index < m_DataBarModes.Count; index++)
+            cache = new Dictionary<Type, Dictionary<string, UnityEngine.Object>>();
+            for (int index = 0; index < DataBarModes.Count; index++)
             {
-                Type type = Map().GetType(m_DataBarModes[index]);
-                m_Cache.Add(type, new Dictionary<string, UnityEngine.Object>());
-                for (int i = 0; i < m_Keys[index].Values.Count; i++)
+                Type type = Map().GetType(DataBarModes[index]);
+                cache.Add(type, new Dictionary<string, UnityEngine.Object>());
+                for (int i = 0; i < Keys[index].Values.Count; i++)
                 {
-                    m_Cache[type].Add(m_Keys[index].Values[i], m_Values[index].Values[i]);
+                    cache[type].Add(Keys[index].Values[i], Values[index].Values[i]);
                 }
             }
         }
@@ -43,11 +43,11 @@ namespace Ninth.HotUpdate
         {
             try
             {
-                if (m_Cache == null)
+                if (cache == null)
                 {
                     Init();
                 }
-                return m_Cache[typeof(T)][key] as T;
+                return cache[typeof(T)][key] as T;
             }
             catch(KeyNotFoundException e)
             {
