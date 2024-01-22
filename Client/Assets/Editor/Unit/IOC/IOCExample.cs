@@ -10,17 +10,10 @@ namespace Ninth.Editor
 {
     public class IOCExample
     {
-        public Dictionary<int, string> dic = new();
-
-        public string? GetStr(int id)
+        public void Foo()
         {
-            dic.TryGetValue(id, out string result);
-            return result;
-        }
-
-        public void Main()
-        {
-           string a = GetStr(1);
         }
     }
+
+    
 }

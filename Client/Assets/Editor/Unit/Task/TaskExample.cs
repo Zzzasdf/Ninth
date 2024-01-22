@@ -9,8 +9,6 @@ namespace Ninth.Editor
     {
         public void Foo()
         {
-            IOCExample ioc = new IOCExample();
-            string? a = ioc.GetStr(1);
         }
     }
 }

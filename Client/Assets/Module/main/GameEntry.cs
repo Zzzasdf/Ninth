@@ -4,7 +4,7 @@ using System;
 namespace Ninth
 {
     [DisallowMultipleComponent]
-    public sealed partial class GameEntry : MonoBehaviour
+    public sealed partial class GameEntry: MonoBehaviour
     {
         [SerializeField] private ConfigCore _Config; // 配置
         [SerializeField] private DownloadCore _Download; // 下载
