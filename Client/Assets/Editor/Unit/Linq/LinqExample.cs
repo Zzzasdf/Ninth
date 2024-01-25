@@ -11,35 +11,6 @@ namespace Ninth.Editor
 {
     public class LinqExample
     {
-#nullable enable
-        public class Test
-        {
-            public string Txt => "AA";
-        }
-        private Dictionary<int, Test> ss = new();
-        private void Main()
-        {
-            Test? test = Foo();
-            Dump(test);
-            // if (test != null)
-            // {
-            //     Dump1(test);
-            // }
-        }
-        private Test? Foo()
-        {
-            ss.TryGetValue(1, out Test result);
-            return result;
-        }
-        private void Dump(Test? test)
-        {
-            test?.Txt.Log();
-        }
-        private void Dump1(Test test)
-        {
-            test.Txt.Log();
-        }
-
         // 延迟执行（defer）与消耗（exhaust）
         [Test]
         public void DeferAndExhaust()
