@@ -18,5 +18,7 @@ public class HotUpdateMain : MonoBehaviour
 
         Debug.Log("=======执行热更部分======");
         //gameObject.AddComponent<Ninth.HotUpdate.GameDriver>();
+
+        
     }
 }

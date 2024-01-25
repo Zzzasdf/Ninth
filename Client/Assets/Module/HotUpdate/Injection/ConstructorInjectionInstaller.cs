@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using UnityEngine.TestTools;
 
 namespace Ninth.HotUpdate
 {
@@ -13,9 +14,9 @@ namespace Ninth.HotUpdate
             // IFoo ifoo = Container.Resolve<IFoo>();
             // ifoo.Increase();
             // ifoo.Dump();
-            Container.Resolve<IFoo>().Increase().Dump();
-            Container.Resolve<Foo>().Increase().Dump();
-            Container.Resolve<Foo2>().Increase().Dump();
+            // Container.Resolve<IFoo>().Increase().Dump();
+            // Container.Resolve<Foo>().Increase().Dump();
+            // Container.Resolve<Foo2>().Increase().Dump();
         }
     }
 

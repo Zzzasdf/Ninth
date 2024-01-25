@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 
 namespace Ninth.HotUpdate
@@ -15,15 +18,12 @@ namespace Ninth.HotUpdate
             static LogSystem()
             {
                 Validator = HotUpdateConfig.LogValidator;
+                FramePrefix = string.Join(' ', "Frame".AddColor(ColorDefine.FrameLog), "..");
             }
 
-            #region Frame
-            public static T FrameLog<T>(T message, string format = null)
+#region Frame
+            public static T FrameLog<T>(T message, string? format)
             {
-                if(message == null)
-                {
-                    return default(T);
-                }
                 if (Validator.HasFlag(LogValidator.FrameLog))
                 {
                     Debug.LogFormat(FrameFormat(), MessageFormat(message, format));
@@ -31,16 +31,16 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameLog<T>(List<T> message, string format = null)
+            public static IEnumerable<T> FrameLog<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.FrameLog))
                 {
-                    Debug.LogFormat(FrameFormat(), MessageListFormat(message, format));
+                    Debug.LogFormat(FrameFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
 
-            public static T FrameWarning<T>(T message, string format = null)
+            public static T FrameWarning<T>(T message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.FrameWarning))
                 {
@@ -49,16 +49,16 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameWarning<T>(List<T> message, string format = null)
+            public static IEnumerable<T> FrameWarning<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.FrameWarning))
                 {
-                    Debug.LogWarningFormat(FrameFormat(), MessageListFormat(message, format));
+                    Debug.LogWarningFormat(FrameFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
 
-            public static T FrameError<T>(T message, string format = null)
+            public static T FrameError<T>(T message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.FrameError))
                 {
@@ -67,18 +67,18 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> FrameError<T>(List<T> message, string format = null)
+            public static IEnumerable<T> FrameError<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.FrameError))
                 {
-                    Debug.LogErrorFormat(FrameFormat(), MessageListFormat(message, format));
+                    Debug.LogErrorFormat(FrameFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
-            #endregion
+#endregion
 
-            #region Game
-            public static T Log<T>(T message, string format = null)
+#region Game
+            public static T Log<T>(T message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Log))
                 {
@@ -87,16 +87,16 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Log<T>(List<T> message, string format = null)
+            public static IEnumerable<T> Log<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Log))
                 {
-                    Debug.LogFormat(TimeFormat(), MessageListFormat(message, format));
+                    Debug.LogFormat(TimeFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
 
-            public static T Warning<T>(T message, string format = null)
+            public static T Warning<T>(T message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Warning))
                 {
@@ -105,16 +105,16 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Warning<T>(List<T> message, string format = null)
+            public static IEnumerable<T> Warning<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Warning))
                 {
-                    Debug.LogWarningFormat(TimeFormat(), MessageListFormat(message, format));
+                    Debug.LogWarningFormat(TimeFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
 
-            public static T Error<T>(T message, string format = null)
+            public static T Error<T>(T message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Error))
                 {
@@ -123,53 +123,56 @@ namespace Ninth.HotUpdate
                 return message;
             }
 
-            public static List<T> Error<T>(List<T> message, string format = null)
+            public static IEnumerable<T> Error<T>(IEnumerable<T> message, string? format)
             {
                 if (Validator.HasFlag(LogValidator.Error))
                 {
-                    Debug.LogErrorFormat(TimeFormat(), MessageListFormat(message, format));
+                    Debug.LogErrorFormat(TimeFormat(), MessageIEnumerableFormat(message, format));
                 }
                 return message;
             }
-            #endregion
+#endregion
 
 
             private static string FrameFormat()
             {
-                if (FramePrefix == null)
-                {
-                    FramePrefix = string.Join(' ', "Frame".AddColor(ColorDefine.FrameLog), "..");
-                }
                 return FramePrefix + TimeFormat();
             }
 
             private static string TimeFormat()
             {
-                return string.Join(' ', DateTime.Now.ToString(), "{0}");
+                int currentManagedThreadId = Environment.CurrentManagedThreadId;
+                string threadIdStr = $"ThreadId: {currentManagedThreadId}";
+                if(currentManagedThreadId != 1)
+                {
+                    threadIdStr = threadIdStr.AddColor(ColorDefine.NonMainThread);
+                }
+                return string.Join(' ', DateTime.Now.ToString(), threadIdStr, "\n{0}");
             }
 
-            private static string MessageFormat<T>(T message, string format = null)
+            private static string MessageFormat<T>(T message, string? format)
             {
-                if (string.IsNullOrEmpty(format))
+                string result = message?.ToString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(format))
                 {
-                    return message.ToString();
+                    result = string.Format(format, result);
                 }
-                else
-                {
-                    return string.Format(format, message.ToString());
-                }
+                return result;
             }
 
-            private static string MessageListFormat<T>(List<T> message, string format = null)
+            private static string MessageIEnumerableFormat<T>(IEnumerable<T> message, string? format)
             {
-                if (string.IsNullOrEmpty(format))
+                StringBuilder sb = new StringBuilder().AppendLine();
+                int index = 0;
+                foreach (var item in message)
                 {
-                    return string.Concat(message, " ", string.Join(',', message));
+                    sb.AppendLine($" [{index}] => [{item}]");
+                    index++;
                 }
-                else
-                {
-                    return string.Concat(message, " ", string.Format(format, string.Join(',', message)));
-                }
+                string result = sb.ToString().TrimEnd('\n', '\r');
+                if (!string.IsNullOrEmpty(format))
+                    result = string.Format(format, result);
+                return $"{message} => {result}";
             }
         }
     }
