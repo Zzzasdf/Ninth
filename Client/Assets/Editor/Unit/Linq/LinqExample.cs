@@ -6,22 +6,71 @@ using Ninth.HotUpdate;
 using System;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading;
+using Random = System.Random;
 
 namespace Ninth.Editor
 {
     public class LinqExample
     {
+        [Test]
+        public void Intersect()
+        {
+            List<int> a = new();
+            List<int> b = new();
+            var result = a.Intersect(b);
+            Debug.Assert(result != null);
+        }
+
+        [Test]
+        public void GroupBy()
+        {
+            List<int> a = new() { 1, 3, 4, 5, 4};
+            // var result = a.GroupBy(x => x).Select(g => new { g.Key, Count = g.Count()});
+            var result = from x in a
+                         group x by x into g
+                         select new { g.Key, Count = g.Count() };
+            foreach(var item in result)
+            {
+                $"{item.Key}, {item.Count}".Log();
+            }
+        }
+
         // 延迟执行（defer）与消耗（exhaust）
         [Test]
         public void DeferAndExhaust()
         {
             var lst = new List<int> { 1, 2, 3, 4, 5 };
             
-            var query = lst.Select(x => Mathf.Pow(x, 2));
+            // var query = lst.Select(x => Mathf.Pow(x, 2));
+            var query = lst.Select(x => 
+            {
+                Thread.Sleep(500);
+                return Mathf.Pow(x, 2);
+            }); // 没有消耗，不真正参与运算
+            "finish".Log();
             query.Log();
             
             lst.Add(6);
             query.Log();
+        }
+        
+        // PLinq并行查询
+        [Test]
+        public void ParallelQuery()
+        {
+            var arr = Enumerable
+                .Range(1, 10)
+                .ToArray()
+                .AsParallel() // 多线程执行
+                .AsOrdered()
+                .Select(x => 
+                {
+                    Thread.Sleep(500);
+                    return Mathf.Pow(x, 2).Log();
+                })
+                .AsSequential() // 恢复单线程
+                .Log();
         }
 
         // 展平
@@ -144,49 +193,62 @@ namespace Ninth.Editor
                 .Log();
         }
 
-        // 开销
+        // 开销预警
         [Test]
-        public void Overhead()
+        public void OverheadWarning()
         {
+            QueryExceeds();
+            ReplaceOrderBy();
 
+            // 查询是否有超过某个数
+            void QueryExceeds()
+            {
+                const int Size = 100_000_000;
+                var arr = GetRandomArray();
+                bool res;
+                // res = arr.Where(x => x > 5000).Count() > 0;
+                res = arr.Any(x => x > 5000);
+
+                IEnumerable<int> GetRandomArray()
+                {
+                    var rnd = new Random(1334);
+                    return Enumerable
+                        .Range(0, Size)
+                        .Select(_ => rnd.Next(1000));
+                }
+            }
+
+            // 替换OrderBy方法
+            void ReplaceOrderBy()
+            {
+                var arr1 = new List<int> { 1, 3, 5, 7, 9, 2, 4, 6, 8 };
+                // arr1 = arr.OrderBy(x => x).ToList(); // 新生成了一个集合, 而且Lamda表达式本质上是个委托，要占用托管堆
+                // arr1 = arr.OrderByDescending(x => x).ToList();
+                arr1.Sort(); // 在原数组操作
+                arr1.Reverse(); // 反转         
+                arr1.Log();
+
+                var arr2 = new [] { 1, 3, 5, 7, 9, 2, 4, 6, 8 };
+                Array.Sort(arr2);
+                arr2.Log();
+            }
         }
 
         [Test]
         public void CommonAPI()
         {
-            var arr = new List<int> { 1, 3, 5, 7, 9, 2, 4, 6, 8 };
-            arr.First(x => x % 2 == 0).Log("First => {0}");
+            var arr = new List<int> { 1, 3, 5, 7, 9, 2, 4, 6, 8, 1 };
+            arr.First(x => (x & 1) == 0).Log("First => {0}");
             arr.FirstOrDefault(x => x == 10).Log("FirstOrDefault => {0}");
-            arr.Last(x => x % 2 == 0).Log("Last => {0}");
+            arr.Last(x => (x & 1) == 0).Log("Last => {0}");
             arr.LastOrDefault(x => x == 10).Log("LastOrDefault => {0}");
-            arr.Count(x => x % 2 == 0).Log("Count => {0}");
+            arr.Count(x => (x & 1) == 0).Log("Count => {0}");
             arr.Min().Log("Min => {0}");
             arr.Max().Log("Max => {0}");
             arr.Average().Log("Average => {0}");
             arr.Sum().Log("Sum => {0}");
-        }
-
-        [Test]
-        public void Intersect()
-        {
-            List<int> a = new();
-            List<int> b = new();
-            var result = a.Intersect(b);
-            Debug.Assert(result != null);
-        }
-
-        [Test]
-        public void GroupBy()
-        {
-            List<int> a = new() { 1, 3, 4, 5, 4};
-            // var result = a.GroupBy(x => x).Select(g => new { g.Key, Count = g.Count()});
-            var result = from x in a
-                         group x by x into g
-                         select new { g.Key, Count = g.Count() };
-            foreach(var item in result)
-            {
-                $"{item.Key}, {item.Count}".Log();
-            }
+            arr.Distinct().Log("Distinct => {0}"); // 去重
+            arr.Distinct().Single(x => x == 1).Log("Single => {0}"); // 查找的目标不存在或存在多个，则返回异常System.InvalidOperationException,  需先去重
         }
     }
 }

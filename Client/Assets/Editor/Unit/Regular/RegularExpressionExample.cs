@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 // 正则表达式
 // http://www.cnblogs.com/chaowang/p/6274852.html
-public class RegularExpressionDocument
+public class RegularExpressionExample
 {
     // 括号
     // [] => 需要匹配的字符

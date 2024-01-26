@@ -34,6 +34,8 @@ namespace Ninth.HotUpdate
             => LogSystem.Log<T>(obj, format).ToList();
         public static IOrderedEnumerable<T> Log<T>(this IOrderedEnumerable<T> obj, string? format = null)
             => (IOrderedEnumerable<T>)LogSystem.Log<T>(obj, format);
+        public static ParallelQuery<T> Log<T>(this ParallelQuery<T> obj, string? format = null)
+            => (ParallelQuery<T>)LogSystem.Log<T>(obj, format);
         public static IEnumerable<T> Log<T>(this IEnumerable<T> obj, string? format = null)
             => LogSystem.Log(obj, format);
 

@@ -7,11 +7,9 @@ using UnityEngine;
 using Zenject;
 using System.Linq;
 
-// TODO => ioc: zenject
-// TODO => 可空的引用类型 C#8.0有但默认不开启，C#10默认开启。开启方式 #nullable enable
 namespace Ninth.Editor
 {
-    public class IOCExample
+    public class IocExample
     {
         [Test]
         public void Foo()
