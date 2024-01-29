@@ -33,8 +33,39 @@ namespace Ninth.Editor
     //  => async + await 会将方法包装成状态机，await 类似于检查点
     //    => MoveNext 方法会在底层调用，从而切换状态
     //  => async Task
-    //    => 
-    //  => async void
+    //    => 返回值依旧是 Task 类型，但是在其中可以使用 await 关键字
+    //    => 在其中写返回值可以直接写 Task<T> 中的 T 类型，不用包装成 Task<T>
+    //  => async void (无法等待)
+    //    => 同样是状态机，但缺少记录状态的 Task 对象
+    //    => 无法聚合异常 （Aggregate Exception），需要谨慎处理异常
+    //    => 几乎只用于对于事件的注册
+    //  => 异步编程具有传染性 (Contagious)
+    //    => 一处 async ，处处 async
+    //    => 几乎所有自带方法都提供了异步的版本
+
+    // 5、重要思想：不阻塞！
+    //  => await 会暂时释放当前线程，使得该线程可以执行其他工作，而不必阻塞线程直到异步操作完成
+    //  => 不要在异步方法里用任何方法阻塞当前线程
+    //  => 常见阻塞情形
+    //    => Task.Wait() & Task.Result
+    //      => 如果任务没有完成，则会阻塞当前线程，容易导致死锁
+    //      => Task.GetAwaiter().GetResult()
+    //          => 不会将 Exception 包装为 AggregateException
+    //    => Task.Delay() vs Thread.Sleep()
+    //      => 后者会阻塞当前的线程，这与异步编程的理念不符
+    //      => 前者是一个异步任务，会立刻释放当前的线程
+    //    => IO 等操作的同步方法
+    //    => 其他繁重且耗时的任务
+
+    // 6、同步上下文
+    //  => 一种管理和协调线程的机制，允许开发者将代码的执行切换到特定的线程
+    //  => WinForms 、WPF 和 Unity 拥有同步上下文（UI线程），而控制台程序默认没有
+    //  => ConfigureAwait(false)
+    //    => 配置任务通过 await 方法结束后是否会到原来的线程，默认为 true
+    //    => 一般只有 UI 线程会采用这种策略
+    //  => TaskScheduler
+
+
 
     // eg！另有 ValueTask 值类型版本
     public class TaskExample
@@ -60,11 +91,11 @@ namespace Ninth.Editor
         }
 
         // 线程切换
-        // await Task方法默认的返回原线程
+        // unity会同步上下文 await Task方法默认的返回原线程
         // ConfigureAwait(false) 只会影响 FooAsync() 下文的线程，该方法返回后，不影响 ThreadChange() 线程
         // 只有在异步方法中配置了 ConfigureAwait(false) 才会影响下文的线程，与 await 返回的线程无关
         [Test]
-        public async void ThreadChange()
+        public async void ThreadChangeAsync()
         {
             "Before".Log("Main {0}");
             await FooAsync();
@@ -73,9 +104,63 @@ namespace Ninth.Editor
             async Task FooAsync()
             {
                 "Before".Log("Async {0}");
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(2000).ConfigureAwait(false); // 关闭同步上下文，不会回到原线程
+                (await GetValueAsync()).Log();
                 "After".Log("Async {0}");
             }
+
+            async Task<int> GetValueAsync()
+            {
+                await Task.Delay(2000);
+                return 42;
+            }
+        }
+
+        // Task 同步方法写法
+        [Test]
+        public void TaskSync()
+        {
+            async Task Foo1()
+            {
+                return;
+            }
+            Task? Foo2()
+            {
+                return null;
+            }
+
+            async Task<int> Foo3Async()
+            {
+                return 42;
+            }
+            Task<int> Foo4()
+            {
+                // return Task.Run(() => 42); // 这个方法会凭空创造出一个Task, 实际上是直接返回结果的，Task是引用类型，会浪费托管内存以及将来GC的调用
+                return Task.FromResult(42);
+            }
+        }
+
+        // async void
+        // 无法等待
+        // 缺少了 Task 包含的异步报错信息
+        [Test]
+        public async void VoidAsyncCall()
+        {
+            try
+            {
+                // await Foo(); // 返回值是 void , 无法等待
+                Foo();
+            }
+            catch (System.Exception ex)
+            {
+                ex.Log();
+            }
+
+            async void Foo()
+            {
+                await Task.Delay(1000);
+                throw new System.Exception("Somethings war wrong!"); // 返回值是 void, 异常无法被外部捕获
+            }   
         }
     }
 }
