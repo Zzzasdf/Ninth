@@ -352,5 +352,37 @@ namespace Ninth.Editor
             // 周期任务
             void PeriodicTimer() { }
         }
+
+        // 线程超时打断机制
+        [Test]
+        public void ThreadTimeout()
+        {
+            var thread = new Thread(Foo);
+            thread.Start();
+            if (!thread.Join(TimeSpan.FromSeconds(10)))
+            {
+                thread.Interrupt();
+            }
+            else
+            {
+                "finish".Log();
+            }
+            "Done".Log();
+
+
+            void Foo()
+            {
+                try
+                {
+                    "Foo start...".Log();
+                    Thread.Sleep(5000);
+                    "Foo end...".Log();
+                }
+                catch(ThreadInterruptedException)
+                {
+                    "Foo interrupted...".Log();
+                }
+            }
+        }
     }
 }

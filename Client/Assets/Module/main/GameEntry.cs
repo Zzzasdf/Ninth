@@ -21,27 +21,12 @@ namespace Ninth
 
         void Awake()
         {
-            // _Json = new JsonCore();
+            _Json = new JsonCore();
         }
 
         async void Start()
         {
-            // _Procedure.Start();
-            // Thread.CurrentThread
-            // await Task.Delay(1000).ConfigureAwait(false);
-            // btnTest?.onClick.AddListener(OnBtnTestClick);
-            // if(txtTest != null)
-            // {
-            //     txtTest.text = "1";
-            // }
+            _Procedure.Start();
         }
-
-        private void OnBtnTestClick()
-        {
-            
-        }
-
-        [SerializeField] private Button btnTest;
-        [SerializeField] private Text txtTest;
     }
 }
