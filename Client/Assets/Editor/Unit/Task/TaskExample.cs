@@ -149,6 +149,12 @@ namespace Ninth.Editor
     //    => SemaphoreSlim （原生的几乎只有这个是适合异步编程）
     //    => ManualResetEventSlim
     //  => 并发集合
+    //    => ConcurrentBag / Stack / Queue
+    //    => BlockingCollection
+    //    => Channel（只有这个适合异步编程）
+    //      => BoundedChannel
+    //      => UnbounderChannel
+    //      => Reader / Writer
     //  => 第三方库
     //    => AsyncManualResetEvent (来自Microsoft.VisualStudio.Threading)
     //    => AsyncLock (来自Nito.AsyncEx)
@@ -526,32 +532,44 @@ namespace Ninth.Editor
         [Test]
         public async void TaskTimeout()
         {
-            using (var cts = new CancellationTokenSource())
+            // var cts = new CancellationTokenSource();
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            try
             {
-                var fooTask = FooAsync(cts.Token);
-                var completedTask = await Task.WhenAny(fooTask, Task.Delay(TimeSpan.FromSeconds(2)));
-                if(completedTask != fooTask)
-                {
-                    cts.Cancel(); // eg!!
-                    await fooTask;
-                    "Timeout...".Log();
-                }
-                "Done.".Log();
+                // await FooAsync(cts.Token).WaitAsync(TimeSpan.FromSeconds(2)); // WaitAsync .net 6 才有
+                await FooAsync(cts.Token);
+                "Success!".Log();
+            }            
+            catch(TimeoutException)
+            {
+                cts.Cancel();
+                "Timeout!".Log();
             }
+            catch (OperationCanceledException)
+            {
+                "Timeout!!".Log();
+            }
+            finally
+            {
+                cts.Dispose();
+            }
+            "Done.".Log();
 
             async Task FooAsync(CancellationToken? cancellationToken = null)
             {
+                var token = cancellationToken ?? CancellationToken.None;
                 try
                 {
                     "Foo start...".Log();
-                    await Task.Delay(5000);
+                    await Task.Delay(5000, token);
                     "Foo end...".Log();
                 }
                 catch (OperationCanceledException)
                 {
                     "Foo cancelled...".Log();
+                    throw;
                 }
             }
-        }
+        }    
     }
 }

@@ -9,10 +9,50 @@ namespace Ninth.HotUpdate
 {
     public static class TasksExtensions
     {
+        // public static async Task TimeoutAfter(this Task task, TimeSpan timeout)
+        // {
+        //     using var cts = new CancellationTokenSource();
+        //     var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token));
+        //     if(completedTask != task)
+        //     {
+        //         cts.Cancel();
+        //         throw new TimeoutException();
+        //     }
+        //     await task;
+        // }
+        // public static async Task TimeoutAfter(this Task task, int millisecondsDelay)
+        // {
+        //     using var cts = new CancellationTokenSource();
+        //     var completedTask = await Task.WhenAny(task, Task.Delay(millisecondsDelay, cts.Token));
+        //     if(completedTask != task)
+        //     {
+        //         cts.Cancel();
+        //         throw new TimeoutException();
+        //     }
+        //     await task;
+        // }
+
         // public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout)
         // {
         //     using var cts = new CancellationTokenSource();
-        //     var completedTask = await Task
+        //     var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token));
+        //     if(completedTask != task)
+        //     {
+        //         cts.Cancel();
+        //         throw new TimeoutException();
+        //     }
+        //     return await task;
+        // }
+        // public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, int millisecondsDelay)
+        // {
+        //     using var cts = new CancellationTokenSource();
+        //     var completedTask = await Task.WhenAny(task, Task.Delay(millisecondsDelay, cts.Token));
+        //     if(completedTask != task)
+        //     {
+        //         cts.Cancel();
+        //         throw new TimeoutException();
+        //     }
+        //     return await task;
         // }
     }
 }

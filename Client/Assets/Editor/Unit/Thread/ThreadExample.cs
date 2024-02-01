@@ -280,7 +280,8 @@ namespace Ninth.Editor
         [Test]
         public void Attention()
         {
-            Collections();
+            // Collections();
+            BlockingCollection();
 
             // 线程安全的单例
             void Lazy() { }
@@ -340,7 +341,52 @@ namespace Ninth.Editor
             // 阻塞集合
             // 不适用于异步编程
             // 低延迟
-            void BlockingCollection() { }
+            void BlockingCollection() 
+            {
+                var queue = new BlockingCollection<Message>(new ConcurrentQueue<Message>());
+
+                var sender = new Thread(SendMessageThread);
+                var receiver = new Thread(ReceiveMessageThread);
+
+                sender.Start(1);
+                receiver.Start(2);
+
+                sender.Join();
+                Thread.Sleep(100);
+                receiver.Interrupt();
+                receiver.Join();
+
+                "Done.".Log();
+
+                void SendMessageThread(object? arg)
+                {
+                    int id = (int)arg!;
+
+                    for (int i = 1; i <= 20; i++)
+                    {
+                        queue.Add(new Message(id, i.ToString()));
+                        $"Thread {id} send {i}".Log();
+                        Thread.Sleep(100);
+                    }
+                }
+
+                void ReceiveMessageThread(object? id)
+                {
+                    try
+                    {
+                        while(true)
+                        {
+                            var message = queue.Take();
+                            $"Thread {id} received {message.Content} from {message.FromId}".Log();
+                            Thread.Sleep(1);
+                        }
+                    }
+                    catch (ThreadInterruptedException)
+                    {
+                        $"Thread {id} interrupted".Log();
+                    }
+                }
+            }
 
             // 通道
             // 高吞吐
@@ -382,6 +428,18 @@ namespace Ninth.Editor
                 {
                     "Foo interrupted...".Log();
                 }
+            }
+        }
+
+        public class Message
+        {
+            public int FromId;
+            public string Content;
+
+            public Message(int FromId, string Content)
+            {
+                this.FromId = FromId;
+                this.Content = Content;
             }
         }
     }
