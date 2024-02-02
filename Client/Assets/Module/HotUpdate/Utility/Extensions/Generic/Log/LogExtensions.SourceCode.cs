@@ -47,7 +47,7 @@ namespace Ninth.HotUpdate
                     return message;
                 }
 
-                string MessageIEnumerableFormat<T>(IEnumerable<T> message, string? format = null)
+                string MessageIEnumerableFormat(IEnumerable<T> message, string? format = null)
                 {
                     StringBuilder sb = new StringBuilder().AppendLine();
                     int index = 0;

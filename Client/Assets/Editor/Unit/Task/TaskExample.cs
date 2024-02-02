@@ -570,6 +570,13 @@ namespace Ninth.Editor
                     throw;
                 }
             }
-        }    
+        }
+
+        // Channel
+        [Test]
+        public void Channel()
+        {
+
+        }
     }
 }

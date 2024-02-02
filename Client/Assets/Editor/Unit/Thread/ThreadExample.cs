@@ -10,6 +10,7 @@ using NUnit.Framework;
 
 namespace Ninth.Editor
 {
+    
     // 1、经常阻塞
     // 2、适用场景
     //  => 适合 CPU 密集型操作 ( UI 线程、轮询操作)
@@ -399,6 +400,17 @@ namespace Ninth.Editor
             void PeriodicTimer() { }
         }
 
+        public class Message
+        {
+            public int FromId;
+            public string Content;
+            public Message(int FromId, string Content)
+            {
+                this.FromId = FromId;
+                this.Content = Content;
+            }
+        }
+
         // 线程超时打断机制
         [Test]
         public void ThreadTimeout()
@@ -428,18 +440,6 @@ namespace Ninth.Editor
                 {
                     "Foo interrupted...".Log();
                 }
-            }
-        }
-
-        public class Message
-        {
-            public int FromId;
-            public string Content;
-
-            public Message(int FromId, string Content)
-            {
-                this.FromId = FromId;
-                this.Content = Content;
             }
         }
     }

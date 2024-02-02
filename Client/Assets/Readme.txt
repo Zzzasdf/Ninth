@@ -1,6 +1,6 @@
 1、热更方案: Hybirdclr
 
-2、ioc框架产检：zenject
+2、ioc框架插件：zenject
 
 3、轻量级异步插件：UniTask
 
@@ -10,3 +10,15 @@
 		eg! Unity项目的.csproj在每次启动Unity时，都会重新生成一个，
 			所以无法将<Nullable>enable<Nullable>配置在项目的.csproj里，
 			所以采用新建一个文件Directory.Build.props
+
+>> TODO
+Thread
+// UI
+// protobuf
+// ..
+Task
+UniTask
+IOC/DI zenject
+Regular
+show ScriptableObject in Inspector
+Attribute
