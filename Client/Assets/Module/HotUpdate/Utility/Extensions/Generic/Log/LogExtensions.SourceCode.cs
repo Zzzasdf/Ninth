@@ -39,28 +39,29 @@ namespace Ninth.HotUpdate
                 {
                     while(true)
                     {
-                        if(logQueue.TryDequeue(out var result) && result == null)
-                        {    
-                            (LogValidator logValidator, string message) = result!;
-                            (Action<string, object[]>? func, Func<string>? format) group = logValidator switch
-                            {
-                                LogValidator.FrameLog => (Debug.LogFormat, FrameFormat),
-                                LogValidator.FrameWarning => (Debug.LogWarningFormat, FrameFormat),
-                                LogValidator.FrameError => (Debug.LogErrorFormat, FrameFormat),
-
-                                LogValidator.Log => (Debug.LogFormat, TimeFormat),
-                                LogValidator.Warning => (Debug.LogWarningFormat, TimeFormat),
-                                LogValidator.Error => (Debug.LogErrorFormat, TimeFormat),
-
-                                _ => (null, null)
-                            };
-                            if(group.func == null || group.format == null)
-                            {
-                                continue;
-                            }
-                            group.func.Invoke(group.format.Invoke(), new object[]{ message });
-                        }
                         Thread.Sleep(1);
+                        if(!logQueue.TryDequeue(out var result) || result == null)
+                        {
+                            continue;    
+                        }
+                        (LogValidator logValidator, string message) = result!;
+                        (Action<string, object[]>? func, Func<string>? format) group = logValidator switch
+                        {
+                            LogValidator.FrameLog => (Debug.LogFormat, FrameFormat),
+                            LogValidator.FrameWarning => (Debug.LogWarningFormat, FrameFormat),
+                            LogValidator.FrameError => (Debug.LogErrorFormat, FrameFormat),
+
+                            LogValidator.Log => (Debug.LogFormat, TimeFormat),
+                            LogValidator.Warning => (Debug.LogWarningFormat, TimeFormat),
+                            LogValidator.Error => (Debug.LogErrorFormat, TimeFormat),
+
+                            _ => (null, null)
+                        };
+                        if (group.func == null || group.format == null)
+                        {
+                            continue;    
+                        }
+                        group.func.Invoke(group.format.Invoke(), new object[] { message });
                     }
 
                     string FrameFormat()
