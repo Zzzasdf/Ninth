@@ -10,7 +10,6 @@ using NUnit.Framework;
 
 namespace Ninth.Editor
 {
-    
     // 1、经常阻塞
     // 2、适用场景
     //  => 适合 CPU 密集型操作 ( UI 线程、轮询操作)

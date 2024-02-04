@@ -71,32 +71,52 @@ namespace Ninth.Editor
         // * => 重复零次或更多次
 
         // 择一匹配
-        // | => 将两个匹配条件进行逻辑 “ 或 ” (Or) 运算
+        // | => 将两个匹配条件进行逻辑 “ 或 ” (Or) 运算】
 
-        // 示例
         [Test]
-        public void Example()
+        public void MatchLetter()
         {
-            Regex obj = new Regex("[a-z]{10}"); // 搜索长度为10的a-z的英文字母
+            // 搜索长度为10的a-z的英文字母
+            Regex obj = new Regex("[a-z]{10}"); 
+            string test = "aqwwga1vzq";
+            obj.IsMatch(test).Log();
+        }
 
+        [Test]
+        public void MatchUrl()
+        {
             // 验证简单的网址URL
             // 第一步：检查是否存在 www: ^www.
             // 第二步：域名必须是长度在 1-15 的英文字母：.[a-z]{1,15}
             // 第三步：以 .com 或者 .org结束：.(com|org)$
             Regex url = new Regex("^www[.][a-z]{1,15}[.](com|org)$");
+            string test = "www.baidu.com";
+            url.IsMatch(test).Log();
+        }
 
+        [Test]
+        public void MatchHeadTailChar()
+        {
             // 匹配开始 ^
             string str = "I am Blue cat";
             Regex.Replace(str, "^", "准备开始：").Log();
             // 匹配结束 $
             string str2 = "I am Blue cat";
             Regex.Replace(str2, "$", "结束了！").Log();
-
+        }
+        
+        [Test]
+        public void MatchOutside()
+        {
             // 查找除ahou这之外的所有字符
             string strFind1 = "I am a Cat!", strFind2 = "My Name's Blue cat!";
             ("除ahou这之外的所有字符,原字符为:" + strFind1 + "替换后:" + Regex.Replace(strFind1, @"[^ahou]", "*")).Log();
             ("除ahou这之外的所有字符,原字符为:" + strFind2 + "替换后:" + Regex.Replace(strFind2, @"[^ahou]", "*")).Log();
+        }
 
+        [Test]
+        public void MatchQQ()
+        {
             // 校验输入内容是否为合法QQ号（备注：QQ号为5-12位数字）
             string isQq1 = "1233", isQq2 = "a1233", isQq3 = "0123456789123", isQq4 = "556878554";
             string regexQq = @"^\d{5,12}$";
@@ -104,7 +124,11 @@ namespace Ninth.Editor
             (isQq2 + "是否为合法QQ号(5-12位数字):" + Regex.IsMatch(isQq2, regexQq)).Log();
             (isQq3 + "是否为合法QQ号(5-12位数字):" + Regex.IsMatch(isQq3, regexQq)).Log();
             (isQq4 + "是否为合法QQ号(5-12位数字):" + Regex.IsMatch(isQq4, regexQq)).Log();
+        }
 
+        [Test]
+        public void MatchNumOrLetter()
+        {
             // 查找数字或字母
             string findStr1 = "ad(d2)-df";
             string regexFindStr = @"[a-z]\d";
@@ -112,12 +136,20 @@ namespace Ninth.Editor
             MatchCollection newStr = Regex.Matches(findStr1, regexFindStr);
             newStr.Cast<Match>().Select(m => m.Value).ToList().ForEach(i => newStrFind += i);
             (findStr1 + "中的字母和数字组成的新字符串为:" + newStrFind).Log();
+        }
 
+        [Test]
+        public void MatchName()
+        {
             // 将人名输出 (zhangsan;lisi,wangwu.zhaoliu")
             string strSplit = "zhangsan;lisi,wangwu.zhaoliu";
             string regexSplitstr = @"[;][,][.]";
             Regex.Split(strSplit, regexSplitstr).ToList().ForEach(i => i.Log());
+        }
 
+        [Test]
+        public void MatchTelephoneNumber()
+        {
             // 校验国内电话号码（支持四种写法校验 A. 010-87654321 B. (010)87654321 C. 01087654321 D. 010 87654321）
             string TelNumber1 = "(010)87654321", TelNumber2 = "010-87654321", TelNumber3 = "01087654321",
             TelNumber4 = "09127654321", TelNumber5 = "010)87654321", TelNumber6 = "(010-87654321",
@@ -130,20 +162,33 @@ namespace Ninth.Editor
             ("电话号码 " + TelNumber5 + " 是否合法:" + RegexTelNumber3.IsMatch(TelNumber5)).Log();
             ("电话号码 " + TelNumber6 + " 是否合法:" + RegexTelNumber3.IsMatch(TelNumber6)).Log();
             ("电话号码 " + TelNumber7 + " 是否合法:" + RegexTelNumber3.IsMatch(TelNumber7)).Log();
+        }
 
+        [Test]
+        public void MatchRepeat()
+        {
             // 用小括号来指定子表达式（也叫做分组）
-            // 示例一：重复单字符 和 重复分组字符
+            // 重复单字符 和 重复分组字符
             string inputStr = "31321412424";
             string strGroup1 = @"a{2}";
             ("单字符重复2两次替换为22, 结果为：" + Regex.Replace(inputStr, strGroup1, "22")).Log();
             // 重复 多个字符 使用（ abcd ）{n}进行分组限定
             string strGroup2 = @"(ab\w{2}){2}";
             ("分组字符重复2两次替换为5555, 结果为：" + Regex.Replace(inputStr, strGroup2, "5555")).Log();
-            // 示例二：校验IP4地址 (如：192.168.1.4，为四段，每段最多三位，每段最大数字为255，并且第一位不能为0)
+        }
+
+        [Test]
+        public void MatchIP()
+        {
+             // 校验IP4地址 (如：192.168.1.4，为四段，每段最多三位，每段最大数字为255，并且第一位不能为0)
             string regexStrIp4 = @"^(((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?))$";
             string inputStrIp4 = "192.168.1.4";
             (inputStrIp4 + " 是否为合法的IP4地址:" + Regex.IsMatch(inputStrIp4, regexStrIp4)).Log();
+        }
 
+        [Test]
+        public void MatchZeroWidthAssertion()
+        {
             // 零宽断言
             Regex reg = new Regex(@"A(\w+)A"); // (exp)匹配exp
             reg.Match("dsA123A").Log();

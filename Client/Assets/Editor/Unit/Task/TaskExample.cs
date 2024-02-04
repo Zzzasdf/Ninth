@@ -76,7 +76,7 @@ namespace Ninth.Editor
 
     // 7、一发即忘（Fire-and-forget）
     //  => 调用一个异步方法，但是并不使用 await 或阻塞的方式去等待它的结束
-    //  => 无法观察任务的状态（是否完成、是否报错等）
+    //  => 无法观察任务的状态（是否完成、是否报错等），依赖 Task 的包装
 
     // 8、简单任务
     //  => 如何创建异步任务？
@@ -159,6 +159,20 @@ namespace Ninth.Editor
     //    => AsyncManualResetEvent (来自Microsoft.VisualStudio.Threading)
     //    => AsyncLock (来自Nito.AsyncEx)
 
+    // 11、其他
+    //  => 单例 AsyncLazy: Nito.AsyncEx, Microsoft.VisualStudio.Threading
+    //  => JoinableTaskFactory: Microsoft.VisualStudio.Threading
+    //  => Ioc Container: Microsoft.Extensions.DependencyInjection
+    //  => Unit Test: Microsoft.VisualStudio.TestTools.UnitTesting
+    //     SingletonSean：https://www.youtube.com/watch?v=vYXs--S0Xxo
+
+    //  => async Task Main
+    //  => async void
+    //  => AsyncLazy
+    //  => IAsyncEnumerable
+    //  => IAsyncDisposable
+    //  => AsyncRelayCommand
+
     // eg！另有 ValueTask 值类型版本
     // 无法在 lock 里面使用 await, 因为进入是由线程 A 把它锁上的，而退出时有可能是从线程 B 退出的，这显然是不可能的
     public class TaskExample
@@ -208,45 +222,6 @@ namespace Ninth.Editor
                 var token = cancellationToken ?? CancellationToken.None;
                 await Task.Delay(2000, token);
                 return 42;
-            }
-        }
-
-        // Task 同步方法写法
-        // 同步调用异步：被调用的异步不要让其回到原线程，因为原线程此时被阻塞，异步回到的原线程正在被阻塞，死锁
-        // 解决方案：让被调用的异步配置ConfigureAwait(false), 让其等待后的线程继续执行
-        // 异步方法若有可能被使用同步方法的方式调用，第一个等待的方法请配置成ConfigureAwait(false)
-        [Test]
-        public void TaskSync()
-        {
-            Foo().GetAwaiter().GetResult();
-
-            async Task Foo(CancellationToken? cancellationToken = null)
-            {
-                var token = cancellationToken ?? CancellationToken.None;
-                await Task.Delay(1000, token).ConfigureAwait(false); // eg！！
-            }
-
-            async Task Foo1(CancellationToken? cancellationToken = null)
-            {
-                var token = cancellationToken ?? CancellationToken.None;
-                return;
-            }
-            Task? Foo2(CancellationToken? cancellationToken = null)
-            {
-                var token = cancellationToken ?? CancellationToken.None;
-                return null;
-            }
-
-            async Task<int> Foo3Async(CancellationToken? cancellationToken = null)
-            {
-                var token = cancellationToken ?? CancellationToken.None;
-                return 42;
-            }
-            Task<int> Foo4(CancellationToken? cancellationToken = null)
-            {
-                var token = cancellationToken ?? CancellationToken.None;
-                // return Task.Run(() => 42); // 这个方法会凭空创造出一个Task, 实际上是直接返回结果的，Task是引用类型，会浪费托管内存以及将来GC的调用
-                return Task.FromResult(42);
             }
         }
 
@@ -572,11 +547,360 @@ namespace Ninth.Editor
             }
         }
 
-        // Channel
+        // Channel // .net 6.0
         [Test]
-        public void Channel()
+        public void TaskChannel()
         {
+            
+        }
+        public class Message
+        {
+            public int FromId;
+            public string Content;
+            public Message(int FromId, string Content)
+            {
+                this.FromId = FromId;
+                this.Content = Content;
+            }
+        }
 
+        // Task 同步方法写法
+        //  => .GetAwaiter().GetResult() 同步方法调用异步方法推荐的等待方式 
+        //    => 优点：等待异步结果, 不会对异步方法的异常进行包装
+        //    => 有无返回值都能用
+        //  => .Wait()
+        //    => 将异步方法的异常包装成 System.AggregateException
+        //    => 无返回值时可用
+        //  => .Result
+        //    => 将异步方法的异常包装成 System.AggregateException
+        //    => 有返回值时可用
+
+        // eg!! 同步调用异步：被调用的异步不要让其回到原线程，因为原线程此时被阻塞，异步回到的原线程正在被阻塞，死锁
+        // 解决方案：让被调用的异步配置ConfigureAwait(false), 让其等待后的线程继续执行
+        // 异步方法若有可能被使用同步方法的方式调用，第一个等待的方法请配置成ConfigureAwait(false)
+        [Test]
+        public void TaskSync()
+        {
+            // Example1();
+            // Example2();
+            // Example3();
+            // Example4();
+            // Example5();
+            // Example6();
+            Example7();
+
+            void Example1()
+            {
+                try
+                {
+                    FooAsync().GetAwaiter().GetResult();
+                }
+                catch(Exception e)
+                {
+                    e.Log();
+                }
+
+                async Task FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    await Task.Delay(1000, token).ConfigureAwait(false); // eg！！
+                    throw new Exception("Error");
+                }
+            }
+
+            void Example2()
+            {
+                FooAsync().GetAwaiter().GetResult();
+
+                async Task FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    return;
+                }
+            }
+
+            void Example3()
+            {
+                FooAsync()?.GetAwaiter().GetResult();;
+            
+                Task? FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    return null;
+                }
+            }
+
+            void Example4()
+            {
+                FooAsync().GetAwaiter().GetResult();
+
+                async Task<int> FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    return 42;
+                }
+            }
+
+            void Example5()
+            {
+                FooAsync().GetAwaiter().GetResult();
+                
+                Task<int> FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    // return Task.Run(() => 42); // 这个方法会凭空创造出一个Task, 实际上是直接返回结果的，Task是引用类型，会浪费托管内存以及将来GC的调用
+                    return Task.FromResult(42);
+                }
+            }
+
+            void Example6()
+            {
+                "Hello World!".Log();
+                FooAsync().GetAwaiter().GetResult();
+                "Done".Log();
+
+                async Task FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    await Task.Delay(1000, token).ConfigureAwait(false);
+                }
+            }
+
+            void Example7()
+            {
+                try
+                {
+                    "Begion".Log();
+                    var message = GetMessageAsync().GetAwaiter().GetResult();
+                    message.Log();
+                    "Done.".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+
+                async Task<string> GetMessageAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    await Task.Delay(1000, token).ConfigureAwait(false);
+                    return "Hello World!";
+                }
+            }
+        }
+
+        // 一发即忘 eg!! 尽量不要用这个
+        //  => 无法观察任务的状态（是否完成、是否报错等）
+        [Test]
+        public void FireAndForget()
+        {
+            Example1();
+
+            void Example1()
+            {
+                try
+                {
+                    // _ = FooAsync(); // 抛出异常后无下文，无法在此处捕获到，且在 log 中无法观察到
+                    VoidFooAsync(); // 无法在此处捕获到，但能在 log 中观察到，程序直接挂掉
+                    "Hello World!".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+
+                async Task FooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    await Task.Delay(1000, token).ConfigureAwait(false);
+                    GetRandomResult(); 
+                    "FooAsync Done".Log(); 
+                }
+
+                async void VoidFooAsync(CancellationToken? cancellationToken = null)
+                {
+                    var token = cancellationToken ?? CancellationToken.None;
+                    await Task.Delay(1000, token).ConfigureAwait(false);
+                    GetRandomResult(); 
+                    "FooAsync Done".Log();
+                }
+
+                void GetRandomResult() => throw new NotImplementedException();
+            }
+        }
+
+        // 解决一发即忘问题方案
+        [Test]
+        public async void ResolveFireAndForget()
+        {
+            // Extensions();
+            // ThroughContinueWith();
+            // await TaskFactory();
+            Assignment();
+
+            // Brian: 写扩展方法
+            // Brian Lagunas：https://www.youtube.com/watch?v=O1Tx-k4Vao0
+            void Extensions()
+            {
+                try
+                {
+                    var dataModel = new BrianDataModel();
+                    "Loading data ...".Log();
+                    Thread.Sleep(2000);
+                    var data = dataModel.Data?.Log();
+                    $"Data is loaded: {dataModel.IsDataLoaded}".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+            }
+
+            // Sean: 用ContinueWith
+            // SingletonSean：https://www.youtube.com/watch?v=vYXs--S0Xxo
+            // 弊端：
+            //  => 会把委托包装成 Task
+            //  => 默认是 TaskScheduler.Current 而不是 TaskScheduler.Default，很危险，有可能造成死锁
+            void ThroughContinueWith()
+            {
+                try
+                {
+                    var dataModel = new SeanDataModel();
+                    "Loading data ...".Log();
+                    Thread.Sleep(2000);
+                    var data = dataModel.Data?.Log();
+                    $"Data is loaded: {dataModel.IsDataLoaded}".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+            }
+
+            // Nick: 异步工厂
+            // Nick Chapsas：https://www.youtube.com/watch?v=lQu-eBIIh-w
+            // 弊端：
+            //  => 无法将这个类注册给 IOC 容器
+            //  => 做成单例很麻烦
+            async void TaskFactory()
+            {
+                try
+                {
+                    var dataModel = await NickDataModel.CreateAsync();
+                    var data = dataModel.Data?.Log();
+                    "Data is loaded finish".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+            }
+
+
+            // 热心网友：Task 赋值给字段, 调用时 await
+            // 弊端
+            //  => async Task 里面只要出现一个 await, 即使已完成，也会把它包装成状态机，await 作为一个检查点
+            async void Assignment()
+            {
+                try
+                {
+                    var dataModel = new AssignmentDataModel();
+                    await dataModel.DisplayDataAsync();
+                    var data = dataModel.Data?.Log();
+                    "Data is loaded finish".Log();
+                }
+                catch (Exception e)
+                {
+                    e.Log();
+                }
+            }
+        }
+
+        class BrianDataModel
+        {
+            public List<int>? Data { get; private set; }
+            public bool IsDataLoaded { get; private set; } = false;
+
+            public BrianDataModel()
+            {
+                LoadDataAsync().SafeFireAndForget(() => IsDataLoaded = true, e => throw e);
+            }
+            
+            async Task LoadDataAsync()
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                throw new Exception("Failed to load data.");
+                Data = Enumerable.Range(1, 10).ToList();
+            }
+        }
+
+        class SeanDataModel
+        {
+            public List<int>? Data { get; private set; }
+            public bool IsDataLoaded { get; private set; } = false;
+
+            public SeanDataModel()
+            {
+                LoadDataAsync().ContinueWith(OnDataLoaded);
+            }
+
+            private bool OnDataLoaded(Task t)
+            {
+                if(t.IsFaulted)
+                {
+                    // t.Exception.Message.Log();
+                    t.Exception.InnerException.Message.Log();
+                }
+                return IsDataLoaded = true;
+            }
+
+            async Task LoadDataAsync()
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                throw new Exception("Failed to load data.");
+                // Data = Enumerable.Range(1, 10).ToList();
+            }
+        }
+
+        class NickDataModel
+        {
+            public static async Task<NickDataModel> CreateAsync()
+            {
+                var dataModel = new NickDataModel();
+                await Task.Delay(1000).ConfigureAwait(false);
+                // throw new Exception("Failed to load data.");
+                dataModel.Data = Enumerable.Range(1, 10).ToList();
+                return dataModel;
+            }
+
+            public List<int>? Data { get; private set; }
+
+            private NickDataModel()
+            {
+            }
+        }
+
+        class AssignmentDataModel
+        {
+            public List<int>? Data { get; private set; }
+            private readonly Task loadDataTask;
+
+            public AssignmentDataModel()
+            {
+                loadDataTask = LoadDataAsync();
+            }
+
+            public async Task DisplayDataAsync()
+            {
+                await loadDataTask;
+            }
+
+            async Task LoadDataAsync()
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                // throw new Exception("Failed to load data.");
+                Data = Enumerable.Range(1, 10).ToList();
+            } 
         }
     }
 }

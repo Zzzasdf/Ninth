@@ -9,6 +9,25 @@ namespace Ninth.HotUpdate
 {
     public static class TasksExtensions
     {
+        // Brian: 写扩展方法处理一发即忘问题
+        // Brian Lagunas：https://www.youtube.com/watch?v=O1Tx-k4Vao0
+        // 适用场景
+        //  => 构造器
+        //  => ..
+        public static  async void SafeFireAndForget(this Task task, Action? onCompleted = null, Action<Exception>? onError = null)
+        {
+            try
+            {
+                await task.ConfigureAwait(false);
+                onCompleted?.Invoke();
+            }
+            catch (Exception e)
+            {
+                onError?.Invoke(e);
+            }
+        }
+
+
         // public static async Task TimeoutAfter(this Task task, TimeSpan timeout)
         // {
         //     using var cts = new CancellationTokenSource();
