@@ -58,7 +58,9 @@ namespace Ninth.Editor
     //      => 后者会阻塞当前的线程，这与异步编程的理念不符
     //      => 前者是一个异步任务，会立刻释放当前的线程
     //    => IO 等操作的同步方法
+    //      => 较新版本的 .Net 为我们提供了一整套的异步方法，包含 Web、IO、Stream 等
     //    => 其他繁重且耗时的任务
+    //      => 使用 Task.Run 包装
 
     // 6、同步上下文
     //  => 一种管理和协调线程的机制，允许开发者将代码的执行切换到特定的线程
@@ -145,9 +147,11 @@ namespace Ninth.Editor
     //    => Mutex
     //    => Semaphore
     //    => EventWaitHandle
-    //  => 轻量型
+    //  => 信号量与锁
+    //    => TaskCompletionSource
     //    => SemaphoreSlim （原生的几乎只有这个是适合异步编程）
-    //    => ManualResetEventSlim
+    //    => AsyncAutoResetEvent
+    //    => AsyncLock
     //  => 并发集合
     //    => ConcurrentBag / Stack / Queue
     //    => BlockingCollection
@@ -551,7 +555,6 @@ namespace Ninth.Editor
         [Test]
         public void TaskChannel()
         {
-            
         }
         public class Message
         {
