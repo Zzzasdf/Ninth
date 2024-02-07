@@ -1,4 +1,4 @@
-namespace Ninth.HotUpdate
+namespace UnityEngine
 {
     /// <summary>
     /// 日志验证器

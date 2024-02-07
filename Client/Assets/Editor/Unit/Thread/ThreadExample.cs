@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ninth.HotUpdate;
 using NUnit.Framework;
+using UnityEngine;
+using ThreadPriority = System.Threading.ThreadPriority;
 
 namespace Ninth.Editor
 {

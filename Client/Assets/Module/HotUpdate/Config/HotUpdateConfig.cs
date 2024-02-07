@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Ninth.HotUpdate
 {
     public sealed class HotUpdateConfig
@@ -8,6 +10,9 @@ namespace Ninth.HotUpdate
         //private int m_Port = 8899;
 
         // 日志生效类型
-        public static LogValidator LogValidator => LogValidator.All;
+        public HotUpdateConfig()
+        {
+            LogExtensions.Validator = LogValidator.All;
+        }
     }
 }

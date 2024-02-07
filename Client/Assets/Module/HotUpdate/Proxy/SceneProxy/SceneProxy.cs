@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 namespace Ninth.HotUpdate
 {

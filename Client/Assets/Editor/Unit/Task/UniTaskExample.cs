@@ -1,8 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Microsoft.Unity.VisualStudio.Editor;
+using Ninth.HotUpdate;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace Ninth.Editor
 {
@@ -88,8 +93,8 @@ namespace Ninth.Editor
     //    => TextMeshPro
     //  => 注意事项  每个 UniTask 只能 await 一次
     
-    public class UniTaskExample
-    {
-         
+    public class UniTaskExample: UnityEditor.Editor
+    {   
+        // UniTaskTest.cs
     }
 }

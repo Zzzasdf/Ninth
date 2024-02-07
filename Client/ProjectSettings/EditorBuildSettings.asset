@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HotUpdateScene.unity
     guid: a80124834c907f34bbd7325efd550c55
+  - enabled: 1
+    path: Assets/Scenes/test.unity
+    guid: 89888b78726b83945921f04949e203a2
   m_configObjects: {}
