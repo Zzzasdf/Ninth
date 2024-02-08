@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Ninth.HotUpdate;
 using NUnit.Framework;
 using UnityEngine;
-using Zenject;
 using System.Linq;
 
 namespace Ninth.Editor

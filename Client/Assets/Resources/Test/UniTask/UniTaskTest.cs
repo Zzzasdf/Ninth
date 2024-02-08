@@ -7,7 +7,6 @@ using UnityEngine.LowLevel;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Zenject.SpaceFighter;
 
 namespace UniTaskTutorial.BaseUsing.Scripts
 {

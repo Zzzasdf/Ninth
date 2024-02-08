@@ -1,6 +1,6 @@
 1、热更方案: Hybirdclr
 
-2、ioc框架插件：zenject
+2、DI插件：VContainer
 
 3、轻量级异步插件：UniTask
 
