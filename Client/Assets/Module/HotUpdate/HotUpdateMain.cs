@@ -2,23 +2,20 @@ using HybridCLR;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer.Unity;
 
-public class HotUpdateMain : MonoBehaviour
+public class HotUpdateMain : IStartable
 {
-    public string text;
-
-    void Start()
+    public void Start()
     {
         Debug.Log("这个热更新脚本挂载在prefab上，打包成ab。通过从ab中实例化prefab成功还原");
-        Debug.LogFormat("hello, {0}.", text);
+        // Debug.LogFormat("hello, {0}.", text);
 
-        gameObject.AddComponent<CreateByCode>();
+        // gameObject.AddComponent<CreateByCode>();
 
         Debug.Log("=======看到此条日志代表你成功运行了示例项目的热更新代码=======");
 
         Debug.Log("=======执行热更部分======");
         //gameObject.AddComponent<Ninth.HotUpdate.GameDriver>();
-
-        
     }
 }
