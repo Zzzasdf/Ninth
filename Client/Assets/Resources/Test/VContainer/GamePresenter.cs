@@ -6,14 +6,13 @@ using VContainer.Unity;
 
 namespace Ninth.HotUpdate
 {
-    public class GamePresenter: IStartable
+    public class GamePresenter : IStartable
     {
         private readonly HelloWorldService helloWorldService;
         private readonly HelloScreen helloScreen;
 
         [Inject]
-        public GamePresenter(HelloWorldService helloWorldService,
-            HelloScreen helloScreen)
+        public GamePresenter(HelloWorldService helloWorldService, HelloScreen helloScreen)
         {
             this.helloWorldService = helloWorldService;
             this.helloScreen = helloScreen;

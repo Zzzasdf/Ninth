@@ -6,25 +6,21 @@ namespace Ninth.HotUpdate
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        [SerializeField] private HelloScreen helloScreen;
+        public HelloScreen helloScreen;
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<HotUpdateMain>(Lifetime.Singleton);
-            
-            builder.Register<GamePresenter>(Lifetime.Singleton);
+            // builder.Register<HotUpdateMain>(Lifetime.Singleton);
+            // 可以解析出一张 UI 路径表 .. 妙！！！
+            builder.RegisterComponentInNewPrefab(objectResolver => Resources.Load<HelloScreen>("Test/VContainer/HelloScreen").Log() , Lifetime.Singleton);
             builder.Register<HelloWorldService>(Lifetime.Singleton);
-            builder.Register<HelloScreen>(container =>
-            {
-                return container.Instantiate(helloScreen, GameObject.Find("Canvas").transform);
-            }, Lifetime.Scoped);
-
+            builder.Register<GamePresenter>(Lifetime.Singleton);
             
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
-                entryPoints.Add<HotUpdateMain>();
+                // entryPoints.Add<HotUpdateMain>();
                 entryPoints.Add<GamePresenter>();
+                // entryPoints.OnException(ex => ex.Log());
             });
         }
     }
 }
-
