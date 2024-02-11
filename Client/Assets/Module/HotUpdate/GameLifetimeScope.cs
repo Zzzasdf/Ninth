@@ -19,7 +19,8 @@ namespace Ninth.HotUpdate
             builder.Register<PlatformConfig>(Lifetime.Singleton);
 
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
-
+            
+            // View HelloScreen 在 GamePresenter 中通过 解析资源代理 加载，解耦！！
             builder.Register<HelloWorldService>(Lifetime.Singleton);
             builder.Register<GamePresenter>(Lifetime.Singleton);
             
