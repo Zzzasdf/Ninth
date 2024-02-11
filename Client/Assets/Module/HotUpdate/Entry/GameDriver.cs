@@ -29,7 +29,7 @@ namespace Ninth.HotUpdate
 
         private async UniTask Init(PathConfig pathConfig)
         {
-            AssetProxy = new AssetProxy(pathConfig);
+            // AssetProxy = new AssetProxy(pathConfig);
             SceneProxy = new SceneProxy();
             DownloaderProxy = new DownloaderProxy();
             ViewCtrlProxy = new ViewCtrlProxy();

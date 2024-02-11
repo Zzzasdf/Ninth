@@ -2,16 +2,17 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
     public partial class AssetProxy
     {
-        public async UniTask<GameObject> CloneAsync(string assetPath)
+        public async UniTask<GameObject> CloneAsync(string assetPath, CancellationToken cancellationToken = default)
         {
             GameObject cloneObj = null;
-            switch (assetConfig.AssetMode)
+            switch (assetConfig.AssetMode.Log())
             {
                 case AssetMode.NonAB:
                     {

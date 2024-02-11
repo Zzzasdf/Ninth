@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: AssetConfigSO
   m_EditorClassIdentifier: 
   buildMode: 0
-  assetMode: 2
+  assetMode: 1
   url: http://192.168.8.197:80
   localGroup:
   - LocalGroup
   remoteGroup:
   - RemoteGroup
   scriptMode: 1
-  dllMode: 6
+  dllMode: 1

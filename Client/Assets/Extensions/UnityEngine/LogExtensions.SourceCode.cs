@@ -8,7 +8,7 @@ namespace UnityEngine
     {
         public static LogValidator Validator = LogValidator.All;
         private static string ColorFrameLog => "#DD2090";
-        private static string FramePrefix => string.Join(' ', $"<color={ColorFrameLog}>Frame</color>", "..");
+        private static string FramePrefix => $" [<color={ColorFrameLog}>Frame</color>] ";
         private static string ColorNonMainThread => "#FFC107"; // 非主线程
 
         private static object LockObj => new object();

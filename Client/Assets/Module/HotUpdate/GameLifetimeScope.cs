@@ -1,3 +1,5 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -6,12 +8,18 @@ namespace Ninth.HotUpdate
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        public HelloScreen helloScreen;
+        [SerializeField] private AssetConfig assetConfig;
+        [SerializeField] private NameConfig nameConfig;
         protected override void Configure(IContainerBuilder builder)
         {
-            // builder.Register<HotUpdateMain>(Lifetime.Singleton);
-            // 可以解析出一张 UI 路径表 .. 妙！！！
-            builder.RegisterComponentInNewPrefab(objectResolver => Resources.Load<HelloScreen>("Test/VContainer/HelloScreen").Log() , Lifetime.Singleton);
+            builder.RegisterInstance(assetConfig);
+            builder.RegisterInstance(nameConfig);
+
+            builder.Register<PathConfig>(Lifetime.Singleton);
+            builder.Register<PlatformConfig>(Lifetime.Singleton);
+
+            builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
+
             builder.Register<HelloWorldService>(Lifetime.Singleton);
             builder.Register<GamePresenter>(Lifetime.Singleton);
             
