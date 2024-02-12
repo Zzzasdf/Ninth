@@ -8,10 +8,9 @@ namespace Ninth.HotUpdate
 {
     public interface IAssetProxy
     {
-        public UniTask<T> ViewLoadAsync<T>(CancellationToken cancellationToken = default) where T : IView;
-   
-        public UniTask<GameObject> CloneAsync(string assetPath, CancellationToken cancellationToken = default);
-        public UniTask<T> LoadAssetAsync<T>(string pathConfig, GameObject mountObj) where T : UnityEngine.Object;
-        public UniTask UnLoadAllAsync();
+        UniTask<GameObject?> CloneAsync(string assetPath, CancellationToken cancellationToken = default);
+        UniTask<GameObject?> CloneAsync(string assetPath, Transform? parent, CancellationToken cancellationToken = default);
+        UniTask<T?> LoadAssetAsync<T>(string pathConfig, GameObject mountObj) where T : UnityEngine.Object;
+        UniTask UnLoadAllAsync();
     }
 }

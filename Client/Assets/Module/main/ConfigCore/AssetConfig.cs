@@ -74,11 +74,10 @@ namespace Ninth
         Release
     }
 
-    [Flags]
     public enum AssetMode
     {
-        NonAB = 1 << 0,
-        LocalAB = 1 << 1,
-        RemoteAB = 1 << 2,
+        NonAB,
+        LocalAB,
+        RemoteAB,
     }
 }

@@ -8,54 +8,80 @@ using VContainer.Unity;
 
 namespace Ninth.HotUpdate
 {
-    public partial class AssetProxy: IAssetProxy
+    public class AssetProxy : IAssetProxy
     {
-        private readonly AssetConfig assetConfig;
-        private readonly PathConfig pathConfig;
-        
+        private readonly IAssetProxyLoad assetProxyLoad;
+
         [Inject]
-        public AssetProxy(AssetConfig assetConfig, PathConfig pathConfig)
+        public AssetProxy(IAssetProxyLoad assetProxyLoad)
         {
-            ViewSubscribe();
-            
-            this.assetConfig = assetConfig;
-            this.pathConfig = pathConfig;
-            
-            m_ConfigAssetPath2AssetRef = new Dictionary<string, AssetRef>();
-            m_BundlePath2BundleRef = new Dictionary<string, BundleRef>();
-            
-            // LoadConfig localLoadConfig = await ProxyCtrl.ModelProxy.Get<LocalLoadConfig>();
-            // LoadConfig remoteLoadConfig = await ProxyCtrl.ModelProxy.Get<RemoteLoadConfig>();
-            
-            // SetPath2BundleName(localLoadConfig);
-            // SetPath2BundleName(remoteLoadConfig);
-            
-            m_LocalPathFunc = (assetName) => pathConfig.BundleInLocalInStreamingAssetPath(assetName);
-            m_RemotePathFunc = (assetName) => pathConfig.BundleInRemoteInPersistentDataPath(assetName);
-            "AssetProxy 初始化成功".Log();
+            this.assetProxyLoad = assetProxyLoad;
+        }
+        
+        public async UniTask<GameObject?> CloneAsync(string assetPath, CancellationToken cancellationToken = default)
+        {
+            var (assetRef, asset) = await assetProxyLoad.Get<GameObject>(assetPath);
+            if (asset == null)
+            {
+                assetPath.FrameError("无法加载该预制体 在路径 {0}");
+                return null;
+            }
+            var cloneObj = UnityEngine.Object.Instantiate(asset);
+            if (cloneObj == null)
+            {
+                assetPath.FrameError("无法在实例化预制体 在路径 {0}");
+                return null;
+            }
+            if (assetRef != null)
+            {
+                assetRef.BeGameObjectDependedList ??= new List<GameObject>();
+                assetRef.BeGameObjectDependedList.Add(cloneObj);
+            }
+            return cloneObj;
         }
 
-        // 资源配置
-        private Dictionary<string, AssetRef> m_ConfigAssetPath2AssetRef;
-
-        // 加载进内存的bundle, 确保只存在一个
-        public Dictionary<string, BundleRef> m_BundlePath2BundleRef;
-
-        private Func<string, string> m_LocalPathFunc;
-        private Func<string, string> m_RemotePathFunc;
-
-        private void SetPath2BundleName(LoadConfig loadConfig)
+        public async UniTask<GameObject?> CloneAsync(string assetPath, Transform? parent,
+            CancellationToken cancellationToken = default)
         {
-            if (loadConfig.AssetRefList == null)
+            var (assetRef, asset) = await assetProxyLoad.Get<GameObject>(assetPath);
+            if (asset == null)
             {
-                return;
+                assetPath.FrameError("无法加载预制体 在路径 {0}");
+                return null;
             }
-            for (int index = 0; index < loadConfig.AssetRefList.Count; index++)
+            var cloneObj = UnityEngine.Object.Instantiate(asset, parent);
+            if (cloneObj == null)
             {
-                string key = loadConfig.AssetRefList[index].AssetPath;
-                AssetRef value = loadConfig.AssetRefList[index];
-                m_ConfigAssetPath2AssetRef.Add(key, value);
+                assetPath.FrameError("无法在实例化预制体 在路径 {0}");
+                return null;
             }
+            if (assetRef != null)
+            {
+                assetRef.BeGameObjectDependedList ??= new List<GameObject>();
+                assetRef.BeGameObjectDependedList.Add(cloneObj);
+            }
+            return cloneObj;
+        }
+
+        public async UniTask<T?> LoadAssetAsync<T>(string assetPath, GameObject mountObj) where T : UnityEngine.Object
+        {
+            var (assetRef, asset) = await assetProxyLoad.Get<T>(assetPath);
+            if (asset == null)
+            {
+                assetPath.FrameError("无法加载预制体 在路径 {0}");
+                return asset;
+            }
+            if (assetRef != null)
+            {
+                assetRef.BeGameObjectDependedList ??= new List<GameObject>();
+                assetRef.BeGameObjectDependedList.Add(mountObj);
+            }
+            return asset;
+        }
+        
+        public async UniTask UnLoadAllAsync()
+        {
+            await assetProxyLoad.UnLoadAllAsync();
         }
     }
 }

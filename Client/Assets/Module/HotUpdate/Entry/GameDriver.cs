@@ -19,7 +19,7 @@ namespace Ninth.HotUpdate
         public static AssetProxy AssetProxy { get; private set; }
         public static SceneProxy SceneProxy { get; private set; }
         public static DownloaderProxy DownloaderProxy { get; private set; }
-        public static ViewCtrlProxy ViewCtrlProxy { get; private set; }
+        public static ViewProxy ViewProxy { get; private set; }
 
         private void Awake()
         {
@@ -32,8 +32,8 @@ namespace Ninth.HotUpdate
             // AssetProxy = new AssetProxy(pathConfig);
             SceneProxy = new SceneProxy();
             DownloaderProxy = new DownloaderProxy();
-            ViewCtrlProxy = new ViewCtrlProxy();
-            await GameDriver.ViewCtrlProxy.Get<ControllerTest>().ShowViewTest();
+            // ViewProxy = new ViewProxy();
+            // await GameDriver.ViewProxy.Get<ControllerTest>().ShowViewTest();
         }
 
         private void Update()

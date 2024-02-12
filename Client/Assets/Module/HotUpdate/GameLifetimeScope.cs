@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -8,19 +9,46 @@ namespace Ninth.HotUpdate
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        [SerializeField] private AssetConfig assetConfig;
-        [SerializeField] private NameConfig nameConfig;
+        [SerializeField] private AssetConfig? assetConfig;
+        [SerializeField] private NameConfig? nameConfig;
         protected override void Configure(IContainerBuilder builder)
         {
+            if (assetConfig == null)
+            {
+                $"该类的组件 {nameof(AssetConfig) } 必须挂载".FrameError();
+                return;
+            }
+            if (nameConfig == null)
+            {
+                $"该类的组件 {nameof(NameConfig) } 必须挂载".FrameError();
+                return;
+            }
+            switch (assetConfig.AssetMode)
+            {
+                case AssetMode.NonAB:
+                    builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+                    break;
+                case AssetMode.LocalAB:
+                case AssetMode.RemoteAB:
+                    builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+                    break;
+                default:
+                    $"未注册该类型 {assetConfig.AssetMode}, 请检查或实现".FrameError();
+                    return;
+            }
+            
             builder.RegisterInstance(assetConfig);
             builder.RegisterInstance(nameConfig);
 
             builder.Register<PathConfig>(Lifetime.Singleton);
             builder.Register<PlatformConfig>(Lifetime.Singleton);
 
+            
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
-            // View HelloScreen 在 GamePresenter 中通过 解析资源代理 加载，解耦！！
+            builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
+            builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
+            
             builder.Register<HelloWorldService>(Lifetime.Singleton);
             builder.Register<GamePresenter>(Lifetime.Singleton);
             
@@ -28,7 +56,7 @@ namespace Ninth.HotUpdate
             {
                 // entryPoints.Add<HotUpdateMain>();
                 entryPoints.Add<GamePresenter>();
-                // entryPoints.OnException(ex => ex.Log());
+                entryPoints.OnException(ex => ex.FrameError());
             });
         }
     }

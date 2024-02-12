@@ -11,26 +11,22 @@ namespace Ninth.HotUpdate
 {
     public class GamePresenter : IAsyncStartable
     {
-        private HelloWorldService helloWorldService;
+        private readonly HelloWorldService helloWorldService;
+        private readonly IViewProxy viewProxy;
         
-        private IAssetProxy assetProxy;
         private HelloScreen helloScreen;
 
         [Inject]
-        public GamePresenter(HelloWorldService helloWorldService, IAssetProxy assetProxy)
+        public GamePresenter(HelloWorldService helloWorldService, IViewProxy viewProxy)
         {
-            111.Log();
             this.helloWorldService = helloWorldService;
-            this.assetProxy = assetProxy;
-            222.Log();
+            this.viewProxy = viewProxy;
         }
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            333.Log();
-            helloScreen = await assetProxy.ViewLoadAsync<HelloScreen>(cancellation);
+            helloScreen = await viewProxy.Get<HelloScreen>(cancellation);
             helloScreen.HelloButton.onClick.AddListener(helloWorldService.Hello);
-            444.Log();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Ninth.HotUpdate
         /// <summary>
         /// 资源包的名字
         /// </summary>
-        public string BundleName;
+        public string? BundleName;
 
         /// <summary>
         /// 资源包定位
@@ -18,11 +18,11 @@ namespace Ninth.HotUpdate
         /// <summary>
         /// 加载时自身Bundle的引用
         /// </summary>
-        public AssetBundle Bundle;
+        public AssetBundle? Bundle;
 
         /// <summary>
         /// 加载时所有依赖此bundle的Asset集合
         /// </summary>
-        public List<AssetRef> BeAssetRefDependedList;
+        public List<AssetRef>? BeAssetRefDependedList;
     }
 }
