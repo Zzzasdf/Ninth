@@ -1,20 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ConfigCore = Ninth.GameEntry.ConfigCore;
-using DownloadCore = Ninth.GameEntry.DownloadCore;
-using JsonCore = Ninth.GameEntry.JsonCore;
-using ProcedureCore = Ninth.GameEntry.ProcedureCore;
 
 namespace Ninth.Editor
 {
     public class EditorEntry
     {
-        public static GameEntry GameEntry => Object.FindObjectOfType<GameEntry>();
-        public static ConfigCore Config => GameEntry.Config; // 配置
-        public static DownloadCore Download => GameEntry.Download; // 下载
-        public static JsonCore Json => GameEntry.Json;  // Json
-        public static ProcedureCore Procedure => GameEntry.Procedure; // 流程
+        public static ConfigCore Config; // 配置
+        public static DownloadProxy Download; // 下载
+        public static JsonProxy Json;  // Json
+        public static ProcedureProxy Procedure; // 流程
 
         public static PlatformConfig PlatformConfig => new PlatformConfig();
         public static NameConfig NameConfig => new NameConfig();

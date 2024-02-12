@@ -14,7 +14,7 @@ namespace Ninth.HotUpdate
         private readonly HelloWorldService helloWorldService;
         private readonly IViewProxy viewProxy;
         
-        private HelloScreen helloScreen;
+        private HelloScreen? helloScreen;
 
         [Inject]
         public GamePresenter(HelloWorldService helloWorldService, IViewProxy viewProxy)
@@ -26,6 +26,10 @@ namespace Ninth.HotUpdate
         public async UniTask StartAsync(CancellationToken cancellation)
         {
             helloScreen = await viewProxy.Get<HelloScreen>(cancellation);
+            if (helloScreen == null)
+            {
+                return;
+            }
             helloScreen.HelloButton.onClick.AddListener(helloWorldService.Hello);
         }
     }

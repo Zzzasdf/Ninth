@@ -1,27 +1,23 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using System.Collections.ObjectModel;
-using System.Security.AccessControl;
 
 namespace Ninth
 {
     [CreateAssetMenu(fileName = "AssetConfigSO", menuName = "Config/AssetConfigSO")]
     [Serializable]
-    public sealed partial class AssetConfig : ScriptableObject
+    public sealed class AssetConfig : ScriptableObject
     {
         // 构建模式
         [SerializeField] private BuildMode buildMode;
         public BuildMode BuildMode => buildMode;
 
         /// <summary>
-        /// 资源加载模式
+        /// 运行环境
         /// </summary>
-        [SerializeField] private AssetMode assetMode;
-        public AssetMode AssetMode => assetMode;
+        [SerializeField] private RuntimeEnv runtimeEnv;
+        public RuntimeEnv RuntimeEnv => runtimeEnv;
 
         /// <summary>
         /// 模块列表Url
@@ -30,41 +26,21 @@ namespace Ninth
         public string Url => url;
 
         /// <summary>
-        /// 本地AB包，随版本包打进StreamingAsset
-        /// </summary>
-        [SerializeField] private List<string> localGroup;
-        public ReadOnlyCollection<string> LocalGroup => new ReadOnlyCollection<string>(localGroup);
-
-        /// <summary>
         /// 热更AB包，随游戏启动下载
         /// </summary>
-        [SerializeField] private List<string> remoteGroup;
-        public ReadOnlyCollection<string> RemoteGroup => new ReadOnlyCollection<string>(remoteGroup);
-
-        /// <summary>
-        /// 运行CS脚本的模式，优先检测
-        /// </summary>
-        [SerializeField] private AssetMode scriptMode;
-        public AssetMode ScriptMode => scriptMode;
+        [SerializeField] private List<string> remoteAbGroup;
+        public ReadOnlyCollection<string> RemoteAbGroup => new(remoteAbGroup);
 
         // 运行Dll脚本的模式
-        [SerializeField] private AssetMode dllMode;
-        public AssetMode DllMode => dllMode;
+        [SerializeField] private List<RuntimeEnv> dllRuntimeEnv;
+        public List<RuntimeEnv> DllRuntimeEnv => dllRuntimeEnv;
 
         public AssetConfig()
         {
-            assetMode = AssetMode.LocalAB;
+            runtimeEnv = RuntimeEnv.LocalAb;
             url = "http://192.168.8.197:80";
-            localGroup = new List<string>()
-            {
-                "LocalGroup"
-            };
-            remoteGroup = new List<string>()
-            {
-                "RemoteGroup"
-            };
-            scriptMode = AssetMode.NonAB;
-            dllMode = AssetMode.LocalAB | AssetMode.RemoteAB;
+            remoteAbGroup = new List<string> { "RemoteGroup" };
+            dllRuntimeEnv = new List<RuntimeEnv> { RuntimeEnv.LocalAb, RuntimeEnv.RemoteAb };
         }
     }
 
@@ -73,11 +49,11 @@ namespace Ninth
         Debug,
         Release
     }
-
-    public enum AssetMode
+    
+    public enum RuntimeEnv
     {
-        NonAB,
-        LocalAB,
-        RemoteAB,
+        NonAb,
+        LocalAb,
+        RemoteAb,
     }
 }

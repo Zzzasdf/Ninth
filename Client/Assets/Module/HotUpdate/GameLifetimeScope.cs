@@ -23,27 +23,25 @@ namespace Ninth.HotUpdate
                 $"该类的组件 {nameof(NameConfig) } 必须挂载".FrameError();
                 return;
             }
-            switch (assetConfig.AssetMode)
-            {
-                case AssetMode.NonAB:
-                    builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-                    break;
-                case AssetMode.LocalAB:
-                case AssetMode.RemoteAB:
-                    builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-                    break;
-                default:
-                    $"未注册该类型 {assetConfig.AssetMode}, 请检查或实现".FrameError();
-                    return;
-            }
-            
             builder.RegisterInstance(assetConfig);
             builder.RegisterInstance(nameConfig);
 
             builder.Register<PathConfig>(Lifetime.Singleton);
             builder.Register<PlatformConfig>(Lifetime.Singleton);
-
             
+            switch (assetConfig.RuntimeEnv)
+            {
+                case RuntimeEnv.NonAb:
+                    builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+                    break;
+                case RuntimeEnv.LocalAb:
+                case RuntimeEnv.RemoteAb:
+                    builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+                    break;
+                default:
+                    $"未注册该类型 {assetConfig.RuntimeEnv}, 请检查或实现".FrameError();
+                    return;
+            }
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();

@@ -38,7 +38,13 @@ namespace Ninth.HotUpdate
                 value.path.FrameError("无法实例化预制体 在路径: {0}");
                 return default;
             }
-            return view.GetComponent<T>();
+            var component = view.GetComponent<T>();
+            if (component == null)
+            {
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{value.path}".FrameError();
+                return default;
+            }
+            return component;
         }
         
         private async UniTask<RectTransform?> GetHierarchy(ViewHierarchy viewHierarchy)

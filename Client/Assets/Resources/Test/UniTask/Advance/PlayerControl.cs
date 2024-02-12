@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityFS;
 
 namespace UniTaskTutorial.Advance.Scripts
 {

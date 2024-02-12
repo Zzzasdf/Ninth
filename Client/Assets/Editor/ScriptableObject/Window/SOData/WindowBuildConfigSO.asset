@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8132ffa09586974eb3e0aaee0972034, type: 3}
   m_Name: WindowBuildConfigSO
   m_EditorClassIdentifier: 
-  buildBundlesDirectoryRoot: F:/Ninth/Bundles
-  buildPlayersDirectoryRoot: F:/Ninth/Players
+  buildBundlesDirectoryRoot: C:/UnityProject/Ninth/Bundles
+  buildPlayersDirectoryRoot: C:/UnityProject/Ninth/Players
   buildSettingsType: 0
   buildBundleMode: 1
-  majorVersion: 3
-  minorVersion: 0
+  majorVersion: 4
+  minorVersion: 1
   versionRevisionNumber: 1
-  revisionNumber: 10
+  revisionNumber: 17
   buildExportDirectoryType: 0
   activeTargetMode: 0
   buildTarget: 19

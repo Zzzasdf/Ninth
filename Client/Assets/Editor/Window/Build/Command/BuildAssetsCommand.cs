@@ -8,7 +8,6 @@ using System.IO;
 using HybridCLR.Editor.Commands;
 using System.Linq;
 using System.Collections.ObjectModel;
-using JsonCore = Ninth.GameEntry.JsonCore;
 
 namespace Ninth.Editor
 {
@@ -16,13 +15,13 @@ namespace Ninth.Editor
     {
         private readonly AssetConfig assetConfig;
         private readonly PackConfig packConfig;
-        private readonly JsonCore jsonCore;
+        private readonly JsonProxy jsonProxy;
 
-        public BuildAssetsCommand(AssetConfig assetConfig, PackConfig packConfig, JsonCore jsonCore)
+        public BuildAssetsCommand(AssetConfig assetConfig, PackConfig packConfig, JsonProxy jsonProxy)
         {
             this.assetConfig = assetConfig;
             this.packConfig = packConfig;
-            this.jsonCore = jsonCore;
+            this.jsonProxy = jsonProxy;
             m_VersionConfig = new VersionConfig();
             m_AssetBundleBuildList = new List<AssetBundleBuild>();
             m_AssetLocate2BundleNameList = new Dictionary<AssetLocate, List<string>>();
@@ -33,12 +32,8 @@ namespace Ninth.Editor
             m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
         }
 
-        public ReadOnlyCollection<string> LocalGroup => assetConfig.LocalGroup;
-
-        public ReadOnlyCollection<string> RemoteGroup => assetConfig.RemoteGroup;
-
         // 打包模式
-        public AssetMode packAssetMode;
+        public RuntimeEnv PackRuntimeEnv;
 
         // 版本配置
         private VersionConfig m_VersionConfig;
@@ -60,9 +55,9 @@ namespace Ninth.Editor
         private Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
         private Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
 
-        public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
         {
-            bool result = BuildAllBundles(target, assetMode, newVersion);
+            bool result = BuildAllBundles(target, runtimeEnv, newVersion);
             if (!result)
             {
                 return result;
@@ -74,7 +69,7 @@ namespace Ninth.Editor
         public bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
         {
             packConfig.BuildPlatform = target.ToString();
-            VersionConfig versionConfig = jsonCore.ToObject<VersionConfig>(packConfig.BaseVersion());
+            VersionConfig versionConfig = jsonProxy.ToObject<VersionConfig>(packConfig.BaseVersion());
             if(versionConfig == null)
             {
                 UnityEngine.Debug.LogError($"在路径{packConfig.BaseVersion()}下不存在版本配置文件, 请先打一个版本包！！");
@@ -106,14 +101,24 @@ namespace Ninth.Editor
             return true;
         }
 
-        public bool BuildAllBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildAllBundles(BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            packAssetMode = assetMode;
+            PackRuntimeEnv = runtimeEnv;
 
+            List<string> localAbGroup = new List<string>();
+            DirectoryInfo directoryInfo = new DirectoryInfo(packConfig.GAssets);
+            DirectoryInfo[] dirs = directoryInfo.GetDirectories();
+            foreach (DirectoryInfo info in dirs)
+            {
+                if (!assetConfig.RemoteAbGroup.Contains(info.Name))
+                {
+                    localAbGroup.Add(info.Name.Log());
+                }
+            }
             bool result = Build(newVersion, target,
-                (LocalGroup, AssetLocate.Local),
-                (RemoteGroup, AssetLocate.Remote));
+                (localAbGroup, AssetLocate.Local),
+                (assetConfig.RemoteAbGroup, AssetLocate.Remote));
             if(!result)
             {
                 return false;
@@ -122,13 +127,13 @@ namespace Ninth.Editor
             return true;
         }
 
-        public bool BuildHotUpdateBundles(BuildTarget target, AssetMode assetMode, string newVersion)
+        public bool BuildHotUpdateBundles(BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            packAssetMode = assetMode;
+            PackRuntimeEnv = runtimeEnv;
 
             bool result = Build(newVersion, target,
-                (RemoteGroup, AssetLocate.Remote));
+                (assetConfig.RemoteAbGroup, AssetLocate.Remote));
             if(!result)
             {
                 return false;
@@ -157,7 +162,7 @@ namespace Ninth.Editor
         /// </summary>
         /// <param name="gAsset"></param>
         /// <param name="groupListArgs"></param>
-        private bool Build(string newVersion, BuildTarget target, params (ReadOnlyCollection<string> groupList, AssetLocate assetLocate)[] groupListArgs)
+        private bool Build(string newVersion, BuildTarget target, params (ICollection<string> groupList, AssetLocate assetLocate)[] groupListArgs)
         {
             try
             {
@@ -183,7 +188,7 @@ namespace Ninth.Editor
                 }
                 else
                 {
-                    VersionConfig versionConfig = jsonCore.ToObject<VersionConfig>(packConfig.ApplyVersionInSourceDataPath());
+                    VersionConfig versionConfig = jsonProxy.ToObject<VersionConfig>(packConfig.ApplyVersionInSourceDataPath());
                     if (versionConfig == null)
                     {
                         Debug.LogError($"路径{packConfig.ApplyVersionInSourceDataPath()}下检测不到版本文件，请将版本文件复制到此处，或先打一个版本包并应用此版本!!");
@@ -211,15 +216,13 @@ namespace Ninth.Editor
                 string gAssets = packConfig.GAssets;
                 for (int index = 0; index < groupListArgs.Length; index++)
                 {
-                    ReadOnlyCollection<string> groupLst = groupListArgs[index].groupList;
+                    var groupLst = groupListArgs[index].groupList;
                     AssetLocate assetLocate = groupListArgs[index].assetLocate;
 
-                    for (int i = 0; i < groupLst.Count; i++)
+                    foreach (var groupName in groupLst)
                     {
-                        string groupName = groupLst[i];
                         string groupPath = gAssets + "/" + groupName;
                         DirectoryInfo groupDir = new DirectoryInfo(groupPath);
-
                         ScanChildDireations(groupDir, assetLocate);
                     }
                 }
@@ -453,7 +456,7 @@ namespace Ninth.Editor
         private void SaveConfigs()
         {
             // 保存版本号
-            jsonCore.ToJson(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
+            jsonProxy.ToJson(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
 
             // 空包也添加配置 =》解决拉取配置404问题
             List<AssetLocate> packAssetLocate = new List<AssetLocate>()
@@ -489,12 +492,12 @@ namespace Ninth.Editor
                     m_DownloadConfig.Add(assetLocate, new DownloadConfig());
                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
                 }
-                jsonCore.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+                jsonProxy.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
                 if(string.IsNullOrEmpty(saveDownloadConfigTempPath[index]))
                 {
                     continue;
                 }
-                jsonCore.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
+                jsonProxy.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
             }
         }
 
@@ -580,15 +583,15 @@ namespace Ninth.Editor
         // 复制文件
         private void CopyFiles(bool backPack)
         {
-            switch(packAssetMode)
+            switch(PackRuntimeEnv)
             {
-                case AssetMode.LocalAB:
+                case RuntimeEnv.LocalAb:
                     {
                         // 全部拷贝到streamingAssets
                         CopyFilesSortOut(AssetLocate.All);
                         break;
                     }
-                case AssetMode.RemoteAB:
+                case RuntimeEnv.RemoteAb:
                     {
                         if(backPack)
                         {

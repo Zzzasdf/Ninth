@@ -23,7 +23,7 @@ namespace Ninth.HotUpdate
             bundlePath2BundleRef = new Dictionary<string, BundleRef>();
         }
 
-        public async UniTask<(AssetRef?, T?)> Get<T>(string assetPath) where T : Object
+        public async UniTask<(AssetRef?, T?)> Get<T>(string assetPath) where T : UnityEngine.Object
         {
             if (!configAssetPath2AssetRef.TryGetValue(assetPath, out AssetRef assetRef))
             {
@@ -77,7 +77,7 @@ namespace Ninth.HotUpdate
             return (assetRef, assetRef.Asset as T);
         }
 
-        public async UniTask UnLoadAllAsync()
+        async UniTask IAssetProxyLoad.UnLoadAllAsync()
         {
             List<string> removeBundleRef = null;
             foreach (var item in bundlePath2BundleRef)

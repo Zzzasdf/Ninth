@@ -30,9 +30,9 @@ namespace Ninth.HotUpdate
             }
         }
 
-        public string ViewLayoutPath() => viewLayoutPath;
+        string IViewConfig.ViewLayoutPath() => viewLayoutPath;
 
-        public ReadOnlyDictionary<Type, (string path, ViewHierarchy hierarchy)> MapContainer() => mapContainer;
+        ReadOnlyDictionary<Type, (string path, ViewHierarchy hierarchy)> IViewConfig.MapContainer() => mapContainer;
     }
 }
 

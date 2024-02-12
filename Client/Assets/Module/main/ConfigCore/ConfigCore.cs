@@ -6,8 +6,6 @@ using System;
 
 namespace Ninth
 {
-    public partial class GameEntry
-    {
         [Serializable]
         public class ConfigCore
         {
@@ -15,7 +13,7 @@ namespace Ninth
             public NameConfig NameConfig;
             public PlatformConfig PlatformConfig { get; }
             public PathConfig PathConfig { get; }
-            public PlayerPrefsConfing PlayerPrefsConfing { get; }
+            public PlayerPrefsConfig PlayerPrefsConfig { get; }
 
             public ConfigCore()
             {
@@ -32,5 +30,4 @@ namespace Ninth
                 return Resources.Load<T>(string.Format("SOData/{0}", soName));
             }
         }
-    }
 }
