@@ -22,7 +22,7 @@ namespace Ninth
             this.pathConfig = pathConfig;
         }
 
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             long totalSize = 0;
 
@@ -36,8 +36,8 @@ namespace Ninth
             // 资源服务器存放下载配置路径
             List<string> serverDownloadConfigPathList = new List<string>()
             {
-                pathConfig.DownloadConfigInRemoteInServerPath(version),
-                pathConfig.DownloadConfigInDllInServerPath(version),
+                pathConfig.DownloadConfigPathByRemoteGroup(version),
+                pathConfig.DownloadConfigPathByDllGroup(version),
             };
 
             // 临时下载配置存放路径
@@ -61,12 +61,12 @@ namespace Ninth
                 string serverDownloadConfigPath = serverDownloadConfigPathList[index];
                 string tempDownloadConfigPath = tempDownloadConfigPathList[index];
 
-                bool result = await downloadProxy.Download(serverDownloadConfigPath, tempDownloadConfigPath, cancellationToken);
+                bool result = await downloadProxy.DownloadAsync(serverDownloadConfigPath, tempDownloadConfigPath, cancellationToken);
                 if (!result)
                 {
                     // TODO .. 弹窗提示 .. 无法获取到最新的下载配置, 重新下载  Y .. 重试  N .. 退出  
                     UnityEngine.Debug.LogError("从资源服务器下载下载配置出错");
-                    return ProcedureInfo.Error;
+                    return PROCEDURE.Error;
                 }
             }
 
@@ -121,7 +121,7 @@ namespace Ninth
             downloadProxy.GetTotalIncreaseBundleSize = totalSize;
             if (downloadProxy.GetTotalIncreaseBundleSize == 0)
             {
-                return ProcedureInfo.Continue;
+                return PROCEDURE.Continue;
             }
             else
             {
@@ -131,12 +131,12 @@ namespace Ninth
                 return await downloadProxy.MessageBox.DownloadBeforce(
                     $"发现新的版本，需要下载大小为：{downloadProxy.SizeToString(totalSize)}",
                     "确认下载",
-                    () => ProcedureInfo.Continue,
+                    () => PROCEDURE.Continue,
                     "取消",
                     () =>
                     {
                         Application.Quit();
-                        return ProcedureInfo.Error;
+                        return PROCEDURE.Error;
                     });
             }
         }

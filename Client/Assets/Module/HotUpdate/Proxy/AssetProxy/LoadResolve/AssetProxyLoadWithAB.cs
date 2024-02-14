@@ -23,9 +23,14 @@ namespace Ninth.HotUpdate
             bundlePath2BundleRef = new Dictionary<string, BundleRef>();
         }
 
-        public async UniTask<(AssetRef?, T?)> Get<T>(string assetPath) where T : UnityEngine.Object
+        async UniTask<(AssetRef?, T?)> IAssetProxyLoad.Get<T>(string? assetPath) where T : class
         {
-            if (!configAssetPath2AssetRef.TryGetValue(assetPath, out AssetRef assetRef))
+            if (assetPath == null)
+            {
+                $"无法加载：{nameof(T)}, 资源路径为空".FrameError();
+                return (null, null);
+            }
+            if (!configAssetPath2AssetRef.TryGetValue(assetPath, out var assetRef))
             {
                 return (null, null);
             }
@@ -54,8 +59,8 @@ namespace Ninth.HotUpdate
 
                         string bundlePath = bundleRef.AssetLocate switch
                         {
-                            AssetLocate.Local => pathConfig.BundleInLocalInStreamingAssetPath(bundleRef.BundleName),
-                            AssetLocate.Remote => pathConfig.BundleInRemoteInPersistentDataPath(bundleRef.BundleName),
+                            AssetLocate.Local => pathConfig.BundlePathByLocalGroup(bundleRef.BundleName),
+                            AssetLocate.Remote => pathConfig.BundlePathByRemoteGroup(bundleRef.BundleName),
                             _ => throw new Exception("Invalid resource location")
                         };
                         bundlePath2BundleRef.Add(bundleRef.BundleName, bundleRef);

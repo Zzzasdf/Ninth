@@ -9,10 +9,10 @@ namespace Ninth
 {
     public class StartUp : IProcedure
     {
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             UnityEngine.Debug.Log("资源更新完毕！！");
-            return ProcedureInfo.Continue;
+            return PROCEDURE.Continue;
         }
     }
 }

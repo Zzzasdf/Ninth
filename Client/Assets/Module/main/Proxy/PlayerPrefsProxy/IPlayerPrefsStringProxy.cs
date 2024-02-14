@@ -6,8 +6,8 @@ namespace Ninth
 {
     public interface IPlayerPrefsStringProxy
     {
-        string Get(PlayerPrefsString playerPrefsString);
+        string? Get(PLAYERPREFS_STRING playerprefsString);
 
-        void Set(PlayerPrefsString playerPrefsString, string value);
+        void Set(PLAYERPREFS_STRING playerprefsString, string value);
     }
 }

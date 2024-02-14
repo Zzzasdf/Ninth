@@ -1,36 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using VContainer;
 
 namespace Ninth
 {
-    public enum JsonFile
-    {
-        Test,
-    }
-    
     public class JsonConfig: IJsonConfig
     {
-        private readonly ReadOnlyDictionary<JsonFile, string> mapContainer;
-        
-        public JsonConfig()
-        {
-            var tempContainer = new Dictionary<JsonFile, string>();
-            mapContainer = new ReadOnlyDictionary<JsonFile, string>(tempContainer);
-
-            Subscribe(JsonFile.Test, "asdadsadsd");
-            return;
+        private readonly ReadOnlyDictionary<Enum, string?> jsonContainer;
             
-            void Subscribe(JsonFile jsonFile, string path)
-            {
-                if (!tempContainer.TryAdd(jsonFile, path))
-                {
-                    jsonFile.FrameError("重复注册 Json: {0}");
-                }
-            }
+        [Inject]
+        public JsonConfig(IPathProxy pathProxy)
+        {
+            jsonContainer = new ReadOnlyDictionary<Enum, string?>(new Dictionary<Enum, string?>());
+            
+            Subscribe(VERSION_PATH.StreamingAssets, pathProxy.Get(VERSION_PATH.StreamingAssets));
+            Subscribe(VERSION_PATH.PersistentData, pathProxy.Get(VERSION_PATH.PersistentData));
+            Subscribe(VERSION_PATH.PersistentDataTemp, pathProxy.Get(VERSION_PATH.PersistentDataTemp));
         }
         
-        ReadOnlyDictionary<JsonFile, string> IJsonConfig.MapContainer() => mapContainer;
+        private void Subscribe(Enum e, string? path)
+        {
+            if (!jsonContainer.TryAdd(e, path))
+            {
+                $"重复订阅 {e.GetType().Name}: {e}".FrameError();
+            }
+        }
+
+        string? IJsonConfig.Get(Enum e)
+        {
+            if (!jsonContainer.TryGetValue(e, out var result))
+            {
+                $"未订阅 {e.GetType().Name}: {e}".FrameError();;
+                return null;
+            }
+            return result;
+        }
     }
 }

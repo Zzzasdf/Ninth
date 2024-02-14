@@ -5,6 +5,6 @@ namespace Ninth
 {
     public interface IProcedure
     {
-        UniTask<ProcedureInfo> StartAsync(CancellationToken cancellationToken = default);
+        UniTask<PROCEDURE> StartAsync(CancellationToken cancellationToken = default);
     }
 }

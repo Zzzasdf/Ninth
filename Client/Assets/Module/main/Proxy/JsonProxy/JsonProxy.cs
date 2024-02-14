@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
@@ -11,46 +12,49 @@ namespace Ninth
 {
     public class JsonProxy : IJsonProxy
     {
-        private readonly UTF8Encoding encoding = new UTF8Encoding(false);
-        
-        private readonly ReadOnlyDictionary<JsonFile, string> mapContainer;
+        private readonly UTF8Encoding encoding;
+
+        private readonly IJsonConfig jsonConfig;
 
         [Inject]
         public JsonProxy(IJsonConfig jsonConfig)
         {
-            this.mapContainer = jsonConfig.MapContainer();
+            encoding = new UTF8Encoding(false);
+            this.jsonConfig = jsonConfig;
         }
         
-        public async UniTask<T?> ToObject<T>(JsonFile jsonFile, CancellationToken cancellationToken = default)
+        async UniTask<T?> IJsonProxy.ToObjectAsync<T>(Enum e, CancellationToken cancellationToken) where T: class
         {
-            if(!mapContainer.TryGetValue(jsonFile, out var path) || string.IsNullOrEmpty(path))
+            var path = jsonConfig.Get(e);
+            if(path == null)
             {
-                $"{jsonFile} 对应的路径为空, 请检查注册的配置文件：{nameof(IJsonConfig)}".FrameError();
-                return default;
+                $"路径为空 {e.GetType().Name}: {e}".FrameError();
+                return null;
             }
             if (!File.Exists(path))
             {
-                path.FrameError("无法加载到 Json 文件 在路径: {0}");
-                return default;
+                $"路径不存在文件: {path}".Log();
+                return null;
             }
             var data = await File.ReadAllTextAsync(path, encoding, cancellationToken);
             return LitJson.JsonMapper.ToObject<T>(data);
         }
 
-        async UniTaskVoid IJsonProxy.ToJson<T>(T obj, JsonFile jsonFile, CancellationToken cancellationToken = default)
+        async UniTaskVoid IJsonProxy.ToJsonAsync<T>(T obj, Enum e, CancellationToken cancellationToken) where T: class
         {
-            if(!mapContainer.TryGetValue(jsonFile, out var path) || string.IsNullOrEmpty(path))
+            var path = jsonConfig.Get(e);
+            if(path == null)
             {
-                $"{jsonFile} 对应的路径为空, 请检查注册的配置文件：{nameof(IJsonConfig)}".FrameError();
+                $"路径为空 {e.GetType().Name}: {e}".FrameError();
                 return;
             }
             if (!File.Exists(path))
             {
-                File.Create(path).Dispose();
+                await File.Create(path).DisposeAsync();
             }
             var jsonData = LitJson.JsonMapper.ToJson(obj);
             await File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding, cancellationToken);
-            // File.WriteAllText(path, jsonData, encoding);
+            // await File.WriteAllTextAsync(path, jsonData, encoding);
         }
 
         private static string ConvertJsonString(string str)

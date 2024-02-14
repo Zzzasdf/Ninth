@@ -33,7 +33,7 @@ namespace Ninth.Editor
         }
 
         // 打包模式
-        public RuntimeEnv PackRuntimeEnv;
+        public Environment PackEnvironment;
 
         // 版本配置
         private VersionConfig m_VersionConfig;
@@ -55,9 +55,9 @@ namespace Ninth.Editor
         private Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
         private Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
 
-        public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
+        public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, Environment environment, string newVersion)
         {
-            bool result = BuildAllBundles(target, runtimeEnv, newVersion);
+            bool result = BuildAllBundles(target, environment, newVersion);
             if (!result)
             {
                 return result;
@@ -69,7 +69,7 @@ namespace Ninth.Editor
         public bool BuildPlayer(BuildTargetGroup buildTargetGroup, BuildTarget target)
         {
             packConfig.BuildPlatform = target.ToString();
-            VersionConfig versionConfig = jsonProxy.ToObject<VersionConfig>(packConfig.BaseVersion());
+            VersionConfig versionConfig = jsonProxy.ToObjectAsync<VersionConfig>(packConfig.BaseVersion());
             if(versionConfig == null)
             {
                 UnityEngine.Debug.LogError($"在路径{packConfig.BaseVersion()}下不存在版本配置文件, 请先打一个版本包！！");
@@ -101,10 +101,10 @@ namespace Ninth.Editor
             return true;
         }
 
-        public bool BuildAllBundles(BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
+        public bool BuildAllBundles(BuildTarget target, Environment environment, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            PackRuntimeEnv = runtimeEnv;
+            PackEnvironment = environment;
 
             List<string> localAbGroup = new List<string>();
             DirectoryInfo directoryInfo = new DirectoryInfo(packConfig.GAssets);
@@ -127,10 +127,10 @@ namespace Ninth.Editor
             return true;
         }
 
-        public bool BuildHotUpdateBundles(BuildTarget target, RuntimeEnv runtimeEnv, string newVersion)
+        public bool BuildHotUpdateBundles(BuildTarget target, Environment environment, string newVersion)
         {
             packConfig.BuildPlatform = target.ToString();
-            PackRuntimeEnv = runtimeEnv;
+            PackEnvironment = environment;
 
             bool result = Build(newVersion, target,
                 (assetConfig.RemoteAbGroup, AssetLocate.Remote));
@@ -188,7 +188,7 @@ namespace Ninth.Editor
                 }
                 else
                 {
-                    VersionConfig versionConfig = jsonProxy.ToObject<VersionConfig>(packConfig.ApplyVersionInSourceDataPath());
+                    VersionConfig versionConfig = jsonProxy.ToObjectAsync<VersionConfig>(packConfig.ApplyVersionInSourceDataPath());
                     if (versionConfig == null)
                     {
                         Debug.LogError($"路径{packConfig.ApplyVersionInSourceDataPath()}下检测不到版本文件，请将版本文件复制到此处，或先打一个版本包并应用此版本!!");
@@ -456,7 +456,7 @@ namespace Ninth.Editor
         private void SaveConfigs()
         {
             // 保存版本号
-            jsonProxy.ToJson(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
+            jsonProxy.ToJsonAsync(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
 
             // 空包也添加配置 =》解决拉取配置404问题
             List<AssetLocate> packAssetLocate = new List<AssetLocate>()
@@ -492,12 +492,12 @@ namespace Ninth.Editor
                     m_DownloadConfig.Add(assetLocate, new DownloadConfig());
                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
                 }
-                jsonProxy.ToJson(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+                jsonProxy.ToJsonAsync(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
                 if(string.IsNullOrEmpty(saveDownloadConfigTempPath[index]))
                 {
                     continue;
                 }
-                jsonProxy.ToJson(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
+                jsonProxy.ToJsonAsync(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
             }
         }
 
@@ -583,15 +583,15 @@ namespace Ninth.Editor
         // 复制文件
         private void CopyFiles(bool backPack)
         {
-            switch(PackRuntimeEnv)
+            switch(PackEnvironment)
             {
-                case RuntimeEnv.LocalAb:
+                case Environment.LocalAb:
                     {
                         // 全部拷贝到streamingAssets
                         CopyFilesSortOut(AssetLocate.All);
                         break;
                     }
-                case RuntimeEnv.RemoteAb:
+                case Environment.RemoteAb:
                     {
                         if(backPack)
                         {

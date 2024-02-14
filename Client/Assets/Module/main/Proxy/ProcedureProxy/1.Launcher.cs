@@ -9,20 +9,20 @@ namespace Ninth
 {
     public class Launcher: IProcedure
     {
-        private readonly RuntimeEnv runtimeEnv;
+        private readonly IAssetConfig assetConfig;
         
         [Inject]
-        public Launcher(AssetConfig assetConfig)
+        public Launcher(IAssetConfig assetConfig)
         {
-            this.runtimeEnv = assetConfig.RuntimeEnv;
+            this.assetConfig = assetConfig;
         }
 
-        UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellation = default)
+        UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellation)
         {
-            return runtimeEnv switch
+            return assetConfig.RuntimeEnv() switch
             {
-                RuntimeEnv.RemoteAb => UniTask.FromResult(ProcedureInfo.Continue),
-                _ => UniTask.FromResult(ProcedureInfo.Through)
+                Environment.RemoteAb => UniTask.FromResult(PROCEDURE.Continue),
+                _ => UniTask.FromResult(PROCEDURE.Finish)
             };
         }
     }

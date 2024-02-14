@@ -2,72 +2,92 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using VContainer;
 
 namespace Ninth
 {
     public class PlayerPrefsConfig: IPlayerPrefsIntConfig, IPlayerPrefsFloatConfig, IPlayerPrefsStringConfig
     {
-        private ReadOnlyDictionary<PlayerPrefsInt, int> intMapContainer;
-        private ReadOnlyDictionary<PlayerPrefsFloat, float> floatMapContainer;
-        private ReadOnlyDictionary<PlayerPrefsString, string> stringMapContainer;
+        private readonly ReadOnlyDictionary<PLAYERPREFS_INT, int> intContainer;
+        private readonly ReadOnlyDictionary<PLAYERPREFS_FLOAT, float> floatContainer;
+        private readonly ReadOnlyDictionary<PLAYERPREFS_STRING, string> stringContainer;
 
+        [Inject]
         public PlayerPrefsConfig()
         {
-            IntSubscribes();
-            FloatSubscribes();
-            StringSubscribes();
+            intContainer = new ReadOnlyDictionary<PLAYERPREFS_INT, int>(new Dictionary<PLAYERPREFS_INT, int>());
+            floatContainer = new ReadOnlyDictionary<PLAYERPREFS_FLOAT, float>(new Dictionary<PLAYERPREFS_FLOAT, float>());
+            stringContainer = new ReadOnlyDictionary<PLAYERPREFS_STRING, string>(new Dictionary<PLAYERPREFS_STRING, string>());
+            
+            Subscribe(PLAYERPREFS_INT.DownloadBundleStartPos, 0);
+            Subscribe(PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion, "0.0.0.0");
         }
-
-        private void IntSubscribes()
-        {
-            var tempIntMapContainer = new Dictionary<PlayerPrefsInt, int>();
-            intMapContainer = new ReadOnlyDictionary<PlayerPrefsInt, int>(tempIntMapContainer);
-            
-            Subscribe(PlayerPrefsInt.DownloadBundleStartPos, 0);
-            
-            void Subscribe(PlayerPrefsInt playerPrefsInt, int defaultValue)
-            {
-                if (!intMapContainer.TryAdd(playerPrefsInt, defaultValue))
-                {
-                    playerPrefsInt.FrameError("重复注册 View: {0}");
-                }
-            }
-        }
-
-        private void FloatSubscribes()
-        {
-            var tempFloatMapContainer = new Dictionary<PlayerPrefsFloat, float>();
-            floatMapContainer = new ReadOnlyDictionary<PlayerPrefsFloat, float>(tempFloatMapContainer);
-            
-            void Subscribe(PlayerPrefsFloat playerPrefsFloat, float defaultValue)
-            {
-                if (!floatMapContainer.TryAdd(playerPrefsFloat, defaultValue))
-                {
-                    playerPrefsFloat.FrameError("重复注册 View: {0}");
-                }
-            }
-        }
-
-        private void StringSubscribes()
-        {
-            var tempStringMapContainer = new Dictionary<PlayerPrefsString, string>();
-            stringMapContainer = new ReadOnlyDictionary<PlayerPrefsString, string>(tempStringMapContainer);
-            
-            Subscribe(PlayerPrefsString.DownloadBundleStartPosFromAssetVersion, "0.0.0.0");
-            
-            void Subscribe(PlayerPrefsString playerPrefsString, string defaultValue)
-            {
-                if (!stringMapContainer.TryAdd(playerPrefsString, defaultValue))
-                {
-                    playerPrefsString.FrameError("重复注册 View: {0}");
-                }
-            }
-        }
-
-        ReadOnlyDictionary<PlayerPrefsInt, int> IPlayerPrefsIntConfig.MapContainer() => intMapContainer;
         
-        ReadOnlyDictionary<PlayerPrefsFloat, float> IPlayerPrefsFloatConfig.MapContainer() => floatMapContainer;
+        private void Subscribe(PLAYERPREFS_INT playerPrefsInt, int defaultValue)
+        {
+            if (!intContainer.TryAdd(playerPrefsInt, defaultValue))
+            {
+                $"重复订阅 {nameof(PLAYERPREFS_INT)}: {playerPrefsInt}".FrameError();
+            }
+        }
+        private void Subscribe(PLAYERPREFS_FLOAT playerPrefsFloat, float defaultValue)
+        {
+            if (!floatContainer.TryAdd(playerPrefsFloat, defaultValue))
+            {
+                $"重复订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerPrefsFloat}".FrameError();
+            }
+        }
+        private void Subscribe(PLAYERPREFS_STRING playerPrefsString, string defaultValue)
+        {
+            if (!stringContainer.TryAdd(playerPrefsString, defaultValue))
+            {
+                $"重复订阅 {nameof(PLAYERPREFS_STRING)}: {playerPrefsString}".FrameError();
+            }
+        }
 
-        ReadOnlyDictionary<PlayerPrefsString, string> IPlayerPrefsStringConfig.MapContainer() => stringMapContainer;
+        int? IPlayerPrefsIntConfig.Get(PLAYERPREFS_INT playerprefsInt)
+        {
+            if (!intContainer.TryGetValue(playerprefsInt, out var result))
+            {
+                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
+                return null;
+            }
+            return result;
+        }
+
+        bool IPlayerPrefsIntConfig.ContainsKey(PLAYERPREFS_INT playerprefsInt)
+        {
+            return intContainer.ContainsKey(playerprefsInt);
+        }
+
+        float? IPlayerPrefsFloatConfig.Get(PLAYERPREFS_FLOAT playerprefsFloat)
+        {
+            if (!floatContainer.TryGetValue(playerprefsFloat, out var result))
+            {
+                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
+                return null;
+            }
+            return result;
+        }
+
+        bool IPlayerPrefsFloatConfig.ContainsKey(PLAYERPREFS_FLOAT playerprefsFloat)
+        {
+            return floatContainer.ContainsKey(playerprefsFloat);
+        }
+
+        string? IPlayerPrefsStringConfig.Get(PLAYERPREFS_STRING playerprefsString)
+        {
+            if (!stringContainer.TryGetValue(playerprefsString, out var result))
+            {
+                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
+                return null;
+            }
+            return result;
+        }
+
+        bool IPlayerPrefsStringConfig.ContainsKey(PLAYERPREFS_STRING playerprefsString)
+        {
+            return stringContainer.ContainsKey(playerprefsString);
+        }
     }
 }

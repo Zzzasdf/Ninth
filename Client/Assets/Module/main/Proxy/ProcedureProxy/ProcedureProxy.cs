@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +10,11 @@ using VContainer.Unity;
 
 namespace Ninth
 {
-    public enum ProcedureInfo
+    public enum PROCEDURE
     {
         Error, // 报错不执行
         Continue, // 继续运行下一步
-        Through, // 通过验证，直接运行启动流程
+        Finish, // 通过验证，直接运行启动流程
     }
     
     public class ProcedureProxy: IProcedureProxy, IAsyncStartable
@@ -44,22 +45,24 @@ namespace Ninth
             };
             foreach (var procedure in procedures)
             {
-                ProcedureInfo info = await procedure.StartAsync();
+                var info = await procedure.StartAsync();
                 switch (info)
                 {
-                    case ProcedureInfo.Continue:
+                    case PROCEDURE.Continue:
                     {
                         continue;
                     }
-                    case ProcedureInfo.Error:
+                    case PROCEDURE.Error:
                     {
                         break;
                     }
-                    case ProcedureInfo.Through:
+                    case PROCEDURE.Finish:
                     {
                         await procedures[^1].StartAsync();
                         break;
                     }
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }

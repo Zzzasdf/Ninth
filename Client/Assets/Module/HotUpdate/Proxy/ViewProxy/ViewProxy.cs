@@ -9,52 +9,70 @@ namespace Ninth.HotUpdate
 {
     public class ViewProxy: IViewProxy
     {
-        private readonly string viewLayoutPath;
-        private readonly ReadOnlyDictionary<Type, (string path, ViewHierarchy hierarchy)> mapContainer;
+        private readonly IViewConfig viewConfig;
         private readonly IAssetProxy assetProxy;
-
+        
         private ViewLayout? viewLayout;
         
         [Inject]
         public ViewProxy(IViewConfig viewConfig, IAssetProxy assetProxy)
         {
+            this.viewConfig = viewConfig;
             this.assetProxy = assetProxy;
-            this.viewLayoutPath = viewConfig.ViewLayoutPath();
-            this.mapContainer = viewConfig.MapContainer();
         }
-        
-        public async UniTask<T?> Get<T>(CancellationToken cancellationToken = default) where T: IView
+
+        async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
         {
-            var type = typeof(T);
-            if (!mapContainer.TryGetValue(type, out var value))
+            var (path, hierarchy) = viewConfig.Get<T>();
+            var rectHierarchy = await GetHierarchy(hierarchy);
+            var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+            if (obj == null)
             {
-                $"未注册 View: {nameof(T)}，请将该类型先注册到 {nameof(IViewConfig)} 上".FrameError();
-                return default;
+                $"无法实例化, 预制体路径: {path}".FrameError();
+                return null;
             }
-            var hierarchy = await GetHierarchy(value.hierarchy);
-            var view = await assetProxy.CloneAsync(value.path, hierarchy, cancellationToken);
-            if (view == null)
-            {
-                value.path.FrameError("无法实例化预制体 在路径: {0}");
-                return default;
-            }
-            var component = view.GetComponent<T>();
+            var component = obj.GetComponent<T>();
             if (component == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{value.path}".FrameError();
-                return default;
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{path}".FrameError();
+                return null;
             }
             return component;
         }
         
-        private async UniTask<RectTransform?> GetHierarchy(ViewHierarchy viewHierarchy)
+        async UniTask<T?> IViewProxy.Get<T>(VIEW view, CancellationToken cancellationToken) where T : class
         {
+            var (path, hierarchy) = viewConfig.Get(view);
+            var rectHierarchy = await GetHierarchy(hierarchy);
+            var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+            if (obj == null)
+            {
+                $"无法实例化, 预制体路径: {path}".FrameError();
+                return null;
+            }
+            var component = obj.GetComponent<T>();
+            if (component == null)
+            {
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{path}".FrameError();
+                return null;
+            }
+            return component;
+        }
+
+        private async UniTask<RectTransform?> GetHierarchy(VIEW_HIERARCY? viewHierarchy)
+        {
+            if (!viewHierarchy.HasValue)
+            {
+                $"{nameof(VIEW_HIERARCY)} 为空".FrameError();
+                return null;
+            }
+            var viewLayoutPath = viewConfig.ViewLayoutPath();
             if (viewLayout == null)
             {
                 var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath);
                 if (viewLayoutObj == null)
                 {
-                    viewLayoutPath.FrameError("无法在找到 view 框架预制体 在路径：{0}");
+                    $"无法实例化, 预制体路径: {viewLayoutPath}".FrameError();
                     return null;
                 }
                 viewLayout = viewLayoutObj.GetComponent<ViewLayout>();
@@ -64,10 +82,10 @@ namespace Ninth.HotUpdate
                     return null;
                 }
             }
-            var hierarchy = viewLayout.GetViewHierarchy(viewHierarchy);
+            var hierarchy = viewLayout.GetViewHierarchy(viewHierarchy.Value);
             if (hierarchy == null)
             {
-                $"无法在 view 框架上找到层级对应的节点, 层级：{viewHierarchy}, 请检查路径 {viewLayoutPath} 预制体根节点上的 {nameof(ViewLayout)} 组件是否正常挂载和调用".FrameError();
+                $"无法在 {nameof(ViewLayout)} 框架上找到层级对应的节点, 层级：{viewHierarchy}, 请检查路径 {viewLayoutPath} 预制体根节点上的 {nameof(ViewLayout)} 组件是否正常挂载和调用".FrameError();
             }
             return hierarchy;
         }

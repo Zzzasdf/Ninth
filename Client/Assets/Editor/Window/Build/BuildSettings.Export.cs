@@ -49,19 +49,19 @@ namespace Ninth.Editor
         // 构建热更ab
         private void CreateHotUpdateBundles(string version)
         {
-            RuntimeEnv runtimeEnv = buildExportCopyFolderMode switch
+            Environment environment = buildExportCopyFolderMode switch
             {
-                BuildExportCopyFolderMode.StreamingAssets => RuntimeEnv.LocalAb,
-                BuildExportCopyFolderMode.Remote => RuntimeEnv.RemoteAb,
+                BuildExportCopyFolderMode.StreamingAssets => Environment.LocalAb,
+                BuildExportCopyFolderMode.Remote => Environment.RemoteAb,
                 _ => default,
             };
-            if(runtimeEnv == default)
+            if(environment == default)
             {
-                Debug.LogError($"未找到该模式：{runtimeEnv}");
+                Debug.LogError($"未找到该模式：{environment}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
-            buildAssetsCmd.BuildHotUpdateBundles(buildTarget, runtimeEnv, version);
+            buildAssetsCmd.BuildHotUpdateBundles(buildTarget, environment, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();
@@ -71,19 +71,19 @@ namespace Ninth.Editor
         // 构建所有ab
         private void CreateAllBundles(string version)
         {
-            RuntimeEnv runtimeEnv = buildExportCopyFolderMode switch
+            Environment environment = buildExportCopyFolderMode switch
             {
-                BuildExportCopyFolderMode.StreamingAssets => RuntimeEnv.LocalAb,
-                BuildExportCopyFolderMode.Remote => RuntimeEnv.RemoteAb,
+                BuildExportCopyFolderMode.StreamingAssets => Environment.LocalAb,
+                BuildExportCopyFolderMode.Remote => Environment.RemoteAb,
                 _ => default,
             };
-            if (runtimeEnv == default)
+            if (environment == default)
             {
-                Debug.LogError($"未找到该模式：{runtimeEnv}");
+                Debug.LogError($"未找到该模式：{environment}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
-            buildAssetsCmd.BuildAllBundles(buildTarget, runtimeEnv, version);
+            buildAssetsCmd.BuildAllBundles(buildTarget, environment, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();
@@ -93,19 +93,19 @@ namespace Ninth.Editor
         // 构建客户端和所有ab
         private void CreatePlayerAndAllBundles(string version)
         {
-            RuntimeEnv runtimeEnv = buildExportCopyFolderMode switch
+            Environment environment = buildExportCopyFolderMode switch
             {
-                BuildExportCopyFolderMode.StreamingAssets => RuntimeEnv.LocalAb,
-                BuildExportCopyFolderMode.Remote => RuntimeEnv.RemoteAb,
+                BuildExportCopyFolderMode.StreamingAssets => Environment.LocalAb,
+                BuildExportCopyFolderMode.Remote => Environment.RemoteAb,
                 _ => default,
             };
-            if (runtimeEnv == default)
+            if (environment == default)
             {
-                Debug.LogError($"未找到该模式：{runtimeEnv}");
+                Debug.LogError($"未找到该模式：{environment}");
                 return;
             }
             BuildAssetsCommand buildAssetsCmd = EditorEntry.BuildAssetsCmd;
-            buildAssetsCmd.BuildPlayerAndAllBundles(buildTargetGroup, buildTarget, runtimeEnv, version);
+            buildAssetsCmd.BuildPlayerAndAllBundles(buildTargetGroup, buildTarget, environment, version);
             if (buildExportCopyFolderMode == BuildExportCopyFolderMode.Remote)
             {
                 buildAssetsCmd.RemoteApply();

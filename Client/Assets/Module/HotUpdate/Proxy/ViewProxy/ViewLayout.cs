@@ -10,15 +10,15 @@ namespace Ninth.HotUpdate
         [SerializeField] private RectTransform? tip;
         [SerializeField] private RectTransform? pop;
 
-        public RectTransform? GetViewHierarchy(ViewHierarchy viewHierarchy)
+        public RectTransform? GetViewHierarchy(VIEW_HIERARCY viewHierarcy)
         {
-            return viewHierarchy switch
+            return viewHierarcy switch
             {
-                ViewHierarchy.Bg => bg,
-                ViewHierarchy.Main => main,
-                ViewHierarchy.Frame => frame,
-                ViewHierarchy.Tip => tip,
-                ViewHierarchy.Pop => pop,
+                VIEW_HIERARCY.Bg => bg,
+                VIEW_HIERARCY.Main => main,
+                VIEW_HIERARCY.Frame => frame,
+                VIEW_HIERARCY.Tip => tip,
+                VIEW_HIERARCY.Pop => pop,
                 _ => null
             };
         }

@@ -20,7 +20,7 @@ namespace Ninth
             this.pathConfig = pathConfig;
         }
 
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             // 本地存放下载配置路径
             List<string> downloadConfigPathList = new List<string>()
@@ -32,8 +32,8 @@ namespace Ninth
             // 本地存放下载文件目录
             List<string> downloadDirPath = new List<string>()
             {
-                pathConfig.bundleRootInRemoteInPersistentDataPath,
-                pathConfig.bundleRootInDllInPersistentDataPath
+                pathConfig.bundleRootPath_RemoteGroup_PersistentData,
+                pathConfig.bundleRootPath_DllGroup_PersistentData
             };
 
             for (int index = 0; index < downloadConfigPathList.Count; index++)
@@ -54,7 +54,7 @@ namespace Ninth
                 }
             }
 
-            return ProcedureInfo.Continue;
+            return PROCEDURE.Continue;
         }
     }
 }

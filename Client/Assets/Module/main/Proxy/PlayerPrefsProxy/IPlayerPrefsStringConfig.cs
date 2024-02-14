@@ -5,13 +5,14 @@ using UnityEngine;
 
 namespace Ninth
 {
-    public enum PlayerPrefsString
+    public enum PLAYERPREFS_STRING
     {
         DownloadBundleStartPosFromAssetVersion,
     }
     
     public interface IPlayerPrefsStringConfig
     {
-        ReadOnlyDictionary<PlayerPrefsString, string> MapContainer();
+        string? Get(PLAYERPREFS_STRING playerprefsString);
+        bool ContainsKey(PLAYERPREFS_STRING playerprefsString);
     }
 }

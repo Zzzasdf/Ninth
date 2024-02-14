@@ -1,120 +1,71 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Ninth
 {
     [CreateAssetMenu(fileName = "NameConfigSO", menuName = "Config/NameConfigSO")]
     [Serializable]
-    public sealed class NameConfig: ScriptableObject
+    public sealed class NameConfig: ScriptableObject, INameConfig
     {
-        /// <summary>
-        /// 版本配置文件
-        /// </summary>
-        [SerializeField] private string versionConfigName;
-        public string VersionConfigName => versionConfigName;
+        [SerializeField] private string fileNameByVersionConfig;
+        [SerializeField] private string fileTempNameByVersionConfig;
+        
+        [SerializeField] private string directoryNameByLocalGroup;
+        [SerializeField] private string loadConfigNameByLocalGroup;
+        
+        [SerializeField] private string directoryNameByRemoteGroup;
+        [SerializeField] private string downloadConfigNameByRemoteGroup;
+        [SerializeField] private string downloadConfigTempNameByRemoteGroup;
+        [SerializeField] private string loadConfigNameByRemoteGroup;
 
-        /// <summary>
-        /// 临时版本配置文件
-        /// </summary>
-        [SerializeField] private string tempVersionConfigName;
-        public string TempVersionConfigName => tempVersionConfigName;
-
-        /// <summary>
-        /// 本地的文件夹名
-        /// </summary>
-        [SerializeField] private string localDirectory;
-        public string LocalDirectory => localDirectory;
-
-        /// <summary>
-        /// 本地的加载配置
-        /// </summary>
-        [SerializeField] private string loadConfigNameInLocal;
-        public string LoadConfigNameInLocal => loadConfigNameInLocal;
-
-        /// <summary>
-        /// 远端的热更文件夹
-        /// </summary>
-        [SerializeField] private string remoteDirectory;
-        public string RemoteDirectory => remoteDirectory;
-
-        /// <summary>
-        /// 在远端的热更下载配置名
-        /// </summary>
-        [SerializeField] private string downloadConfigNameInRemote;
-        public string DownloadConfigNameInRemote => downloadConfigNameInRemote;
-
-        /// <summary>
-        /// 在远端的热更下载临时配置名
-        /// </summary>
-        [SerializeField] private string tempDownloadConfigNameInRemote;
-        public string TempDownloadConfigNameInRemote => tempDownloadConfigNameInRemote;
-
-        /// <summary>
-        /// 在远端的热更加载配置名
-        /// </summary>
-        [SerializeField] private string loadConfigNameInRemote;
-        public string LoadConfigNameInRemote => loadConfigNameInRemote;
-
-        /// <summary>
-        /// Dll文件夹
-        /// </summary>
-        [SerializeField] private string dllDirectory;
-        public string DllDirectory => dllDirectory;
-
-        /// <summary>
-        /// Dll程序集集合的Bundle名
-        /// </summary>
-        [SerializeField] private string dllsBundleName;
-        public string DllsBundleName => dllsBundleName;
-
-        /// <summary>
-        /// Dll的下载配置名
-        /// </summary>
-        [SerializeField] private string downloadConfigNameInDll;
-        public string DownloadConfigNameInDll => downloadConfigNameInDll;
-
-        /// <summary>
-        /// Dll的下载临时配置名
-        /// </summary>
-        [SerializeField] private string tempDownloadConfigNameInDll;
-        public string TempDownloadConfigNameInDll => tempDownloadConfigNameInDll;
-
-        /// <summary>
-        /// Dll的加载配置名
-        /// </summary>
-        [SerializeField] private string loadConfigNameInDll;
-        public string LoadConfigNameInDll => loadConfigNameInDll;
-
-        /// <summary>
-        /// 打包的临时目录
-        /// </summary>
-        [SerializeField] private string packTempDirectory;
-        public string PackTempDirectory => packTempDirectory;
-
+        [SerializeField] private string directoryNameByDllGroup;
+        [SerializeField] private string dllsBundleNameByDllGroup;
+        [SerializeField] private string downloadConfigNameByDllGroup;
+        [SerializeField] private string downloadConfigTempNameByDllGroup;
+        [SerializeField] private string loadConfigNameByDllGroup;
+        [SerializeField] private string directoryTempNameByPack;
+        
         public NameConfig()
         {
-            versionConfigName = "VersionConfig.json";
-            tempVersionConfigName = "TempVersionConfig.json";
+            fileNameByVersionConfig = "VersionConfig.json";
+            fileTempNameByVersionConfig = "VersionConfigTemp.json";
 
-            // 本地
-            localDirectory = "Local";
-            loadConfigNameInLocal = "LoadLocal.json";
+            directoryNameByLocalGroup = "Local";
+            loadConfigNameByLocalGroup = "LoadConfigByLocalGroup.json";
 
-            // 远端
-            remoteDirectory = "Remote";
-            downloadConfigNameInRemote = "DownloadRemote.json";
-            tempDownloadConfigNameInRemote = "TempDownloadRemote.json";
-            loadConfigNameInRemote = "LoadRemote.json";
+            directoryNameByRemoteGroup = "Remote";
+            downloadConfigNameByRemoteGroup = "DownloadConfigByRemoteGroup.json";
+            downloadConfigTempNameByRemoteGroup = "DownloadConfigTempByRemoteGroup.json";
+            loadConfigNameByRemoteGroup = "LoadConfigByRemoteGroup.json";
 
-            // Dll
-            dllDirectory = "Dll";
-            dllsBundleName = "Assemblys";
-            downloadConfigNameInDll = "DownloadDll.json";
-            tempDownloadConfigNameInDll = "TempDownloadDll.json";
-            loadConfigNameInDll = "LoadDll.json";
+            directoryNameByDllGroup = "Dll";
+            dllsBundleNameByDllGroup = "HotUpdateAssemblyByDllGroup";
+            downloadConfigNameByDllGroup = "DownloadConfigByDllGroup.json";
+            downloadConfigTempNameByDllGroup = "DownloadConfigByDllGroup.json";
+            loadConfigNameByDllGroup = "LoadConfigByDllGroup.json";
 
-            // 打包的临时目录
-            packTempDirectory = "TempPackDirectory";
+            directoryTempNameByPack = "DirectoryTempByPack";
         }
+
+        string INameConfig.FileNameByVersionConfig() => fileNameByVersionConfig;
+        string INameConfig.FileTempNameByVersionConfig() => fileTempNameByVersionConfig;
+        
+        string INameConfig.DirectoryNameByLocalGroup() => directoryNameByLocalGroup;
+        string INameConfig.LoadConfigNameByLocalGroup() => loadConfigNameByLocalGroup;
+        
+        string INameConfig.DirectoryNameByRemoteGroup() => directoryNameByRemoteGroup;
+        string INameConfig.DownloadConfigNameByRemoteGroup() => downloadConfigNameByRemoteGroup;
+        string INameConfig.DownloadConfigTempNameByRemoteGroup() => downloadConfigTempNameByRemoteGroup;
+        string INameConfig.LoadConfigNameByRemoteGroup() => loadConfigNameByRemoteGroup;
+        
+        string INameConfig.DirectoryNameByDllGroup() => directoryNameByDllGroup;
+        string INameConfig.DllsBundleNameByDllGroup() => dllsBundleNameByDllGroup;
+        string INameConfig.DownloadConfigNameByDllGroup() => downloadConfigNameByDllGroup;
+        string INameConfig.DownloadConfigTempNameByDllGroup() => downloadConfigTempNameByDllGroup;
+        string INameConfig.LoadConfigNameByDllGroup() => loadConfigNameByDllGroup;
+
+        string INameConfig.DirectoryTempNameByPack() => directoryTempNameByPack;
+
     }
 }

@@ -11,7 +11,7 @@ namespace Ninth
         {
             public AssetConfig AssetConfig;
             public NameConfig NameConfig;
-            public PlatformConfig PlatformConfig { get; }
+            public PlayerSettings PlayerSettings { get; }
             public PathConfig PathConfig { get; }
             public PlayerPrefsConfig PlayerPrefsConfig { get; }
 

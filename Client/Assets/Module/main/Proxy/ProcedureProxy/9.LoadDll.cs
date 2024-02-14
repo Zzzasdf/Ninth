@@ -40,13 +40,13 @@ namespace Ninth
 
         private System.Reflection.Assembly m_GameAss = null;
 
-        public async Task<ProcedureInfo> Execute()
+        public async Task<PROCEDURE> Execute()
         {
 #if !UNITY_EDITOR
                     return await LoadDllFromBytes();
 #else
-            RuntimeEnv runtimeEnv = assetConfig.RuntimeEnv;
-            if (!assetConfig.DllRuntimeEnv.Contains(runtimeEnv))
+            Environment environment = assetConfig.RuntimeEnv;
+            if (!assetConfig.DllRuntimeEnv.Contains(environment))
             {
                 m_GameAss = AppDomain.CurrentDomain.GetAssemblies()
                     .First(assembly => assembly.GetName().Name == "Assembly-CSharp");
@@ -57,7 +57,7 @@ namespace Ninth
 #endif
         }
 
-        private async Task<ProcedureInfo> LoadDllFromBytes()
+        private async Task<PROCEDURE> LoadDllFromBytes()
         {
             var assets = new List<string>
             {
@@ -67,8 +67,8 @@ namespace Ninth
             {
                 string dir = assetConfig.RuntimeEnv switch
                 {
-                    RuntimeEnv.LocalAb => pathConfig.BunldeInDllInStreamingAssetPath(asset),
-                    RuntimeEnv.RemoteAb => pathConfig.BundleInDllInPersistentDataPath(asset),
+                    Environment.LocalAb => pathConfig.BundlePathByDllGroup(asset),
+                    Environment.RemoteAb => pathConfig.BundlePathByDllGroup(asset),
                     _ => throw new NotImplementedException(),
                 };
 
@@ -136,7 +136,7 @@ namespace Ninth
             }
         }
 
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             if (m_GameAss == null)
             {
@@ -146,7 +146,7 @@ namespace Ninth
             var appType = m_GameAss.GetType("Ninth.HotUpdate.GameDriver");
             var mainMethod = appType.GetMethod("Init");
             mainMethod.Invoke(pathConfig, null);
-            return ProcedureInfo.Through;
+            return PROCEDURE.Finish;
         }
     }
 }

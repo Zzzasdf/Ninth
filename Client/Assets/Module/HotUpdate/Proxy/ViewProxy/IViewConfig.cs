@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Ninth.HotUpdate
 {
-    public enum ViewHierarchy
+    public enum VIEW_HIERARCY
     {
         Bg,
         Main,
@@ -12,9 +12,15 @@ namespace Ninth.HotUpdate
         Pop
     }
 
+    public enum VIEW
+    {
+        HelloScreen
+    }
+
     public interface IViewConfig
     {
         string ViewLayoutPath();
-        ReadOnlyDictionary<Type, (string path, ViewHierarchy hierarchy)> MapContainer();
+        (string? path, VIEW_HIERARCY? hierarchy) Get<T>() where T: class, IView;
+        (string? path, VIEW_HIERARCY? hierarchy) Get(VIEW view);
     }
 }

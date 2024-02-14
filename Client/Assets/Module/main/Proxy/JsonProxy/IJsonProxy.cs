@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,7 +9,8 @@ namespace Ninth
 {
     public interface IJsonProxy
     {
-        UniTask<T?> ToObject<T>(JsonFile jsonFile, CancellationToken cancellationToken = default);
-        UniTaskVoid ToJson<T>(T obj, JsonFile jsonFile, CancellationToken cancellationToken = default);
+        UniTask<T?> ToObjectAsync<T>(Enum e, CancellationToken cancellationToken = default) where T : class;
+        UniTaskVoid ToJsonAsync<T>(T obj, Enum e, CancellationToken cancellationToken = default) where T: class; 
+
     }
 }

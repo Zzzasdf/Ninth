@@ -2,83 +2,87 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using VContainer;
 
 namespace Ninth
 {
     public class PlayerPrefsProxy : IPlayerPrefsIntProxy, IPlayerPrefsFloatProxy, IPlayerPrefsStringProxy
     {
-        private readonly ReadOnlyDictionary<PlayerPrefsInt, int> intMapContainer;
-        private readonly ReadOnlyDictionary<PlayerPrefsFloat, float> floatMapContainer;
-        private readonly ReadOnlyDictionary<PlayerPrefsString, string> stringMapContainer;
+        private readonly IPlayerPrefsIntConfig intConfig;
+        private readonly IPlayerPrefsFloatConfig floatConfig;
+        private readonly IPlayerPrefsStringConfig stringConfig;
 
         [Inject]
-        public PlayerPrefsProxy(IPlayerPrefsIntConfig playerPrefsIntConfig,
-            IPlayerPrefsFloatConfig playerPrefsFloatConfig, IPlayerPrefsStringConfig playerPrefsStringConfig)
+        public PlayerPrefsProxy(IPlayerPrefsIntConfig intConfig,
+            IPlayerPrefsFloatConfig floatConfig, IPlayerPrefsStringConfig stringConfig)
         {
-            this.intMapContainer = playerPrefsIntConfig.MapContainer();
-            this.floatMapContainer = playerPrefsFloatConfig.MapContainer();
-            this.stringMapContainer = playerPrefsStringConfig.MapContainer();
+            this.intConfig = intConfig;
+            this.floatConfig = floatConfig;
+            this.stringConfig = stringConfig;
         }
         
-        int IPlayerPrefsIntProxy.Get(PlayerPrefsInt playerPrefsInt)
+        int? IPlayerPrefsIntProxy.Get(PLAYERPREFS_INT playerprefsInt)
         {
-            if (!intMapContainer.TryGetValue(playerPrefsInt, out var result))
+            var defaultValue = intConfig.Get(playerprefsInt);
+            if (!defaultValue.HasValue)
             {
-                playerPrefsInt.FrameError("未注册, 请先注册该字段 {0}");
-                return 0;
+                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
+                return null;
             }
-            return PlayerPrefs.GetInt(((int)playerPrefsInt).ToString(), result);
+            return PlayerPrefs.GetInt(((int)playerprefsInt).ToString(), defaultValue.Value);
         }
 
-        void IPlayerPrefsIntProxy.Set(PlayerPrefsInt playerPrefsInt, int value)
+        void IPlayerPrefsIntProxy.Set(PLAYERPREFS_INT playerprefsInt, int value)
         {
-            if (!intMapContainer.ContainsKey(playerPrefsInt))
+            if (!intConfig.ContainsKey(playerprefsInt))
             {
-                playerPrefsInt.FrameError("未注册, 请先注册该字段 {0}");
+                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
                 return;
             }
-            PlayerPrefs.SetInt(((int)playerPrefsInt).ToString(), value);
+            PlayerPrefs.SetInt(((int)playerprefsInt).ToString(), value);
         }
         
-        float IPlayerPrefsFloatProxy.Get(PlayerPrefsFloat playerPrefsFloat)
+        float? IPlayerPrefsFloatProxy.Get(PLAYERPREFS_FLOAT playerprefsFloat)
         {
-            if (!floatMapContainer.TryGetValue(playerPrefsFloat, out var result))
+            var defaultValue = floatConfig.Get(playerprefsFloat);
+            if (!defaultValue.HasValue)
             {
-                playerPrefsFloat.FrameError("未注册, 请先注册该字段 {0}");
-                return 0f;
+                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
+                return null;
             }
-            return PlayerPrefs.GetFloat(((int)playerPrefsFloat).ToString(), result);
+            return PlayerPrefs.GetFloat(((int)playerprefsFloat).ToString(), defaultValue.Value);
         }
 
-        void IPlayerPrefsFloatProxy.Set(PlayerPrefsFloat playerPrefsFloat, float value)
+        void IPlayerPrefsFloatProxy.Set(PLAYERPREFS_FLOAT playerprefsFloat, float value)
         {
-            if (!floatMapContainer.ContainsKey(playerPrefsFloat))
+            if (!floatConfig.ContainsKey(playerprefsFloat))
             {
-                playerPrefsFloat.FrameError("未注册, 请先注册该字段 {0}");
+                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
                 return;
             }
-            PlayerPrefs.SetFloat(((int)playerPrefsFloat).ToString(), value);
+            PlayerPrefs.SetFloat(((int)playerprefsFloat).ToString(), value);
         }
         
-        string IPlayerPrefsStringProxy.Get(PlayerPrefsString playerPrefsString)
+        string? IPlayerPrefsStringProxy.Get(PLAYERPREFS_STRING playerprefsString)
         {
-            if (!stringMapContainer.TryGetValue(playerPrefsString, out var result))
+            var defaultValue = stringConfig.Get(playerprefsString);
+            if (defaultValue == null)
             {
-                playerPrefsString.FrameError("未注册, 请先注册该字段 {0}");
-                return string.Empty;
+                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
+                return null;
             }
-            return PlayerPrefs.GetString(((int)playerPrefsString).ToString(), result);
+            return PlayerPrefs.GetString(((int)playerprefsString).ToString(), defaultValue);
         }
 
-        void IPlayerPrefsStringProxy.Set(PlayerPrefsString playerPrefsString, string value)
+        void IPlayerPrefsStringProxy.Set(PLAYERPREFS_STRING playerprefsString, string value)
         {
-            if (!stringMapContainer.ContainsKey(playerPrefsString))
+            if (!stringConfig.ContainsKey(playerprefsString))
             {
-                playerPrefsString.FrameError("未注册, 请先注册该字段 {0}");
+                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
                 return;
             }
-            PlayerPrefs.SetString(((int)playerPrefsString).ToString(), value);
+            PlayerPrefs.SetString(((int)playerprefsString).ToString(), value);
         }
     }
 }

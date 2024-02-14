@@ -6,8 +6,8 @@ namespace Ninth
 {
     public interface IPlayerPrefsIntProxy
     {
-        int Get(PlayerPrefsInt playerPrefsInt);
+        int? Get(PLAYERPREFS_INT playerprefsINT);
 
-        void Set(PlayerPrefsInt playerPrefsInt, int value);
+        void Set(PLAYERPREFS_INT playerprefsINT, int value);
     }
 }

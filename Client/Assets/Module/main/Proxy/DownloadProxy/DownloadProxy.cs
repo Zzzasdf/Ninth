@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 using UnityEngine.Networking;
 using VContainer;
 
@@ -8,19 +9,20 @@ namespace Ninth
 {
     public class DownloadProxy: IDownloadProxy
     {
-        private readonly PathConfig pathConfig;
+        private readonly IPlayerPrefsIntProxy playerPrefsIntProxy;
+        private readonly IPlayerPrefsStringProxy playerPrefsStringProxy;
+        private readonly IServerPathProxy serverPathProxy;
         private readonly IJsonProxy jsonProxy;
         
         [Inject]
-        public DownloadProxy(PathConfig pathConfig, IJsonProxy jsonProxy)
+        public DownloadProxy(IPlayerPrefsIntProxy playerPrefsIntProxy, IPlayerPrefsStringProxy playerPrefsStringProxy, IServerPathProxy serverPathProxy, IJsonProxy jsonProxy)
         {
-            this.pathConfig = pathConfig;
+            this.playerPrefsIntProxy = playerPrefsIntProxy;
+            this.playerPrefsStringProxy = playerPrefsStringProxy;
+            this.serverPathProxy = serverPathProxy;
             this.jsonProxy = jsonProxy;
         }
 
-        private Dictionary<string, VersionConfig> m_Path2VersionConfig;
-        private Dictionary<string, DownloadConfig> m_Path2DownloadConfig;
-        private Dictionary<string, BundleInfo> m_IncreaseBundleDic; // 新增的Bundle
         public List<int> IncreaseTypeNodes { get; set; } // 新增的类型节点
 
         public int DownloadBundleStartPos
@@ -78,9 +80,6 @@ namespace Ninth
 
         public DownloadProxy()
         {
-            m_Path2VersionConfig = new Dictionary<string, VersionConfig>();
-            m_Path2DownloadConfig = new Dictionary<string, DownloadConfig>();
-            m_IncreaseBundleDic = new Dictionary<string, BundleInfo>();
         }
 
         public void Clear()
@@ -93,57 +92,32 @@ namespace Ninth
             GetCompleteDownloadIncreaseBundleAmount = 0;
             GetCompleteDownloadIncreaseBundleProgress = 0;
             GetTotalIncreaseBundleSize = 0;
+            IDownloadProxy.DownloadAsync("", "");
             request = null;
         }
 
-        public async UniTask<bool> Download(string srcPath, string dstPath, CancellationToken cancellationToken = default)
+        async UniTask<bool> IDownloadProxy.DownloadAsync(string? srcPath, string? dstPath, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(srcPath) || string.IsNullOrEmpty(dstPath))
+            {
+                $"下载的源路径或目标路径为空，源路径：{srcPath}, 目标路径: {dstPath}".Error();
+                return false;
+            }
             request = UnityWebRequest.Get(srcPath);
             request.downloadHandler = new DownloadHandlerFile(dstPath);
-            UnityEngine.Debug.Log("原路径:" + srcPath + "请求下载到本地路径: " + dstPath);
             await request.SendWebRequest();
             if (string.IsNullOrEmpty(request.error) == false)
             {
-                UnityEngine.Debug.LogError($"下载文件：{request.error}");
+                $"下载错误, 远端路径: {srcPath}, 本地路径: {dstPath}, 错误日志: {request.error}".Error();
                 return false;
             }
-
             return true;
         }
 
         #region Config
 
-        public VersionConfig GetVersionConfig(string path)
-        {
-            if (m_Path2VersionConfig.TryGetValue(path, out VersionConfig versionConfig))
-            {
-                return versionConfig;
-            }
-            else
-            {
-                VersionConfig newVersionConfig = jsonProxy.ToObject<VersionConfig>(path);
-                if (newVersionConfig != null)
-                {
-                    m_Path2VersionConfig.Add(path, newVersionConfig);
-                }
+       
 
-                return newVersionConfig;
-            }
-        }
-
-        public DownloadConfig GetDownloadConfig(string path)
-        {
-            if (m_Path2DownloadConfig.TryGetValue(path, out DownloadConfig downloadConfig))
-            {
-                return downloadConfig;
-            }
-            else
-            {
-                DownloadConfig newDownloadConfig = jsonProxy.ToObject<DownloadConfig>(path);
-                m_Path2DownloadConfig.Add(path, newDownloadConfig);
-                return newDownloadConfig;
-            }
-        }
 
         public void ClearConfigCache()
         {

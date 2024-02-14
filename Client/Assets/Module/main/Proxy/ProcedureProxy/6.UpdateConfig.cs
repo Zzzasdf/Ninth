@@ -19,7 +19,7 @@ namespace Ninth
             this.pathConfig = pathConfig;
         }
 
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             // 临时下载配置的存放路径
             List<string> tempDownloadConfigInPersistentDataPathList = new List<string>()
@@ -62,7 +62,7 @@ namespace Ninth
             // 因为文件名发生了变化，所以把配置缓存清空
             downloadProxy.ClearConfigCache();
 
-            return ProcedureInfo.Continue;
+            return PROCEDURE.Continue;
         }
     }
 }

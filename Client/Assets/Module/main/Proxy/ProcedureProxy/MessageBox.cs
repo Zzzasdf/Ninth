@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Ninth
 {
     public class MessageBox
     {
-        private DownloadProxy DownloadProxy { get; }
-
-        public MessageBox(DownloadProxy downloadProxy)
+        private IDownloadProxy DownloadProxy { get; }
+        
+        [Inject]
+        public MessageBox(IDownloadProxy downloadProxy)
         {
             this.DownloadProxy = downloadProxy;
             Init();
@@ -60,8 +62,8 @@ namespace Ninth
         private long curPackSize;
 
 
-        public async Task<ProcedureInfo> DownloadBeforce(string strMessage, string strFirst,
-            Func<ProcedureInfo> btnFirstClickedFunc, string strSecond, Func<ProcedureInfo> btnSecondClickedFunc)
+        public async Task<PROCEDURE> DownloadBeforce(string strMessage, string strFirst,
+            Func<PROCEDURE> btnFirstClickedFunc, string strSecond, Func<PROCEDURE> btnSecondClickedFunc)
         {
             txtMessage.text = strMessage;
             txtFirst.text = strFirst;

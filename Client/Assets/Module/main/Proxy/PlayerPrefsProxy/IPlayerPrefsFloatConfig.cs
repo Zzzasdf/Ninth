@@ -5,13 +5,14 @@ using UnityEngine;
 
 namespace Ninth
 {
-    public enum PlayerPrefsFloat
+    public enum PLAYERPREFS_FLOAT
     {
         
     }
     
     public interface IPlayerPrefsFloatConfig
     {
-        ReadOnlyDictionary<PlayerPrefsFloat, float> MapContainer();
+        float? Get(PLAYERPREFS_FLOAT playerprefsFloat);
+        bool ContainsKey(PLAYERPREFS_FLOAT playerprefsFloat);
     }
 }

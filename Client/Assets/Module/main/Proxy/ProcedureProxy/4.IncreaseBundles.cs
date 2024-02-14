@@ -23,20 +23,20 @@ namespace Ninth
             this.pathConfig = pathConfig;
         }
 
-        async UniTask<ProcedureInfo> IProcedure.StartAsync(CancellationToken cancellationToken = default)
+        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
         {
             string version = downloadProxy.GetVersionConfig(pathConfig.TempVersionInPersistentDataPath()).Version;
 
             List<Func<string, string, string>> bundleServerPathList = new List<Func<string, string, string>>
             {
-                (version, bundleName) => pathConfig.BundleInRemoteInServerPath(version, bundleName),
-                (version, bundleName) => pathConfig.BundleInDllInServerPath(version, bundleName),
+                (version, bundleName) => pathConfig.BundlePathByRemoteGroup(version, bundleName),
+                (version, bundleName) => pathConfig.BundlePathByDllGroup(version, bundleName),
             };
 
             List<Func<string, string>> bundlePersistentDataPathList = new List<Func<string, string>>
             {
-                bundleName => pathConfig.BundleInRemoteInPersistentDataPath(bundleName),
-                bundleName => pathConfig.BundleInDllInPersistentDataPath(bundleName),
+                bundleName => pathConfig.BundlePathByRemoteGroup(bundleName),
+                bundleName => pathConfig.BundlePathByDllGroup(bundleName),
             };
 
             // 下载新增或更改bundle
@@ -53,13 +53,13 @@ namespace Ninth
                     long size = increaseBundleList[index].Size;
                     downloadProxy.MessageBox.DownloadNext("当前的下载进度{0}%({1}/{2})", size);
 
-                    bool result = await downloadProxy.Download(bundleServerPathList[i - 1](version, bundleName),
+                    bool result = await downloadProxy.DownloadAsync(bundleServerPathList[i - 1](version, bundleName),
                         bundlePersistentDataPathList[i - 1](bundleName), cancellationToken);
                     if (!result)
                     {
                         // TODO .. 弹窗提示 .. 下载错误  Y .. 重试（3）
                         UnityEngine.Debug.LogError($"远端文件Remote文件夹下不存在名{bundleName}的Bundle");
-                        return ProcedureInfo.Error;
+                        return PROCEDURE.Error;
                     }
 
                     downloadProxy.DownloadBundleStartPos++;
@@ -75,7 +75,7 @@ namespace Ninth
                 downloadProxy.MessageBox.OverStatus();
             }
 
-            return ProcedureInfo.Continue;
+            return PROCEDURE.Continue;
         }
     }
 }
