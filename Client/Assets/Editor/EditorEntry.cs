@@ -11,10 +11,10 @@ namespace Ninth.Editor
         public static JsonProxy Json;  // Json
         public static ProcedureProxy Procedure; // 流程
 
-        public static PlayerSettings PlayerSettings => new PlayerSettings();
+        public static PlayerSettingsConfig PlayerSettingsConfig => new PlayerSettingsConfig();
         public static NameConfig NameConfig => new NameConfig();
-        public static PathConfig PathConfig => new PathConfig(Config.AssetConfig, PlayerSettings, NameConfig);
-        public static PackConfig PackConfig => new PackConfig(PlayerSettings, NameConfig, PathConfig);
+        public static PathConfig PathConfig => new PathConfig(Config.AssetConfig, PlayerSettingsConfig, NameConfig);
+        public static PackConfig PackConfig => new PackConfig(PlayerSettingsConfig, NameConfig, PathConfig);
         public static BuildAssetsCommand BuildAssetsCmd => new BuildAssetsCommand(Config.AssetConfig, PackConfig, Json);
     }
 }

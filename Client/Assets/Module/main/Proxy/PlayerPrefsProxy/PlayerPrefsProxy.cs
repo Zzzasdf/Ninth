@@ -22,67 +22,64 @@ namespace Ninth
             this.stringConfig = stringConfig;
         }
         
-        int? IPlayerPrefsIntProxy.Get(PLAYERPREFS_INT playerprefsInt)
+        int? IPlayerPrefsIntProxy.Get(PLAYERPREFS_INT @int)
         {
-            var defaultValue = intConfig.Get(playerprefsInt);
+            var defaultValue = intConfig.Get(@int);
             if (!defaultValue.HasValue)
             {
-                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
                 return null;
             }
-            return PlayerPrefs.GetInt(((int)playerprefsInt).ToString(), defaultValue.Value);
+            return PlayerPrefs.GetInt(((int)@int).ToString(), defaultValue.Value);
         }
 
-        void IPlayerPrefsIntProxy.Set(PLAYERPREFS_INT playerprefsInt, int value)
+        void IPlayerPrefsIntProxy.Set(PLAYERPREFS_INT @int, int value)
         {
-            if (!intConfig.ContainsKey(playerprefsInt))
+            if (!intConfig.ContainsKey(@int))
             {
-                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
+                $"未订阅 {nameof(PLAYERPREFS_INT)}: {@int}".FrameError();
                 return;
             }
-            PlayerPrefs.SetInt(((int)playerprefsInt).ToString(), value);
+            PlayerPrefs.SetInt(((int)@int).ToString(), value);
         }
         
-        float? IPlayerPrefsFloatProxy.Get(PLAYERPREFS_FLOAT playerprefsFloat)
+        float? IPlayerPrefsFloatProxy.Get(PLAYERPREFS_FLOAT @float)
         {
-            var defaultValue = floatConfig.Get(playerprefsFloat);
+            var defaultValue = floatConfig.Get(@float);
             if (!defaultValue.HasValue)
             {
-                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
                 return null;
             }
-            return PlayerPrefs.GetFloat(((int)playerprefsFloat).ToString(), defaultValue.Value);
+            return PlayerPrefs.GetFloat(((int)@float).ToString(), defaultValue.Value);
         }
 
-        void IPlayerPrefsFloatProxy.Set(PLAYERPREFS_FLOAT playerprefsFloat, float value)
+        void IPlayerPrefsFloatProxy.Set(PLAYERPREFS_FLOAT @float, float value)
         {
-            if (!floatConfig.ContainsKey(playerprefsFloat))
+            if (!floatConfig.ContainsKey(@float))
             {
-                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
+                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {@float}".FrameError();
                 return;
             }
-            PlayerPrefs.SetFloat(((int)playerprefsFloat).ToString(), value);
+            PlayerPrefs.SetFloat(((int)@float).ToString(), value);
         }
         
-        string? IPlayerPrefsStringProxy.Get(PLAYERPREFS_STRING playerprefsString)
+        string? IPlayerPrefsStringProxy.Get(PLAYERPREFS_STRING @string)
         {
-            var defaultValue = stringConfig.Get(playerprefsString);
+            var defaultValue = stringConfig.Get(@string);
             if (defaultValue == null)
             {
-                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
                 return null;
             }
-            return PlayerPrefs.GetString(((int)playerprefsString).ToString(), defaultValue);
+            return PlayerPrefs.GetString(((int)@string).ToString(), defaultValue);
         }
 
-        void IPlayerPrefsStringProxy.Set(PLAYERPREFS_STRING playerprefsString, string value)
+        void IPlayerPrefsStringProxy.Set(PLAYERPREFS_STRING @string, string value)
         {
-            if (!stringConfig.ContainsKey(playerprefsString))
+            if (!stringConfig.ContainsKey(@string))
             {
-                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
+                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {@string}".FrameError();
                 return;
             }
-            PlayerPrefs.SetString(((int)playerprefsString).ToString(), value);
+            PlayerPrefs.SetString(((int)@string).ToString(), value);
         }
     }
 }

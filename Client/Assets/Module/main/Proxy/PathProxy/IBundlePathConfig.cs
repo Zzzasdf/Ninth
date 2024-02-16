@@ -20,7 +20,7 @@ namespace Ninth
         BundlePathByDllGroup,
     }
     
-    public interface IBundlePath
+    public interface IBundlePathConfig
     {
         string? Get(BUNDLE_PATH bundlePath, string bundleName);
 

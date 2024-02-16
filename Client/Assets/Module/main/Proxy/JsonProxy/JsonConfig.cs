@@ -9,34 +9,21 @@ namespace Ninth
 {
     public class JsonConfig: IJsonConfig
     {
-        private readonly ReadOnlyDictionary<Enum, string?> jsonContainer;
-            
+        private readonly BaseSubscribe<Enum, string?> jsonSubscribe;
         [Inject]
         public JsonConfig(IPathProxy pathProxy)
         {
-            jsonContainer = new ReadOnlyDictionary<Enum, string?>(new Dictionary<Enum, string?>());
-            
-            Subscribe(VERSION_PATH.StreamingAssets, pathProxy.Get(VERSION_PATH.StreamingAssets));
-            Subscribe(VERSION_PATH.PersistentData, pathProxy.Get(VERSION_PATH.PersistentData));
-            Subscribe(VERSION_PATH.PersistentDataTemp, pathProxy.Get(VERSION_PATH.PersistentDataTemp));
-        }
-        
-        private void Subscribe(Enum e, string? path)
-        {
-            if (!jsonContainer.TryAdd(e, path))
+            jsonSubscribe = new BaseSubscribe<Enum, string?>
             {
-                $"重复订阅 {e.GetType().Name}: {e}".FrameError();
-            }
+                [VERSION_PATH.StreamingAssets] = pathProxy.Get(VERSION_PATH.StreamingAssets),
+                [VERSION_PATH.PersistentData] = pathProxy.Get(VERSION_PATH.PersistentData),
+                [VERSION_PATH.PersistentDataTemp] = pathProxy.Get(VERSION_PATH.PersistentDataTemp),
+            };
         }
 
-        string? IJsonConfig.Get(Enum e)
+        public string? Get(Enum e)
         {
-            if (!jsonContainer.TryGetValue(e, out var result))
-            {
-                $"未订阅 {e.GetType().Name}: {e}".FrameError();;
-                return null;
-            }
-            return result;
+            return jsonSubscribe.Get(e);
         }
     }
 }

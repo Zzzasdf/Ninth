@@ -23,7 +23,7 @@ namespace Ninth.HotUpdate
 
         async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
         {
-            var (path, hierarchy) = viewConfig.Get<T>();
+            (string? path, VIEW_HIERARCY? hierarchy)? tuple = viewConfig.Get<T>();
             var rectHierarchy = await GetHierarchy(hierarchy);
             var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
             if (obj == null)

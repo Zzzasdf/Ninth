@@ -8,86 +8,57 @@ namespace Ninth
 {
     public class PlayerPrefsConfig: IPlayerPrefsIntConfig, IPlayerPrefsFloatConfig, IPlayerPrefsStringConfig
     {
-        private readonly ReadOnlyDictionary<PLAYERPREFS_INT, int> intContainer;
-        private readonly ReadOnlyDictionary<PLAYERPREFS_FLOAT, float> floatContainer;
-        private readonly ReadOnlyDictionary<PLAYERPREFS_STRING, string> stringContainer;
-
+        private readonly BaseSubscribe<PLAYERPREFS_INT, int?> intPlayerPrefsSubscribe;
+        private readonly BaseSubscribe<PLAYERPREFS_FLOAT, float?> floatPlayerPrefsSubscribe;
+        private readonly BaseSubscribe<PLAYERPREFS_STRING, string?> stringPlayerPrefsSubscribe;
+        
         [Inject]
         public PlayerPrefsConfig()
         {
-            intContainer = new ReadOnlyDictionary<PLAYERPREFS_INT, int>(new Dictionary<PLAYERPREFS_INT, int>());
-            floatContainer = new ReadOnlyDictionary<PLAYERPREFS_FLOAT, float>(new Dictionary<PLAYERPREFS_FLOAT, float>());
-            stringContainer = new ReadOnlyDictionary<PLAYERPREFS_STRING, string>(new Dictionary<PLAYERPREFS_STRING, string>());
-            
-            Subscribe(PLAYERPREFS_INT.DownloadBundleStartPos, 0);
-            Subscribe(PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion, "0.0.0.0");
+            intPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_INT, int?>
+            {
+                [PLAYERPREFS_INT.DownloadBundleStartPos] = 0,
+            };
+
+            floatPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_FLOAT, float?>
+            {
+
+            };
+
+            stringPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_STRING, string?>
+            {
+                [PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion] = "0.0.0.0",
+            };
         }
         
-        private void Subscribe(PLAYERPREFS_INT playerPrefsInt, int defaultValue)
+        int? IPlayerPrefsIntConfig.Get(PLAYERPREFS_INT @int)
         {
-            if (!intContainer.TryAdd(playerPrefsInt, defaultValue))
-            {
-                $"重复订阅 {nameof(PLAYERPREFS_INT)}: {playerPrefsInt}".FrameError();
-            }
-        }
-        private void Subscribe(PLAYERPREFS_FLOAT playerPrefsFloat, float defaultValue)
-        {
-            if (!floatContainer.TryAdd(playerPrefsFloat, defaultValue))
-            {
-                $"重复订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerPrefsFloat}".FrameError();
-            }
-        }
-        private void Subscribe(PLAYERPREFS_STRING playerPrefsString, string defaultValue)
-        {
-            if (!stringContainer.TryAdd(playerPrefsString, defaultValue))
-            {
-                $"重复订阅 {nameof(PLAYERPREFS_STRING)}: {playerPrefsString}".FrameError();
-            }
+            return intPlayerPrefsSubscribe.Get(@int);
         }
 
-        int? IPlayerPrefsIntConfig.Get(PLAYERPREFS_INT playerprefsInt)
+        bool IPlayerPrefsIntConfig.ContainsKey(PLAYERPREFS_INT @int)
         {
-            if (!intContainer.TryGetValue(playerprefsInt, out var result))
-            {
-                $"未订阅 {nameof(PLAYERPREFS_INT)}: {playerprefsInt}".FrameError();
-                return null;
-            }
-            return result;
+            return intPlayerPrefsSubscribe.ContainsKey(@int);
         }
 
-        bool IPlayerPrefsIntConfig.ContainsKey(PLAYERPREFS_INT playerprefsInt)
+        float? IPlayerPrefsFloatConfig.Get(PLAYERPREFS_FLOAT @float)
         {
-            return intContainer.ContainsKey(playerprefsInt);
+            return floatPlayerPrefsSubscribe.Get(@float);
         }
 
-        float? IPlayerPrefsFloatConfig.Get(PLAYERPREFS_FLOAT playerprefsFloat)
+        bool IPlayerPrefsFloatConfig.ContainsKey(PLAYERPREFS_FLOAT @float)
         {
-            if (!floatContainer.TryGetValue(playerprefsFloat, out var result))
-            {
-                $"未订阅 {nameof(PLAYERPREFS_FLOAT)}: {playerprefsFloat}".FrameError();
-                return null;
-            }
-            return result;
+            return floatPlayerPrefsSubscribe.ContainsKey(@float);
         }
 
-        bool IPlayerPrefsFloatConfig.ContainsKey(PLAYERPREFS_FLOAT playerprefsFloat)
+        string? IPlayerPrefsStringConfig.Get(PLAYERPREFS_STRING @string)
         {
-            return floatContainer.ContainsKey(playerprefsFloat);
+            return stringPlayerPrefsSubscribe.Get(@string);
         }
 
-        string? IPlayerPrefsStringConfig.Get(PLAYERPREFS_STRING playerprefsString)
+        bool IPlayerPrefsStringConfig.ContainsKey(PLAYERPREFS_STRING @string)
         {
-            if (!stringContainer.TryGetValue(playerprefsString, out var result))
-            {
-                $"未订阅 {nameof(PLAYERPREFS_STRING)}: {playerprefsString}".FrameError();
-                return null;
-            }
-            return result;
-        }
-
-        bool IPlayerPrefsStringConfig.ContainsKey(PLAYERPREFS_STRING playerprefsString)
-        {
-            return stringContainer.ContainsKey(playerprefsString);
+            return stringPlayerPrefsSubscribe.ContainsKey(@string);
         }
     }
 }

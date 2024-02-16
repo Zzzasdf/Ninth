@@ -4,17 +4,17 @@ namespace Ninth
 {
     public class PlaySettingsProxy : IPlaySettingsProxy
     {
-        private readonly IPlayerSettings playerSettings;
+        private readonly IPlayerSettingsConfig playerSettingsConfig;
         
         [Inject]
-        public PlaySettingsProxy(IPlayerSettings playerSettings)
+        public PlaySettingsProxy(IPlayerSettingsConfig playerSettingsConfig)
         {
-            this.playerSettings = playerSettings;
+            this.playerSettingsConfig = playerSettingsConfig;
         }
         
         string? IPlaySettingsProxy.Get(PLAY_SETTINGS playSettings)
         {
-            return playerSettings.Get(playSettings);
+            return playerSettingsConfig.Get(playSettings);
         }
     }
 }

@@ -26,10 +26,10 @@ namespace Ninth.HotUpdate
             builder.RegisterInstance(assetConfig).As<IAssetConfig>();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
 
-            builder.Register<PlayerSettings>(Lifetime.Singleton).As<IPlayerSettings>();
-            builder.Register<VersionPath>(Lifetime.Singleton).As<IVersionPath>();
-            builder.Register<ConfigPath>(Lifetime.Singleton).As<IConfigPath>(); 
-            builder.Register<BundlePath>(Lifetime.Singleton).As<IBundlePath>();
+            builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();
+            builder.Register<VersionPathConfig>(Lifetime.Singleton).As<IVersionPathConfig>();
+            builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>(); 
+            builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
             builder.Register<PathProxy>(Lifetime.Singleton).As<IPathProxy>();
 
             IAssetConfig iAssetConfig = Container.Resolve<IAssetConfig>();

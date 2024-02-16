@@ -10,7 +10,7 @@ namespace Ninth
         PlatformName,
     }
 
-    public interface IPlayerSettings
+    public interface IPlayerSettingsConfig
     {
         string? Get(PLAY_SETTINGS playSettings);
     }

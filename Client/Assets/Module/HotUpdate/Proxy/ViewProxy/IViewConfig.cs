@@ -20,7 +20,7 @@ namespace Ninth.HotUpdate
     public interface IViewConfig
     {
         string ViewLayoutPath();
-        (string? path, VIEW_HIERARCY? hierarchy) Get<T>() where T: class, IView;
-        (string? path, VIEW_HIERARCY? hierarchy) Get(VIEW view);
+        (string? path, VIEW_HIERARCY? hierarchy)? Get<T>() where T: class, IView;
+        (string? path, VIEW_HIERARCY? hierarchy)? Get(VIEW view);
     }
 }

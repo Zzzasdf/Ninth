@@ -25,7 +25,7 @@ namespace Ninth
         LoadConfigPathByDllGroup,
     }
     
-    public interface IConfigPath
+    public interface IConfigPathConfig
     {
         string? Get(CONFIG_PATH configPath);
 

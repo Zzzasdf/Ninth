@@ -4,13 +4,13 @@ namespace Ninth.Editor
 {
     public partial class PackConfig
     {
-        private readonly IPlayerSettings playerSettings;
+        private readonly IPlayerSettingsConfig playerSettingsConfig;
         private readonly INameConfig nameConfig;
         private readonly IPathConfig pathConfig;
 
-        public PackConfig(IPlayerSettings playerSettings, INameConfig nameConfig, IPathConfig pathConfig)
+        public PackConfig(IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig, IPathConfig pathConfig)
         {
-            this.playerSettings = playerSettings;
+            this.playerSettingsConfig = playerSettingsConfig;
             this.nameConfig = nameConfig;
             this.pathConfig = pathConfig;
         }
@@ -26,9 +26,9 @@ namespace Ninth.Editor
             {
                 m_BuildPlatform = value;
                 BundleSourceDataVersionRoot =
-                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildBundlesTargetFolderRoot, playerSettings.Get(PLAY_SETTINGS.ProduceName), BuildPlatform);
+                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildBundlesTargetFolderRoot, playerSettingsConfig.Get(PLAY_SETTINGS.ProduceName), BuildPlatform);
                 PlayerSourceDataVersionRoot =
-                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildPlayersDirectoryRoot, playerSettings.Get(PLAY_SETTINGS.ProduceName), BuildPlatform);
+                    string.Format("{0}/{1}/{2}", WindowSOCore.Get<WindowBuildConfig>().BuildPlayersDirectoryRoot, playerSettingsConfig.Get(PLAY_SETTINGS.ProduceName), BuildPlatform);
             }
         }
 
