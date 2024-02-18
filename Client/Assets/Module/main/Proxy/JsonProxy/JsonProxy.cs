@@ -59,16 +59,16 @@ namespace Ninth
 
         private static string ConvertJsonString(string str)
         {
-            JsonSerializer serializer = new JsonSerializer();
+            var serializer = new JsonSerializer();
             TextReader tr = new StringReader(str);
-            JsonTextReader jtr = new JsonTextReader(tr);
-            object obj = serializer.Deserialize(jtr);
+            var jtr = new JsonTextReader(tr);
+            var obj = serializer.Deserialize(jtr);
             if (obj == null)
             {
                 return str;
             }
-            StringWriter textWriter = new StringWriter();
-            JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
+            var textWriter = new StringWriter();
+            var jsonWriter = new JsonTextWriter(textWriter)
             {
                 Formatting = Formatting.Indented,
                 Indentation = 4,

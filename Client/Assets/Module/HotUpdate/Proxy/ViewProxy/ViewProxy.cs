@@ -23,18 +23,18 @@ namespace Ninth.HotUpdate
 
         async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
         {
-            (string? path, VIEW_HIERARCY? hierarchy)? tuple = viewConfig.Get<T>();
-            var rectHierarchy = await GetHierarchy(hierarchy);
-            var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+            var tuple = viewConfig.Get<T>();
+            var rectHierarchy = await GetHierarchy(tuple?.hierarchy);
+            var obj = await assetProxy.CloneAsync(tuple?.path, rectHierarchy, cancellationToken);
             if (obj == null)
             {
-                $"无法实例化, 预制体路径: {path}".FrameError();
+                $"无法实例化, 预制体路径: {tuple?.path}".FrameError();
                 return null;
             }
             var component = obj.GetComponent<T>();
             if (component == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{path}".FrameError();
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{tuple?.path}".FrameError();
                 return null;
             }
             return component;
@@ -42,18 +42,18 @@ namespace Ninth.HotUpdate
         
         async UniTask<T?> IViewProxy.Get<T>(VIEW view, CancellationToken cancellationToken) where T : class
         {
-            var (path, hierarchy) = viewConfig.Get(view);
-            var rectHierarchy = await GetHierarchy(hierarchy);
-            var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+            var tuple = viewConfig.Get(view);
+            var rectHierarchy = await GetHierarchy(tuple?.hierarchy);
+            var obj = await assetProxy.CloneAsync(tuple?.path, rectHierarchy, cancellationToken);
             if (obj == null)
             {
-                $"无法实例化, 预制体路径: {path}".FrameError();
+                $"无法实例化, 预制体路径: {tuple?.path}".FrameError();
                 return null;
             }
             var component = obj.GetComponent<T>();
             if (component == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{path}".FrameError();
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{tuple?.path}".FrameError();
                 return null;
             }
             return component;

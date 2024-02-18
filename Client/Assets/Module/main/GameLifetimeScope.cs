@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -37,23 +38,14 @@ namespace Ninth
             builder.Register<PlayerPrefsProxy>(Lifetime.Singleton).As<IPlayerPrefsIntProxy, IPlayerPrefsFloatProxy, IPlayerPrefsStringProxy>();
 
             builder.Register<DownloadProxy>(Lifetime.Singleton).As<IDownloadProxy>();
-            builder.Register<AssetBundleProxy>(Lifetime.Transient).As<IAssetBundleProxy>();
-            
-            builder.Register<Launcher>(Lifetime.Scoped);
-            builder.Register<CompareVersion>(Lifetime.Scoped);
-            builder.Register<CompareDownloadConfig>(Lifetime.Scoped);
-            builder.Register<IncreaseBundles>(Lifetime.Scoped);
-            builder.Register<DownloadLoadConfig>(Lifetime.Scoped);
-            builder.Register<UpdateConfig>(Lifetime.Scoped);
-            builder.Register<ScanDecreaseBundles>(Lifetime.Scoped);
-            builder.Register<StartUp>(Lifetime.Scoped);
+            builder.Register<AssetDownloadBox>(Lifetime.Scoped).As<IAssetDownloadBox>();
+            builder.Register<AssetBundleProxy>(Lifetime.Scoped).As<IAssetBundleProxy>();
+
             builder.Register<LoadDll>(Lifetime.Scoped);
-            builder.Register<ProcedureProxy>(Lifetime.Scoped).As<IProcedureProxy>();
-            builder.Register<MessageBox>(Lifetime.Scoped); // 接口，下载专用
             
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
-                entryPoints.Add<ProcedureProxy>();
+                entryPoints.Add<AssetBundleProxy>();
                 entryPoints.OnException(ex => ex.FrameError());
             });
         }

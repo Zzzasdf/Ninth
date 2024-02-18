@@ -10,15 +10,15 @@ namespace Ninth.HotUpdate
 {
     public class AssetProxyLoadWithAB : IAssetProxyLoad
     {
-        private readonly PathConfig pathConfig;
+        private readonly IPathProxy pathProxy;
 
         private readonly Dictionary<string, AssetRef> configAssetPath2AssetRef;
         private readonly Dictionary<string, BundleRef> bundlePath2BundleRef;
 
         [Inject]
-        public AssetProxyLoadWithAB(PathConfig pathConfig)
+        public AssetProxyLoadWithAB(IPathProxy pathProxy)
         {
-            this.pathConfig = pathConfig;
+            this.pathProxy = pathProxy;
             configAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             bundlePath2BundleRef = new Dictionary<string, BundleRef>();
         }
@@ -57,12 +57,16 @@ namespace Ninth.HotUpdate
                         bundleRef.BundleName = originBundleRef.BundleName;
                         bundleRef.AssetLocate = originBundleRef.AssetLocate;
 
-                        string bundlePath = bundleRef.AssetLocate switch
+                        var bundlePath = bundleRef.AssetLocate switch
                         {
-                            AssetLocate.Local => pathConfig.BundlePathByLocalGroup(bundleRef.BundleName),
-                            AssetLocate.Remote => pathConfig.BundlePathByRemoteGroup(bundleRef.BundleName),
+                            AssetLocate.Local => pathProxy.Get(BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets, bundleRef.BundleName),
+                            AssetLocate.Remote => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData, bundleRef.BundleName),
                             _ => throw new Exception("Invalid resource location")
                         };
+                        if (bundlePath == null)
+                        {
+                            continue;
+                        }
                         bundlePath2BundleRef.Add(bundleRef.BundleName, bundleRef);
                         bundleNames.Add(originBundleRef.BundleName);
                         waitTasks.Add(AssetBundle.LoadFromFileAsync(bundlePath).ToUniTask());

@@ -8,11 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using VContainer;
 using VContainer.Unity;
 
 namespace Ninth
 {
-    public class LoadDll : IProcedure
+    public class LoadDll: IAsyncStartable
     {
         public static List<string> AOTMetaAssemblyNames { get; } = new List<string>()
         {
@@ -29,35 +30,38 @@ namespace Ninth
             return s_assetDatas[dllName];
         }
 
-        private readonly AssetConfig assetConfig;
-        private readonly PathConfig pathConfig;
-
-        public LoadDll(AssetConfig assetConfig, PathConfig pathConfg)
+        private readonly IAssetConfig assetConfig;
+        private readonly IPathProxy pathProxy;
+        
+        [Inject]
+        public LoadDll(IAssetConfig assetConfig, IPathProxy pathProxy)
         {
             this.assetConfig = assetConfig;
-            this.pathConfig = pathConfg;
+            this.pathProxy = pathProxy;
         }
 
         private System.Reflection.Assembly m_GameAss = null;
 
-        public async Task<PROCEDURE> Execute()
+        public async UniTask StartAsync(CancellationToken cancellationToken)
         {
 #if !UNITY_EDITOR
-                    return await LoadDllFromBytes();
+            await LoadDllFromBytes();
 #else
-            Environment environment = assetConfig.RuntimeEnv;
-            if (!assetConfig.DllRuntimeEnv.Contains(environment))
+            var environment = assetConfig.RuntimeEnv();
+            if (!assetConfig.DllRuntimeEnv().Contains(environment))
             {
                 m_GameAss = AppDomain.CurrentDomain.GetAssemblies()
                     .First(assembly => assembly.GetName().Name == "Assembly-CSharp");
-                return await ExitProcedure();
+                LoadHotUpdatePart();
             }
-
-            return await LoadDllFromBytes();
+            else
+            {
+                await LoadDllFromBytes();
+            }
 #endif
         }
 
-        private async Task<PROCEDURE> LoadDllFromBytes()
+        private async UniTask LoadDllFromBytes()
         {
             var assets = new List<string>
             {
@@ -65,16 +69,19 @@ namespace Ninth
             }.Concat(AOTMetaAssemblyNames);
             foreach (var asset in assets)
             {
-                string dir = assetConfig.RuntimeEnv switch
+                var dir = assetConfig.RuntimeEnv() switch
                 {
-                    Environment.LocalAb => pathConfig.BundlePathByDllGroup(asset),
-                    Environment.RemoteAb => pathConfig.BundlePathByDllGroup(asset),
-                    _ => throw new NotImplementedException(),
+                    Environment.LocalAb => pathProxy.Get(VERSION_PATH.StreamingAssets),
+                    Environment.RemoteAb => pathProxy.Get(VERSION_PATH.PersistentData),
+                    _ => null,
                 };
-
-                string dllPath = GetWebRequestPath(dir);
+                if (dir == null)
+                {
+                    continue;
+                }
+                var dllPath = GetWebRequestPath(dir);
                 Debug.Log($"start download asset:{dllPath}");
-                UnityWebRequest www = UnityWebRequest.Get(dllPath);
+                var www = UnityWebRequest.Get(dllPath);
                 await www.SendWebRequest();
 
 #if UNITY_2020_1_OR_NEWER
@@ -91,15 +98,14 @@ namespace Ninth
                 else
                 {
                     // Or retrieve results as binary data
-                    byte[] assetData = www.downloadHandler.data;
+                    var assetData = www.downloadHandler.data;
                     Debug.Log($"dll:{asset}  size:{assetData.Length}");
                     s_assetDatas[asset] = assetData;
                 }
             }
 
             LoadMetadataForAOTAssemblies();
-            m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
-            return await ExitProcedure();
+            LoadHotUpdatePart();
         }
 
         private string GetWebRequestPath(string path)
@@ -123,30 +129,29 @@ namespace Ninth
         /// </summary>
         private static void LoadMetadataForAOTAssemblies()
         {
-            /// 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
-            /// 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
-            /// 
-            HomologousImageMode mode = HomologousImageMode.SuperSet;
+            // 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
+            // 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
+            var mode = HomologousImageMode.SuperSet;
             foreach (var aotDllName in AOTMetaAssemblyNames)
             {
-                byte[] dllBytes = GetAssetData(aotDllName);
+                var dllBytes = GetAssetData(aotDllName);
                 // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
-                LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
-                Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. mode:{mode} ret:{err}");
+                var err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
+                $"LoadMetadataForAOTAssembly:{aotDllName}. mode:{mode} ret:{err}".Log();
             }
         }
 
-        async UniTask<PROCEDURE> IProcedure.StartAsync(CancellationToken cancellationToken)
+        private void LoadHotUpdatePart()
         {
+            m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
             if (m_GameAss == null)
             {
                 throw new Exception("未找到对应热更的程序集");
             }
-
-            var appType = m_GameAss.GetType("Ninth.HotUpdate.GameDriver");
-            var mainMethod = appType.GetMethod("Init");
-            mainMethod.Invoke(pathConfig, null);
-            return PROCEDURE.Finish;
+            // TODO
+            // var appType = m_GameAss.GetType("Ninth.HotUpdate.GameDriver");
+            // var mainMethod = appType.GetMethod("Init");
+            // mainMethod.Invoke(null);
         }
     }
 }

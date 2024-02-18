@@ -36,6 +36,8 @@ namespace Ninth
             {
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup] = CONFIG_PATH.DownloadConfigTempPathByRemoteGroupByPersistentData,
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup] = CONFIG_PATH.DownloadConfigTempPathByDllGroupByPersistentData,
+                [ASSET_SERVER_CONFIG_PATH.LoadConfigPathByRemoteGroup] = CONFIG_PATH.LoadConfigPathByRemoteGroupByPersistentData,
+                [ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup] = CONFIG_PATH.LoadConfigPathByDllGroupByPersistentData,
             };
 
             bundlePathBaseSubscribe = new BaseSubscribe<ASSET_SERVER_BUNDLE_PATH, BUNDLE_PATH?>

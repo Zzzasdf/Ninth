@@ -6,13 +6,11 @@ namespace Ninth.Editor
     {
         private readonly IPlayerSettingsConfig playerSettingsConfig;
         private readonly INameConfig nameConfig;
-        private readonly IPathConfig pathConfig;
 
-        public PackConfig(IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig, IPathConfig pathConfig)
+        public PackConfig(IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             this.playerSettingsConfig = playerSettingsConfig;
             this.nameConfig = nameConfig;
-            this.pathConfig = pathConfig;
         }
 
         private string m_BuildPlatform;

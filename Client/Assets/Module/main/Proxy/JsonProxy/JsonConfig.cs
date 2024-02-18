@@ -17,7 +17,8 @@ namespace Ninth
             {
                 [VERSION_PATH.StreamingAssets] = pathProxy.Get(VERSION_PATH.StreamingAssets),
                 [VERSION_PATH.PersistentData] = pathProxy.Get(VERSION_PATH.PersistentData),
-                [VERSION_PATH.PersistentDataTemp] = pathProxy.Get(VERSION_PATH.PersistentDataTemp),
+                [CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData] = pathProxy.Get(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData),
+                [CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData] = pathProxy.Get(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData),
             };
         }
 
