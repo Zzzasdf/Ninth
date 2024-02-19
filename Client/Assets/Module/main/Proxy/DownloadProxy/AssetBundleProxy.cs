@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Ninth.Utility;
 
 namespace Ninth
 {

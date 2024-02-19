@@ -12,7 +12,6 @@ namespace Ninth
     [Serializable]
     public sealed class AssetConfig: ScriptableObject, IAssetConfig
     {
-        [SerializeField] private Environment buildEnv;
         [SerializeField] private Environment runtimeEnv;
         [SerializeField] private string url;
         [SerializeField] private List<string> remoteAbGroup;
@@ -27,7 +26,6 @@ namespace Ninth
             dllRuntimeEnv = new List<Environment> { Environment.LocalAb, Environment.RemoteAb };
         }
         
-        Environment IAssetConfig.BuildEnv() => buildEnv;
         Environment IAssetConfig.RuntimeEnv() => runtimeEnv;
         string IAssetConfig.Url() => url;
         ReadOnlyCollection<string> IAssetConfig.RemoteGroup() => new(remoteAbGroup);

@@ -200,8 +200,6 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  assetConfig: {fileID: 11400000, guid: 83c123f0a5f14064f8a57b8d165c5861, type: 2}
-  nameConfig: {fileID: 11400000, guid: 6cf935f1c8c392c46ab306aa4737ca81, type: 2}
 --- !u!4 &252438795
 Transform:
   m_ObjectHideFlags: 0

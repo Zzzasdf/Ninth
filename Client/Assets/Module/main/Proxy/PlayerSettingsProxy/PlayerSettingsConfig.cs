@@ -7,12 +7,12 @@ namespace Ninth
 {
     public class PlayerSettingsConfig: BaseSubscribe<PLAY_SETTINGS, string?>, IPlayerSettingsConfig
     {
-        private readonly BaseSubscribe<PLAY_SETTINGS, string?> playSettingSubscribe;
+        private readonly BaseSubscribe<PLAY_SETTINGS, string> playSettingSubscribe;
         
         [Inject]
         public PlayerSettingsConfig()
         {
-            playSettingSubscribe = new PlayerSettingsConfig()
+            playSettingSubscribe = new BaseSubscribe<PLAY_SETTINGS, string>
             {
                 [PLAY_SETTINGS.ProduceName] = Application.productName,
                 [PLAY_SETTINGS.PlatformName] = Application.platform switch

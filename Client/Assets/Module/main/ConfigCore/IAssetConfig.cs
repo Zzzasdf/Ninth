@@ -7,9 +7,6 @@ namespace Ninth
 {
     public interface IAssetConfig
     {
-        // 构建环境
-        Environment BuildEnv();
-        
         // 运行环境
         Environment RuntimeEnv();
         

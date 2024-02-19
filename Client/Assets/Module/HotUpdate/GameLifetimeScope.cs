@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -9,30 +10,25 @@ namespace Ninth.HotUpdate
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        [SerializeField] private AssetConfig? assetConfig;
-        [SerializeField] private NameConfig? nameConfig;
         protected override void Configure(IContainerBuilder builder)
         {
-            if (assetConfig == null)
-            {
-                $"该类的组件 {nameof(AssetConfig) } 必须挂载".FrameError();
-                return;
-            }
-            if (nameConfig == null)
-            {
-                $"该类的组件 {nameof(NameConfig) } 必须挂载".FrameError();
-                return;
-            }
+            // core
+            var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
+            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
             builder.RegisterInstance(assetConfig).As<IAssetConfig>();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
-
+            
             builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();
             builder.Register<VersionPathConfig>(Lifetime.Singleton).As<IVersionPathConfig>();
             builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>(); 
             builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
             builder.Register<PathProxy>(Lifetime.Singleton).As<IPathProxy>();
-
-            IAssetConfig iAssetConfig = Container.Resolve<IAssetConfig>();
+            
+            builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
+            builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
+            
+            // hotUpdate
+            var iAssetConfig = Container.Resolve<IAssetConfig>();
             switch (iAssetConfig.RuntimeEnv())
             {
                 case Environment.NonAb:
