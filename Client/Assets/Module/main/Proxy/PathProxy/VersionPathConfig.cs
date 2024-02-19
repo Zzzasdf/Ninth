@@ -8,8 +8,8 @@ namespace Ninth
 {
     public class VersionPathConfig: IVersionPathConfig
     {
-        private readonly BaseSubscribe<VERSION_PATH, string?> versionPathSubscribe;
-        private readonly BaseSubscribe<ASSET_SERVER_VERSION_PATH, string?> assetServerVersionPathSubscribe;
+        private readonly CommonSubscribe<VERSION_PATH, string?> versionPathSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, string?> assetServerVersionPathSubscribe;
         
         [Inject]
         public VersionPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
@@ -30,14 +30,14 @@ namespace Ninth
             
             var assetServer = $"{url_produceName_platformName}/{nameConfig.FileNameByVersionConfig()}";
 
-            versionPathSubscribe = new BaseSubscribe<VERSION_PATH, string?>
+            versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string?>
             {
                 [VERSION_PATH.StreamingAssets] = streamingAssets,
                 [VERSION_PATH.PersistentData] = persistentData,
                 [VERSION_PATH.PersistentDataTemp] = persistentDataTemp,
             };
 
-            assetServerVersionPathSubscribe = new BaseSubscribe<ASSET_SERVER_VERSION_PATH, string?>
+            assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, string?>
             {
                 [ASSET_SERVER_VERSION_PATH.AssetServer] = assetServer,
             };

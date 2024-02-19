@@ -12,9 +12,9 @@ namespace Ninth
 {
     public class PathProxy: IPathProxy
     {
-        private readonly BaseSubscribe<ASSET_SERVER_VERSION_PATH, VERSION_PATH?> versionPathBaseSubscribe;
-        private readonly BaseSubscribe<ASSET_SERVER_CONFIG_PATH, CONFIG_PATH?> configPathBaseSubscribe;
-        private readonly BaseSubscribe<ASSET_SERVER_BUNDLE_PATH, BUNDLE_PATH?> bundlePathBaseSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, VERSION_PATH?> versionPathCommonSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_CONFIG_PATH, CONFIG_PATH?> configPathCommonSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, BUNDLE_PATH?> bundlePathCommonSubscribe;
         
         private readonly IVersionPathConfig versionPathConfig;
         private readonly IConfigPathConfig configPathConfig;
@@ -27,12 +27,12 @@ namespace Ninth
             this.configPathConfig = configPathConfig;
             this.bundlePathConfig = bundlePathConfig;
 
-            versionPathBaseSubscribe = new BaseSubscribe<ASSET_SERVER_VERSION_PATH, VERSION_PATH?>
+            versionPathCommonSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, VERSION_PATH?>
             {
                 [ASSET_SERVER_VERSION_PATH.AssetServer] = VERSION_PATH.PersistentDataTemp,
             };
 
-            configPathBaseSubscribe = new BaseSubscribe<ASSET_SERVER_CONFIG_PATH, CONFIG_PATH?>
+            configPathCommonSubscribe = new CommonSubscribe<ASSET_SERVER_CONFIG_PATH, CONFIG_PATH?>
             {
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup] = CONFIG_PATH.DownloadConfigTempPathByRemoteGroupByPersistentData,
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup] = CONFIG_PATH.DownloadConfigTempPathByDllGroupByPersistentData,
@@ -40,7 +40,7 @@ namespace Ninth
                 [ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup] = CONFIG_PATH.LoadConfigPathByDllGroupByPersistentData,
             };
 
-            bundlePathBaseSubscribe = new BaseSubscribe<ASSET_SERVER_BUNDLE_PATH, BUNDLE_PATH?>
+            bundlePathCommonSubscribe = new CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, BUNDLE_PATH?>
             {
 
             };
@@ -53,7 +53,7 @@ namespace Ninth
 
         (string? assetServerVersionPath, VERSION_PATH? versionPersistentDataTempPath) IPathProxy.Get(ASSET_SERVER_VERSION_PATH versionPath)
         {
-            return (versionPathConfig.Get(versionPath), versionPathBaseSubscribe.Get(versionPath));
+            return (versionPathConfig.Get(versionPath), versionPathCommonSubscribe.Get(versionPath));
         }
 
         string? IPathProxy.Get(CONFIG_PATH configPath)
@@ -63,7 +63,7 @@ namespace Ninth
 
         (string? assetServerConfigPath, CONFIG_PATH? configPersistentDataTempPath) IPathProxy.Get(ASSET_SERVER_CONFIG_PATH configPath, string version)
         {
-            return (configPathConfig.Get(configPath, version), configPathBaseSubscribe.Get(configPath));
+            return (configPathConfig.Get(configPath, version), configPathCommonSubscribe.Get(configPath));
         }
 
         string? IPathProxy.Get(BUNDLE_PATH bundlePath, string bundleName)
@@ -73,7 +73,7 @@ namespace Ninth
 
         (string? assetServerBundlePath, BUNDLE_PATH? bundlePersistentDataTempPath) IPathProxy.Get(ASSET_SERVER_BUNDLE_PATH bundlePath, string version, string bundleName)
         {
-            return (bundlePathConfig.Get(bundlePath, version, bundleName), bundlePathBaseSubscribe.Get(bundlePath));
+            return (bundlePathConfig.Get(bundlePath, version, bundleName), bundlePathCommonSubscribe.Get(bundlePath));
         }
     }
 }

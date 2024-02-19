@@ -9,6 +9,20 @@ namespace Ninth.HotUpdate
 {
     public static class StringExtensions
     {
+        public static string?[] ToArrayString<T>(this ICollection<T> tArray)
+        {
+             var result = new string?[tArray.Count];
+             var i = 0;
+             foreach (var item in tArray)
+             {
+                 result[i] = item?.ToString();
+                 i++;
+             }
+             return result;
+        }
+        
+        
+        
         #region Format
         public static string Format(this string s, string arg0, string arg1)
         {

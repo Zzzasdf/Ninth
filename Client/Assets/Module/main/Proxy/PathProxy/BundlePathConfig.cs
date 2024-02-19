@@ -9,8 +9,8 @@ namespace Ninth
 {
     public class BundlePathConfig : IBundlePathConfig
     {
-        private readonly BaseSubscribe<BUNDLE_PATH, Func<string?, string?>?> bundlePathSubscribe;
-        private readonly BaseSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?> assetServerBundlePathSubscribe;
+        private readonly CommonSubscribe<BUNDLE_PATH, Func<string?, string?>?> bundlePathSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?> assetServerBundlePathSubscribe;
         
         
         [Inject]
@@ -33,7 +33,7 @@ namespace Ninth
             var bundleRootPathByRemoteGroupByPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByRemoteGroup()}";
             var bundleRootPathByRemoteGroupPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByDllGroup()}";
 
-            bundlePathSubscribe = new BaseSubscribe<BUNDLE_PATH, Func<string?, string?>?>
+            bundlePathSubscribe = new CommonSubscribe<BUNDLE_PATH, Func<string?, string?>?>
             {
                 [BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets] = bundleName => $"{bundleRootPathByLocalGroupByStreamingAssets}/{bundleName}",
                 [BUNDLE_PATH.BundlePathByRemoteGroupByStreamingAssets] = bundleName => $"{bundleRootPathByRemoteGroupByStreamingAssets}/{bundleName}",
@@ -42,7 +42,7 @@ namespace Ninth
                 [BUNDLE_PATH.BundlePathByDllGroupByPersistentData] = bundleName => $"{bundleRootPathByRemoteGroupPersistentData}/{bundleName}",
             };
 
-            assetServerBundlePathSubscribe = new BaseSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?>
+            assetServerBundlePathSubscribe = new CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?>
             {
                 [ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup] = (version, bundleName) => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}/{bundleName}",
                 [ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup] = (version, bundleName) => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{bundleName}",

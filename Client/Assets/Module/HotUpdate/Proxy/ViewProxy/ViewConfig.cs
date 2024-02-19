@@ -10,7 +10,7 @@ namespace Ninth.HotUpdate
     {
         private readonly string viewLayoutPath = "Assets/GAssets/RemoteGroup/View/ViewLayout.prefab";
         private readonly GenericsSubscribe<IView, (string? path, VIEW_HIERARCY? hierarcy)?> genericsContainer;
-        private readonly BaseSubscribe<VIEW, (string? path, VIEW_HIERARCY? hierarchy)?> viewContainer;
+        private readonly CommonSubscribe<VIEW, (string? path, VIEW_HIERARCY? hierarchy)?> viewContainer;
         
         [Inject]
         public ViewConfig()
@@ -18,7 +18,7 @@ namespace Ninth.HotUpdate
             this.genericsContainer = new GenericsSubscribe<IView, (string? path, VIEW_HIERARCY? hierarcy)?>()
                 .Subscribe<HelloScreen>(("Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab", VIEW_HIERARCY.Frame));
 
-            this.viewContainer = new BaseSubscribe<VIEW, (string? path, VIEW_HIERARCY? hierarchy)?>
+            this.viewContainer = new CommonSubscribe<VIEW, (string? path, VIEW_HIERARCY? hierarchy)?>
             {
                 [VIEW.HelloScreen] = ("Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab", VIEW_HIERARCY.Frame),
             };

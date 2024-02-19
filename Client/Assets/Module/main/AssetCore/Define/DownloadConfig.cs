@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Ninth.Utility;
 using UnityEngine;
 
 namespace Ninth
 {
-    public class DownloadConfig
+    public class DownloadConfig: IJson
     {
         public Dictionary<string, BundleInfo> BundleInfos;
 

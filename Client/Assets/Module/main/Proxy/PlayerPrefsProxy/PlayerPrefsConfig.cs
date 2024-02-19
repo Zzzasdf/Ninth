@@ -8,24 +8,24 @@ namespace Ninth
 {
     public class PlayerPrefsConfig: IPlayerPrefsIntConfig, IPlayerPrefsFloatConfig, IPlayerPrefsStringConfig
     {
-        private readonly BaseSubscribe<PLAYERPREFS_INT, int?> intPlayerPrefsSubscribe;
-        private readonly BaseSubscribe<PLAYERPREFS_FLOAT, float?> floatPlayerPrefsSubscribe;
-        private readonly BaseSubscribe<PLAYERPREFS_STRING, string?> stringPlayerPrefsSubscribe;
+        private readonly CommonSubscribe<PLAYERPREFS_INT, int?> intPlayerPrefsSubscribe;
+        private readonly CommonSubscribe<PLAYERPREFS_FLOAT, float?> floatPlayerPrefsSubscribe;
+        private readonly CommonSubscribe<PLAYERPREFS_STRING, string?> stringPlayerPrefsSubscribe;
         
         [Inject]
         public PlayerPrefsConfig()
         {
-            intPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_INT, int?>
+            intPlayerPrefsSubscribe = new CommonSubscribe<PLAYERPREFS_INT, int?>
             {
                 [PLAYERPREFS_INT.DownloadBundleStartPos] = 0,
             };
 
-            floatPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_FLOAT, float?>
+            floatPlayerPrefsSubscribe = new CommonSubscribe<PLAYERPREFS_FLOAT, float?>
             {
 
             };
 
-            stringPlayerPrefsSubscribe = new BaseSubscribe<PLAYERPREFS_STRING, string?>
+            stringPlayerPrefsSubscribe = new CommonSubscribe<PLAYERPREFS_STRING, string?>
             {
                 [PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion] = "0.0.0.0",
             };

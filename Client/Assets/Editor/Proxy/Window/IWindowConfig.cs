@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using Ninth.Utility;
 using UnityEngine;
 
 namespace Ninth.Editor.Window
@@ -8,12 +10,14 @@ namespace Ninth.Editor.Window
         Build,
         Excel,
         Scan,
-        Review,
-        Other
     }
     
-    public interface IWindowConfig
+    public interface IWindowConfig: IJson
     {
-        Tab Tab { get; set; }
+        Tab CurrentTab { get; set; }
+        string? GetEnumType<T>() where T: Enum;
+        (Type type, string path)? Get(Tab tab);
+        ReadOnlyDictionary<Type, string?>.KeyCollection EnumTypeKeys();
+        ReadOnlyDictionary<Tab, (Type type, string path)?>.KeyCollection Keys();
     }
 }

@@ -9,8 +9,8 @@ namespace Ninth
 {
     public class ConfigPathConfig : IConfigPathConfig
     {
-        private readonly BaseSubscribe<CONFIG_PATH, string?> configPathSubscribe;
-        private readonly BaseSubscribe<ASSET_SERVER_CONFIG_PATH, Func<string?, string?>?> assetServerConfigPathSubscribe;
+        private readonly CommonSubscribe<CONFIG_PATH, string?> configPathSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_CONFIG_PATH, Func<string?, string?>?> assetServerConfigPathSubscribe;
         
         [Inject]
         public ConfigPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
@@ -35,7 +35,7 @@ namespace Ninth
             var loadConfigPathByRemoteGroupByPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByRemoteGroup()}/{nameConfig.LoadConfigNameByRemoteGroup()}";
             var loadConfigPathByDllGroupByPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByDllGroup()}/{nameConfig.LoadConfigNameByDllGroup()}";
 
-            configPathSubscribe = new BaseSubscribe<CONFIG_PATH, string?>
+            configPathSubscribe = new CommonSubscribe<CONFIG_PATH, string?>
             {
                 [CONFIG_PATH.LoadConfigPathByLocalGroupByStreamingAssets] = loadConfigPathByLocalGroupByStreamingAssets,
                 [CONFIG_PATH.LoadConfigPathByRemoteGroupByStreamingAssets] = loadConfigPathByRemoteGroupByStreamingAssets,
@@ -47,7 +47,7 @@ namespace Ninth
                 [CONFIG_PATH.LoadConfigPathByDllGroupByPersistentData] = loadConfigPathByDllGroupByPersistentData,
             };
 
-            assetServerConfigPathSubscribe = new BaseSubscribe<ASSET_SERVER_CONFIG_PATH, Func<string?, string?>?>
+            assetServerConfigPathSubscribe = new CommonSubscribe<ASSET_SERVER_CONFIG_PATH, Func<string?, string?>?>
             {
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup] = version => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}",
                 [ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup] = version => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{nameConfig.DownloadConfigNameByDllGroup()}",

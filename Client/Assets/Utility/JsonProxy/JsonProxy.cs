@@ -22,7 +22,73 @@ namespace Ninth.Utility
             encoding = new UTF8Encoding(false);
             this.jsonConfig = jsonConfig;
         }
-        
+
+        async UniTask<T?> IJsonProxy.ToObjectAsync<T>(CancellationToken cancellationToken) where T: class
+        {
+            var path = jsonConfig.Get<T>();
+            if(path == null)
+            {
+                $"路径为空 {nameof(T)}".FrameError();
+                return null;
+            }
+            if (!File.Exists(path))
+            {
+                $"路径不存在文件: {path}".Log();
+                return null;
+            }
+            var data = await File.ReadAllTextAsync(path, encoding, cancellationToken);
+            return LitJson.JsonMapper.ToObject<T>(data);
+        }
+
+        public T? ToObject<T>() where T : class, IJson
+        {
+            var path = jsonConfig.Get<T>();
+            if(path == null)
+            {
+                $"路径为空 {nameof(T)}".FrameError();
+                return null;
+            }
+            if (!File.Exists(path))
+            {
+                $"路径不存在文件: {path}".Log();
+                return null;
+            }
+            var data = File.ReadAllText(path, encoding);
+            return LitJson.JsonMapper.ToObject<T>(data);
+        }
+
+        async UniTaskVoid IJsonProxy.ToJsonAsync<T>(T obj, CancellationToken cancellationToken) where T: class
+        {
+            var path = jsonConfig.Get<T>();
+            if(path == null)
+            {
+                $"路径为空 {nameof(T)}".FrameError();
+                return;
+            }
+            if (!File.Exists(path))
+            {
+                await File.Create(path).DisposeAsync();
+            }
+            var jsonData = LitJson.JsonMapper.ToJson(obj);
+            await File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding, cancellationToken);
+        }
+
+        public void ToJson<T>(T obj) where T : class, IJson
+        {
+            var path = jsonConfig.Get<T>();
+            if(path == null)
+            {
+                $"路径为空 {nameof(T)}".FrameError();
+                return;
+            }
+            if (!File.Exists(path))
+            {
+                File.Create(path).Dispose();
+            }
+            var jsonData = LitJson.JsonMapper.ToJson(obj);
+            File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding);
+        }
+
         async UniTask<T?> IJsonProxy.ToObjectAsync<T>(Enum e, CancellationToken cancellationToken) where T: class
         {
             var path = jsonConfig.Get(e);
@@ -54,7 +120,6 @@ namespace Ninth.Utility
             }
             var jsonData = LitJson.JsonMapper.ToJson(obj);
             await File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding, cancellationToken);
-            // await File.WriteAllTextAsync(path, jsonData, encoding);
         }
 
         private static string ConvertJsonString(string str)

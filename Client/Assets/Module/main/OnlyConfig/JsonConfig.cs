@@ -13,7 +13,7 @@ namespace Ninth.Utility
         [Inject]
         public JsonConfig(IPathProxy pathProxy)
         {
-            baseSubscribe = new BaseSubscribe<Enum, string?>
+            commonSubscribe = new CommonSubscribe<Enum, string?>
             {
                 [VERSION_PATH.StreamingAssets] = pathProxy.Get(VERSION_PATH.StreamingAssets),
                 [VERSION_PATH.PersistentData] = pathProxy.Get(VERSION_PATH.PersistentData),

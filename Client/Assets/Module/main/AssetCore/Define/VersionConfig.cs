@@ -1,10 +1,11 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Ninth.Utility;
 using UnityEngine;
 
 namespace Ninth
 {
-    public class VersionConfig
+    public class VersionConfig: IJson
     {
         public string BaseVersion { get; set; }
 

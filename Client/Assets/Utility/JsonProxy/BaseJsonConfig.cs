@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Ninth.Utility;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
 using UnityEngine;
 using VContainer;
 
@@ -10,27 +11,38 @@ namespace Ninth.Utility
 {
     public abstract class BaseJsonConfig: IJsonConfig
     {
-        protected GenericsSubscribe<Type, string?>? typeSubscribe;
-        protected BaseSubscribe<Enum, string?>? baseSubscribe;
+        protected GenericsSubscribe<IJson, string?>? genericsSubscribe;
+        protected EnumTypeSubscribe<string?>? enumTypeSubscribe;
+        protected CommonSubscribe<Enum, string?>? commonSubscribe;
+        
+        string? IJsonConfig.Get<T>()
+        {
+            if (genericsSubscribe == null)
+            {
+                $"{genericsSubscribe} 未初始化".FrameError();
+                return null;
+            }
+            return genericsSubscribe.Get<T>();
+        }
+
+        string? IJsonConfig.GetEnum<T>()
+        {
+            if (enumTypeSubscribe == null)
+            {
+                $"{enumTypeSubscribe} 未初始化".FrameError();
+                return null;
+            }
+            return enumTypeSubscribe.Get<T>();
+        }
         
         string? IJsonConfig.Get(Enum e)
         {
-            if (baseSubscribe == null)
+            if (commonSubscribe == null)
             {
-                $"{baseSubscribe} 未初始化".FrameError();
+                $"{commonSubscribe} 未初始化".FrameError();
                 return null;
             }
-            return baseSubscribe.Get(e);
-        }
-
-        string? IJsonConfig.Get<T>() 
-        {
-            if (typeSubscribe == null)
-            {
-                $"{typeSubscribe} 未初始化".FrameError();
-                return null;
-            }
-            return typeSubscribe.Get<T>();
+            return commonSubscribe.Get(e);
         }
     }
 }
