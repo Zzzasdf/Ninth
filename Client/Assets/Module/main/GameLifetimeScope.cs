@@ -10,6 +10,7 @@ namespace Ninth
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            "Main 初始化".FrameLog();
             // core
             var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
@@ -40,6 +41,7 @@ namespace Ninth
                 entryPoints.Add<AssetBundleProxy>();
                 entryPoints.OnException(ex => ex.FrameError());
             });
+            "Main IOC 容器注册完成！！".FrameLog(); 
         }
     }
 }

@@ -19,13 +19,13 @@ namespace Ninth.Editor.Window
         public WindowConfig()
         {
             enumTypeSubscribe = new EnumTypeSubscribe<string?>()
-                .Subscribe<Tab>("Assets/Editor/Proxy/Window/WindowConfig.json");
-            
+                .Subscribe<Tab>("");
+
             commonSubscribe = new CommonSubscribe<Tab, (Type type, string path)?>
             {
-                [Tab.Build] = (typeof(IBuildProxy), "Assets/Editor/Proxy/Window/Build/BuildConfig.json"),
-                [Tab.Excel] = (typeof(IExcelProxy), "Assets/Editor/Proxy/Window/Excel/ExcelConfig.json"),
-                [Tab.Scan] = (typeof(IScanProxy), "Assets/Editor/Proxy/Window/Scan/ScanConfig.json"),
+                [Tab.Build] = (typeof(IWindowProxy), ""),
+                [Tab.Excel] = (typeof(IExcelProxy), ""),
+                [Tab.Scan] = (typeof(IScanProxy), ""),
             };
         }
         

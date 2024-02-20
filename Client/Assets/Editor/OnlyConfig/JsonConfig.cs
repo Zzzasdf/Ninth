@@ -9,15 +9,15 @@ namespace Ninth.Editor
     public class JsonConfig: BaseJsonConfig
     {
         [Inject]
-        public JsonConfig(IWindowConfig windowConfig)
+        public JsonConfig()
         {
             enumTypeSubscribe = new EnumTypeSubscribe<string?>()
-                .Subscribe<Tab>(windowConfig.GetEnumType<Tab>());
+                .Subscribe<Tab>("Assets/Editor/Proxy/Window/WindowConfig.json");
 
             commonSubscribe = new CommonSubscribe<Enum, string?>()
-                .Subscribe(Tab.Build, windowConfig.Get(Tab.Build)?.path ?? throw new NullReferenceException())
-                .Subscribe(Tab.Excel, windowConfig.Get(Tab.Excel)?.path ?? throw new NullReferenceException())
-                .Subscribe(Tab.Scan, windowConfig.Get(Tab.Scan)?.path ?? throw new NullReferenceException());
+                .Subscribe(Tab.Build, "Assets/Editor/Proxy/Window/Build/BuildConfig.json")
+                .Subscribe(Tab.Excel, "Assets/Editor/Proxy/Window/Excel/ExcelConfig.json")
+                .Subscribe(Tab.Scan, "Assets/Editor/Proxy/Window/Scan/ScanConfig.json");
         }
     }
 }

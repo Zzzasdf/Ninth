@@ -89,6 +89,26 @@ namespace Ninth.Utility
             File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding);
         }
 
+        public UniTask<T?> ToObjectAsync<T, TEnum>(CancellationToken cancellationToken = default) where T : class, IJson where TEnum : Enum
+        {
+            throw new NotImplementedException();
+        }
+
+        public T? ToObject<T, TEnum>(CancellationToken cancellationToken = default) where T : class, IJson where TEnum : Enum
+        {
+            return null;
+        }
+
+        public UniTaskVoid ToJsonAsync<T, TEnum>(T obj, CancellationToken cancellationToken = default) where T : class, IJson where TEnum : Enum
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToJson<T, TEnum>(T obj) where T : class, IJson
+        {
+            throw new NotImplementedException();
+        }
+
         async UniTask<T?> IJsonProxy.ToObjectAsync<T>(Enum e, CancellationToken cancellationToken) where T: class
         {
             var path = jsonConfig.Get(e);
@@ -106,6 +126,11 @@ namespace Ninth.Utility
             return LitJson.JsonMapper.ToObject<T>(data);
         }
 
+        public T? ToObject<T>(Enum e) where T : class, IJson
+        {
+            throw new NotImplementedException();
+        }
+
         async UniTaskVoid IJsonProxy.ToJsonAsync<T>(T obj, Enum e, CancellationToken cancellationToken) where T: class
         {
             var path = jsonConfig.Get(e);
@@ -120,6 +145,11 @@ namespace Ninth.Utility
             }
             var jsonData = LitJson.JsonMapper.ToJson(obj);
             await File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding, cancellationToken);
+        }
+
+        public void ToJson<T>(T obj, Enum e) where T : class, IJson
+        {
+            throw new NotImplementedException();
         }
 
         private static string ConvertJsonString(string str)

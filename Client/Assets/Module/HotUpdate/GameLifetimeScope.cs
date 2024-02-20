@@ -28,7 +28,7 @@ namespace Ninth.HotUpdate
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
             // hotUpdate
-            var iAssetConfig = Container.Resolve<IAssetConfig>();
+            var iAssetConfig = assetConfig as IAssetConfig;
             switch (iAssetConfig.RuntimeEnv())
             {
                 case Environment.NonAb:

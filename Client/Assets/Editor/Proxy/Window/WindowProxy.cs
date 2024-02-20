@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Ninth.HotUpdate;
 using UnityEditor;
@@ -28,13 +29,15 @@ namespace Ninth.Editor.Window
         
         private IObjectResolver resolver;
         private IWindowConfig windowConfig;
-            
+
+        private void OnEnable()
+        {
+            resolver = EditorLifetimeScope.Resolver.Resolve<IObjectResolver>();
+            windowConfig = resolver.Resolve<IWindowConfig>();
+        }
+
         private void OnGUI()
         {
-            if(EditorApplication.isCompiling) return;
-            resolver ??= EditorContainerBuilder.Resolver.Resolve<IObjectResolver>();
-            windowConfig ??= EditorContainerBuilder.Resolver.Resolve<IWindowConfig>();
-            
             using var horizontalScope = new GUILayout.HorizontalScope();
             RenderTags();
             RenderSplitter();
