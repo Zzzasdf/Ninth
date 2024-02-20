@@ -54,7 +54,7 @@ namespace Ninth.Editor
             // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();
             //
             // builder.Register<Window.IExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
-            "编辑器 IOC 容器注册完成！！".FrameLog(); 
+            "编辑器 IOC 容器注册完成！！".FrameLog();
         }
     }
 

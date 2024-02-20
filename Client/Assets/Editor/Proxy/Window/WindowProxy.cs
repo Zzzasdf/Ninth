@@ -107,7 +107,7 @@ namespace Ninth.Editor.Window
             var value = windowConfig.Get(windowConfig.CurrentTab);
             if (value.HasValue)
             {
-                // resolver.Resolve(value.Value.type);
+                resolver.Resolve(value.Value.type);
             }
             GUILayout.EndScrollView();
         }
