@@ -5,48 +5,53 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public class ContainerBuilder
+    public class ContainerBuilder: IContainerBuilder
     {
-        private readonly List<RegistrationBuilder> builder;
-        private readonly List<RegistrationBuilder> instanceBuilder;
+        private readonly Action<List<ContainerBuilderItem>> assemblyResolver;
+        
+        private readonly List<ContainerBuilderItem> builder;
 
-        public ContainerBuilder(List<RegistrationBuilder> builder, List<RegistrationBuilder> instanceBuilder)
+        public ContainerBuilder(Action<List<ContainerBuilderItem>> assemblyResolver, List<ContainerBuilderItem> builder)
         {
+            this.assemblyResolver = assemblyResolver;
             this.builder = builder;
-            this.instanceBuilder = instanceBuilder;
         }
 
-        public RegistrationBuilder Register<T>(Lifetime lifetime)
+        ContainerBuilderItem IContainerBuilder.Register<T>(Lifetime lifetime)
         {
-            var register = new RegistrationBuilder(typeof(T), lifetime);
+            var register = new ContainerBuilderItem(typeof(T), lifetime);
             builder.Add(register);
             return register;
         }
 
-        public RegistrationBuilder RegisterInstance<TInterface>(TInterface instance)
+        ContainerBuilderItem IContainerBuilder.Register<T>(Func<IObjectResolver, object> objectResolver, Lifetime lifetime)
         {
-            var register = new RegistrationBuilder(typeof(TInterface), instance);
-            instanceBuilder.Add(register);
+            var register = new ContainerBuilderItem(typeof(T), objectResolver, lifetime);
+            builder.Add(register);
             return register;
         }
 
-        public void UseEntryPoints(Lifetime lifetime) //, Action<EntryPointsBuilder> configuration)
+        ContainerBuilderItem IContainerBuilder.RegisterInstance<TInterface>(TInterface instance)
         {
-            builder.Count.Log();
+            var register = new ContainerBuilderItem(typeof(TInterface), instance);
+            builder.Add(register);
+            return register;
         }
-        // {
-        //     EntryPointsBuilder.EnsureDispatcherRegistered(builder);
-        //     configuration(new EntryPointsBuilder(builder, lifetime));
-        // }
+
+        void IContainerBuilder.CompleteConfiguration()
+        {
+            assemblyResolver.Invoke(builder);
+        }
     }
 
-    public class RegistrationBuilder
+    public class ContainerBuilderItem
     {
-        public Type Type { get; private set; }
-        public object instance { get; set; }
-        public Lifetime Lifetime { get; private set; }
+        public Type Type { get; }
+        public Lifetime Lifetime { get; }
+        public Func<ObjectResolver, object> ObjectResolverFunc { get; }
+        public object Instance { get; }
+        
         private List<Type>? keys;
-
         public ReadOnlyCollection<Type> Keys
         {
             get
@@ -55,25 +60,31 @@ namespace Ninth.Editor
                 {
                     return new ReadOnlyCollection<Type>(new List<Type> { Type });
                 }
-
-                return new ReadOnlyCollection<Type>(Keys);
+                return new ReadOnlyCollection<Type>(keys);
             }
         }
 
-        public RegistrationBuilder(Type type, Lifetime lifetime)
+        public ContainerBuilderItem(Type type, Lifetime lifetime)
         {
             Type = type;
             Lifetime = lifetime;
         }
 
-        public RegistrationBuilder(Type type, object instance)
+        public ContainerBuilderItem(Type type, Func<ObjectResolver, object> objectResolverFunc, Lifetime  lifetime)
+        {
+            Type = type;
+            ObjectResolverFunc = objectResolverFunc;
+            this.Lifetime = lifetime;
+        }
+
+        public ContainerBuilderItem(Type type, object instance)
         {
             Type = type;
             Lifetime = Lifetime.Singleton;
-            this.instance = instance;
+            this.Instance = instance;
         }
 
-        public RegistrationBuilder As<T>()
+        public ContainerBuilderItem As<T>()
         {
             var type = typeof(T);
             keys ??= new List<Type>();
@@ -81,7 +92,7 @@ namespace Ninth.Editor
             return this;
         }
 
-        public RegistrationBuilder AsSelf()
+        public ContainerBuilderItem AsSelf()
         {
             keys ??= new List<Type>();
             keys.Add(Type);

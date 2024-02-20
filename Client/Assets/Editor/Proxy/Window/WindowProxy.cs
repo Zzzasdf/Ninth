@@ -22,28 +22,22 @@ namespace Ninth.Editor.Window
         [MenuItem("Tools/WindowCollect/Close")]
         private static void PanelClose()
         {
-            GetWindow<WindowProxy>().Close();
-            // if (window == null)
-            // { 
-            //     return;
-            // }
-            // window.Saves();
-            // window.Close();
+            if (window == null)
+            { 
+                return;
+            }
+            window.Close();
         }
 
-        private readonly IWindowConfig windowConfig;
-        private readonly VContainer.IObjectResolver resolver;
-        
-        [Inject]
-        public WindowProxy(IWindowConfig windowConfig, VContainer.IObjectResolver resolver)
-        {
-            $"windowConfig Value: {windowConfig}".Log();
-            this.windowConfig = windowConfig;
-            this.resolver = resolver;
-        }
+        private IWindowConfig windowConfig;
+        private IObjectResolver resolver;
         
         private void OnGUI()
         {
+            if(EditorApplication.isCompiling) return;
+            this.windowConfig ??= LifetimeScope.IObjectResolver.Resolve<IWindowConfig>();
+            this.resolver ??= LifetimeScope.IObjectResolver; 
+            
             using var horizontalScope = new GUILayout.HorizontalScope();
             RenderTags();
             RenderSplitter();
@@ -113,7 +107,7 @@ namespace Ninth.Editor.Window
             var value = windowConfig.Get(windowConfig.CurrentTab);
             if (value.HasValue)
             {
-                // resolver.Resolve<AssetConfig>(value.Value.type);
+                // resolver.Resolve(value.Value.type);
             }
             GUILayout.EndScrollView();
         }

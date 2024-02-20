@@ -12,9 +12,9 @@ namespace Ninth.Editor
             Configure(LifetimeScope.ContainerBuilder);
         }
 
-        static void Configure(ContainerBuilder builder)
+        static void Configure(IContainerBuilder builder)
         {
-            "编辑器初始化！！".FrameLog();
+            "编辑器初始化！！".FrameLog(); 
             // core
             var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
@@ -30,37 +30,30 @@ namespace Ninth.Editor
             builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
-            // // editor
-            // builder.Register<Window.WindowConfig>(  (resolve) =>
-            // {
-            //     11.Log();
-            //     var jsonProxy = resolve.Resolve<IJsonProxy>();
-            //     return jsonProxy.ToObject<Window.WindowConfig>() ?? new Window.WindowConfig();
-            // }, Lifetime.Singleton).As<Window.IWindowConfig>();
-            // builder.Register<Window.WindowProxy>(Lifetime.Singleton).As<Window.IWindowProxy>();
+            // editor
+            builder.Register<Window.WindowConfig>(resolver =>
+            {
+                var jsonProxy = resolver.Resolve<IJsonProxy>();
+                return jsonProxy.ToObject<Window.WindowConfig>() ?? new Window.WindowConfig();
+            }, Lifetime.Singleton).As<Window.IWindowConfig>();
+            builder.Register<Window.WindowProxy>(Lifetime.Singleton).As<Window.IWindowProxy>();
+            
+            // builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
+            // builder.Register<Window.BuildProxy>(Lifetime.Singleton).As<Window.IBuildProxy>();
             //
-            // // builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
-            // // builder.Register<Window.BuildProxy>(Lifetime.Singleton).As<Window.IBuildProxy>();
-            // //
-            // // builder.Register<Window.ExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
-            // // builder.Register<Window.ExcelProxy>(Lifetime.Singleton).As<Window.IExcelProxy>();
-            // //
-            // // builder.Register<Window.ScanConfig>(Lifetime.Singleton).As<Window.IScanConfig>();
-            // // builder.Register<Window.ScanProxy>(Lifetime.Singleton).As<Window.IScanProxy>();
-            // //
-            // // builder.Register<Window.OtherConfig>(Lifetime.Singleton).As<Window.IOtherConfig>();
-            // // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();
+            // builder.Register<Window.ExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
+            // builder.Register<Window.ExcelProxy>(Lifetime.Singleton).As<Window.IExcelProxy>();
             //
+            // builder.Register<Window.ScanConfig>(Lifetime.Singleton).As<Window.IScanConfig>();
+            // builder.Register<Window.ScanProxy>(Lifetime.Singleton).As<Window.IScanProxy>();
+            //
+            // builder.Register<Window.OtherConfig>(Lifetime.Singleton).As<Window.IOtherConfig>();
+            // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();
             //
             // builder.Register<Window.IExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
-            //
-            // builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
-            // {
-            //     entryPoints.Add<AssetBundleProxy>();
-            //     entryPoints.OnException(ex => ex.FrameError());
-            // });
-            // TODO
-            builder.UseEntryPoints(Lifetime.Scoped);
+            
+            builder.CompleteConfiguration();
+            "编辑器 IOC 容器注册完成！！".FrameLog(); 
         }
     }
 }

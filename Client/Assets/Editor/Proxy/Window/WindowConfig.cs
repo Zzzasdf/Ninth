@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -44,12 +45,12 @@ namespace Ninth.Editor.Window
             return commonSubscribe.Get(tab);
         }
 
-        public ReadOnlyDictionary<Type, string?>.KeyCollection EnumTypeKeys()
+        Dictionary<Type, string?>.KeyCollection IWindowConfig.EnumTypeKeys()
         {
             return enumTypeSubscribe.Keys;
         }
 
-        public ReadOnlyDictionary<Tab, (Type type, string path)?>.KeyCollection Keys()
+        Dictionary<Tab, (Type type, string path)?>.KeyCollection IWindowConfig.Keys()
         {
             return commonSubscribe.Keys;
         }

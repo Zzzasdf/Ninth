@@ -7,23 +7,22 @@ namespace Ninth.Editor
     {
         Transient,
         Singleton,
-        Scoped,
     }
     
     public class LifetimeScope
     {
-        private static List<RegistrationBuilder> builder = new();
-        private static List<RegistrationBuilder> instanceBuilder = new();
-        public static ContainerBuilder ContainerBuilder;
+        public static IContainerBuilder ContainerBuilder { get; private set; }
+        public static IObjectResolver IObjectResolver { get; private set; }
 
         static LifetimeScope()
         {
-            ContainerBuilder = new ContainerBuilder(builder, instanceBuilder);
+            var builder = new List<ContainerBuilderItem>();
+            ContainerBuilder = new ContainerBuilder(AssemblyResolver, builder);
         }
 
-        
-        
-
-        
+        private static void AssemblyResolver(List<ContainerBuilderItem> builderItems)
+        {
+            IObjectResolver = new ObjectResolver(builderItems);
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Ninth
 {
     public class GenericsSubscribe<TKey, TValue>
     {
-        private readonly ReadOnlyDictionary<Type, TValue?> container = new(new Dictionary<Type, TValue?>());
+        private readonly Dictionary<Type, TValue?> container = new();
         
         public GenericsSubscribe<TKey, TValue> Subscribe<T>(TValue? value) where T: TKey
         {
@@ -30,8 +30,8 @@ namespace Ninth
             return result;
         }
         
-        public ReadOnlyDictionary<Type, TValue?>.KeyCollection Keys => container.Keys;
-        public ReadOnlyDictionary<Type, TValue?>.ValueCollection Values => container.Values;
+        public Dictionary<Type, TValue?>.KeyCollection Keys => container.Keys;
+        public Dictionary<Type, TValue?>.ValueCollection Values => container.Values;
 
         public bool ContainsKey<T>()  where T: class, TKey
         {
@@ -42,7 +42,7 @@ namespace Ninth
     
     public class EnumTypeSubscribe<TValue>
     {
-        private readonly ReadOnlyDictionary<Type, TValue?> container = new(new Dictionary<Type, TValue?>());
+        private readonly Dictionary<Type, TValue?> container = new();
         
         public EnumTypeSubscribe<TValue> Subscribe<T>(TValue? value) where T: Enum
         {
@@ -65,8 +65,8 @@ namespace Ninth
             return result;
         } 
         
-        public ReadOnlyDictionary<Type, TValue?>.KeyCollection Keys => container.Keys;
-        public ReadOnlyDictionary<Type, TValue?>.ValueCollection Values => container.Values;
+        public Dictionary<Type, TValue?>.KeyCollection Keys => container.Keys;
+        public Dictionary<Type, TValue?>.ValueCollection Values => container.Values;
 
         public bool ContainsKey<T>() where T: Enum
         {
@@ -77,7 +77,7 @@ namespace Ninth
     
     public class CommonSubscribe<TKey, TValue>
     {
-        private readonly ReadOnlyDictionary<TKey, TValue?> container = new(new Dictionary<TKey, TValue?>());
+        private readonly Dictionary<TKey, TValue?> container = new();
 
         public TValue? this[TKey key]
         {
@@ -104,8 +104,8 @@ namespace Ninth
             return result;
         }
 
-        public ReadOnlyDictionary<TKey, TValue?>.KeyCollection Keys => container.Keys;
-        public ReadOnlyDictionary<TKey, TValue?>.ValueCollection Values => container.Values;
+        public Dictionary<TKey, TValue?>.KeyCollection Keys => container.Keys;
+        public Dictionary<TKey, TValue?>.ValueCollection Values => container.Values;
 
         public bool ContainsKey(TKey key)
         {
