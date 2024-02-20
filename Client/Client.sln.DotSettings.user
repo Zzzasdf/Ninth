@@ -4,6 +4,7 @@
   &lt;Assembly Path="C:\UnityProject\Ninth\Client\Assets\Plugins\Json\LitJSON.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Configuration.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\UnityEditor\2021.3.4f1c1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\System.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\UnityProject\Ninth\Client\Library\ScriptAssemblies\VContainer.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6c97c960_002De9eb_002D44ed_002Da79f_002Dd7e6a0fb9f9b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="UniTaskExample" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;

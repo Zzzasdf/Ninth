@@ -1,20 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
 using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Ninth.Editor
 {
-    [InitializeOnLoad]
-    public class EditorLifetimeScope
+    public class EditorContainerBuilder : ContainerBuilder // 基类包装写成 LifetimeScope
     {
-        static EditorLifetimeScope()
+        public static IObjectResolver Resolver;
+        
+        [InitializeOnLoadMethod]
+        private static void Initialize()
         {
-            Configure(LifetimeScope.ContainerBuilder);
+            var builder = new EditorContainerBuilder();
         }
-
-        static void Configure(IContainerBuilder builder)
+        
+        public EditorContainerBuilder()
         {
             "编辑器初始化！！".FrameLog(); 
+            var builder = this;
             // core
             var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
@@ -31,11 +38,12 @@ namespace Ninth.Editor
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
             // editor
-            builder.Register<Window.WindowConfig>(resolver =>
-            {
-                var jsonProxy = resolver.Resolve<IJsonProxy>();
-                return jsonProxy.ToObject<Window.WindowConfig>() ?? new Window.WindowConfig();
-            }, Lifetime.Singleton).As<Window.IWindowConfig>();
+            // builder.Register<Window.WindowConfig>(resolver =>
+            // {
+            //     var jsonProxy = resolver.Resolve<IJsonProxy>();
+            //     return jsonProxy.ToObject<Window.WindowConfig>() ?? new Window.WindowConfig();
+            // }, Lifetime.Singleton).As<Window.IWindowConfig>();
+            builder.Register<Window.WindowConfig>(Lifetime.Singleton).As<Window.IWindowConfig>();
             builder.Register<Window.WindowProxy>(Lifetime.Singleton).As<Window.IWindowProxy>();
             
             // builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
@@ -51,9 +59,9 @@ namespace Ninth.Editor
             // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();
             //
             // builder.Register<Window.IExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
-            
-            builder.CompleteConfiguration();
+             Resolver = builder.Build();
             "编辑器 IOC 容器注册完成！！".FrameLog(); 
         }
     }
+
 }

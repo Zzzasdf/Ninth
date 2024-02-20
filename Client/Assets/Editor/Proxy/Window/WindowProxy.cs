@@ -3,6 +3,7 @@ using Ninth.HotUpdate;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Ninth.Editor.Window
 {
@@ -14,7 +15,7 @@ namespace Ninth.Editor.Window
         private static void PanelOpen()
         {
             window = GetWindow<WindowProxy>();
-            //window.position = new Rect(200, 200, 800, 500);
+            // window.position = new Rect(200, 200, 800, 500);
             window.position = new Rect(2200, 200, 1000, 700);
             window.splitterPos = 150;
         }
@@ -22,21 +23,17 @@ namespace Ninth.Editor.Window
         [MenuItem("Tools/WindowCollect/Close")]
         private static void PanelClose()
         {
-            if (window == null)
-            { 
-                return;
-            }
-            window.Close();
+            GetWindow<WindowProxy>().Close();
         }
-
-        private IWindowConfig windowConfig;
-        private IObjectResolver resolver;
         
+        private IObjectResolver resolver;
+        private IWindowConfig windowConfig;
+            
         private void OnGUI()
         {
             if(EditorApplication.isCompiling) return;
-            this.windowConfig ??= LifetimeScope.IObjectResolver.Resolve<IWindowConfig>();
-            this.resolver ??= LifetimeScope.IObjectResolver; 
+            resolver ??= EditorContainerBuilder.Resolver.Resolve<IObjectResolver>();
+            windowConfig ??= EditorContainerBuilder.Resolver.Resolve<IWindowConfig>();
             
             using var horizontalScope = new GUILayout.HorizontalScope();
             RenderTags();
