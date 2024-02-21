@@ -8,49 +8,42 @@ namespace Ninth
 {
     public class VersionPathConfig: IVersionPathConfig
     {
-        private readonly CommonSubscribe<VERSION_PATH, string?> versionPathSubscribe;
-        private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, string?> assetServerVersionPathSubscribe;
+        private readonly CommonSubscribe<VERSION_PATH, string> versionPathSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> assetServerVersionPathSubscribe;
         
+        CommonSubscribe<VERSION_PATH, string> IVersionPathConfig.VersionPathSubscribe => versionPathSubscribe;
+        CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> IVersionPathConfig.AssetServerVersionPathSubscribe => assetServerVersionPathSubscribe;
+
         [Inject]
         public VersionPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             var url = assetConfig.Url();
 
-            var produceName = playerSettingsConfig.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.Get(PLAY_SETTINGS.PlatformName);
-            
+            var produceName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.PlatformName);
+
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
-            var persistentData_produceName_platformName = $"{persistentDataPath}/{produceName}/{platformName}";
-            var url_produceName_platformName = $"{url}/{produceName}/{platformName}";
+            var persistentDataProduceNamePlatformName = $"{persistentDataPath}/{produceName}/{platformName}";
+            var urlProduceNamePlatformName = $"{url}/{produceName}/{platformName}";
 
             var streamingAssets = $"{streamingAssetsPath}/{nameConfig.FileNameByVersionConfig()}";
-            var persistentData = $"{persistentData_produceName_platformName}/{nameConfig.FileNameByVersionConfig()}";
-            var persistentDataTemp = $"{persistentData_produceName_platformName}/{nameConfig.FileTempNameByVersionConfig()}";
-            
-            var assetServer = $"{url_produceName_platformName}/{nameConfig.FileNameByVersionConfig()}";
+            var persistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FileNameByVersionConfig()}";
+            var persistentDataTemp = $"{persistentDataProduceNamePlatformName}/{nameConfig.FileTempNameByVersionConfig()}";
 
-            versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string?>
+            var assetServer = $"{urlProduceNamePlatformName}/{nameConfig.FileNameByVersionConfig()}";
+
+            versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string>
             {
                 [VERSION_PATH.StreamingAssets] = streamingAssets,
                 [VERSION_PATH.PersistentData] = persistentData,
                 [VERSION_PATH.PersistentDataTemp] = persistentDataTemp,
             };
 
-            assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, string?>
+            assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)>
             {
-                [ASSET_SERVER_VERSION_PATH.AssetServer] = assetServer,
+                [ASSET_SERVER_VERSION_PATH.AssetServer] = (assetServer, VERSION_PATH.PersistentDataTemp),
             };
-        }
-        
-        string? IVersionPathConfig.Get(VERSION_PATH versionPath)
-        {
-            return versionPathSubscribe.Get(versionPath);
-        }
-
-        string? IVersionPathConfig.Get(ASSET_SERVER_VERSION_PATH versionPath)
-        {
-            return assetServerVersionPathSubscribe.Get(versionPath);
         }
     }
 }

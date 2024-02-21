@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,8 +23,7 @@ namespace Ninth
     
     public interface IBundlePathConfig
     {
-        string? Get(BUNDLE_PATH bundlePath, string bundleName);
-
-        string? Get(ASSET_SERVER_BUNDLE_PATH bundlePath, string version, string bundleName);
+        CommonSubscribe<BUNDLE_PATH, Func<string, string>> BundlePathSubscribe { get; }
+        CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)> AssetServerBundlePathSubscribe { get; }    
     }
 }

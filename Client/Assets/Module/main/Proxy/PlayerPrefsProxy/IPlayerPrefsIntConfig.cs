@@ -12,8 +12,6 @@ namespace Ninth
     
     public interface IPlayerPrefsIntConfig
     {
-        int? Get(PLAYERPREFS_INT playerprefsInt);
-        
-        bool ContainsKey(PLAYERPREFS_INT playerprefsInt);
+        CommonSubscribe<PLAYERPREFS_INT, int> CommonSubscribe { get; }
     }
 }

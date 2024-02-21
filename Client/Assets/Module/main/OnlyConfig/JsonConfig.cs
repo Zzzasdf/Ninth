@@ -1,19 +1,19 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Ninth.Utility;
-using UnityEngine;
 using VContainer;
 
-namespace Ninth.Utility
+namespace Ninth
 {
     public class JsonConfig: BaseJsonConfig
     {
         [Inject]
         public JsonConfig(IPathProxy pathProxy)
         {
-            commonSubscribe = new CommonSubscribe<Enum, string?>
+            genericsSubscribe = new GenericsSubscribe<IJson, string>();
+            
+            enumTypeSubscribe = new EnumTypeSubscribe<string>();
+            
+            commonSubscribe = new CommonSubscribe<Enum, string>
             {
                 [VERSION_PATH.StreamingAssets] = pathProxy.Get(VERSION_PATH.StreamingAssets),
                 [VERSION_PATH.PersistentData] = pathProxy.Get(VERSION_PATH.PersistentData),

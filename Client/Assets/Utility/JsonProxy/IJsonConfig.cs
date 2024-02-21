@@ -1,17 +1,17 @@
 using System;
-using System.Collections.ObjectModel;
 
 namespace Ninth.Utility
 {
+    // 需要转换成 Json 的类要继承 IJson
     public interface IJson
     {
-        
+    
     }
     
     public interface IJsonConfig
     {
-        string? Get<T>() where T : IJson;
-        string? GetEnum<T>() where T: Enum;
-        string? Get(Enum e);
+        GenericsSubscribe<IJson, string> GenericsSubscribe { get; }
+        EnumTypeSubscribe<string> EnumTypeSubscribe { get; }
+        CommonSubscribe<Enum, string> CommonSubscribe { get; }
     }
 }

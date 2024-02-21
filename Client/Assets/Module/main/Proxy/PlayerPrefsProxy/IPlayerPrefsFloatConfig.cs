@@ -12,7 +12,6 @@ namespace Ninth
     
     public interface IPlayerPrefsFloatConfig
     {
-        float? Get(PLAYERPREFS_FLOAT playerprefsFloat);
-        bool ContainsKey(PLAYERPREFS_FLOAT playerprefsFloat);
+        CommonSubscribe<PLAYERPREFS_FLOAT, float> CommonSubscribe { get; }
     }
 }

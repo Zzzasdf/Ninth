@@ -7,11 +7,13 @@ namespace Ninth
 {
     public class PlayerSettingsConfig: CommonSubscribe<PLAY_SETTINGS, string?>, IPlayerSettingsConfig
     {
-        private readonly CommonSubscribe<PLAY_SETTINGS, string> playSettingSubscribe;
+        private readonly CommonSubscribe<PLAY_SETTINGS, string> commonSubscribe;
+        CommonSubscribe<PLAY_SETTINGS, string> IPlayerSettingsConfig.CommonSubscribe => commonSubscribe;
         
+        [Inject]
         public PlayerSettingsConfig()
         {
-            playSettingSubscribe = new CommonSubscribe<PLAY_SETTINGS, string>
+            commonSubscribe = new CommonSubscribe<PLAY_SETTINGS, string>
             {
                 [PLAY_SETTINGS.ProduceName] = Application.productName,
                 [PLAY_SETTINGS.PlatformName] = Application.platform switch
@@ -21,11 +23,6 @@ namespace Ninth
                     _ => "StandaloneWindows64"
                 },
             };
-        }
-        
-        string? IPlayerSettingsConfig.Get(PLAY_SETTINGS playSettings)
-        {
-            return Get(playSettings);
         }
     }
 }

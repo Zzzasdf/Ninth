@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Ninth.HotUpdate;
+using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
@@ -10,12 +11,10 @@ namespace Ninth.Editor.Window
 {
     public class WindowProxy: EditorWindow, IWindowProxy
     {
-        private static WindowProxy window;
-        
         [MenuItem("Tools/WindowCollect/Open")]
         private static void PanelOpen()
         {
-            window = GetWindow<WindowProxy>();
+            var window = GetWindow<WindowProxy>();
             // window.position = new Rect(200, 200, 800, 500);
             window.position = new Rect(2200, 200, 1000, 700);
             window.splitterPos = 150;
@@ -26,14 +25,26 @@ namespace Ninth.Editor.Window
         {
             GetWindow<WindowProxy>().Close();
         }
-        
-        private IObjectResolver resolver;
+
+        public static void SubscribeResolver(IObjectResolver resolver)
+        {
+            WindowProxy.resolver = resolver;
+        }
+        private static IObjectResolver resolver;
         private IWindowConfig windowConfig;
+        private IJsonProxy jsonProxy;
 
         private void OnEnable()
         {
-            resolver = EditorLifetimeScope.Resolver.Resolve<IObjectResolver>();
             windowConfig = resolver.Resolve<IWindowConfig>();
+            jsonProxy = resolver.Resolve<IJsonProxy>();
+        }
+
+        private void OnDisable()
+        {
+            // 保存 window 相关 json 
+            jsonProxy.ToJson<IWindowConfig, Tab>(windowConfig);
+            AssetDatabase.Refresh(); 
         }
 
         private void OnGUI()
@@ -54,7 +65,8 @@ namespace Ninth.Editor.Window
                 GUILayout.MinWidth(splitterPos));
 
             var tabs = windowConfig.Keys().ToArrayString();
-            windowConfig.CurrentTab = (Tab)GUILayout.SelectionGrid((int)(windowConfig.CurrentTab), tabs, 1);
+            var tab = (Tab)GUILayout.SelectionGrid((int)(windowConfig.GetEnumType<Tab>()), tabs, 1);
+            windowConfig.SetEnumType<Tab>((int)tab);
             GUILayout.EndScrollView();
         }
         
@@ -104,17 +116,10 @@ namespace Ninth.Editor.Window
         {
             // 页签内容
             contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-            var value = windowConfig.Get(windowConfig.CurrentTab);
-            if (value.HasValue)
-            {
-                resolver.Resolve(value.Value.type);
-            }
+            var tab = windowConfig.GetEnumType<Tab>();
+            var type = windowConfig.Get(tab);
+            (resolver.Resolve(type) as IStartable)?.Start();
             GUILayout.EndScrollView();
-        }
-
-        private void Saves()
-        {
-            // TODO 保存 window 相关 json
         }
     }
 }

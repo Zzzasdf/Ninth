@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace Ninth.Editor.Window
@@ -12,45 +10,51 @@ namespace Ninth.Editor.Window
     {
         [SerializeField] private Tab currentTab;
 
-        private readonly EnumTypeSubscribe<string?> enumTypeSubscribe;
-        private readonly CommonSubscribe<Tab, (Type type, string path)?> commonSubscribe;
+        private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
+        private readonly CommonSubscribe<Tab, Type> commonSubscribe;
 
         [Inject]
         public WindowConfig()
         {
-            enumTypeSubscribe = new EnumTypeSubscribe<string?>()
-                .Subscribe<Tab>("");
+            enumTypeSubscribe = new EnumTypeSubscribe<int>()
+                .Subscribe<Tab>((int)currentTab);
 
-            commonSubscribe = new CommonSubscribe<Tab, (Type type, string path)?>
+            commonSubscribe = new CommonSubscribe<Tab, Type>
             {
-                [Tab.Build] = (typeof(IWindowProxy), ""),
-                [Tab.Excel] = (typeof(IExcelProxy), ""),
-                [Tab.Scan] = (typeof(IScanProxy), ""),
+                [Tab.Build] = typeof(IBuildProxy),
+                [Tab.Excel] = typeof(IExcelProxy),
+                [Tab.Scan] = typeof(IScanProxy),
             };
         }
         
-        public Tab CurrentTab
+        // enumType
+        T IWindowConfig.GetEnumType<T>()
         {
-            get => currentTab;
-            set => currentTab = value;
+            return (T)Enum.ToObject(typeof(T),enumTypeSubscribe.Get<T>());
+        }
+        
+        void IWindowConfig.SetEnumType<T>(int value)
+        {
+            enumTypeSubscribe.Set<T>(value);
         }
 
-        string? IWindowConfig.GetEnumType<T>()
+        Dictionary<Type, int>.KeyCollection IWindowConfig.EnumTypeKeys()
         {
-            return enumTypeSubscribe.Get<T>();
+            return enumTypeSubscribe.Keys;
         }
-
-        (Type type, string path)? IWindowConfig.Get(Tab tab)
+        
+        // common
+        Type? IWindowConfig.Get(Tab tab)
         {
             return commonSubscribe.Get(tab);
         }
 
-        Dictionary<Type, string?>.KeyCollection IWindowConfig.EnumTypeKeys()
+        void IWindowConfig.Set(Tab key, Type value)
         {
-            return enumTypeSubscribe.Keys;
+            commonSubscribe.Set(key, value);
         }
 
-        Dictionary<Tab, (Type type, string path)?>.KeyCollection IWindowConfig.Keys()
+        Dictionary<Tab, Type?>.KeyCollection IWindowConfig.Keys()
         {
             return commonSubscribe.Keys;
         }

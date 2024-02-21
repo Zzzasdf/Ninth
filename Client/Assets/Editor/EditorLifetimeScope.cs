@@ -1,3 +1,4 @@
+using System;
 using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -7,12 +8,13 @@ namespace Ninth.Editor
 {
     public class EditorLifetimeScope : LifetimeScope
     {
-        public static IObjectResolver Resolver { get; private set; }
-        
         [InitializeOnLoadMethod]
         private static void Initialization()
         {
-            Resolver = new EditorLifetimeScope().Build(); 
+            var resolver = new EditorLifetimeScope().Build();
+            Action<IObjectResolver>? subscribeResolverFunc = null;
+            subscribeResolverFunc += Window.WindowProxy.SubscribeResolver;
+            subscribeResolverFunc.Invoke(resolver);
         }
         
         protected override void Configure(IContainerBuilder builder)
@@ -26,7 +28,7 @@ namespace Ninth.Editor
             
             builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();
             builder.Register<VersionPathConfig>(Lifetime.Singleton).As<IVersionPathConfig>();
-            builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>(); 
+            builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>();
             builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
             builder.Register<PathProxy>(Lifetime.Singleton).As<IPathProxy>();
             
@@ -36,13 +38,13 @@ namespace Ninth.Editor
             // editor
             builder.Register<Window.WindowConfig>(resolver =>
             {
-                var windowConfig = resolver.Resolve<IJsonProxy>().ToObject<Window.WindowConfig, Window.Tab>();
+                var windowConfig = resolver.Resolve<IJsonProxy>().ToObject<Window.WindowConfig, Window.Tab>(false);
                 return windowConfig ?? new Window.WindowConfig();
             },Lifetime.Singleton).As<Window.IWindowConfig>();
             builder.Register<Window.WindowProxy>(Lifetime.Singleton).As<Window.IWindowProxy>();
             
-            // builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
-            // builder.Register<Window.BuildProxy>(Lifetime.Singleton).As<Window.IBuildProxy>();
+            builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
+            builder.Register<Window.BuildProxy>(Lifetime.Singleton).As<Window.IBuildProxy>();
             //
             // builder.Register<Window.ExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
             // builder.Register<Window.ExcelProxy>(Lifetime.Singleton).As<Window.IExcelProxy>();

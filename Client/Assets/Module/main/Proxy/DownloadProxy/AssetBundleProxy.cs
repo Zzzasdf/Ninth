@@ -126,51 +126,33 @@ namespace Ninth
 
         private async UniTask<VersionConfig?> GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH versionPath, CancellationToken cancellationToken)
         {
-            var (srcPath, tempPathOrNull) = pathProxy.Get(versionPath);
-            if (tempPathOrNull == null)
-            {
-                $"无下载的本地目标路径 源路径：{srcPath}".Error();
-                return null;
-            }
-            var tempPath = tempPathOrNull.Value;
-            var dstPath = pathProxy.Get(tempPath);
-            var downloadResult = await downloadProxy.DownloadAsync(srcPath, dstPath, cancellationToken);
+            var (serverPath, cachePath) = pathProxy.Get(versionPath);
+            var dstPath = pathProxy.Get(cachePath);
+            var downloadResult = await downloadProxy.DownloadAsync(serverPath, dstPath, cancellationToken);
             if (!downloadResult)
             {
                 return null;
             }
-            return await jsonProxy.ToObjectAsync<VersionConfig>(tempPath, cancellationToken);
+            return await jsonProxy.ToObjectAsync<VersionConfig>(cachePath, cancellationToken);
         }
 
         private async UniTask<DownloadConfig?> GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH configPath, string version, CancellationToken cancellationToken)
         {
-            var (srcPath, tempPathOrNull) = pathProxy.Get(configPath, version);
-            if (tempPathOrNull == null)
-            {
-                $"无下载的本地目标路径 源路径：{srcPath}".Error();
-                return null;
-            }
-            var tempPath = tempPathOrNull.Value;
-            var dstPath = pathProxy.Get(tempPath);
-            var downloadResult = await downloadProxy.DownloadAsync(srcPath, dstPath, cancellationToken);
+            var (serverPath, cachePath) = pathProxy.Get(configPath, version);
+            var dstPath = pathProxy.Get(cachePath);
+            var downloadResult = await downloadProxy.DownloadAsync(serverPath, dstPath, cancellationToken);
             if (!downloadResult)
             {
                 return null;
             }
-            return await jsonProxy.ToObjectAsync<DownloadConfig>(tempPath, cancellationToken);
+            return await jsonProxy.ToObjectAsync<DownloadConfig>(cachePath, cancellationToken);
         }
 
         private async UniTask DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH configPath, string version, CancellationToken cancellationToken)
         {
-            var (srcPath, tempPathOrNull) = pathProxy.Get(configPath, version);
-            if (tempPathOrNull == null)
-            {
-                $"无下载的本地目标路径 源路径：{srcPath}".Error();
-                return;
-            }
-            var tempPath = tempPathOrNull.Value;
-            var dstPath = pathProxy.Get(tempPath);
-            await downloadProxy.DownloadAsync(srcPath, dstPath, cancellationToken);
+            var (serverPath, cachePath) = pathProxy.Get(configPath, version);
+            var dstPath = pathProxy.Get(cachePath);
+            await downloadProxy.DownloadAsync(serverPath, dstPath, cancellationToken);
         }
     }
 }

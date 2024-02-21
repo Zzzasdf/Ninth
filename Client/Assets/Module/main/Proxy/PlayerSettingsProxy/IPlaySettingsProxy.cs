@@ -6,6 +6,6 @@ namespace Ninth
 {
     public interface IPlaySettingsProxy
     {
-        string? Get(PLAY_SETTINGS playSettings);
+        string Get(PLAY_SETTINGS playSettings);
     }
 }

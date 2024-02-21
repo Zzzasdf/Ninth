@@ -15,10 +15,12 @@ namespace Ninth.Editor.Window
     
     public interface IWindowConfig: IJson
     {
-        Tab CurrentTab { get; set; }
-        string? GetEnumType<T>() where T: Enum;
-        (Type type, string path)? Get(Tab tab);
-        Dictionary<Type, string?>.KeyCollection EnumTypeKeys();
-        Dictionary<Tab, (Type type, string path)?>.KeyCollection Keys();
+        T GetEnumType<T>() where T: Enum;
+        void SetEnumType<T>(int value) where T : Enum;
+        Dictionary<Type, int>.KeyCollection EnumTypeKeys();
+        
+        Type? Get(Tab tab);
+        void Set(Tab key, Type value);
+        Dictionary<Tab, Type?>.KeyCollection Keys();
     }
 }

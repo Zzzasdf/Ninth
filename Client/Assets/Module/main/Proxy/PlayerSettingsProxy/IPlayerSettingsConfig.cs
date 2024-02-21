@@ -12,6 +12,6 @@ namespace Ninth
 
     public interface IPlayerSettingsConfig
     {
-        string? Get(PLAY_SETTINGS playSettings);
+        CommonSubscribe<PLAY_SETTINGS, string> CommonSubscribe { get; }
     }
 }

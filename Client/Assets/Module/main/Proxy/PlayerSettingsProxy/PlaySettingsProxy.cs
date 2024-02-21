@@ -1,3 +1,4 @@
+using UnityEngine;
 using VContainer;
 
 namespace Ninth
@@ -12,9 +13,14 @@ namespace Ninth
             this.playerSettingsConfig = playerSettingsConfig;
         }
         
-        string? IPlaySettingsProxy.Get(PLAY_SETTINGS playSettings)
+        string IPlaySettingsProxy.Get(PLAY_SETTINGS playSettings)
         {
-            return playerSettingsConfig.Get(playSettings);
+            var result = playerSettingsConfig.CommonSubscribe.Get(playSettings);
+            if (result == null)
+            {
+                return string.Empty;
+            }
+            return result;
         }
     }
 }

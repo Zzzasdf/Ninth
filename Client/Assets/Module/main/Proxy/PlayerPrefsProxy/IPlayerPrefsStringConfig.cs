@@ -12,7 +12,6 @@ namespace Ninth
     
     public interface IPlayerPrefsStringConfig
     {
-        string? Get(PLAYERPREFS_STRING playerprefsString);
-        bool ContainsKey(PLAYERPREFS_STRING playerprefsString);
+        CommonSubscribe<PLAYERPREFS_STRING, string> CommonSubscribe { get; }
     }
 }

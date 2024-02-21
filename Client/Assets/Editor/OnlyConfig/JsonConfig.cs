@@ -1,8 +1,8 @@
 using System;
 using Ninth.Editor.Window;
 using Ninth.Utility;
+using UnityEngine.Device;
 using VContainer;
-using NullReferenceException = System.NullReferenceException;
 
 namespace Ninth.Editor
 {
@@ -11,13 +11,17 @@ namespace Ninth.Editor
         [Inject]
         public JsonConfig()
         {
-            enumTypeSubscribe = new EnumTypeSubscribe<string?>()
-                .Subscribe<Tab>("Assets/Editor/Proxy/Window/WindowConfig.json");
+            genericsSubscribe = new GenericsSubscribe<IJson, string>();
+            
+            enumTypeSubscribe = new EnumTypeSubscribe<string>()
+                .Subscribe<Tab>(Application.dataPath + "/Editor/Proxy/Window/WindowConfig.json");
 
-            commonSubscribe = new CommonSubscribe<Enum, string?>()
-                .Subscribe(Tab.Build, "Assets/Editor/Proxy/Window/Build/BuildConfig.json")
-                .Subscribe(Tab.Excel, "Assets/Editor/Proxy/Window/Excel/ExcelConfig.json")
-                .Subscribe(Tab.Scan, "Assets/Editor/Proxy/Window/Scan/ScanConfig.json");
+            commonSubscribe = new CommonSubscribe<Enum, string>
+            {
+                [Tab.Build] = Application.dataPath + "/Editor/Proxy/Window/Build/BuildConfig.json",
+                [Tab.Excel] = Application.dataPath + "/Editor/Proxy/Window/Excel/ExcelConfig.json",
+                [Tab.Scan] = Application.dataPath + "/Editor/Proxy/Window/Scan/ScanConfig.json",
+            };
         }
     }
 }

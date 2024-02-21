@@ -11,20 +11,14 @@ namespace Ninth
         PersistentDataTemp,
     }
 
-    public interface a
-    {
-        
-    }
-
     public enum ASSET_SERVER_VERSION_PATH
     {
         AssetServer,
     }
     
-    
     public interface IVersionPathConfig
     {
-        string? Get(VERSION_PATH versionPath);
-        string? Get(ASSET_SERVER_VERSION_PATH assetServerVersionPath);
+        CommonSubscribe<VERSION_PATH, string> VersionPathSubscribe { get; }
+        CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> AssetServerVersionPathSubscribe { get; }
     }
 }

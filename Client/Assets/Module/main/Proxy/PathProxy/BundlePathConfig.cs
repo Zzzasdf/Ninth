@@ -9,31 +9,33 @@ namespace Ninth
 {
     public class BundlePathConfig : IBundlePathConfig
     {
-        private readonly CommonSubscribe<BUNDLE_PATH, Func<string?, string?>?> bundlePathSubscribe;
-        private readonly CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?> assetServerBundlePathSubscribe;
+        private readonly CommonSubscribe<BUNDLE_PATH, Func<string, string>> bundlePathSubscribe;
+        private readonly CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)> assetServerBundlePathSubscribe;
         
-        
+        CommonSubscribe<BUNDLE_PATH, Func<string, string>> IBundlePathConfig.BundlePathSubscribe => bundlePathSubscribe;
+        CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)> IBundlePathConfig.AssetServerBundlePathSubscribe => assetServerBundlePathSubscribe;
+
         [Inject]
         public BundlePathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             var url = assetConfig.Url();
 
-            var produceName = playerSettingsConfig.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.Get(PLAY_SETTINGS.PlatformName);
+            var produceName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.PlatformName);
             
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
-            var persistentData_produceName_platformName = $"{persistentDataPath}/{produceName}/{platformName}";
-            var url_produceName_platformName = $"{url}/{produceName}/{platformName}";
+            var persistentDataProduceNamePlatformName = $"{persistentDataPath}/{produceName}/{platformName}";
+            var urlProduceNamePlatformName = $"{url}/{produceName}/{platformName}";
             
             var bundleRootPathByLocalGroupByStreamingAssets  = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByLocalGroup()}";
             var bundleRootPathByRemoteGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByRemoteGroup()}";
             var bundleRootPathByDllGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByDllGroup()}";
 
-            var bundleRootPathByRemoteGroupByPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByRemoteGroup()}";
-            var bundleRootPathByRemoteGroupPersistentData = $"{persistentData_produceName_platformName}/{nameConfig.DirectoryNameByDllGroup()}";
+            var bundleRootPathByRemoteGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.DirectoryNameByRemoteGroup()}";
+            var bundleRootPathByRemoteGroupPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.DirectoryNameByDllGroup()}";
 
-            bundlePathSubscribe = new CommonSubscribe<BUNDLE_PATH, Func<string?, string?>?>
+            bundlePathSubscribe = new CommonSubscribe<BUNDLE_PATH, Func<string, string>>
             {
                 [BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets] = bundleName => $"{bundleRootPathByLocalGroupByStreamingAssets}/{bundleName}",
                 [BUNDLE_PATH.BundlePathByRemoteGroupByStreamingAssets] = bundleName => $"{bundleRootPathByRemoteGroupByStreamingAssets}/{bundleName}",
@@ -42,21 +44,11 @@ namespace Ninth
                 [BUNDLE_PATH.BundlePathByDllGroupByPersistentData] = bundleName => $"{bundleRootPathByRemoteGroupPersistentData}/{bundleName}",
             };
 
-            assetServerBundlePathSubscribe = new CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, Func<string?, string?, string?>?>
+            assetServerBundlePathSubscribe = new CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)>
             {
-                [ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup] = (version, bundleName) => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}/{bundleName}",
-                [ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup] = (version, bundleName) => $"{url_produceName_platformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{bundleName}",
+                [ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup] = ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData),
+                [ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup] = ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByDllGroupByPersistentData),
             };
-        }
-
-        string? IBundlePathConfig.Get(BUNDLE_PATH bundlePath, string? bundleName)
-        {
-            return bundlePathSubscribe.Get(bundlePath)?.Invoke(bundleName);
-        }
-
-        string? IBundlePathConfig.Get(ASSET_SERVER_BUNDLE_PATH bundlePath, string? version, string? bundleName)
-        {
-            return assetServerBundlePathSubscribe.Get(bundlePath)?.Invoke(version, bundleName);
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Ninth
                 btnSecond.gameObject.SetActive(false);
                 btnThird.gameObject.SetActive(true);
                 downloadBundleCancellationToken = new CancellationTokenSource();
-                downloadedCount.Value = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos) ?? 0 - skipCount;
+                downloadedCount.Value = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos);
                 var cancelled = await DownloadOperateAsync(downloadBundleCancellationToken.Token).SuppressCancellationThrow();
                 if (cancelled)
                 {
@@ -133,11 +133,6 @@ namespace Ninth
                 playerPrefsIntProxy.Set(PLAYERPREFS_INT.DownloadBundleStartPos, 0);
             }
             var startPos = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos);
-            if (startPos == null)
-            {
-                "无法获取到断点续传的起始位置".FrameError();
-                return false;
-            }
             var unDownloadSize = GetUnDownloadSize();
             txtMessage.text = $"发现新的版本, 需要下载的资源大小: {SizeToString(unDownloadSize)}";
             
@@ -157,7 +152,7 @@ namespace Ninth
             // 初始化
             this.version = version;
             bundleInfosGroup = downloadBundleInfos;
-            skipCount = startPos.Value; // 记录进入界面时断点的位置
+            skipCount = startPos; // 记录进入界面时断点的位置
             
             // 结果
             await UniTask.WaitUntil(() => completeStatus.HasValue, cancellationToken: cancellationToken);
@@ -239,7 +234,7 @@ namespace Ninth
         {
             var size = 0;
             var index = 0;
-            var startPos = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos) ?? 0;
+            var startPos = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos);
             for (var i = 0; i < bundleInfosGroup.Length; i++)
             {
                 var bundleInfos = bundleInfosGroup[i].bundleInfos;
@@ -293,15 +288,9 @@ namespace Ninth
         
         private async UniTask<bool> DownloadBundle(ASSET_SERVER_BUNDLE_PATH bundlePath, string version, string bundleName, CancellationToken cancellationToken)
         {
-            var (srcPath, tempPathOrNull) = pathProxy.Get(bundlePath, version, bundleName);
-            if (tempPathOrNull == null)
-            {
-                $"无下载的本地目标路径 源路径：{srcPath}".Error();
-                return false;
-            }
-            var tempPath = tempPathOrNull.Value;
-            var dstPath = pathProxy.Get(tempPath, bundleName);
-            return await downloadProxy.DownloadAsync(srcPath, dstPath, cancellationToken);
+            var (serverPath, cachePath) = pathProxy.Get(bundlePath, version, bundleName);
+            var dstPath = pathProxy.Get(cachePath, bundleName);
+            return await downloadProxy.DownloadAsync(serverPath, dstPath, cancellationToken);
         }
     }
 }

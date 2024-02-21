@@ -5,6 +5,6 @@ namespace Ninth
 {
     public interface IDownloadProxy
     {
-        UniTask<bool> DownloadAsync(string? srcPath, string? dstPath, CancellationToken cancellationToken = default);
+        UniTask<bool> DownloadAsync(string serverPath, string cachePath, CancellationToken cancellationToken = default);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,8 +28,7 @@ namespace Ninth
     
     public interface IConfigPathConfig
     {
-        string? Get(CONFIG_PATH configPath);
-
-        string? Get(ASSET_SERVER_CONFIG_PATH configPath, string version);
+        CommonSubscribe<CONFIG_PATH, string> ConfigPathSubscribe { get; }
+        CommonSubscribe<ASSET_SERVER_CONFIG_PATH, (Func<string, string> serverPath, CONFIG_PATH cachePath)> AssetServerConfigPathSubscribe { get; }
     }
 }
