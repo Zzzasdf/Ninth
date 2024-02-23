@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public interface IBuildProxy: IStartable
     {

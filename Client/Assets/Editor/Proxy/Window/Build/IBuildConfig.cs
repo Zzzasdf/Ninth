@@ -4,7 +4,7 @@ using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public interface IBuildConfig : IJson
     {

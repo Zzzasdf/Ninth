@@ -25,75 +25,75 @@ namespace Ninth.Utility
         // Generics
         async UniTask<T?> IJsonProxy.ToObjectAsync<T>(CancellationToken cancellationToken, bool unExistLog) where T: class
         {
-            var path = jsonConfig.GenericsSubscribe?.Get<T>();
+            var path = jsonConfig.GenericsSubscribe.Get<T>();
             return await ToObjectAsync<T>(path, cancellationToken, unExistLog);
         }
 
         T? IJsonProxy.ToObject<T>(bool unExistLog) where T : class
         {
-            var path = jsonConfig.GenericsSubscribe?.Get<T>();
+            var path = jsonConfig.GenericsSubscribe.Get<T>();
             return ToObject<T>(path, unExistLog);
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T>(T obj, CancellationToken cancellationToken) where T: class
         {
-            var path = jsonConfig.GenericsSubscribe?.Get<T>();
+            var path = jsonConfig.GenericsSubscribe.Get<T>();
             await ToJsonAsync(obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T>(T obj) where T : class
         {
-            var path = jsonConfig.GenericsSubscribe?.Get<T>();
+            var path = jsonConfig.GenericsSubscribe.Get<T>();
             ToJson(obj, path);
         }
         
         // EnumType
         async UniTask<T?> IJsonProxy.ToObjectAsync<T, TEnum>(CancellationToken cancellationToken, bool unExistLog) where T : class
         {
-            var path = jsonConfig.EnumTypeSubscribe?.Get<TEnum>();
+            var path = jsonConfig.EnumTypeSubscribe.Get<TEnum>();
             return await ToObjectAsync<T>(path, cancellationToken, unExistLog);
         }
 
         T? IJsonProxy.ToObject<T, TEnum>(bool unExistLog) where T : class
         {
-            var path = jsonConfig.EnumTypeSubscribe?.Get<TEnum>();
+            var path = jsonConfig.EnumTypeSubscribe.Get<TEnum>();
             return ToObject<T>(path, unExistLog);
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T, TEnum>(T obj, CancellationToken cancellationToken) where T : class
         {
-            var path = jsonConfig.EnumTypeSubscribe?.Get<TEnum>();
+            var path = jsonConfig.EnumTypeSubscribe.Get<TEnum>();
             await ToJsonAsync(obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T, TEnum>(T obj) where T : class
         {
-            var path = jsonConfig.EnumTypeSubscribe?.Get<TEnum>();
+            var path = jsonConfig.EnumTypeSubscribe.Get<TEnum>();
             ToJson(obj, path);
         }
 
         // Enum
         async UniTask<T?> IJsonProxy.ToObjectAsync<T>(Enum e, CancellationToken cancellationToken, bool unExistLog) where T: class
         {
-            var path = jsonConfig.CommonSubscribe?.Get(e);
+            var path = jsonConfig.CommonSubscribe.Get(e);
             return await ToObjectAsync<T>(path, cancellationToken, unExistLog);
         }
 
         T? IJsonProxy.ToObject<T>(Enum e, bool unExistLog) where T : class
         {
-            var path = jsonConfig.CommonSubscribe?.Get(e);
+            var path = jsonConfig.CommonSubscribe.Get(e);
             return ToObject<T>(path, unExistLog);
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T>(T obj, Enum e, CancellationToken cancellationToken) where T: class
         {
-            var path = jsonConfig.CommonSubscribe?.Get(e);
+            var path = jsonConfig.CommonSubscribe.Get(e);
             await ToJsonAsync(obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T>(T obj, Enum e) where T : class
         {
-            var path = jsonConfig.CommonSubscribe?.Get(e);
+            var path = jsonConfig.CommonSubscribe.Get(e);
             ToJson(obj, path);
         }
         

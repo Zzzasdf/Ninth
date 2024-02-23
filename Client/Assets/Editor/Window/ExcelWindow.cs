@@ -1,6 +1,6 @@
 namespace Ninth.Editor
 {
-    public interface IBuildSO
+    public class ExcelWindow
     {
         
     }

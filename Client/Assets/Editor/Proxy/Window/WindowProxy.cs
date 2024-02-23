@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ninth.HotUpdate;
 using Ninth.Utility;
@@ -7,119 +8,53 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
-    public class WindowProxy: EditorWindow, IWindowProxy
+    public class WindowProxy: IWindowProxy
     {
-        [MenuItem("Tools/WindowCollect/Open")]
-        private static void PanelOpen()
+        private readonly IWindowConfig windowConfig;
+        private readonly IJsonProxy jsonProxy;
+        
+        [Inject]
+        public WindowProxy(IWindowConfig windowConfig, IJsonProxy jsonProxy)
         {
-            var window = GetWindow<WindowProxy>();
-            // window.position = new Rect(200, 200, 800, 500);
-            window.position = new Rect(2200, 200, 1000, 700);
-            window.splitterPos = 150;
+            this.windowConfig = windowConfig;
+            this.jsonProxy = jsonProxy;
+        }
+        
+        T IWindowProxy.GetEnumType<T>()
+        {
+            return (T)Enum.ToObject(typeof(T),windowConfig.EnumTypeSubscribe.Get<T>());
         }
 
-        [MenuItem("Tools/WindowCollect/Close")]
-        private static void PanelClose()
+        void IWindowProxy.SetEnumType<T>(int value)
         {
-            GetWindow<WindowProxy>().Close();
+            windowConfig.EnumTypeSubscribe.Set<T>(value);
         }
 
-        public static void SubscribeResolver(IObjectResolver resolver)
+        Dictionary<Type, ReactiveProperty<int>>.KeyCollection IWindowProxy.EnumTypeKeys()
         {
-            WindowProxy.resolver = resolver;
-        }
-        private static IObjectResolver resolver;
-        private IWindowConfig windowConfig;
-        private IJsonProxy jsonProxy;
-
-        private void OnEnable()
-        {
-            windowConfig = resolver.Resolve<IWindowConfig>();
-            jsonProxy = resolver.Resolve<IJsonProxy>();
+            return windowConfig.EnumTypeSubscribe.Keys();
         }
 
-        private void OnDisable()
+        Type IWindowProxy.Get(Tab key)
         {
-            // 保存 window 相关 json 
+            return windowConfig.CommonSubscribe.Get(key);
+        }
+
+        void IWindowProxy.Set(Tab key, Type value)
+        {
+            windowConfig.CommonSubscribe.Set(key, value);
+        }
+
+        Dictionary<Tab, ReactiveProperty<Type>>.KeyCollection IWindowProxy.Keys()
+        {
+            return windowConfig.CommonSubscribe.Keys();
+        }
+
+        void IWindowProxy.ConfigToJson()
+        {
             jsonProxy.ToJson<IWindowConfig, Tab>(windowConfig);
-            AssetDatabase.Refresh(); 
-        }
-
-        private void OnGUI()
-        {
-            using var horizontalScope = new GUILayout.HorizontalScope();
-            RenderTags();
-            RenderSplitter();
-            RenderContent();
-        }
-        
-        private float splitterPos;
-        private Vector2 tabScrollView;
-        private void RenderTags()
-        {
-             tabScrollView = GUILayout.BeginScrollView(tabScrollView,
-                GUILayout.Width(splitterPos),
-                GUILayout.MaxWidth(splitterPos),
-                GUILayout.MinWidth(splitterPos));
-
-            var tabs = windowConfig.Keys().ToArrayString();
-            var tab = (Tab)GUILayout.SelectionGrid((int)(windowConfig.GetEnumType<Tab>()), tabs, 1);
-            windowConfig.SetEnumType<Tab>((int)tab);
-            GUILayout.EndScrollView();
-        }
-        
-        private readonly float splitterWidth = 5;
-        private Rect splitterRect;
-        private bool dragging;
-        private void RenderSplitter()
-        {
-            // 分割线
-            GUILayout.Box("",
-                GUILayout.Width(splitterWidth),
-                GUILayout.MaxWidth(splitterWidth),
-                GUILayout.MinWidth(splitterWidth),
-                GUILayout.ExpandHeight(true));
-            splitterRect = GUILayoutUtility.GetLastRect();
-            // 分割线事件
-            if (Event.current == null)
-            {
-                return;
-            }
-            switch (Event.current.rawType)
-            {
-                case EventType.MouseDown:
-                    if (splitterRect.Contains(Event.current.mousePosition))
-                    {
-                        dragging = true;
-                    }
-                    break;
-                case EventType.MouseDrag:
-                    if (dragging)
-                    {
-                        splitterPos += Event.current.delta.x;
-                        Repaint();
-                    }
-                    break;
-                case EventType.MouseUp:
-                    if (dragging)
-                    {
-                        dragging = false;
-                    }
-                    break;
-            }
-        }
-
-        private Vector2 contentScrollView;
-        private void RenderContent()
-        {
-            // 页签内容
-            contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-            var tab = windowConfig.GetEnumType<Tab>();
-            var type = windowConfig.Get(tab);
-            (resolver.Resolve(type) as IStartable)?.Start();
-            GUILayout.EndScrollView();
         }
     }
 }

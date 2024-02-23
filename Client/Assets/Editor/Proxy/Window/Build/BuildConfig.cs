@@ -1,13 +1,14 @@
 using System;
+using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     [Serializable]
-    public class BuildConfig: IBuildConfig
+    public class BuildConfig : IBuildConfig
     {
         [SerializeField] private BuildSettingsMode buildSettingsType;
         [SerializeField] private BuildBundleMode buildBundleMode;
@@ -15,15 +16,15 @@ namespace Ninth.Editor.Window
         [SerializeField] private ActiveTargetMode activeTargetMode;
         [SerializeField] private BuildTarget buildTarget;
         [SerializeField] private BuildTargetGroup buildTargetGroup;
-        
+
         [SerializeField] private string buildPlayersDirectoryRoot;
         [SerializeField] private string buildBundlesDirectoryRoot;
         [SerializeField] private string displayVersion;
-        
+
         [SerializeField] private int frameVersion;
         [SerializeField] private int hotUpdateVersion;
         [SerializeField] private int iterateVersion;
-        
+
         private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
         private readonly CommonSubscribe<BuildDirectoryRoot, string> commonStringSubscribe;
         private readonly CommonSubscribe<BuildVersion, int> commonIntSubscribe;
@@ -31,26 +32,28 @@ namespace Ninth.Editor.Window
         [Inject]
         public BuildConfig()
         {
-            enumTypeSubscribe = new EnumTypeSubscribe<int>()
-                .Subscribe<BuildSettingsMode>((int)buildSettingsType)
-                .Subscribe<BuildBundleMode>((int)buildBundleMode)
-                .Subscribe<BuildExportCopyFolderMode>((int)buildExportDirectoryType)
-                .Subscribe<ActiveTargetMode>((int)activeTargetMode)
-                .Subscribe<BuildTarget>((int)buildTarget)
-                .Subscribe<BuildTargetGroup>((int)buildTargetGroup);
-
-            commonStringSubscribe = new CommonSubscribe<BuildDirectoryRoot, string>
             {
-                [BuildDirectoryRoot.Players] = buildPlayersDirectoryRoot,
-                [BuildDirectoryRoot.Bundles] = buildBundlesDirectoryRoot,
-            };
+                var build = enumTypeSubscribe = new EnumTypeSubscribe<int>();
+                build.Subscribe<BuildSettingsMode>((int)buildSettingsType);
+                build.Subscribe<BuildBundleMode>((int)buildBundleMode);
+                build.Subscribe<BuildExportCopyFolderMode>((int)buildExportDirectoryType);
+                build.Subscribe<ActiveTargetMode>((int)activeTargetMode);
+                build.Subscribe<BuildTarget>((int)buildTarget);
+                build.Subscribe<BuildTargetGroup>((int)buildTargetGroup);
+            }
 
-            commonIntSubscribe = new CommonSubscribe<BuildVersion, int>
             {
-                [BuildVersion.Frame] = frameVersion,
-                [BuildVersion.HotUpdate] = hotUpdateVersion,
-                [BuildVersion.Iterate] = iterateVersion,
-            };
+                var build = commonStringSubscribe = new CommonSubscribe<BuildDirectoryRoot, string>();
+                build.Subscribe(BuildDirectoryRoot.Players, buildPlayersDirectoryRoot);
+                build.Subscribe(BuildDirectoryRoot.Bundles, buildBundlesDirectoryRoot);
+            }
+
+            {
+                var build = commonIntSubscribe = new CommonSubscribe<BuildVersion, int>();
+                build.Subscribe(BuildVersion.Frame, frameVersion);
+                build.Subscribe(BuildVersion.HotUpdate, hotUpdateVersion);
+                build.Subscribe(BuildVersion.Iterate, iterateVersion);
+            }
         }
     }
 
@@ -67,7 +70,7 @@ namespace Ninth.Editor.Window
         HotUpdate,
         Iterate
     }
-    
+
     public enum BuildSettingsMode
     {
         Bundle,
@@ -85,7 +88,7 @@ namespace Ninth.Editor.Window
         StreamingAssets,
         Remote
     }
-    
+
     public enum ActiveTargetMode
     {
         ActiveTarget,

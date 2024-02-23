@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public interface IExcelProxy
     {

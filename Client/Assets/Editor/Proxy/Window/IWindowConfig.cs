@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using Ninth.Utility;
 using UnityEngine;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public enum Tab
     {
@@ -15,12 +15,7 @@ namespace Ninth.Editor.Window
     
     public interface IWindowConfig: IJson
     {
-        T GetEnumType<T>() where T: Enum;
-        void SetEnumType<T>(int value) where T : Enum;
-        Dictionary<Type, int>.KeyCollection EnumTypeKeys();
-        
-        Type? Get(Tab tab);
-        void Set(Tab key, Type value);
-        Dictionary<Tab, Type?>.KeyCollection Keys();
+        EnumTypeSubscribe<int> EnumTypeSubscribe { get; }
+        CommonSubscribe<Tab, Type> CommonSubscribe { get; }
     }
 }

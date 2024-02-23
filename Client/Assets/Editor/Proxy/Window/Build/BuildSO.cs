@@ -5,7 +5,7 @@ using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Ninth.Editor.Window.Build
+namespace Ninth.Editor
 {
     [CreateAssetMenu(fileName = "BuildSO", menuName = "EditorWindowSO/BuildSO")]
     public class BuildSO : ScriptableObject, IBuildSO

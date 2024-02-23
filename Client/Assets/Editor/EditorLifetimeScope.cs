@@ -13,7 +13,7 @@ namespace Ninth.Editor
         {
             var resolver = new EditorLifetimeScope().Build();
             Action<IObjectResolver>? subscribeResolverFunc = null;
-            subscribeResolverFunc += Window.WindowProxy.SubscribeResolver;
+            subscribeResolverFunc += Window.WindowCollect.SubscribeResolver;
             subscribeResolverFunc.Invoke(resolver);
         }
         
@@ -36,21 +36,21 @@ namespace Ninth.Editor
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
              
             // editor
-            builder.Register<Window.WindowConfig>(resolver =>
+            builder.Register<WindowConfig>(resolver =>
             {
-                var windowConfig = resolver.Resolve<IJsonProxy>().ToObject<Window.WindowConfig, Window.Tab>(false);
-                return windowConfig ?? new Window.WindowConfig();
-            },Lifetime.Singleton).As<Window.IWindowConfig>();
-            builder.Register<Window.WindowProxy>(Lifetime.Singleton).As<Window.IWindowProxy>();
+                var windowConfig = resolver.Resolve<IJsonProxy>().ToObject<WindowConfig, Tab>(false);
+                return windowConfig ?? new WindowConfig();
+            },Lifetime.Singleton).As<IWindowConfig>();
+            builder.Register<WindowProxy>(Lifetime.Singleton).As<IWindowProxy>();
             
-            builder.Register<Window.BuildConfig>(Lifetime.Singleton).As<Window.IBuildConfig>();
-            builder.Register<Window.BuildProxy>(Lifetime.Singleton).As<Window.IBuildProxy>();
-            //
-            // builder.Register<Window.ExcelConfig>(Lifetime.Singleton).As<Window.IExcelConfig>();
-            // builder.Register<Window.ExcelProxy>(Lifetime.Singleton).As<Window.IExcelProxy>();
-            //
-            // builder.Register<Window.ScanConfig>(Lifetime.Singleton).As<Window.IScanConfig>();
-            // builder.Register<Window.ScanProxy>(Lifetime.Singleton).As<Window.IScanProxy>();
+            builder.Register<BuildConfig>(Lifetime.Singleton).As<IBuildConfig>();
+            builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
+            
+            builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
+            builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();
+            
+            builder.Register<ScanConfig>(Lifetime.Singleton).As<IScanConfig>();
+            builder.Register<ScanProxy>(Lifetime.Singleton).As<IScanProxy>();
             //
             // builder.Register<Window.OtherConfig>(Lifetime.Singleton).As<Window.IOtherConfig>();
             // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();

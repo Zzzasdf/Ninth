@@ -23,18 +23,18 @@ namespace Ninth.HotUpdate
 
         async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
         {
-            var tuple = viewConfig.Get<T>();
-            var rectHierarchy = await GetHierarchy(tuple?.hierarchy);
-            var obj = await assetProxy.CloneAsync(tuple?.path, rectHierarchy, cancellationToken);
+            var tuple = viewConfig.GenericsSubscribe.Get<T>();
+            var rectHierarchy = await GetHierarchy(tuple.hierarcy);
+            var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
             if (obj == null)
             {
-                $"无法实例化, 预制体路径: {tuple?.path}".FrameError();
+                $"无法实例化, 预制体路径: {tuple.path}".FrameError();
                 return null;
             }
             var component = obj.GetComponent<T>();
             if (component == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{tuple?.path}".FrameError();
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{tuple.path}".FrameError();
                 return null;
             }
             return component;
@@ -42,18 +42,18 @@ namespace Ninth.HotUpdate
         
         async UniTask<T?> IViewProxy.Get<T>(VIEW view, CancellationToken cancellationToken) where T : class
         {
-            var tuple = viewConfig.Get(view);
-            var rectHierarchy = await GetHierarchy(tuple?.hierarchy);
-            var obj = await assetProxy.CloneAsync(tuple?.path, rectHierarchy, cancellationToken);
+            var tuple = viewConfig.CommonSubscribe.Get(view);
+            var rectHierarchy = await GetHierarchy(tuple.hierarchy);
+            var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
             if (obj == null)
             {
-                $"无法实例化, 预制体路径: {tuple?.path}".FrameError();
+                $"无法实例化, 预制体路径: {tuple.path}".FrameError();
                 return null;
             }
             var component = obj.GetComponent<T>();
             if (component == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{tuple?.path}".FrameError();
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{tuple.path}".FrameError();
                 return null;
             }
             return component;
@@ -66,7 +66,7 @@ namespace Ninth.HotUpdate
                 $"{nameof(VIEW_HIERARCY)} 为空".FrameError();
                 return null;
             }
-            var viewLayoutPath = viewConfig.ViewLayoutPath();
+            var viewLayoutPath = viewConfig.EnumTypeSubscribe.Get<VIEW_HIERARCY>();
             if (viewLayout == null)
             {
                 var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath);

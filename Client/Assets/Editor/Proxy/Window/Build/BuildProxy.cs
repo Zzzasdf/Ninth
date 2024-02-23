@@ -10,7 +10,7 @@ using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public class BuildProxy: IBuildProxy
     {

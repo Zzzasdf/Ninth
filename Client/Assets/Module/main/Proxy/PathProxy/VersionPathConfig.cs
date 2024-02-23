@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 
 namespace Ninth
 {
-    public class VersionPathConfig: IVersionPathConfig
+    public class VersionPathConfig : IVersionPathConfig
     {
         private readonly CommonSubscribe<VERSION_PATH, string> versionPathSubscribe;
         private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> assetServerVersionPathSubscribe;
-        
+
         CommonSubscribe<VERSION_PATH, string> IVersionPathConfig.VersionPathSubscribe => versionPathSubscribe;
         CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> IVersionPathConfig.AssetServerVersionPathSubscribe => assetServerVersionPathSubscribe;
 
@@ -33,17 +34,17 @@ namespace Ninth
 
             var assetServer = $"{urlProduceNamePlatformName}/{nameConfig.FileNameByVersionConfig()}";
 
-            versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string>
             {
-                [VERSION_PATH.StreamingAssets] = streamingAssets,
-                [VERSION_PATH.PersistentData] = persistentData,
-                [VERSION_PATH.PersistentDataTemp] = persistentDataTemp,
-            };
+                var build = versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string>();
+                build.Subscribe(VERSION_PATH.StreamingAssets, streamingAssets);
+                build.Subscribe(VERSION_PATH.PersistentData, persistentData);
+                build.Subscribe(VERSION_PATH.PersistentDataTemp, persistentDataTemp);
+            }
 
-            assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)>
             {
-                [ASSET_SERVER_VERSION_PATH.AssetServer] = (assetServer, VERSION_PATH.PersistentDataTemp),
-            };
+                var build = assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)>();
+                build.Subscribe(ASSET_SERVER_VERSION_PATH.AssetServer, (assetServer, VERSION_PATH.PersistentDataTemp));
+            }
         }
     }
 }

@@ -2,61 +2,35 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
+using LitJson;
+using Ninth.Utility;
 
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
-    [Serializable]
-    public class WindowConfig: IWindowConfig
+    public class WindowConfig : IWindowConfig
     {
-        [SerializeField] private Tab currentTab;
+        public Tab CurrentTab { get; private set; }
 
         private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
         private readonly CommonSubscribe<Tab, Type> commonSubscribe;
 
+        EnumTypeSubscribe<int> IWindowConfig.EnumTypeSubscribe => enumTypeSubscribe;
+        CommonSubscribe<Tab, Type> IWindowConfig.CommonSubscribe => commonSubscribe;
+
         [Inject]
         public WindowConfig()
         {
-            enumTypeSubscribe = new EnumTypeSubscribe<int>()
-                .Subscribe<Tab>((int)currentTab);
-
-            commonSubscribe = new CommonSubscribe<Tab, Type>
             {
-                [Tab.Build] = typeof(IBuildProxy),
-                [Tab.Excel] = typeof(IExcelProxy),
-                [Tab.Scan] = typeof(IScanProxy),
-            };
-        }
-        
-        // enumType
-        T IWindowConfig.GetEnumType<T>()
-        {
-            return (T)Enum.ToObject(typeof(T),enumTypeSubscribe.Get<T>());
-        }
-        
-        void IWindowConfig.SetEnumType<T>(int value)
-        {
-            enumTypeSubscribe.Set<T>(value);
-        }
+                var build = enumTypeSubscribe = new EnumTypeSubscribe<int>();
+                build.Subscribe<Tab>((int)CurrentTab).AsSetEvent(value => CurrentTab = (Tab)value);
+            }
 
-        Dictionary<Type, int>.KeyCollection IWindowConfig.EnumTypeKeys()
-        {
-            return enumTypeSubscribe.Keys;
-        }
-        
-        // common
-        Type? IWindowConfig.Get(Tab tab)
-        {
-            return commonSubscribe.Get(tab);
-        }
-
-        void IWindowConfig.Set(Tab key, Type value)
-        {
-            commonSubscribe.Set(key, value);
-        }
-
-        Dictionary<Tab, Type?>.KeyCollection IWindowConfig.Keys()
-        {
-            return commonSubscribe.Keys;
+            {
+                var build = commonSubscribe = new CommonSubscribe<Tab, Type>();
+                build.Subscribe(Tab.Build, typeof(IBuildProxy));
+                build.Subscribe(Tab.Excel, typeof(IExcelProxy));
+                build.Subscribe(Tab.Scan, typeof(IScanProxy));
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Ninth.Editor.Window
+namespace Ninth.Editor
 {
     public class ScanConfig: IScanConfig
     {

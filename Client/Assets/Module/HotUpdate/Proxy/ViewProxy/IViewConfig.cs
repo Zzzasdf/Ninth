@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using Ninth.Utility;
 
 namespace Ninth.HotUpdate
 {
@@ -19,8 +20,8 @@ namespace Ninth.HotUpdate
 
     public interface IViewConfig
     {
-        string ViewLayoutPath();
-        (string? path, VIEW_HIERARCY? hierarchy)? Get<T>() where T: class, IView;
-        (string? path, VIEW_HIERARCY? hierarchy)? Get(VIEW view);
+        EnumTypeSubscribe<string> EnumTypeSubscribe { get; }
+        GenericsSubscribe<IView, (string path, VIEW_HIERARCY hierarcy)> GenericsSubscribe { get; }
+        CommonSubscribe<VIEW, (string path, VIEW_HIERARCY hierarchy)> CommonSubscribe { get; }
     }
 }
