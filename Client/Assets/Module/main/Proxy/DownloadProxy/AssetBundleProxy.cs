@@ -111,14 +111,14 @@ namespace Ninth
             await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup, versionConfigByServer.Version, cancellation);
             
             // 保存临时 versionConfig, DownloadConfig
-            jsonProxy.ToJsonAsync(versionConfigByServer, VERSION_PATH.PersistentData, cancellation);
+            jsonProxy.ToJsonAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation);
             if (downloadConfigByServerRemote != null)
             {
-                jsonProxy.ToJsonAsync(downloadConfigByServerRemote, CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation);
+                jsonProxy.ToJsonAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation);
             }
             if (downloadConfigByServerDll != null)
             {
-                jsonProxy.ToJsonAsync(downloadConfigByServerDll, CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation);
+                jsonProxy.ToJsonAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation);
             }
             // 启动
             objResolver.Resolve<LoadDll>();

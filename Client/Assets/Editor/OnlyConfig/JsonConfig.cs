@@ -25,14 +25,14 @@ namespace Ninth.Editor
 
             {
                 var build = enumTypeSubscribe = new EnumTypeSubscribe<string>();
-                build.Subscribe<Tab>(Application.dataPath + "/Editor/Proxy/Window/WindowConfig.json");
+                build.Subscribe<Tab>($"{Application.dataPath}/Editor/Proxy/Window/WindowJson.json");
             }
 
             {
                 var build = commonSubscribe = new CommonSubscribe<Enum, string>();
-                build.Subscribe(Tab.Build, Application.dataPath + "/Editor/Proxy/Window/Build/BuildConfig.json");
-                build.Subscribe(Tab.Excel, Application.dataPath + "/Editor/Proxy/Window/Excel/ExcelConfig.json");
-                build.Subscribe(Tab.Scan, Application.dataPath + "/Editor/Proxy/Window/Scan/ScanConfig.json");
+                build.Subscribe(Tab.Build, $"{Application.dataPath}/Editor/Proxy/Window/Build/BuildJson.json");
+                build.Subscribe(Tab.Excel, $"{Application.dataPath}/Editor/Proxy/Window/Excel/ExcelJson.json");
+                build.Subscribe(Tab.Scan, $"{Application.dataPath}/Editor/Proxy/Window/Scan/ScanJson.json");
             }
         }
     }

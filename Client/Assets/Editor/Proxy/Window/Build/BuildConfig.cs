@@ -1,97 +1,45 @@
-using System;
 using Ninth.Utility;
 using UnityEditor;
-using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace Ninth.Editor
 {
-    [Serializable]
     public class BuildConfig : IBuildConfig
     {
-        [SerializeField] private BuildSettingsMode buildSettingsType;
-        [SerializeField] private BuildBundleMode buildBundleMode;
-        [SerializeField] private BuildExportCopyFolderMode buildExportDirectoryType;
-        [SerializeField] private ActiveTargetMode activeTargetMode;
-        [SerializeField] private BuildTarget buildTarget;
-        [SerializeField] private BuildTargetGroup buildTargetGroup;
+        private readonly EnumTypeSubscribe<int> intEnumTypeSubscribe;
+        private readonly CommonSubscribe<BuildDirectoryRoot, string> stringCommonSubscribe;
+        private readonly CommonSubscribe<BuildVersion, int> intCommonSubscribe;
 
-        [SerializeField] private string buildPlayersDirectoryRoot;
-        [SerializeField] private string buildBundlesDirectoryRoot;
-        [SerializeField] private string displayVersion;
-
-        [SerializeField] private int frameVersion;
-        [SerializeField] private int hotUpdateVersion;
-        [SerializeField] private int iterateVersion;
-
-        private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
-        private readonly CommonSubscribe<BuildDirectoryRoot, string> commonStringSubscribe;
-        private readonly CommonSubscribe<BuildVersion, int> commonIntSubscribe;
-
+        EnumTypeSubscribe<int> IBuildConfig.IntEnumTypeSubscribe => intEnumTypeSubscribe;
+        CommonSubscribe<BuildDirectoryRoot, string> IBuildConfig.StringCommonSubscribe => stringCommonSubscribe;
+        CommonSubscribe<BuildVersion, int> IBuildConfig.IntCommonSubscribe => intCommonSubscribe;
+        
         [Inject]
-        public BuildConfig()
+        public BuildConfig(BuildJson buildJson)
         {
             {
-                var build = enumTypeSubscribe = new EnumTypeSubscribe<int>();
-                build.Subscribe<BuildSettingsMode>((int)buildSettingsType);
-                build.Subscribe<BuildBundleMode>((int)buildBundleMode);
-                build.Subscribe<BuildExportCopyFolderMode>((int)buildExportDirectoryType);
-                build.Subscribe<ActiveTargetMode>((int)activeTargetMode);
-                build.Subscribe<BuildTarget>((int)buildTarget);
-                build.Subscribe<BuildTargetGroup>((int)buildTargetGroup);
+                var build = intEnumTypeSubscribe = new EnumTypeSubscribe<int>();
+                build.Subscribe<BuildSettingsMode>((int)buildJson.BuildSettingsType).AsSetEvent(value => buildJson.BuildSettingsType = (BuildSettingsMode)value);
+                build.Subscribe<BuildBundleMode>((int)buildJson.BuildBundleMode).AsSetEvent(value => buildJson.BuildBundleMode = (BuildBundleMode)value);
+                build.Subscribe<BuildExportCopyFolderMode>((int)buildJson.BuildExportDirectoryType).AsSetEvent(value => buildJson.BuildExportDirectoryType = (BuildExportCopyFolderMode)value);
+                build.Subscribe<ActiveTargetMode>((int)buildJson.ActiveTargetMode).AsSetEvent(value => buildJson.ActiveTargetMode = (ActiveTargetMode)value);
+                build.Subscribe<BuildTarget>((int)buildJson.BuildTarget).AsSetEvent(value => buildJson.BuildTarget = (BuildTarget)value);
+                build.Subscribe<BuildTargetGroup>((int)buildJson.BuildTargetGroup).AsSetEvent(value => buildJson.BuildTargetGroup = (BuildTargetGroup)value);
             }
 
             {
-                var build = commonStringSubscribe = new CommonSubscribe<BuildDirectoryRoot, string>();
-                build.Subscribe(BuildDirectoryRoot.Players, buildPlayersDirectoryRoot);
-                build.Subscribe(BuildDirectoryRoot.Bundles, buildBundlesDirectoryRoot);
+                var build = stringCommonSubscribe = new CommonSubscribe<BuildDirectoryRoot, string>();
+                build.Subscribe(BuildDirectoryRoot.Players, buildJson.BuildPlayersDirectoryRoot).AsSetEvent(value => buildJson.BuildPlayersDirectoryRoot = value);
+                build.Subscribe(BuildDirectoryRoot.Bundles, buildJson.BuildBundlesDirectoryRoot).AsSetEvent(value => buildJson.BuildBundlesDirectoryRoot = value);
+                build.Subscribe(BuildDirectoryRoot.DisaplayVerison, buildJson.DisplayVersion).AsSetEvent(value => buildJson.DisplayVersion = value);
             }
 
             {
-                var build = commonIntSubscribe = new CommonSubscribe<BuildVersion, int>();
-                build.Subscribe(BuildVersion.Frame, frameVersion);
-                build.Subscribe(BuildVersion.HotUpdate, hotUpdateVersion);
-                build.Subscribe(BuildVersion.Iterate, iterateVersion);
+                var build = intCommonSubscribe = new CommonSubscribe<BuildVersion, int>();
+                build.Subscribe(BuildVersion.Frame, buildJson.FrameVersion).AsSetEvent(value => buildJson.FrameVersion = value);
+                build.Subscribe(BuildVersion.HotUpdate, buildJson.HotUpdateVersion).AsSetEvent(value => buildJson.HotUpdateVersion = value);
+                build.Subscribe(BuildVersion.Iterate, buildJson.IterateVersion).AsSetEvent(value => buildJson.IterateVersion = value);
             }
         }
-    }
-
-    public enum BuildDirectoryRoot
-    {
-        Players,
-        Bundles,
-        DisaplayVerison,
-    }
-
-    public enum BuildVersion
-    {
-        Frame,
-        HotUpdate,
-        Iterate
-    }
-
-    public enum BuildSettingsMode
-    {
-        Bundle,
-        Player
-    }
-
-    public enum BuildBundleMode
-    {
-        HotUpdateBundles,
-        AllBundles
-    }
-
-    public enum BuildExportCopyFolderMode
-    {
-        StreamingAssets,
-        Remote
-    }
-
-    public enum ActiveTargetMode
-    {
-        ActiveTarget,
-        InactiveTarget
     }
 }

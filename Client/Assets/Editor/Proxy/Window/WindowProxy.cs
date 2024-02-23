@@ -51,10 +51,5 @@ namespace Ninth.Editor
         {
             return windowConfig.CommonSubscribe.Keys();
         }
-
-        void IWindowProxy.ConfigToJson()
-        {
-            jsonProxy.ToJson<IWindowConfig, Tab>(windowConfig);
-        }
     }
 }

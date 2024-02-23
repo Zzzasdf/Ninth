@@ -9,8 +9,6 @@ namespace Ninth.Editor
 {
     public class WindowConfig : IWindowConfig
     {
-        public Tab CurrentTab { get; private set; }
-
         private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
         private readonly CommonSubscribe<Tab, Type> commonSubscribe;
 
@@ -18,11 +16,11 @@ namespace Ninth.Editor
         CommonSubscribe<Tab, Type> IWindowConfig.CommonSubscribe => commonSubscribe;
 
         [Inject]
-        public WindowConfig()
+        public WindowConfig(WindowJson windowJson)
         {
             {
                 var build = enumTypeSubscribe = new EnumTypeSubscribe<int>();
-                build.Subscribe<Tab>((int)CurrentTab).AsSetEvent(value => CurrentTab = (Tab)value);
+                build.Subscribe<Tab>((int)windowJson.CurrentTab).AsSetEvent(value => windowJson.CurrentTab = (Tab)value);
             }
 
             {

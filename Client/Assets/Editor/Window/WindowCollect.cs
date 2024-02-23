@@ -13,10 +13,11 @@ namespace Ninth.Editor.Window
 {
     public class WindowCollect : EditorWindow
     {
+        private static WindowCollect window; 
         [MenuItem("Tools/WindowCollect/Open")]
         private static void PanelOpen()
         {
-            var window = GetWindow<WindowCollect>();
+            window = GetWindow<WindowCollect>();
             // window.position = new Rect(200, 200, 800, 500);
             window.position = new Rect(2200, 200, 1000, 700);
             window.splitterPos = 150;
@@ -25,7 +26,7 @@ namespace Ninth.Editor.Window
         [MenuItem("Tools/WindowCollect/Close")]
         private static void PanelClose()
         {
-            GetWindow<WindowCollect>().Close();
+            window.Close();
         }
 
         public static void SubscribeResolver(IObjectResolver resolver)
@@ -33,17 +34,20 @@ namespace Ninth.Editor.Window
             WindowCollect.resolver = resolver;
         }
         private static IObjectResolver resolver;
+        private IJsonProxy jsonProxy;
         private IWindowProxy windowProxy;
 
         private void OnEnable()
         {
+            jsonProxy = resolver.Resolve<IJsonProxy>();
             windowProxy = resolver.Resolve<IWindowProxy>();
         }
 
         private void OnDisable()
         {
-            windowProxy.ConfigToJson();
-            AssetDatabase.Refresh(); 
+            jsonProxy.ToJson<WindowJson, Tab>();
+            jsonProxy.ToJson<BuildJson>(Tab.Build, false);
+            AssetDatabase.Refresh();
         }
 
         private void OnGUI()

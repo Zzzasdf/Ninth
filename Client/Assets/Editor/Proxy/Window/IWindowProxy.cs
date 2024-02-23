@@ -13,7 +13,5 @@ namespace Ninth.Editor
         Type Get(Tab key);
         void Set(Tab key, Type value);
         Dictionary<Tab, ReactiveProperty<Type>>.KeyCollection Keys();
-
-        void ConfigToJson();
     }
 }
