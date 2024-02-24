@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public interface IExcelProxy: IOnGUI
+    public interface IOnGUI
     {
-        
+        void OnGUI();
     }
 }

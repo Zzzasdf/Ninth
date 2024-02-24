@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ninth.Editor.Window;
 using Ninth.HotUpdate;
 using Ninth.Utility;
 using UnityEditor;
@@ -13,43 +14,51 @@ namespace Ninth.Editor
     public class WindowProxy: IWindowProxy
     {
         private readonly IWindowConfig windowConfig;
-        private readonly IJsonProxy jsonProxy;
+        private readonly IObjectResolver resolver;
         
         [Inject]
-        public WindowProxy(IWindowConfig windowConfig, IJsonProxy jsonProxy)
+        public WindowProxy(IWindowConfig windowConfig, IObjectResolver resolver)
         {
             this.windowConfig = windowConfig;
-            this.jsonProxy = jsonProxy;
+            this.resolver = resolver;
+        }
+
+        void IWindowProxy.Tab()
+        {
+            var tabs = TabKeys().ToArrayString();
+            var current = GetEnumType<Tab>();
+            var temp = GUILayout.SelectionGrid(current, tabs, 1);
+            if (temp != current)
+            {
+                SetEnumType<Tab>(temp);
+            }
+        }
+
+        void IWindowProxy.Content()
+        {
+            var tab = GetEnumType<Tab>();
+            var type = GetTab((Tab)tab);
+            (resolver.Resolve(type) as IOnGUI)?.OnGUI();
         }
         
-        T IWindowProxy.GetEnumType<T>()
+        private int GetEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            return (T)Enum.ToObject(typeof(T),windowConfig.EnumTypeSubscribe.Get<T>());
+            return windowConfig.EnumTypeSubscribe.Get<TKeyEnum>();
         }
 
-        void IWindowProxy.SetEnumType<T>(int value)
+        private void SetEnumType<TKeyEnum>(int value) where TKeyEnum: Enum
         {
-            windowConfig.EnumTypeSubscribe.Set<T>(value);
+            windowConfig.EnumTypeSubscribe.Set<TKeyEnum>(value);
         }
 
-        Dictionary<Type, ReactiveProperty<int>>.KeyCollection IWindowProxy.EnumTypeKeys()
+        private Type GetTab(Tab key)
         {
-            return windowConfig.EnumTypeSubscribe.Keys();
+            return windowConfig.TabCommonSubscribe.Get(key);
         }
-
-        Type IWindowProxy.Get(Tab key)
+        
+        private Dictionary<Tab, LinkedListReactiveProperty<Type>>.KeyCollection TabKeys()
         {
-            return windowConfig.CommonSubscribe.Get(key);
-        }
-
-        void IWindowProxy.Set(Tab key, Type value)
-        {
-            windowConfig.CommonSubscribe.Set(key, value);
-        }
-
-        Dictionary<Tab, ReactiveProperty<Type>>.KeyCollection IWindowProxy.Keys()
-        {
-            return windowConfig.CommonSubscribe.Keys();
+            return windowConfig.TabCommonSubscribe.Keys();
         }
     }
 }

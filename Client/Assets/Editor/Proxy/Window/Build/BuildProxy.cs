@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Ninth.HotUpdate;
+using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,113 +15,56 @@ namespace Ninth.Editor
     public class BuildProxy: IBuildProxy
     {
         private readonly IBuildConfig buildConfig;
+        private readonly BuildWindow buildWindow;
         
         [Inject]
-        public BuildProxy(IBuildConfig buildConfig)
+        public BuildProxy(IBuildConfig buildConfig, BuildWindow buildWindow)
         {
             this.buildConfig = buildConfig;
+            this.buildWindow = buildWindow.Subscribe(Tab, Content);
         }
         
-        void IStartable.Start()
+        void IOnGUI.OnGUI()
         {
-            GUILayout.BeginVertical();
-            string[] barMenu = { "1", " 2" };
-            GUILayout.Toolbar(0, barMenu);
-            if (GUILayout.Button("btn"))
-            {
-                "hello world".Log();
-            }
-            GUILayout.EndVertical();
+            (buildWindow as IStartable).Start();
         }
-        
-        
-        // private ReadOnlyDictionary<BuildSettingsMode, UnityAction> _tabActionDic;
-        // private ReadOnlyDictionary<BuildSettingsMode, UnityAction> tabActionDic
-        // { 
-        //     get
-        //     {
-        //         if(_tabActionDic == null)
-        //         {
-        //             _tabActionDic = new(new Dictionary<BuildSettingsMode, UnityAction>()
-        //             {
-        //                 { BuildSettingsMode.Bundle, OnBundleGUI },
-        //                 { BuildSettingsMode.Player, OnPlayerGUI },
-        //             });
-        //         }
-        //         return _tabActionDic;
-        //     }
-        // }
-        //
-        // private BuildSettingsMode buildSettingsMode
-        // {
-        //     get => WindowSOCore.Get<BuildSO>().BuildSettingsMode;
-        //     set => WindowSOCore.Get<BuildSO>().BuildSettingsMode = value;
-        // }
-        //
-        // private bool bVersionInit;
-        //
-        // public void OnGUI()
-        // {
-        //     if (!bVersionInit)
-        //     {
-        //         VersionRefresh();
-        //         bVersionInit = !bVersionInit;
-        //     }
-        //     using (new GUILayout.VerticalScope())
-        //     {
-        //         RenderTag();
-        //         RenderContent();
-        //     }
-        // }
-        //
-        // private void RenderTag()
-        // {
-        //     string[] barMenu = tabActionDic.Keys.ToArray().ToCurrLanguage();
-        //     BuildSettingsMode buildSettingsModeTemp = (BuildSettingsMode)GUILayout.Toolbar((int)buildSettingsMode, barMenu);
-        //     if (buildSettingsModeTemp != buildSettingsMode)
-        //     {
-        //         VersionRefresh();
-        //         buildSettingsMode = buildSettingsModeTemp;
-        //     }
-        // }
-        //
-        // private void RenderContent()
-        // {
-        //     tabActionDic[buildSettingsMode]?.Invoke();
-        // }
-        //
-        // #region Bundle
-        // private void OnBundleGUI()
-        // {
-        //     GUILayout.Space(10);
-        //     GUILayout.Label(CommonLanguage.ExportTargetFolderSettings.ToCurrLanguage(), EditorStyles.boldLabel);
-        //     RenderBuildBundlesTargetFolderRootAndBrowse();
-        //     RenderBuildBundleMode();
-        //     RenderToolbarByBuildExportCopyFolderMode();
-        //     RenderToolbarByActiveTarget();
-        //     RenderPopupByBuildTarget();
-        //     RenderVersion();
-        //     RenderBtnResetByVersion();
-        //     RenderExport();
-        // }
-        // #endregion
-        //
-        // #region Player
-        // private void OnPlayerGUI()
-        // {
-        //     GUILayout.Space(10);
-        //     GUILayout.Label(CommonLanguage.ExportTargetFolderSettings.ToCurrLanguage(), EditorStyles.boldLabel);
-        //     RenderBuildBundlesTargetFolderRootAndBrowse();
-        //     RenderBuildPlayersTargetFolderRootAndBrowse();
-        //     RenderBuildAllBundles();
-        //     RenderToolbarByBuildExportCopyFolderMode();
-        //     RenderToolbarByActiveTarget();
-        //     RenderPopupByBuildTarget();
-        //     RenderPopupByBuildTargetGroup();
-        //     RenderVersion();
-        //     RenderBtnResetByVersion();
-        //     RenderExport();
-        // }
-        // #endregion
+
+        private void Tab()
+        {
+            var barMenu = TabKeys().ToArrayString();
+            var current = Get<BuildSettingsMode>();
+            var temp = GUILayout.Toolbar(current, barMenu);
+            if (temp == current)
+            {
+                return;
+            }
+            Set<BuildSettingsMode>(temp);
+        }
+
+        BuildConfig.BuildSettings Content()
+        {
+            var current = (BuildSettingsMode)Get<BuildSettingsMode>();
+            return Get(current);
+        }
+
+        private int Get<TKeyEnum>() where TKeyEnum: Enum
+        {
+            return buildConfig.IntEnumTypeSubscribe.Get<TKeyEnum>();
+        }
+
+        private void Set<TEnumKey>(int value) where TEnumKey: Enum
+        {
+            buildConfig.IntEnumTypeSubscribe.Set<TEnumKey>(value);
+        }
+
+        private BuildConfig.BuildSettings Get(BuildSettingsMode mode)
+        {
+            return buildConfig.TabCommonSubscribe.Get(mode);
+        }
+
+        private Dictionary<BuildSettingsMode, LinkedListReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection TabKeys()
+        {
+            return buildConfig.TabCommonSubscribe.Keys();
+        }
     }
 }

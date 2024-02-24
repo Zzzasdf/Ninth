@@ -9,6 +9,10 @@ namespace Ninth.Editor
 {
     public class ScanProxy: IScanProxy
     {
+        void IOnGUI.OnGUI()
+        {
+            
+        }
         // private Dictionary<ScanMode, Action> cache;
         // private Dictionary<ScanMode, Action> Cache
         // {

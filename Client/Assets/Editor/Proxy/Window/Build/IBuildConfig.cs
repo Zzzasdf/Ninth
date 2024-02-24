@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Ninth.Utility;
@@ -9,7 +10,8 @@ namespace Ninth.Editor
     public interface IBuildConfig : IJson
     {
         EnumTypeSubscribe<int> IntEnumTypeSubscribe { get; }
-        CommonSubscribe<BuildDirectoryRoot, string> StringCommonSubscribe { get; }
-        CommonSubscribe<BuildVersion, int> IntCommonSubscribe { get; }
+        CommonSubscribe<Enum, string> StringCommonSubscribe { get; }
+        CommonSubscribe<Enum, int> IntCommonSubscribe { get; }
+        CommonSubscribe<BuildSettingsMode, BuildConfig.BuildSettings> TabCommonSubscribe { get; }
     }
 }

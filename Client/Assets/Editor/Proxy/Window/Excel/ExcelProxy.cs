@@ -32,5 +32,9 @@ namespace Ninth.Editor
         //         action?.Invoke();
         //     }
         // }
+        void IOnGUI.OnGUI()
+        {
+            
+        }
     }
 }

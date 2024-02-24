@@ -43,12 +43,15 @@ namespace Ninth.Editor
             builder.Register<BuildJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<BuildJson>(Tab.Build, true), Lifetime.Singleton).AsSelf();
             builder.Register<BuildConfig>(Lifetime.Singleton).As<IBuildConfig>();
             builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
+            builder.Register<BuildWindow>(Lifetime.Singleton).AsSelf();
             
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();
+            builder.Register<ExcelWindow>(Lifetime.Singleton).AsSelf();
             
             builder.Register<ScanConfig>(Lifetime.Singleton).As<IScanConfig>();
             builder.Register<ScanProxy>(Lifetime.Singleton).As<IScanProxy>();
+            builder.Register<ScanWindow>(Lifetime.Singleton).AsSelf();
             //
             // builder.Register<Window.OtherConfig>(Lifetime.Singleton).As<Window.IOtherConfig>();
             // builder.Register<Window.OtherProxy>(Lifetime.Singleton).As<Window.IOtherProxy>();

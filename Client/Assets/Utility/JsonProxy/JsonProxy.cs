@@ -130,6 +130,7 @@ namespace Ninth.Utility
             {
                 return (TResult)value.Value;
             }
+
             var path = jsonConfig.CommonSubscribe.Get(key);
             var obj = await ToObjectAsync<TResult>(path, cancellationToken, newIfNotExist);
             commonSubscribe.Subscribe(key, obj);
@@ -154,7 +155,7 @@ namespace Ninth.Utility
             {
                 return;
             }
-            var obj = commonSubscribe.Get(key);
+            var obj = commonSubscribe.Get(key); 
             var path = jsonConfig.CommonSubscribe.Get(key);
             await ToJsonAsync((T)obj, path, cancellationToken);
         }

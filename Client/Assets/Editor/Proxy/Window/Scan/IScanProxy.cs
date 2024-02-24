@@ -1,6 +1,6 @@
 namespace Ninth.Editor
 {
-    public interface IScanProxy
+    public interface IScanProxy: IOnGUI
     {
         
     }

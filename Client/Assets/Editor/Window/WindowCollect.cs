@@ -53,23 +53,20 @@ namespace Ninth.Editor.Window
         private void OnGUI()
         {
             using var horizontalScope = new GUILayout.HorizontalScope();
-            RenderTags();
+            RenderTab();
             RenderSplitter();
             RenderContent();
         }
         
         private float splitterPos;
         private Vector2 tabScrollView;
-        private void RenderTags()
+        private void RenderTab()
         {
              tabScrollView = GUILayout.BeginScrollView(tabScrollView,
                 GUILayout.Width(splitterPos),
                 GUILayout.MaxWidth(splitterPos),
                 GUILayout.MinWidth(splitterPos));
-
-             var tabs = windowProxy.Keys().ToArrayString();
-            var tab = (Tab)GUILayout.SelectionGrid((int)(windowProxy.GetEnumType<Tab>()), tabs, 1);
-            windowProxy.SetEnumType<Tab>((int)tab);
+            windowProxy.Tab();
             GUILayout.EndScrollView();
         }
         
@@ -117,11 +114,8 @@ namespace Ninth.Editor.Window
         private Vector2 contentScrollView;
         private void RenderContent()
         {
-            // 页签内容
             contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-            var tab = windowProxy.GetEnumType<Tab>();
-            var type = windowProxy.Get(tab);
-            (resolver.Resolve(type) as IStartable)?.Start();
+            windowProxy.Content();
             GUILayout.EndScrollView();
         }
     }

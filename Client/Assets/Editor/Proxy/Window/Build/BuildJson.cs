@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public enum BuildDirectoryRoot
+    public enum BuildFolder
     {
         Players,
         Bundles,
@@ -46,19 +46,37 @@ namespace Ninth.Editor
     
     public class BuildJson : IJson
     {
-        public BuildSettingsMode BuildSettingsType { get; set; }
-        public BuildBundleMode BuildBundleMode { get; set; }
-        public BuildExportCopyFolderMode BuildExportDirectoryType { get; set; }
-        public ActiveTargetMode ActiveTargetMode { get; set; }
-        public BuildTarget BuildTarget { get; set; }
-        public BuildTargetGroup BuildTargetGroup { get; set; }
+        public Common BuildCommon { get; private set; } = new();
+        public Bundle BuildBundle { get; private set; } = new();
+        public Player BuildPlayer { get; private set; } = new();
 
-        public string BuildPlayersDirectoryRoot { get; set; }
-        public string BuildBundlesDirectoryRoot { get; set; }
-        public string DisplayVersion { get; set; }
+        public class Common
+        {
+            public BuildSettingsMode BuildSettingsType { get; set; }
+            public string DisplayVersion { get; set; }
+            public int HotUpdateVersion { get; set; }
+            public int IterateVersion { get; set; }
+            
+            
+            public BuildExportCopyFolderMode BuildExportDirectoryType { get; set; }
+            public ActiveTargetMode ActiveTargetMode { get; set; }
+            public BuildTarget BuildTarget { get; set; }
+            public BuildTargetGroup BuildTargetGroup { get; set; }
+        }
+        
+        public class Bundle
+        {
+            public string BuildBundlesDirectoryRoot { get; set; }
 
-        public int FrameVersion { get; set; }
-        public int HotUpdateVersion { get; set; }
-        public int IterateVersion { get; set; }
+            public BuildBundleMode BuildBundleBundleCurrentMode { get; set; }
+        }
+
+        public class Player
+        {
+            public string BuildBundlesDirectoryRoot { get; set; }
+            public string BuildPlayersDirectoryRoot { get; set; }
+            public BuildBundleMode BuildPlayerBundleCurrentMode { get; set; }
+            public int FrameVersion { get; set; }
+        }
     }
 }

@@ -9,13 +9,13 @@ namespace Ninth.HotUpdate
 {
     public static class StringExtensions
     {
-        public static string?[] ToArrayString<T>(this ICollection<T> tArray)
+        public static string[] ToArrayString<T>(this ICollection<T> tArray)
         {
-             var result = new string?[tArray.Count];
+             var result = new string[tArray.Count];
              var i = 0;
              foreach (var item in tArray)
              {
-                 result[i] = item?.ToString();
+                 result[i] = item?.ToString() ?? string.Empty;
                  i++;
              }
              return result;

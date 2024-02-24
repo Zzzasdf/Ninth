@@ -10,11 +10,10 @@ namespace Ninth.Editor
     public class WindowConfig : IWindowConfig
     {
         private readonly EnumTypeSubscribe<int> enumTypeSubscribe;
-        private readonly CommonSubscribe<Tab, Type> commonSubscribe;
+        private readonly CommonSubscribe<Tab, Type> tabCommonSubscribe;
 
         EnumTypeSubscribe<int> IWindowConfig.EnumTypeSubscribe => enumTypeSubscribe;
-        CommonSubscribe<Tab, Type> IWindowConfig.CommonSubscribe => commonSubscribe;
-
+        CommonSubscribe<Tab, Type> IWindowConfig.TabCommonSubscribe => tabCommonSubscribe;
         [Inject]
         public WindowConfig(WindowJson windowJson)
         {
@@ -24,7 +23,7 @@ namespace Ninth.Editor
             }
 
             {
-                var build = commonSubscribe = new CommonSubscribe<Tab, Type>();
+                var build = tabCommonSubscribe = new CommonSubscribe<Tab, Type>();
                 build.Subscribe(Tab.Build, typeof(IBuildProxy));
                 build.Subscribe(Tab.Excel, typeof(IExcelProxy));
                 build.Subscribe(Tab.Scan, typeof(IScanProxy));

@@ -5,11 +5,14 @@
 3、轻量级异步插件：UniTask
 
 4、全局配置
-	1 => 已启用Nullable，C#8.0有但默认不开启，C#10默认开启。文件中使用 #nullable enable 开启，同步上下文
+	1 => 已启用 Nullable，C#8.0 有但默认不开启，C#10 默认开启。文件中使用 #nullable enable 开启，同步上下文
 		配置文件：Asset/../Directory.Build.props
-		eg! Unity项目的.csproj在每次启动Unity时，都会重新生成一个，
-			所以无法将<Nullable>enable<Nullable>配置在项目的.csproj里，
-			所以采用新建一个文件Directory.Build.props
+		eg! Unity项目的 .csproj 在每次启动 Unity 时，都会重新生成一个，
+			所以无法将 <Nullable>enable<Nullable> 配置在项目的 .csproj 里，
+			所以采用新建一个文件 Directory.Build.props
+
+5、LitJson
+   eg!! 该类的所有的字段一定要给它设置 Set 权限, 2024/2/25 警钟敲烂！！！！！！！！！！！！！！！！！！
 
 >> TODO
 Thread

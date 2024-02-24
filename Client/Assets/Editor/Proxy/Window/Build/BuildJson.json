@@ -1,0 +1,22 @@
+{
+    "BuildCommon": {
+        "BuildSettingsType": 0,
+        "DisplayVersion": null,
+        "HotUpdateVersion": 0,
+        "IterateVersion": 0,
+        "BuildExportDirectoryType": 0,
+        "ActiveTargetMode": 0,
+        "BuildTarget": 0,
+        "BuildTargetGroup": 0
+    },
+    "BuildBundle": {
+        "BuildBundlesDirectoryRoot": "C:/UnityProject/Ninth/Client/HybridCLRData",
+        "BuildBundleBundleCurrentMode": 1
+    },
+    "BuildPlayer": {
+        "BuildBundlesDirectoryRoot": "C:/UnityProject/Ninth/Bundles",
+        "BuildPlayersDirectoryRoot": null,
+        "BuildPlayerBundleCurrentMode": 0,
+        "FrameVersion": 0
+    }
+}
