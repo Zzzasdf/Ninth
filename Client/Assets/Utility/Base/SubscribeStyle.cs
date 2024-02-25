@@ -168,7 +168,7 @@ namespace Ninth.Utility
             var isSuccess = linkedList.TrySubscribe(value, markBit, out var result);
             if (!isSuccess)
             {
-                $"重复订阅 {key!.GetType()}, MarkBit: {markBit}".FrameError();
+                $"重复订阅 {key!.GetType()}: {key}, MarkBit: {markBit}".FrameError();
             }
             return result;
         }

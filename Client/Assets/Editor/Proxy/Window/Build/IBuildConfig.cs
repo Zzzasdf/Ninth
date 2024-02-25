@@ -9,6 +9,7 @@ namespace Ninth.Editor
 {
     public interface IBuildConfig : IJson
     {
+        CommonSubscribe<Enum, List<string>> StringListCommonSubscribe { get; }
         EnumTypeSubscribe<int> IntEnumTypeSubscribe { get; }
         CommonSubscribe<Enum, string> StringCommonSubscribe { get; }
         CommonSubscribe<Enum, int> IntCommonSubscribe { get; }

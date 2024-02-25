@@ -20,6 +20,16 @@ namespace Ninth.HotUpdate
              }
              return result;
         }
+
+        public static int[] ToIndexArray<T>(this ICollection<T> tArray)
+        {
+            var result = new int[tArray.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = i;
+            }
+            return result;
+        }
         
         
         

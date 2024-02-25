@@ -14,7 +14,7 @@ namespace Ninth.Editor.Window
     public class WindowCollect : EditorWindow
     {
         private static WindowCollect window; 
-        [MenuItem("Tools/WindowCollect/Open")]
+        [MenuItem("Tools/WindowCollect/Open %w")]
         private static void PanelOpen()
         {
             window = GetWindow<WindowCollect>();
@@ -23,7 +23,7 @@ namespace Ninth.Editor.Window
             window.splitterPos = 150;
         }
 
-        [MenuItem("Tools/WindowCollect/Close")]
+        [MenuItem("Tools/WindowCollect/Close %g")]
         private static void PanelClose()
         {
             window.Close();
