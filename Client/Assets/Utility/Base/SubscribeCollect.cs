@@ -1,177 +1,61 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
 
 namespace Ninth.Utility
 {
-    public class SubscribeCollect<TValue> : SubscribeCollect<TValue, Type, Enum>
+    public class SubscribeCollect<TValue> : SubscribeCollect<TValue, Enum>
     {
-        
     }
-    
-    public class SubscribeCollect<TValue, TKeyGenerics, TKeyCommon>
-        where TKeyCommon: Enum
+
+    public class SubscribeCollect<TValue, TEnum> : BaseSubscribeCollect<TValue, TEnum>
+        where TEnum : Enum
     {
-        private GenericsSubscribe<TKeyGenerics, TValue>? genericsSubscribe;
-        private EnumTypeSubscribe<TValue>? enumTypeSubscribe;
-        private CommonSubscribe<TKeyCommon, TValue>? commonSubscribe;
+        public new ReactiveProperty<TValue> Subscribe<TKey>(TValue value, int markBit = 0) => base.Subscribe<TKey>(value, markBit);
+        public new ReactiveProperty<TValue> Subscribe(TEnum key, TValue value, int markBit = 0) => base.Subscribe(key, value, markBit);
+        public new TValue Get<TKey>(int markBit = 0) => base.Get<TKey>(markBit);
+        public new TValue Get(TEnum key, int markBit = 0) => base.Get(key, markBit);
+        public new void Set<TKey>(TValue value, int markBit = 0) => base.Set<TKey>(value, markBit);
+        public new void Set(TEnum key, TValue value, int markBit = 0) => base.Set(key, value, markBit);
+        public new bool TryGetValue<TKey>(out TValue value, int markBit = 0) => base.TryGetValue<TKey>(out value, markBit);
+        public new bool TryGetValue(TEnum key, out TValue value, int markBit = 0) => base.TryGetValue(key, out value, markBit);
+        public new bool ContainsKey<TKey>(int markBit = 0) => base.ContainsKey<TKey>(markBit);
+        public new bool ContainsKey(TEnum key, int markBit = 0) => base.ContainsKey(key, markBit);
+        public new Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.KeyCollection Keys() => base.Keys();
+        public new Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.ValueCollection Values() => base.Values();
+        public new Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.KeyCollection KeysByCommon() => base.KeysByCommon();
+        public new Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.ValueCollection ValuesByCommon() => base.ValuesByCommon();
+    }
 
-        #region Subcribe
-        public ReactiveProperty<TValue> Subscribe<TKeyExpand>(TValue value, int markBit = 0) where TKeyExpand : TKeyGenerics
-        {
-            genericsSubscribe ??= new GenericsSubscribe<TKeyGenerics, TValue>();
-            return genericsSubscribe.Subscribe<TKeyExpand>(value, markBit);
-        }
+    public class SubscribeCollect<TValue, TKey, TEnumType>: SubscribeCollect<TValue, TKey, TEnumType, Enum>
+        where TEnumType : Enum
+    {
+    }
 
-        public ReactiveProperty<TValue> SubscribeByEnumType<TKeyEnum>(TValue value, int markBit = 0) where TKeyEnum : Enum
-        {
-            enumTypeSubscribe ??= new EnumTypeSubscribe<TValue>();
-            return enumTypeSubscribe.Subscribe<TKeyEnum>(value, markBit);
-        }
-
-        public ReactiveProperty<TValue> Subscribe(TKeyCommon key, TValue value, int markBit = 0)
-        {
-            commonSubscribe ??= new CommonSubscribe<TKeyCommon, TValue>();
-            return commonSubscribe.Subscribe(key, value, markBit);
-        }
-        #endregion
-
-        #region Get
-        public TValue? Get<TKeyExpand>(int markBit = 0) where TKeyExpand : TKeyGenerics
-        {
-            if (genericsSubscribe == null)
-            {
-                $"未订阅 {typeof(TKeyExpand)}".FrameError();
-                return default;
-            }
-            return genericsSubscribe.Get<TKeyExpand>(markBit);
-        }
-        
-        public TValue? GetByEnumType<TKeyEnum>(int markBit = 0) where TKeyEnum : Enum
-        {
-            if (enumTypeSubscribe == null)
-            {
-                $"未订阅 {typeof(TKeyEnum)}".FrameError();
-                return default;
-            }
-            return enumTypeSubscribe.Get<TKeyEnum>(markBit);
-        }
-
-        public TValue? Get(TKeyCommon key, int markBit = 0)
-        {
-            if (commonSubscribe == null)
-            {
-                $"未订阅 {key.GetType()}: {key}".FrameError();
-                return default;
-            }
-            return commonSubscribe.Get(key, markBit);
-        }
-        #endregion
-
-        #region Set
-        public void Set<TKeyExpand>(TValue value, int markBit = 0) where TKeyExpand : TKeyGenerics
-        {
-            if (genericsSubscribe == null)
-            {
-                $"未订阅 {typeof(TKeyExpand)}".FrameError();
-                return;
-            }
-            genericsSubscribe.Set<TKeyExpand>(value, markBit);
-        }
-
-        public void SetByEnumType<TKeyEnum>(TValue value, int markBit = 0) where TKeyEnum : TKeyCommon
-        {
-            if (enumTypeSubscribe == null)
-            {
-                $"未订阅 {typeof(TKeyEnum)}".FrameError();
-                return;
-            }
-            enumTypeSubscribe.Set<TKeyEnum>(value, markBit);
-        }
-
-        public void Set(TKeyCommon key, TValue value, int markBit = 0)
-        {
-            if (commonSubscribe == null)
-            {
-                $"未订阅 {key.GetType()}: {key}".FrameError();
-                return;
-            }
-            commonSubscribe.Set(key, value, markBit);
-        }
-        #endregion
-
-        #region TryGetValue
-        public bool TryGetValue<TKeyExpand>(out ReactiveProperty<TValue>? reactiveProperty, int markBit = 0) where TKeyExpand : class, TKeyGenerics
-        {
-            if (genericsSubscribe == null)
-            {
-                reactiveProperty = null;
-                return false;
-            }
-            return genericsSubscribe.TryGetValue<TKeyExpand>(out reactiveProperty, markBit);
-        }
-
-        public bool TryGetValueByEnumType<TKeyEnum>(out ReactiveProperty<TValue>? reactiveProperty, int markBit = 0) where TKeyEnum : Enum
-        {
-            if (enumTypeSubscribe == null)
-            {
-                reactiveProperty = null;
-                return false;
-            }
-            return enumTypeSubscribe.TryGetValue<TKeyEnum>(out reactiveProperty, markBit);
-        }
-
-        public bool TryGetValue(TKeyCommon key, out ReactiveProperty<TValue>? reactiveProperty, int markBit = 0)
-        {
-            if (commonSubscribe == null)
-            {
-                reactiveProperty = null;
-                return false;
-            }
-            return commonSubscribe.TryGetValue(key, out reactiveProperty, markBit);
-        } 
-        #endregion
-
-        #region ContainsKey
-        public bool ContainsKey<TKeyExpand>() where TKeyExpand : class, TKeyGenerics
-        {
-            if (genericsSubscribe == null)
-            {
-                return false;
-            }
-            return genericsSubscribe.ContainsKey<TKeyExpand>();
-        }
-
-        public bool ContainsKeyByEnumType<TKeyEnum>() where TKeyEnum : TKeyCommon
-        {
-            if (enumTypeSubscribe == null)
-            {
-                return false;
-            }
-            return enumTypeSubscribe.ContainsKey<TKeyEnum>();
-        }
-
-        public bool ContainsKey(TKeyCommon key)
-        {
-            if (commonSubscribe == null)
-            {
-                return false;
-            }
-            return commonSubscribe.ContainsKey(key);
-        }
-        #endregion
-
-        #region Collection
-        public Dictionary<Type, LinkedListReactiveProperty<TValue>>.KeyCollection? Keys() => genericsSubscribe?.Keys();
-        public Dictionary<Type, LinkedListReactiveProperty<TValue>>.ValueCollection? Values() => genericsSubscribe?.Values();
-
-        public Dictionary<Type, LinkedListReactiveProperty<TValue>>.KeyCollection? KeysByEnumType() => enumTypeSubscribe?.Keys();
-        public Dictionary<Type, LinkedListReactiveProperty<TValue>>.ValueCollection? ValuesByEnumType() => enumTypeSubscribe?.Values(); 
-
-        public Dictionary<TKeyCommon, LinkedListReactiveProperty<TValue>>.KeyCollection? KeysByCommon() => commonSubscribe?.Keys();
-        public Dictionary<TKeyCommon, LinkedListReactiveProperty<TValue>>.ValueCollection? ValuesByCommon() => commonSubscribe?.Values();
-        #endregion
+    public class SubscribeCollect<TValue, TKey, TEnumType, TEnum> : BaseSubscribeCollect<TValue, TEnum>
+        where TEnumType : Enum
+        where TEnum : Enum
+    {
+        public new ReactiveProperty<TValue> Subscribe<TKeyExpand>(TValue value, int markBit = 0) where TKeyExpand : TKey => base.Subscribe<TKeyExpand>(value, markBit);
+        public new ReactiveProperty<TValue> SubscribeByEnumType<TEnumTypeExpand>(TValue value, int markBit = 0) where TEnumTypeExpand : TEnumType => base.Subscribe<TEnumTypeExpand>(value, markBit);
+        public new ReactiveProperty<TValue> Subscribe(TEnum key, TValue value, int markBit = 0) => base.Subscribe(key, value, markBit);
+        public new TValue Get<TKeyExpand>(int markBit = 0) where TKeyExpand: TKey => base.Get<TKeyExpand>(markBit);
+        public new TValue GetByEnumType<TEnumTypeExpand>(int markBit = 0) where TEnumTypeExpand: TEnumType => base.Get<TEnumTypeExpand>(markBit);
+        public new TValue Get(TEnum key, int markBit = 0) => base.Get(key, markBit);
+        public new void Set<TKeyExpand>(TValue value, int markBit = 0) where TKeyExpand: TKey => base.Set<TKeyExpand>(value, markBit);
+        public new void SetByEnumType<TEnumTypeExpand>(TValue value, int markBit = 0) where TEnumTypeExpand: TEnumType => base.Set<TEnumTypeExpand>(value, markBit);
+        public new void Set(TEnum key, TValue value, int markBit = 0) => base.Set(key, value, markBit);
+        public new bool TryGetValue<TKeyExpand>(out TValue value, int markBit = 0) where TKeyExpand: TKey => base.TryGetValue<TKeyExpand>(out value, markBit);
+        public new bool TryGetValueByEnumType<TEnumTypeExpand>(out TValue value, int markBit = 0) where TEnumTypeExpand: TEnumType => base.TryGetValue<TEnumTypeExpand>(out value, markBit);
+        public new bool TryGetValue(TEnum key, out TValue value, int markBit = 0) => base.TryGetValue(key, out value, markBit);
+        public new bool ContainsKey<TKeyExpand>(int markBit = 0) where TKeyExpand: TKey => base.ContainsKey<TKeyExpand>(markBit);
+        public new bool ContainsKeyByEnumType<TEnumTypeExpand>(int markBit = 0) where TEnumTypeExpand: TEnumType => base.ContainsKey<TEnumTypeExpand>(markBit);
+        public new bool ContainsKey(TEnum key, int markBit = 0) => base.ContainsKey(key, markBit);
+        public new Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.KeyCollection Keys() => base.Keys();
+        public new Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.ValueCollection Values() => base.Values();
+        public new Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.KeyCollection KeysByCommon() => base.KeysByCommon();
+        public new Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.ValueCollection ValuesByCommon() => base.ValuesByCommon();
     }
 }
-

@@ -8,14 +8,14 @@ namespace Ninth
 {
     public class PlayerSettingsConfig : IPlayerSettingsConfig
     {
-        private readonly CommonSubscribe<PLAY_SETTINGS, string> commonSubscribe;
-        CommonSubscribe<PLAY_SETTINGS, string> IPlayerSettingsConfig.CommonSubscribe => commonSubscribe;
+        private readonly SubscribeCollect<string, PLAY_SETTINGS> stringSubscribe;
+        SubscribeCollect<string, PLAY_SETTINGS> IPlayerSettingsConfig.StringSubscribe => stringSubscribe;
 
         [Inject]
         public PlayerSettingsConfig()
         {
             {
-                var build = commonSubscribe = new CommonSubscribe<PLAY_SETTINGS, string>();
+                var build = stringSubscribe = new SubscribeCollect<string, PLAY_SETTINGS>();
                 build.Subscribe(PLAY_SETTINGS.ProduceName, Application.productName);
                 build.Subscribe(PLAY_SETTINGS.PlatformName, Application.platform switch
                 {

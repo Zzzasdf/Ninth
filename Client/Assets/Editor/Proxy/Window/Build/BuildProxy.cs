@@ -6,6 +6,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using System.IO;
+using System.Linq;
 using NPOI.SS.UserModel;
 
 namespace Ninth.Editor
@@ -33,7 +34,7 @@ namespace Ninth.Editor
 
         private void Tab()
         {
-            var barMenu = KeysByCommon().ToArrayString();
+            var barMenu = KeysByCommon().Select(x => x.key.ToString()).ToArray();
             var current = GetIntByEnumType<BuildSettingsMode>();
             var temp = GUILayout.Toolbar(current, barMenu);
             if (temp == current)
@@ -154,17 +155,17 @@ namespace Ninth.Editor
 
         private string GetStringByEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            return buildConfig.StringSubscribe.GetByEnumType<TKeyEnum>();
+            return buildConfig.StringSubscribe.Get<TKeyEnum>();
         }
 
         private int GetIntByEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            return buildConfig.IntSubscribe.GetByEnumType<TKeyEnum>();
+            return buildConfig.IntSubscribe.Get<TKeyEnum>();
         }
 
         private void SetIntByEnumType<TKeyEnum>(int value) where TKeyEnum: Enum
         {
-            buildConfig.IntSubscribe.SetByEnumType<TKeyEnum>(value);
+            buildConfig.IntSubscribe.Set<TKeyEnum>(value);
         }
 
         private string GetString(Enum key)
@@ -177,7 +178,7 @@ namespace Ninth.Editor
             return buildConfig.BuildSettingsSubscribe.Get(mode);
         }
 
-        private Dictionary<Enum, LinkedListReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
+        private Dictionary<(Enum key, int markBit), ReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
         {
             return buildConfig.BuildSettingsSubscribe.KeysByCommon();
         }

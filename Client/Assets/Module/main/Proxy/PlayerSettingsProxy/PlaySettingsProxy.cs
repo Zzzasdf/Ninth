@@ -15,7 +15,7 @@ namespace Ninth
         
         string IPlaySettingsProxy.Get(PLAY_SETTINGS playSettings)
         {
-            var result = playerSettingsConfig.CommonSubscribe.Get(playSettings);
+            var result = playerSettingsConfig.StringSubscribe.Get(playSettings);
             if (result == null)
             {
                 return string.Empty;

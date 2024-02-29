@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Ninth.Utility;
@@ -19,7 +20,7 @@ namespace Ninth
     
     public interface IVersionPathConfig
     {
-        CommonSubscribe<VERSION_PATH, string> VersionPathSubscribe { get; }
-        CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> AssetServerVersionPathSubscribe { get; }
+        SubscribeCollect<string, VERSION_PATH> VersionPathSubscribe { get; }
+        SubscribeCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> AssetServerVersionPathSubscribe { get; }
     }
 }

@@ -10,19 +10,19 @@ namespace Ninth
 {
     public class ConfigPathConfig : IConfigPathConfig
     {
-        private readonly CommonSubscribe<CONFIG_PATH, string> configPathSubscribe;
-        private readonly CommonSubscribe<ASSET_SERVER_CONFIG_PATH, (Func<string, string> serverPath, CONFIG_PATH cachePath)> assetServerConfigPathSubscribe;
+        private readonly SubscribeCollect<string, CONFIG_PATH> configPathSubscribe;
+        private readonly SubscribeCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH> assetServerConfigPathSubscribe;
 
-        CommonSubscribe<CONFIG_PATH, string> IConfigPathConfig.ConfigPathSubscribe => configPathSubscribe;
-        CommonSubscribe<ASSET_SERVER_CONFIG_PATH, (Func<string, string> serverPath, CONFIG_PATH cachePath)> IConfigPathConfig.AssetServerConfigPathSubscribe => assetServerConfigPathSubscribe;
+        SubscribeCollect<string, CONFIG_PATH> IConfigPathConfig.ConfigPathSubscribe => configPathSubscribe;
+        SubscribeCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH> IConfigPathConfig.AssetServerConfigPathSubscribe => assetServerConfigPathSubscribe;
 
         [Inject]
         public ConfigPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             var url = assetConfig.Url();
 
-            var produceName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.PlatformName);
+            var produceName = playerSettingsConfig.StringSubscribe?.Get(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.StringSubscribe?.Get(PLAY_SETTINGS.PlatformName);
 
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
@@ -40,7 +40,7 @@ namespace Ninth
             var loadConfigPathByDllGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.DirectoryNameByDllGroup()}/{nameConfig.LoadConfigNameByDllGroup()}";
 
             {
-                var build = configPathSubscribe = new CommonSubscribe<CONFIG_PATH, string>();
+                var build = configPathSubscribe = new SubscribeCollect<string, CONFIG_PATH>();
                 build.Subscribe(CONFIG_PATH.LoadConfigPathByLocalGroupByStreamingAssets, loadConfigPathByLocalGroupByStreamingAssets);
                 build.Subscribe(CONFIG_PATH.LoadConfigPathByRemoteGroupByStreamingAssets, loadConfigPathByRemoteGroupByStreamingAssets);
                 build.Subscribe(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, downloadConfigPathByRemoteGroupByPersistentData);
@@ -52,7 +52,7 @@ namespace Ninth
             }
 
             {
-                var build = assetServerConfigPathSubscribe = new CommonSubscribe<ASSET_SERVER_CONFIG_PATH, (Func<string, string> serverPath, CONFIG_PATH cachePath)>();
+                var build = assetServerConfigPathSubscribe = new SubscribeCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH>();
                 build.Subscribe(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup, (version => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}", CONFIG_PATH.DownloadConfigTempPathByRemoteGroupByPersistentData));
                 build.Subscribe(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup,
                     (version => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{nameConfig.DownloadConfigNameByDllGroup()}", CONFIG_PATH.DownloadConfigTempPathByDllGroupByPersistentData));

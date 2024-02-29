@@ -26,7 +26,7 @@ namespace Ninth.Editor
             var common = buildJson.BuildCommon;
             var bundle = buildJson.BuildBundle;
             var player = buildJson.BuildPlayer;
-
+            
             {
                 var build = stringListSubscribe = new SubscribeCollect<List<string>>();
                 build.Subscribe(AssetGroup.Local, common.LocalGroup).AsSetEvent(value => common.LocalGroup = value);
@@ -35,7 +35,7 @@ namespace Ninth.Editor
 
             {
                 var build = stringSubscribe = new SubscribeCollect<string>();
-                build.SubscribeByEnumType<BuildFolder>(jsonProxy.GetPathByEnumType<BuildFolder>());
+                build.Subscribe<BuildFolder>(jsonProxy.GetPathByEnumType<BuildFolder>());
                 build.Subscribe(BuildFolder.Bundles, bundle.ExportBundleFolder, 0).AsSetEvent(value => bundle.ExportBundleFolder = value);
                 build.Subscribe(BuildFolder.Bundles, player.ExportBundleFolder, 1).AsSetEvent(value => player.ExportBundleFolder = value);
                 build.Subscribe(BuildFolder.Players, player.ExportPlayFolder).AsSetEvent(value => player.ExportPlayFolder = value);
@@ -47,13 +47,13 @@ namespace Ninth.Editor
 
             {
                 var build = intSubscribe = new SubscribeCollect<int>();
-                build.SubscribeByEnumType<BuildSettingsMode>(common.CurrentBuildModeIndex).AsSetEvent(value => common.CurrentBuildModeIndex = value);
-                build.SubscribeByEnumType<BuildBundleMode>(bundle.CurrentExportBundleModeIndex, 0).AsSetEvent(value => bundle.CurrentExportBundleModeIndex = value);
-                build.SubscribeByEnumType<BuildBundleMode>(player.CurrentExportBundleModeIndex, 1).AsSetEvent(value => player.CurrentExportBundleModeIndex = value);
-                build.SubscribeByEnumType<BuildExportCopyFolderMode>(bundle.CurrentCopyBundleModeIndex, 0).AsSetEvent(value => bundle.CurrentCopyBundleModeIndex = value);
-                build.SubscribeByEnumType<BuildExportCopyFolderMode>(player.CurrentCopyBundleModeIndex, 1).AsSetEvent(value => player.CurrentCopyBundleModeIndex = value);
-                build.SubscribeByEnumType<ActiveTargetMode>(bundle.CurrentActiveTargetModeIndex, 0).AsSetEvent(value => bundle.CurrentActiveTargetModeIndex = value);
-                build.SubscribeByEnumType<ActiveTargetMode>(player.CurrentActiveTargetModeIndex, 1).AsSetEvent(value => player.CurrentActiveTargetModeIndex = value);
+                build.Subscribe<BuildSettingsMode>(common.CurrentBuildModeIndex).AsSetEvent(value => common.CurrentBuildModeIndex = value);
+                build.Subscribe<BuildBundleMode>(bundle.CurrentExportBundleModeIndex, 0).AsSetEvent(value => bundle.CurrentExportBundleModeIndex = value);
+                build.Subscribe<BuildBundleMode>(player.CurrentExportBundleModeIndex, 1).AsSetEvent(value => player.CurrentExportBundleModeIndex = value);
+                build.Subscribe<BuildExportCopyFolderMode>(bundle.CurrentCopyBundleModeIndex, 0).AsSetEvent(value => bundle.CurrentCopyBundleModeIndex = value);
+                build.Subscribe<BuildExportCopyFolderMode>(player.CurrentCopyBundleModeIndex, 1).AsSetEvent(value => player.CurrentCopyBundleModeIndex = value);
+                build.Subscribe<ActiveTargetMode>(bundle.CurrentActiveTargetModeIndex, 0).AsSetEvent(value => bundle.CurrentActiveTargetModeIndex = value);
+                build.Subscribe<ActiveTargetMode>(player.CurrentActiveTargetModeIndex, 1).AsSetEvent(value => player.CurrentActiveTargetModeIndex = value);
                 build.Subscribe(ActiveTargetMode.ActiveTarget, 0);
                 build.Subscribe(ActiveTargetMode.InactiveTarget, bundle.InactiveBuildTargetIndex, 0).AsSetEvent(value => bundle.InactiveBuildTargetIndex = value);
                 build.Subscribe(ActiveTargetMode.InactiveTarget, player.InactiveBuildTargetIndex, 1).AsSetEvent(value => player.InactiveBuildTargetIndex = value);
@@ -212,14 +212,14 @@ namespace Ninth.Editor
                 public string[] BuildBundleModeStrings => buildBundleModeDic.Keys.ToArrayString();
                 public int Current
                 {
-                    get => intSubscribe.GetByEnumType<BuildBundleMode>(markBit);
+                    get => intSubscribe.Get<BuildBundleMode>(markBit);
                     set
                     {
                         // if (value >= buildBundleModeDic.Count)
                         // {
                         //     value = buildBundleModeDic.Count - 1;
                         // } 
-                        intSubscribe.SetByEnumType<BuildBundleMode>(value, markBit);
+                        intSubscribe.Set<BuildBundleMode>(value, markBit);
                     }
                 }
                 private List<AssetGroup> currentAssetGroups => buildBundleModeDic.Values.ToList()[Current];
@@ -296,7 +296,7 @@ namespace Ninth.Editor
                 {
                     get
                     {
-                        return intSubscribe.GetByEnumType<BuildExportCopyFolderMode>(markBit);
+                        return intSubscribe.Get<BuildExportCopyFolderMode>(markBit);
                     }
                     set
                     {
@@ -304,7 +304,7 @@ namespace Ninth.Editor
                         // {
                         //     value = packBuildBundleCopyModes.Count - 1;
                         // }
-                        intSubscribe.SetByEnumType<BuildExportCopyFolderMode>(value, markBit);
+                        intSubscribe.Set<BuildExportCopyFolderMode>(value, markBit);
                     }
                 }
 
@@ -346,14 +346,14 @@ namespace Ninth.Editor
 
                 public int Current
                 {
-                    get => intSubscribe.GetByEnumType<ActiveTargetMode>(markBit);
+                    get => intSubscribe.Get<ActiveTargetMode>(markBit);
                     set
                     {
                         // if (value >= packBuildTargetModes.Count)
                         // {
                         //     value = packBuildTargetModes.Count - 1;
                         // }
-                        intSubscribe.SetByEnumType<ActiveTargetMode>(value, markBit);
+                        intSubscribe.Set<ActiveTargetMode>(value, markBit);
                     }
                 }
 

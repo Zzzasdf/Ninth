@@ -9,28 +9,28 @@ namespace Ninth
 {
     public class PlayerPrefsConfig : IPlayerPrefsIntConfig, IPlayerPrefsFloatConfig, IPlayerPrefsStringConfig
     {
-        private readonly CommonSubscribe<PLAYERPREFS_INT, int> intCommonSubscribe;
-        private readonly CommonSubscribe<PLAYERPREFS_FLOAT, float> floatCommonSubscribe;
-        private readonly CommonSubscribe<PLAYERPREFS_STRING, string> stringCommonSubscribe;
+        private readonly SubscribeCollect<int, PLAYERPREFS_INT> intSubscribe;
+        private readonly SubscribeCollect<float, PLAYERPREFS_FLOAT> floatSubscribe;
+        private readonly SubscribeCollect<string, PLAYERPREFS_STRING> stringSubscribe;
 
-        CommonSubscribe<PLAYERPREFS_INT, int> IPlayerPrefsIntConfig.CommonSubscribe => intCommonSubscribe;
-        CommonSubscribe<PLAYERPREFS_FLOAT, float> IPlayerPrefsFloatConfig.CommonSubscribe => floatCommonSubscribe;
-        CommonSubscribe<PLAYERPREFS_STRING, string> IPlayerPrefsStringConfig.CommonSubscribe => stringCommonSubscribe;
+        SubscribeCollect<int, PLAYERPREFS_INT> IPlayerPrefsIntConfig.IntSubscribe => intSubscribe;
+        SubscribeCollect<float, PLAYERPREFS_FLOAT> IPlayerPrefsFloatConfig.FloatSubscribe => floatSubscribe;
+        SubscribeCollect<string, PLAYERPREFS_STRING> IPlayerPrefsStringConfig.StringSubscribe => stringSubscribe;
 
         [Inject]
         public PlayerPrefsConfig()
         {
             {
-                var build = intCommonSubscribe = new CommonSubscribe<PLAYERPREFS_INT, int>();
+                var build = intSubscribe = new SubscribeCollect<int, PLAYERPREFS_INT>();
                 build.Subscribe(PLAYERPREFS_INT.DownloadBundleStartPos, 0);
             }
 
             {
-                var build = floatCommonSubscribe = new CommonSubscribe<PLAYERPREFS_FLOAT, float>();
+                var build = floatSubscribe = new SubscribeCollect<float, PLAYERPREFS_FLOAT>();
             }
 
             {
-                var build = stringCommonSubscribe = new CommonSubscribe<PLAYERPREFS_STRING, string>();
+                var build = stringSubscribe = new SubscribeCollect<string, PLAYERPREFS_STRING>();
                 build.Subscribe(PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion, "0.0.0.0");
             }
         }

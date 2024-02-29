@@ -15,7 +15,7 @@ namespace Ninth.Editor
     
     public interface IWindowConfig: IJson
     {
-        EnumTypeSubscribe<int> EnumTypeSubscribe { get; }
-        CommonSubscribe<Tab, Type> TabCommonSubscribe { get; }
+        SubscribeCollect<int> IntSubscribe { get; }
+        SubscribeCollect<Type, Tab> TypeSubscribe { get; }
     }
 }

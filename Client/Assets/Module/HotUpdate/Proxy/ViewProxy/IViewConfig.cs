@@ -20,8 +20,7 @@ namespace Ninth.HotUpdate
 
     public interface IViewConfig
     {
-        EnumTypeSubscribe<string> EnumTypeSubscribe { get; }
-        GenericsSubscribe<IView, (string path, VIEW_HIERARCY hierarcy)> GenericsSubscribe { get; }
-        CommonSubscribe<VIEW, (string path, VIEW_HIERARCY hierarchy)> CommonSubscribe { get; }
+        SubscribeCollect<string> StringSubscribe { get; }
+        SubscribeCollect<(string path, VIEW_HIERARCY hierarcy)> TupleSubscribe { get; }
     }
 }

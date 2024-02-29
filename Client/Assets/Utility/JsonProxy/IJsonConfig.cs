@@ -10,8 +10,6 @@ namespace Ninth.Utility
     
     public interface IJsonConfig
     {
-        GenericsSubscribe<IJson, string> GenericsSubscribe { get; }
-        EnumTypeSubscribe<string> EnumTypeSubscribe { get; }
-        CommonSubscribe<Enum, string> CommonSubscribe { get; }
+        SubscribeCollect<string> StringSubscribe { get; }
     }
 }

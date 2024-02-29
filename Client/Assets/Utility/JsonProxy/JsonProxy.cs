@@ -14,170 +14,165 @@ namespace Ninth.Utility
         private readonly UTF8Encoding encoding;
         private readonly IJsonConfig jsonConfig;
 
-        private readonly GenericsSubscribe<IJson, object> genericsSubscribe;
-        private readonly EnumTypeSubscribe<object> enumTypeSubscribe;
-        private readonly CommonSubscribe<Enum, object> commonSubscribe;
+        private readonly SubscribeCollect<object> objectSubscribe;
         
         [Inject]
         public JsonProxy(IJsonConfig jsonConfig)
         {
             encoding = new UTF8Encoding(false);
             this.jsonConfig = jsonConfig;
-
-            genericsSubscribe = new GenericsSubscribe<IJson, object>();
-            enumTypeSubscribe = new EnumTypeSubscribe<object>();
-            commonSubscribe = new CommonSubscribe<Enum, object>();
+            objectSubscribe = new SubscribeCollect<object>();
         }
         
         // Generics
         async UniTask<TKey> IJsonProxy.ToObjectAsync<TKey>(CancellationToken cancellationToken, bool newIfNotExist)
         {
-            if (genericsSubscribe.TryGetValue<TKey>(out var value))
+            if (objectSubscribe.TryGetValue<TKey>(out var value))
             {
-                return (TKey)value.Value;
+                return (TKey)value;
             }
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>();
+            var path = jsonConfig.StringSubscribe.Get<TKey>();
             var obj = await ToObjectAsync<TKey>(path, cancellationToken, newIfNotExist);
-            genericsSubscribe.Subscribe<TKey>(obj);
+            objectSubscribe.Subscribe<TKey>(obj);
             return obj;
         }
 
         TKey IJsonProxy.ToObject<TKey>(int markBit, bool newIfNotExist)
         {
-            if (genericsSubscribe.TryGetValue<TKey>(out var value))
+            if (objectSubscribe.TryGetValue<TKey>(out var value))
             {
-                return (TKey)value.Value;
+                return (TKey)value;
             }
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
+            var path = jsonConfig.StringSubscribe.Get<TKey>(markBit);
             var obj = ToObject<TKey>(path, newIfNotExist);
-            genericsSubscribe.Subscribe<TKey>(obj);
+            objectSubscribe.Subscribe<TKey>(obj);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<TKey>(CancellationToken cancellationToken, bool throwEmptyError)
         {
-            if (!throwEmptyError && !genericsSubscribe.ContainsKey<TKey>())
+            if (!throwEmptyError && !objectSubscribe.ContainsKey<TKey>())
             {
                 return;
             }
-            var obj = genericsSubscribe.Get<TKey>();
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>();
+            var obj = objectSubscribe.Get<TKey>();
+            var path = jsonConfig.StringSubscribe.Get<TKey>();
             await ToJsonAsync((TKey)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<TKey>(int markBit, bool throwEmptyError) where TKey : class
         {
-            if (!throwEmptyError && !genericsSubscribe.ContainsKey<TKey>())
+            if (!throwEmptyError && !objectSubscribe.ContainsKey<TKey>())
             {
                 return;
             }
-            var obj = genericsSubscribe.Get<TKey>();
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
+            var obj = objectSubscribe.Get<TKey>();
+            var path = jsonConfig.StringSubscribe.Get<TKey>(markBit);
             ToJson((TKey)obj, path);
         }
 
         string IJsonProxy.GetPath<TKey>(int markBit) where TKey : class
         {
-            return jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
+            return jsonConfig.StringSubscribe.Get<TKey>(markBit);
         }
 
         // EnumType
         async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken, bool newIfNotExist)
         {
-            if (enumTypeSubscribe.TryGetValue<TKeyEnum>(out var value))
+            if (objectSubscribe.TryGetValue<TKeyEnum>(out var value))
             {
-                return (TResult)value.Value;
+                return (TResult)value;
             }
-            var path = jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscribe.Get<TKeyEnum>();
             var obj = await ToObjectAsync<TResult>(path, cancellationToken, newIfNotExist);
-            enumTypeSubscribe.Subscribe<TKeyEnum>(obj);
+            objectSubscribe.Subscribe<TKeyEnum>(obj);
             return obj;
         }
 
         TResult IJsonProxy.ToObject<TResult, TKeyEnum>(bool newIfNotExist)
         {
-            if (enumTypeSubscribe.TryGetValue<TKeyEnum>(out var value))
+            if (objectSubscribe.TryGetValue<TKeyEnum>(out var value))
             {
-                return (TResult)value.Value;
+                return (TResult)value;
             }
-            var path = jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscribe.Get<TKeyEnum>();
             var obj = ToObject<TResult>(path, newIfNotExist);
-            enumTypeSubscribe.Subscribe<TKeyEnum>(obj);
+            objectSubscribe.Subscribe<TKeyEnum>(obj);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken, bool throwEmptyError)
         {
-            if (!throwEmptyError && !enumTypeSubscribe.ContainsKey<TKeyEnum>())
+            if (!throwEmptyError && !objectSubscribe.ContainsKey<TKeyEnum>())
             {
                 return;
             }
-            var obj = enumTypeSubscribe.Get<TKeyEnum>();
-            var path = jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            var obj = objectSubscribe.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscribe.Get<TKeyEnum>();
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T, TKeyEnum>(bool throwEmptyError) where T : class
         {
-            if (!throwEmptyError && !enumTypeSubscribe.ContainsKey<TKeyEnum>())
+            if (!throwEmptyError && !objectSubscribe.ContainsKey<TKeyEnum>())
             {
                 return;
             }
-            var obj = enumTypeSubscribe.Get<TKeyEnum>();
-            var path = jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            var obj = objectSubscribe.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscribe.Get<TKeyEnum>();
             ToJson((T)obj, path);
         }
 
         string IJsonProxy.GetPathByEnumType<TKeyEnum>()
         {
-            return jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            return jsonConfig.StringSubscribe.Get<TKeyEnum>();
         }
 
         // Enum
         async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken, bool newIfNotExist)
         {
-            if (commonSubscribe.TryGetValue(key, out var value))
+            if (objectSubscribe.TryGetValue(key, out var value))
             {
-                return (TResult)value.Value;
+                return (TResult)value;
             }
 
-            var path = jsonConfig.CommonSubscribe.Get(key);
+            var path = jsonConfig.StringSubscribe.Get(key);
             var obj = await ToObjectAsync<TResult>(path, cancellationToken, newIfNotExist);
-            commonSubscribe.Subscribe(key, obj);
+            objectSubscribe.Subscribe(key, obj);
             return obj;
         }
 
         TResult IJsonProxy.ToObject<TResult>(Enum key, bool newIfNotExist)
         {
-            if (commonSubscribe.TryGetValue(key, out var value))
+            if (objectSubscribe.TryGetValue(key, out var value))
             {
-                return (TResult)value.Value;
+                return (TResult)value;
             }
-            var path = jsonConfig.CommonSubscribe.Get(key);
+            var path = jsonConfig.StringSubscribe.Get(key);
             var obj = ToObject<TResult>(path, newIfNotExist);
-            commonSubscribe.Subscribe(key, obj);
+            objectSubscribe.Subscribe(key, obj);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T>(Enum key, CancellationToken cancellationToken, bool throwEmptyError)
         {
-            if (!throwEmptyError && !commonSubscribe.ContainsKey(key))
+            if (!throwEmptyError && !objectSubscribe.ContainsKey(key))
             {
                 return;
             }
-            var obj = commonSubscribe.Get(key); 
-            var path = jsonConfig.CommonSubscribe.Get(key);
+            var obj = objectSubscribe.Get(key); 
+            var path = jsonConfig.StringSubscribe.Get(key);
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T>(Enum key, bool throwEmptyError)
         {
-            if (!throwEmptyError && !commonSubscribe.ContainsKey(key))
+            if (!throwEmptyError && !objectSubscribe.ContainsKey(key))
             {
                 return;
             }
-            var obj = commonSubscribe.Get(key);
-            var path = jsonConfig.CommonSubscribe.Get(key);
+            var obj = objectSubscribe.Get(key);
+            var path = jsonConfig.StringSubscribe.Get(key);
             ToJson((T)obj, path);
         }
 

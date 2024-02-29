@@ -13,6 +13,6 @@ namespace Ninth
 
     public interface IPlayerSettingsConfig
     {
-        CommonSubscribe<PLAY_SETTINGS, string> CommonSubscribe { get; }
+        SubscribeCollect<string, PLAY_SETTINGS> StringSubscribe { get; }
     }
 }

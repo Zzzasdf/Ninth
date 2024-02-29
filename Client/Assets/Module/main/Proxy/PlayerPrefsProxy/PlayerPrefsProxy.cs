@@ -24,13 +24,13 @@ namespace Ninth
         
         int IPlayerPrefsIntProxy.Get(PLAYERPREFS_INT @int)
         {
-            var defaultValue = intConfig.CommonSubscribe.Get(@int);
+            var defaultValue = intConfig.IntSubscribe.Get(@int);
             return PlayerPrefs.GetInt(((int)@int).ToString(), defaultValue);
         }
 
         void IPlayerPrefsIntProxy.Set(PLAYERPREFS_INT @int, int value)
         {
-            if (!intConfig.CommonSubscribe.ContainsKey(@int))
+            if (!intConfig.IntSubscribe.ContainsKey(@int))
             {
                 $"未订阅 {nameof(PLAYERPREFS_INT)}".FrameError();
                 return;
@@ -40,13 +40,13 @@ namespace Ninth
         
         float IPlayerPrefsFloatProxy.Get(PLAYERPREFS_FLOAT @float)
         {
-            var defaultValue = floatConfig.CommonSubscribe.Get(@float);
+            var defaultValue = floatConfig.FloatSubscribe.Get(@float);
             return PlayerPrefs.GetFloat(((int)@float).ToString(), defaultValue);
         }
 
         void IPlayerPrefsFloatProxy.Set(PLAYERPREFS_FLOAT @float, float value)
         {
-            if (!floatConfig.CommonSubscribe.ContainsKey(@float))
+            if (!floatConfig.FloatSubscribe.ContainsKey(@float))
             {
                 $"未订阅 {nameof(PLAYERPREFS_FLOAT)}".FrameError();
                 return;
@@ -56,13 +56,13 @@ namespace Ninth
         
         string IPlayerPrefsStringProxy.Get(PLAYERPREFS_STRING @string)
         {
-            var defaultValue = stringConfig.CommonSubscribe.Get(@string);
+            var defaultValue = stringConfig.StringSubscribe.Get(@string);
             return PlayerPrefs.GetString(((int)@string).ToString(), defaultValue);
         }
 
         void IPlayerPrefsStringProxy.Set(PLAYERPREFS_STRING @string, string value)
         {
-            if (!stringConfig.CommonSubscribe.ContainsKey(@string))
+            if (!stringConfig.StringSubscribe.ContainsKey(@string))
             {
                 $"未订阅 {nameof(@string)}".FrameError();
                 return;

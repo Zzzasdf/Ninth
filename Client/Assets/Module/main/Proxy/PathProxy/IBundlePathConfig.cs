@@ -24,7 +24,7 @@ namespace Ninth
     
     public interface IBundlePathConfig
     {
-        CommonSubscribe<BUNDLE_PATH, Func<string, string>> BundlePathSubscribe { get; }
-        CommonSubscribe<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)> AssetServerBundlePathSubscribe { get; }    
+        SubscribeCollect<Func<string, string>, BUNDLE_PATH> BundlePathSubscribe { get; }
+        SubscribeCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH> AssetServerBundlePathSubscribe { get; }    
     }
 }

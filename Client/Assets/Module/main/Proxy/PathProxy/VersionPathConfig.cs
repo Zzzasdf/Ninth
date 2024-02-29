@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,19 +10,19 @@ namespace Ninth
 {
     public class VersionPathConfig : IVersionPathConfig
     {
-        private readonly CommonSubscribe<VERSION_PATH, string> versionPathSubscribe;
-        private readonly CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> assetServerVersionPathSubscribe;
+        private readonly SubscribeCollect<string, VERSION_PATH> versionPathSubscribe;
+        private readonly SubscribeCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> assetServerVersionPathSubscribe;
 
-        CommonSubscribe<VERSION_PATH, string> IVersionPathConfig.VersionPathSubscribe => versionPathSubscribe;
-        CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> IVersionPathConfig.AssetServerVersionPathSubscribe => assetServerVersionPathSubscribe;
+        SubscribeCollect<string, VERSION_PATH> IVersionPathConfig.VersionPathSubscribe => versionPathSubscribe;
+        SubscribeCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> IVersionPathConfig.AssetServerVersionPathSubscribe => assetServerVersionPathSubscribe;
 
         [Inject]
         public VersionPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             var url = assetConfig.Url();
 
-            var produceName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.CommonSubscribe?.Get(PLAY_SETTINGS.PlatformName);
+            var produceName = playerSettingsConfig.StringSubscribe?.Get(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.StringSubscribe?.Get(PLAY_SETTINGS.PlatformName);
 
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
@@ -35,14 +36,14 @@ namespace Ninth
             var assetServer = $"{urlProduceNamePlatformName}/{nameConfig.FileNameByVersionConfig()}";
 
             {
-                var build = versionPathSubscribe = new CommonSubscribe<VERSION_PATH, string>();
+                var build = versionPathSubscribe = new SubscribeCollect<string, VERSION_PATH>();
                 build.Subscribe(VERSION_PATH.StreamingAssets, streamingAssets);
                 build.Subscribe(VERSION_PATH.PersistentData, persistentData);
                 build.Subscribe(VERSION_PATH.PersistentDataTemp, persistentDataTemp);
             }
 
             {
-                var build = assetServerVersionPathSubscribe = new CommonSubscribe<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)>();
+                var build = assetServerVersionPathSubscribe = new SubscribeCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH>();
                 build.Subscribe(ASSET_SERVER_VERSION_PATH.AssetServer, (assetServer, VERSION_PATH.PersistentDataTemp));
             }
         }

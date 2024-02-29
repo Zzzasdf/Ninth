@@ -25,7 +25,7 @@ namespace Ninth.Editor
 
         void IWindowProxy.Tab()
         {
-            var tabs = TabKeys().ToArrayString();
+            var tabs = TabKeys().Select(x => x.key.ToString()).ToArray();
             var current = GetEnumType<Tab>();
             var temp = GUILayout.SelectionGrid(current, tabs, 1);
             if (temp != current)
@@ -43,22 +43,22 @@ namespace Ninth.Editor
         
         private int GetEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            return windowConfig.EnumTypeSubscribe.Get<TKeyEnum>();
+            return windowConfig.IntSubscribe.Get<TKeyEnum>();
         }
 
         private void SetEnumType<TKeyEnum>(int value) where TKeyEnum: Enum
         {
-            windowConfig.EnumTypeSubscribe.Set<TKeyEnum>(value);
+            windowConfig.IntSubscribe.Set<TKeyEnum>(value);
         }
 
         private Type GetTab(Tab key)
         {
-            return windowConfig.TabCommonSubscribe.Get(key);
+            return windowConfig.TypeSubscribe.Get(key);
         }
         
-        private Dictionary<Tab, LinkedListReactiveProperty<Type>>.KeyCollection TabKeys()
+        private Dictionary<(Tab key, int markBit), ReactiveProperty<Type>>.KeyCollection TabKeys()
         {
-            return windowConfig.TabCommonSubscribe.Keys();
+            return windowConfig.TypeSubscribe.KeysByCommon();
         }
     }
 }
