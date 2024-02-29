@@ -3,7 +3,7 @@ namespace Ninth
     /// <summary>
     /// 资源定位
     /// </summary>
-    public enum AssetLocate
+    public enum AssetGroup
     {
         /// <summary>
         /// 本地

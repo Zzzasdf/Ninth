@@ -2,6 +2,7 @@ using System;
 using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
+using UnityFS;
 using VContainer;
 
 namespace Ninth.Editor
@@ -36,6 +37,9 @@ namespace Ninth.Editor
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
              
             // editor
+            builder.Register<VersionConfig>(resolver => resolver.Resolve<IJsonProxy>().ToObject<VersionConfig>(newIfNotExist: true), Lifetime.Singleton).AsSelf();
+            builder.Register<BuildProxy.BuildBundleInfo>(Lifetime.Transient).AsSelf();
+            
             builder.Register<WindowJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<WindowJson, Tab>(true), Lifetime.Singleton).AsSelf();
             builder.Register<WindowConfig>(Lifetime.Singleton).As<IWindowConfig>();
             builder.Register<WindowProxy>(Lifetime.Singleton).As<IWindowProxy>();
@@ -44,6 +48,7 @@ namespace Ninth.Editor
             builder.Register<BuildConfig>(Lifetime.Singleton).As<IBuildConfig>();
             builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
             builder.Register<BuildWindow>(Lifetime.Singleton).AsSelf();
+            
             
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();
@@ -60,5 +65,4 @@ namespace Ninth.Editor
             "编辑器 IOC 容器注册完成！！".FrameLog();
         }
     }
-
 }

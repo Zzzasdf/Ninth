@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 3350291559
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: gassets_localgroup
+      Dependencies: {}
+    Info_1:
+      Name: gassets_remotegroup
+      Dependencies: {}
+    Info_2:
+      Name: gassets_remotegroup_view
+      Dependencies: {}
+    Info_3:
+      Name: gassets_remotegroup_view_login
+      Dependencies: {}
+    Info_4:
+      Name: gassets_remotegroup_view_test
+      Dependencies: {}

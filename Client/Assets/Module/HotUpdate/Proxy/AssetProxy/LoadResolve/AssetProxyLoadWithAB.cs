@@ -55,12 +55,12 @@ namespace Ninth.HotUpdate
                     {
                         bundleRef = new BundleRef();
                         bundleRef.BundleName = originBundleRef.BundleName;
-                        bundleRef.AssetLocate = originBundleRef.AssetLocate;
+                        bundleRef.AssetGroup = originBundleRef.AssetGroup;
 
-                        var bundlePath = bundleRef.AssetLocate switch
+                        var bundlePath = bundleRef.AssetGroup switch
                         {
-                            AssetLocate.Local => pathProxy.Get(BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets, bundleRef.BundleName),
-                            AssetLocate.Remote => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData, bundleRef.BundleName),
+                            AssetGroup.Local => pathProxy.Get(BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets, bundleRef.BundleName),
+                            AssetGroup.Remote => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData, bundleRef.BundleName),
                             _ => throw new Exception("Invalid resource location")
                         };
                         if (bundlePath == null)

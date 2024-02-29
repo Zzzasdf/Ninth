@@ -7,7 +7,7 @@
             "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
         ],
         "CurrentBuildModeIndex": 0,
-        "DisplayVersion": "0.0.1",
+        "DisplayVersion": null,
         "HotUpdateVersion": 0,
         "IterateVersion": 0
     },
@@ -16,17 +16,17 @@
         "CurrentExportBundleModeIndex": 1,
         "CurrentCopyBundleModeIndex": 1,
         "CopyBundleRemotePath": "C:/UnityProject/Ninth/Remote",
-        "CurrentActiveTargetModeIndex": 1,
+        "CurrentActiveTargetModeIndex": 0,
         "InactiveBuildTargetIndex": 0
     },
     "BuildPlayer": {
-        "ExportBundleFolder": "C:/UnityProject/Ninth/Players",
-        "ExportPlayFolder": "C:/UnityProject/Ninth/Bundles",
+        "ExportBundleFolder": "C:/UnityProject/Ninth/Bundles",
+        "ExportPlayFolder": "C:/UnityProject/Ninth/Players",
         "CurrentExportBundleModeIndex": 0,
-        "CurrentCopyBundleModeIndex": 0,
-        "CopyBundleRemotePath": null,
+        "CurrentCopyBundleModeIndex": 1,
+        "CopyBundleRemotePath": "C:/UnityProject/Ninth/Remote",
         "CurrentActiveTargetModeIndex": 0,
-        "InactiveBuildTargetIndex": 3,
+        "InactiveBuildTargetIndex": 0,
         "FrameVersion": 0
     }
 }

@@ -138,7 +138,7 @@ namespace Ninth.Utility
             {
                 latestValue = value;
                 triggerEvents?.Invoke(value);
-            }
+            } 
         }
 
         public ReactiveProperty<T> AsSetEvent(Action<T> triggerEvent)

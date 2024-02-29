@@ -54,26 +54,21 @@ namespace Ninth.Editor
         private void RenderBuildPath()
         {
             if (contentFunc == null) return;
-            var paths = contentFunc.Invoke().Paths;
-            foreach (var path in paths)
+            var pathInfo = contentFunc.Invoke().PathInfo;
+            foreach (var path in pathInfo.Items)
             {
                 using (new GUILayout.HorizontalScope())
                 {
                     var label = path.Label;
                     var folder = path.Folder;
-                    var title = path.Title;
+                    var title = "选择目标文件夹";
                     var defaultName = path.DefaultName;
                     GUI.enabled = false;
                     EditorGUILayout.TextField(label, folder);
                     GUI.enabled = true;
                     if (GUILayout.Button("浏览"))
                     {
-                        var temp = EditorUtility.OpenFolderPanel(title, folder, defaultName);
-                        if (string.IsNullOrEmpty(temp))
-                        {
-                            return;
-                        }
-                        path.Folder = temp;
+                        path.Folder = EditorUtility.OpenFolderPanel(title, folder, defaultName);
                     }
                 }
             }
@@ -82,7 +77,7 @@ namespace Ninth.Editor
          private void RenderBuildBundleMode()
          {
              if (contentFunc == null) return;
-             var bundleMode = contentFunc.Invoke().BundleMode;
+             var bundleMode = contentFunc.Invoke().BundleInfo;
              using (new GUILayout.HorizontalScope())
              {
                  var barMenu = bundleMode.BuildBundleModeStrings;
@@ -108,10 +103,6 @@ namespace Ninth.Editor
                          if (GUILayout.Button("浏览"))
                          {
                              var temp = EditorUtility.OpenFolderPanel(title, folder, groupIndex.ToString());
-                             if (string.IsNullOrEmpty(temp))
-                             {
-                                 return;
-                             }
                              bundleMode.Set(groupIndex, temp, i);
                          }
                          if (GUILayout.Button("移除"))
@@ -130,7 +121,7 @@ namespace Ninth.Editor
          private void RenderBuildCopyPath()
          {
              if (contentFunc == null) return;
-             var copyMode = contentFunc.Invoke().CopyMode;
+             var copyMode = contentFunc.Invoke().CopyInfo;
              using (new GUILayout.HorizontalScope())
              {
                  var barMenu = copyMode.BuildBundleCopyModeStrings;
@@ -157,10 +148,6 @@ namespace Ninth.Editor
                  if (GUILayout.Button("浏览"))
                  {
                      var temp = EditorUtility.OpenFolderPanel(title, folder, defaultName);
-                     if (string.IsNullOrEmpty(temp))
-                     {
-                         return;
-                     }
                      copyMode.Folder = temp;
                  }
              }
@@ -169,7 +156,7 @@ namespace Ninth.Editor
          private void RenderBuildTargetMode()
          {
              if (contentFunc == null) return;
-             var buildTargetMode = contentFunc.Invoke().BuildTargetMode;
+             var buildTargetMode = contentFunc.Invoke().BuildTargetInfo;
              using (new GUILayout.HorizontalScope())
              {
                  var barMenu = buildTargetMode.BuildTargetModes;
@@ -181,14 +168,14 @@ namespace Ninth.Editor
              {
                  var label = "bundle 打包的平台";
                  var isModify = buildTargetMode.CurrentPackBuildTargetModeIsModify;
-                 var currentBuildTarget = buildTargetMode.CurrentBuildTarget;
+                 var currentBuildTarget = buildTargetMode.CurrentBuildTargetIndex;
                  var displayedOptions = buildTargetMode.BuildTargetStrings;
                  var optionValues = buildTargetMode.BuildTargetIndex;
                  if (!isModify)
                  {
                      GUI.enabled = false;
                  }
-                 buildTargetMode.CurrentBuildTarget = EditorGUILayout.IntPopup(label, currentBuildTarget, displayedOptions, optionValues);
+                 buildTargetMode.CurrentBuildTargetIndex = EditorGUILayout.IntPopup(label, currentBuildTarget, displayedOptions, optionValues);
                  if (!isModify)
                  {
                      GUI.enabled = true;
@@ -214,7 +201,7 @@ namespace Ninth.Editor
          private void RenderBuildVersion()
          {
              if (contentFunc == null) return;
-             var version = contentFunc.Invoke().Version;
+             var version = contentFunc.Invoke().VersionInfo;
              version.Init();
              using (new GUILayout.HorizontalScope())
              {
@@ -225,7 +212,7 @@ namespace Ninth.Editor
                  GUI.enabled = false;
                  EditorGUILayout.IntField("Frame 版本", version.FrameTemp);
                  GUI.enabled = true;
-                 if (!version.IsModify && version.EnableModifyFrame &&GUILayout.Button("+1"))
+                 if (version is { IsModify: false, EnableModifyFrame: true } && GUILayout.Button("+1"))
                  {
                      version.FrameTemp++;
                      version.IsModify = true;
@@ -266,7 +253,7 @@ namespace Ninth.Editor
                  return;
              }
              var build = contentFunc.Invoke();
-             var version = build.Version;
+             var version = build.VersionInfo;
              if (GUILayout.Button("开始构建"))
              {
                  var isSuccess = checkForCompletenessFunc.Invoke(build);

@@ -72,18 +72,18 @@
 //
 //         private void DllSortOut(string dllName)
 //         {
-//             AssetLocate assetLocate = AssetLocate.Dll;
-//             if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
+//             AssetGroup assetGroup = AssetGroup.Dll;
+//             if (!m_AssetLocate2BundleNameList.ContainsKey(assetGroup))
 //             {
-//                 m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
+//                 m_AssetLocate2BundleNameList.Add(assetGroup, new List<string>());
 //             }
-//             m_AssetLocate2BundleNameList[assetLocate].Add(dllName);
+//             m_AssetLocate2BundleNameList[assetGroup].Add(dllName);
 //
 //             // 配置Bundle引用
 //             BundleRef bundleRef = new BundleRef()
 //             {
 //                 BundleName = dllName,
-//                 AssetLocate = assetLocate
+//                 AssetGroup = assetGroup
 //             };
 //             m_BundleName2BundleRef.Add(dllName, bundleRef);
 //
@@ -95,14 +95,14 @@
 //             };
 //
 //             // 配置加载配置
-//             if (!m_LoadConfig.ContainsKey(assetLocate))
+//             if (!m_LoadConfig.ContainsKey(assetGroup))
 //             {
-//                 m_LoadConfig.Add(assetLocate, new LoadConfig()
+//                 m_LoadConfig.Add(assetGroup, new LoadConfig()
 //                 {
 //                     AssetRefList = new List<AssetRef>()
 //                 });
 //             }
-//             m_LoadConfig[assetLocate].AssetRefList.Add(assetRef);
+//             m_LoadConfig[assetGroup].AssetRefList.Add(assetRef);
 //         }
 //     }
 // }

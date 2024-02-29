@@ -42,13 +42,13 @@ namespace Ninth.Utility
             return obj;
         }
 
-        TKey IJsonProxy.ToObject<TKey>(bool newIfNotExist)
+        TKey IJsonProxy.ToObject<TKey>(int markBit, bool newIfNotExist)
         {
             if (genericsSubscribe.TryGetValue<TKey>(out var value))
             {
                 return (TKey)value.Value;
             }
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>();
+            var path = jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
             var obj = ToObject<TKey>(path, newIfNotExist);
             genericsSubscribe.Subscribe<TKey>(obj);
             return obj;
@@ -65,17 +65,22 @@ namespace Ninth.Utility
             await ToJsonAsync((TKey)obj, path, cancellationToken);
         }
 
-        void IJsonProxy.ToJson<TKey>(bool throwEmptyError) where TKey : class
+        void IJsonProxy.ToJson<TKey>(int markBit, bool throwEmptyError) where TKey : class
         {
             if (!throwEmptyError && !genericsSubscribe.ContainsKey<TKey>())
             {
                 return;
             }
             var obj = genericsSubscribe.Get<TKey>();
-            var path = jsonConfig.GenericsSubscribe.Get<TKey>();
+            var path = jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
             ToJson((TKey)obj, path);
         }
-        
+
+        string IJsonProxy.GetPath<TKey>(int markBit) where TKey : class
+        {
+            return jsonConfig.GenericsSubscribe.Get<TKey>(markBit);
+        }
+
         // EnumType
         async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken, bool newIfNotExist)
         {
@@ -121,6 +126,11 @@ namespace Ninth.Utility
             var obj = enumTypeSubscribe.Get<TKeyEnum>();
             var path = jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
             ToJson((T)obj, path);
+        }
+
+        string IJsonProxy.GetPathByEnumType<TKeyEnum>()
+        {
+            return jsonConfig.EnumTypeSubscribe.Get<TKeyEnum>();
         }
 
         // Enum

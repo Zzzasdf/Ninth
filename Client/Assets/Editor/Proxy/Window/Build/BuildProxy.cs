@@ -1,32 +1,29 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Ninth.HotUpdate;
 using Ninth.Utility;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using System.IO;
+using NPOI.SS.UserModel;
 
 namespace Ninth.Editor
 {
-    public class BuildProxy: IBuildProxy
+    public partial class BuildProxy: IBuildProxy
     {
         private readonly IBuildConfig buildConfig;
         private readonly BuildWindow buildWindow;
-        private readonly IAssetConfig assetConfig;
-        private readonly INameConfig nameConfig;
+        private readonly VersionConfig versionConfig;
+        private readonly BuildBundleInfo buildBundleInfo;
         
         [Inject]
-        public BuildProxy(IBuildConfig buildConfig, BuildWindow buildWindow, IAssetConfig assetConfig, INameConfig nameConfig)
+        public BuildProxy(IBuildConfig buildConfig, BuildWindow buildWindow, VersionConfig versionConfig, BuildBundleInfo buildBundleInfo)
         {
             this.buildConfig = buildConfig;
             this.buildWindow = buildWindow.Subscribe(Tab, Content, CheckForCompleteness, Export);
-            this.assetConfig = assetConfig;
-            this.nameConfig = nameConfig;
+            this.versionConfig = versionConfig;
+            this.buildBundleInfo = buildBundleInfo;
         }
         
         void IOnGUI.OnGUI()
@@ -36,49 +33,96 @@ namespace Ninth.Editor
 
         private void Tab()
         {
-            var barMenu = TabKeys().ToArrayString();
-            var current = Get<BuildSettingsMode>();
+            var barMenu = KeysByCommon().ToArrayString();
+            var current = GetIntByEnumType<BuildSettingsMode>();
             var temp = GUILayout.Toolbar(current, barMenu);
             if (temp == current)
             {
                 return;
             }
-            Set<BuildSettingsMode>(temp);
+            SetIntByEnumType<BuildSettingsMode>(temp);
         }
 
         private BuildConfig.BuildSettings Content()
         {
-            var current = (BuildSettingsMode)Get<BuildSettingsMode>();
+            var current = (BuildSettingsMode)GetIntByEnumType<BuildSettingsMode>();
             return Get(current);
         }
 
         // 检查配置完整性
         private bool CheckForCompleteness(BuildConfig.BuildSettings build)
         {
+            // bundle 打包临时缓存路径
+            var bundlesTemp = GetStringByEnumType<BuildFolder>();
+            if (string.IsNullOrEmpty(bundlesTemp))
+            {
+                "bundle 打包临时缓存路径不能为空".FrameError();
+                return false;
+            }
             // 打包路径检查
-            var paths = build.Paths;
-            foreach (var path in paths)
+            var pathInfo = build.PathInfo;
+            foreach (var path in pathInfo.Items)
             {
                 if (!Directory.Exists(path.Folder))
                 {
                     $"无法找到打包路径：{path.Folder}".FrameError();
                     return false;
                 }
+                if (path.Folder.Contains(Application.dataPath))
+                {
+                    $"打包路径: {path} 不能包含 {Application.dataPath}".FrameError();
+                    return false;
+                }
+            }
+            // 打包资源组检查
+            var bundleInfo = build.BundleInfo;
+            var localGroupPaths = bundleInfo.LocalGroupPaths;
+            foreach (var path in localGroupPaths)
+            {
+                if (!Directory.Exists(path))
+                {
+                    $"无法找到 Local 打包资源组路径: {path}".FrameError();
+                    return false;
+                }
+                if (!path.Contains(Application.dataPath))
+                {
+                    $"Local 打包资源组路径: {path} 必须包含 {Application.dataPath}".FrameError();
+                    return false;
+                }
+            }
+            var remoteGroupPaths = bundleInfo.RemoteGroupPaths;
+            if (remoteGroupPaths.Count == 0)
+            {
+                "Remote 打包资源组至少为一个".FrameError();
+                return false;
+            }
+            foreach (var path in remoteGroupPaths)
+            {
+                if (!Directory.Exists(path))
+                {
+                    $"无法找到 Remote 打包资源组路径: {path}".FrameError();
+                    return false;
+                }
+                if (!path.Contains(Application.dataPath))
+                {
+                    $"Remote 打包资源组路径: {path} 必须包含 {Application.dataPath}".FrameError();
+                    return false;
+                }
             }
             // 拷贝路径检查
-            var copyMode = build.CopyMode;
-            if (!Directory.Exists(copyMode.Folder))
+            var copyInfo = build.CopyInfo;
+            if (!Directory.Exists(copyInfo.Folder))
             {
-                $"无法找到拷贝路径：{copyMode.Folder}".FrameError();
+                $"无法找到拷贝路径：{copyInfo.Folder}".FrameError();
                 return false;
             }
             // 版本检查
-            var version = build.Version;
-            if (string.IsNullOrEmpty(version.Display))
+            var versionInfo = build.VersionInfo;
+            if (string.IsNullOrEmpty(versionInfo.Display))
             {
                 "客户端显示的版本为空".FrameWarning();
             }
-            if (!version.IsModify)
+            if (!versionInfo.IsModify)
             {
                 "版本未更新".FrameError();
                 return false;
@@ -88,51 +132,15 @@ namespace Ninth.Editor
 
         private void Export(BuildConfig.BuildSettings build)
         {
-            var buildTargetMode = build.BuildTargetMode;
             // 构建 bundle
-            BuildBundles();
+            BuildBundles(build);
             // 拷贝 bundle
 
             // 构建 player
         }
 
-        private void BuildBundles()
-        {
-            // var gAssets = $"{Application.dataPath}/GAssets";
-            // var remoteGroups = new List<string>
-            // {
-            //     "RemoteGroup",
-            // };
-            // var localGroup = new List<string>();
-            // var gAssetsInfo = new DirectoryInfo(gAssets);
-            // DirectoryInfo[] gAssetsFolders = gAssetsInfo.GetDirectories();
-            // foreach (var item in gAssetsFolders)
-            // {
-            //     if (!remoteGroups.Contains(item.Name))
-            //     {
-            //         localGroup.Add(item.Name.Log());
-            //     }
-            // }
-            //
-            // Dictionary<AssetLocate, List<string>> bundleSorts = new()
-            // {
-            //     []
-            // };
-
-            //
-            // for (int index = 0; index < groupListArgs.Length; index++)
-            // {
-            //     var groupLst = groupListArgs[index].groupList;
-            //     AssetLocate assetLocate = groupListArgs[index].assetLocate;
-            //
-            //     foreach (var groupName in groupLst)
-            //     {
-            //         string groupPath = gAssets + "/" + groupName;
-            //         DirectoryInfo groupDir = new DirectoryInfo(groupPath);
-            //         ScanChildDireations(groupDir, assetLocate);
-            //     }
-            // }
-        }
+        
+        
 
         private void CopyBundles()
         {
@@ -143,28 +151,35 @@ namespace Ninth.Editor
         {
             
         }
-        
-        
-        
 
-        private int Get<TKeyEnum>() where TKeyEnum: Enum
+        private string GetStringByEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            return buildConfig.IntEnumTypeSubscribe.Get<TKeyEnum>();
+            return buildConfig.StringSubscribe.GetByEnumType<TKeyEnum>();
         }
 
-        private void Set<TEnumKey>(int value) where TEnumKey: Enum
+        private int GetIntByEnumType<TKeyEnum>() where TKeyEnum: Enum
         {
-            buildConfig.IntEnumTypeSubscribe.Set<TEnumKey>(value);
+            return buildConfig.IntSubscribe.GetByEnumType<TKeyEnum>();
+        }
+
+        private void SetIntByEnumType<TKeyEnum>(int value) where TKeyEnum: Enum
+        {
+            buildConfig.IntSubscribe.SetByEnumType<TKeyEnum>(value);
+        }
+
+        private string GetString(Enum key)
+        {
+            return buildConfig.StringSubscribe.Get(key);
         }
 
         private BuildConfig.BuildSettings Get(BuildSettingsMode mode)
         {
-            return buildConfig.TabCommonSubscribe.Get(mode);
+            return buildConfig.BuildSettingsSubscribe.Get(mode);
         }
 
-        private Dictionary<BuildSettingsMode, LinkedListReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection TabKeys()
+        private Dictionary<Enum, LinkedListReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
         {
-            return buildConfig.TabCommonSubscribe.Keys();
+            return buildConfig.BuildSettingsSubscribe.KeysByCommon();
         }
     }
 }

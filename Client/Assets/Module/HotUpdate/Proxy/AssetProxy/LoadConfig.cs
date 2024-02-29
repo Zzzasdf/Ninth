@@ -1,25 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Ninth.Utility;
 
 namespace Ninth.HotUpdate
 {
-    public class LocalLoadConfig: LoadConfig
+    public class LoadConfig: IJson
     {
-
-    }
-
-    public class RemoteLoadConfig: LoadConfig
-    {
-
-    }
-
-    public class DllLoadConfig: LoadConfig
-    {
-
-    }
-
-    public class LoadConfig: IModel
-    {
-        public List<AssetRef> AssetRefList;
+        public List<AssetRef> AssetRefList = new();
     }
 }

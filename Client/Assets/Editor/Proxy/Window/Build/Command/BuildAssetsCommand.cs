@@ -24,12 +24,12 @@
 //             this.jsonProxy = jsonProxy;
 //             m_VersionConfig = new VersionConfig();
 //             m_AssetBundleBuildList = new List<AssetBundleBuild>();
-//             m_AssetLocate2BundleNameList = new Dictionary<AssetLocate, List<string>>();
-//             m_LoadConfig = new Dictionary<AssetLocate, LoadConfig>();
-//             m_AssetLocate2AssetPathList = new Dictionary<AssetLocate, List<string>>();
+//             m_AssetLocate2BundleNameList = new Dictionary<Ninth.AssetGroup, List<string>>();
+//             m_LoadConfig = new Dictionary<Ninth.AssetGroup, LoadConfig>();
+//             m_AssetLocate2AssetPathList = new Dictionary<Ninth.AssetGroup, List<string>>();
 //             m_AssetPath2AssetRef = new Dictionary<string, AssetRef>();
 //             m_BundleName2BundleRef = new Dictionary<string, BundleRef>();
-//             m_DownloadConfig = new Dictionary<AssetLocate, DownloadConfig>();
+//             m_DownloadConfig = new Dictionary<Ninth.AssetGroup, DownloadConfig>();
 //         }
 //
 //         // 打包模式
@@ -45,15 +45,15 @@
 //         // 整包 Local + Remote + Dll
 //         // eg!! Local 放在StreamingAssets文件夹下
 //         // 增量包 Remote + Dll
-//         private Dictionary<AssetLocate, LoadConfig> m_LoadConfig;
-//         private Dictionary<AssetLocate, List<string>> m_AssetLocate2AssetPathList;
+//         private Dictionary<Ninth.AssetGroup, LoadConfig> m_LoadConfig;
+//         private Dictionary<Ninth.AssetGroup, List<string>> m_AssetLocate2AssetPathList;
 //         private Dictionary<string, AssetRef> m_AssetPath2AssetRef;
 //         private Dictionary<string, BundleRef> m_BundleName2BundleRef;
 //
 //         // 下载配置 Remote + Dll
 //         // 与版本包对比需要热更的部分
-//         private Dictionary<AssetLocate, DownloadConfig> m_DownloadConfig;
-//         private Dictionary<AssetLocate, List<string>> m_AssetLocate2BundleNameList;
+//         private Dictionary<Ninth.AssetGroup, DownloadConfig> m_DownloadConfig;
+//         private Dictionary<Ninth.AssetGroup, List<string>> m_AssetLocate2BundleNameList;
 //
 //         public bool BuildPlayerAndAllBundles(BuildTargetGroup buildTargetGroup, BuildTarget target, Environment environment, string newVersion)
 //         {
@@ -117,8 +117,8 @@
 //                 }
 //             }
 //             bool result = Build(newVersion, target,
-//                 (localAbGroup, AssetLocate.Local),
-//                 (assetConfig.RemoteAbGroup, AssetLocate.Remote));
+//                 (localAbGroup, Ninth.AssetGroup.Local),
+//                 (assetConfig.RemoteAbGroup, Ninth.AssetGroup.Remote));
 //             if(!result)
 //             {
 //                 return false;
@@ -133,7 +133,7 @@
 //             PackEnvironment = environment;
 //
 //             bool result = Build(newVersion, target,
-//                 (assetConfig.RemoteAbGroup, AssetLocate.Remote));
+//                 (assetConfig.RemoteAbGroup, Ninth.AssetGroup.Remote));
 //             if(!result)
 //             {
 //                 return false;
@@ -162,7 +162,7 @@
 //         /// </summary>
 //         /// <param name="gAsset"></param>
 //         /// <param name="groupListArgs"></param>
-//         private bool Build(string newVersion, BuildTarget target, params (ICollection<string> groupList, AssetLocate assetLocate)[] groupListArgs)
+//         private bool Build(string newVersion, BuildTarget target, params (ICollection<string> groupList, Ninth.AssetGroup assetLocate)[] groupListArgs)
 //         {
 //             try
 //             {
@@ -171,7 +171,7 @@
 //                 bool basePack = false;
 //                 for (int index = 0; index < groupListArgs.Length; index++)
 //                 {
-//                     if (groupListArgs[index].assetLocate == AssetLocate.Local)
+//                     if (groupListArgs[index].assetLocate == Ninth.AssetGroup.Local)
 //                     {
 //                         basePack = true;
 //                         break;
@@ -217,13 +217,13 @@
 //                 for (int index = 0; index < groupListArgs.Length; index++)
 //                 {
 //                     var groupLst = groupListArgs[index].groupList;
-//                     AssetLocate assetLocate = groupListArgs[index].assetLocate;
+//                     AssetGroup assetGroup = groupListArgs[index].assetLocate;
 //
 //                     foreach (var groupName in groupLst)
 //                     {
 //                         string groupPath = gAssets + "/" + groupName;
 //                         DirectoryInfo groupDir = new DirectoryInfo(groupPath);
-//                         ScanChildDireations(groupDir, assetLocate);
+//                         ScanChildDireations(groupDir, assetGroup);
 //                     }
 //                 }
 //
@@ -272,10 +272,10 @@
 //         /// 2. 并且递归遍历这个文件夹下的所有子文件夹
 //         /// </summary>
 //         /// <param name="directoryInfo"></param>
-//         public void ScanChildDireations(DirectoryInfo directoryInfo, AssetLocate assetLocate)
+//         public void ScanChildDireations(DirectoryInfo directoryInfo, Ninth.AssetGroup assetGroup)
 //         {
 //             // 收集当前路径下的文件 把它们打成一个AB包
-//             ScanCurrDirectory(directoryInfo, assetLocate);
+//             ScanCurrDirectory(directoryInfo, assetGroup);
 //
 //             // 遍历当前路径下的子文件夹
 //             DirectoryInfo[] dirs = directoryInfo.GetDirectories();
@@ -283,7 +283,7 @@
 //             // 子文件夹递归打包
 //             foreach (DirectoryInfo info in dirs)
 //             {
-//                 ScanChildDireations(info, assetLocate);
+//                 ScanChildDireations(info, assetGroup);
 //             }
 //         }
 //
@@ -291,7 +291,7 @@
 //         /// 遍历当前路径下的文件 把它们打成一个AB包
 //         /// </summary>
 //         /// <param name="directoryInfo"></param>
-//         private void ScanCurrDirectory(DirectoryInfo directoryInfo, AssetLocate assetLocate)
+//         private void ScanCurrDirectory(DirectoryInfo directoryInfo, Ninth.AssetGroup assetGroup)
 //         {
 //             List<string> assetPaths = new List<string>();
 //             FileInfo[] fileInfoList = directoryInfo.GetFiles();
@@ -312,18 +312,18 @@
 //                 // 格式类似 gassets_Launch
 //                 string bundleName = directoryInfo.FullName.Substring(Application.dataPath.Length + 1).Replace('\\', '_').ToLower();
 //                 bundleName = bundleName.Replace('/', '_').ToLower();
-//                 SortOut(assetLocate, bundleName, assetPaths);
+//                 SortOut(assetGroup, bundleName, assetPaths);
 //             }
 //         }
 //
 //         // 分类
-//         private void SortOut(AssetLocate assetLocate, string bundleName, List<string> assetPaths)
+//         private void SortOut(Ninth.AssetGroup assetGroup, string bundleName, List<string> assetPaths)
 //         {
-//             if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
+//             if (!m_AssetLocate2BundleNameList.ContainsKey(assetGroup))
 //             {
-//                 m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
+//                 m_AssetLocate2BundleNameList.Add(assetGroup, new List<string>());
 //             }
-//             m_AssetLocate2BundleNameList[assetLocate].Add(bundleName);
+//             m_AssetLocate2BundleNameList[assetGroup].Add(bundleName);
 //
 //             // 配置Bundle
 //             AssetBundleBuild build = new AssetBundleBuild()
@@ -337,7 +337,7 @@
 //             BundleRef bundleRef = new BundleRef()
 //             {
 //                 BundleName = bundleName,
-//                 AssetLocate = assetLocate
+//                 AssetGroup = assetGroup
 //             };
 //             m_BundleName2BundleRef.Add(bundleName, bundleRef);
 //
@@ -345,11 +345,11 @@
 //             {
 //                 string assetPath = assetPaths[i];
 //
-//                 if (!m_AssetLocate2AssetPathList.ContainsKey(assetLocate))
+//                 if (!m_AssetLocate2AssetPathList.ContainsKey(assetGroup))
 //                 {
-//                     m_AssetLocate2AssetPathList.Add(assetLocate, new List<string>());
+//                     m_AssetLocate2AssetPathList.Add(assetGroup, new List<string>());
 //                 }
-//                 m_AssetLocate2AssetPathList[assetLocate].Add(assetPath);
+//                 m_AssetLocate2AssetPathList[assetGroup].Add(assetPath);
 //
 //                 // 资源
 //                 AssetRef assetRef = new AssetRef()
@@ -360,14 +360,14 @@
 //                 m_AssetPath2AssetRef.Add(assetPath, assetRef);
 //
 //                 // 配置加载配置
-//                 if (!m_LoadConfig.ContainsKey(assetLocate))
+//                 if (!m_LoadConfig.ContainsKey(assetGroup))
 //                 {
-//                     m_LoadConfig.Add(assetLocate, new LoadConfig()
+//                     m_LoadConfig.Add(assetGroup, new LoadConfig()
 //                     {
 //                         AssetRefList = new List<AssetRef>()
 //                     });
 //                 }
-//                 m_LoadConfig[assetLocate].AssetRefList.Add(assetRef);
+//                 m_LoadConfig[assetGroup].AssetRefList.Add(assetRef);
 //             }
 //         }
 //
@@ -383,7 +383,7 @@
 //             foreach (var item in m_BundleName2BundleRef)
 //             {
 //                 string bundleName = item.Key;
-//                 AssetLocate assetLocate = item.Value.AssetLocate;
+//                 Ninth.AssetGroup assetGroup = item.Value.AssetGroup;
 //
 //                 BundleInfo bundleInfo = new BundleInfo()
 //                 {
@@ -396,7 +396,7 @@
 //
 //                     bundleInfo.Size = (int)stream.Length;
 //                 }
-//                 m_DownloadConfig[assetLocate].BundleInfos.Add(bundleName, bundleInfo);
+//                 m_DownloadConfig[assetGroup].BundleInfos.Add(bundleName, bundleInfo);
 //             }
 //         }
 //
@@ -459,11 +459,11 @@
 //             jsonProxy.ToJsonAsync(m_VersionConfig, packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version));
 //
 //             // 空包也添加配置 =》解决拉取配置404问题
-//             List<AssetLocate> packAssetLocate = new List<AssetLocate>()
+//             List<Ninth.AssetGroup> packAssetLocate = new List<Ninth.AssetGroup>()
 //             {
-//                 AssetLocate.Local,
-//                 AssetLocate.Remote,
-//                 AssetLocate.Dll
+//                 Ninth.AssetGroup.Local,
+//                 Ninth.AssetGroup.Remote,
+//                 Ninth.AssetGroup.Dll
 //             };
 //
 //             // 保存加载配置位置
@@ -484,20 +484,20 @@
 //
 //             for (int index = 0; index < packAssetLocate.Count; index++)
 //             {
-//                 AssetLocate assetLocate = packAssetLocate[index];
+//                 Ninth.AssetGroup assetGroup = packAssetLocate[index];
 //
-//                 if (!m_AssetLocate2BundleNameList.ContainsKey(assetLocate))
+//                 if (!m_AssetLocate2BundleNameList.ContainsKey(assetGroup))
 //                 {
-//                     m_LoadConfig.Add(assetLocate, new LoadConfig());
-//                     m_DownloadConfig.Add(assetLocate, new DownloadConfig());
-//                     m_AssetLocate2BundleNameList.Add(assetLocate, new List<string>());
+//                     m_LoadConfig.Add(assetGroup, new LoadConfig());
+//                     m_DownloadConfig.Add(assetGroup, new DownloadConfig());
+//                     m_AssetLocate2BundleNameList.Add(assetGroup, new List<string>());
 //                 }
-//                 jsonProxy.ToJsonAsync(m_LoadConfig[assetLocate], saveLoadConfigTempPath[index]);
+//                 jsonProxy.ToJsonAsync(m_LoadConfig[assetGroup], saveLoadConfigTempPath[index]);
 //                 if(string.IsNullOrEmpty(saveDownloadConfigTempPath[index]))
 //                 {
 //                     continue;
 //                 }
-//                 jsonProxy.ToJsonAsync(m_DownloadConfig[assetLocate], saveDownloadConfigTempPath[index]);
+//                 jsonProxy.ToJsonAsync(m_DownloadConfig[assetGroup], saveDownloadConfigTempPath[index]);
 //             }
 //         }
 //
@@ -517,15 +517,15 @@
 //             }
 //
 //             // 移动AB包至源目录
-//             Dictionary<AssetLocate, Func<string, string>> locate2SourceDataPath = new Dictionary<AssetLocate, Func<string, string>>()
+//             Dictionary<Ninth.AssetGroup, Func<string, string>> locate2SourceDataPath = new Dictionary<Ninth.AssetGroup, Func<string, string>>()
 //             {
-//                 { AssetLocate.Local, (bundleName) => packConfig.BundleInLocalInSourceDataPath(m_VersionConfig.Version, bundleName) },
-//                 { AssetLocate.Remote, (bundleName) => packConfig.BundleInRemoteInSourceDataPath(m_VersionConfig.Version, bundleName) },
-//                 { AssetLocate.Dll, (bundleName) => packConfig.BundleInDllInSourceDataPath(m_VersionConfig.Version, bundleName) },
+//                 { Ninth.AssetGroup.Local, (bundleName) => packConfig.BundleInLocalInSourceDataPath(m_VersionConfig.Version, bundleName) },
+//                 { Ninth.AssetGroup.Remote, (bundleName) => packConfig.BundleInRemoteInSourceDataPath(m_VersionConfig.Version, bundleName) },
+//                 { Ninth.AssetGroup.Dll, (bundleName) => packConfig.BundleInDllInSourceDataPath(m_VersionConfig.Version, bundleName) },
 //             };
 //             foreach(var item in m_AssetLocate2BundleNameList)
 //             {
-//                 AssetLocate assetLocate = item.Key;
+//                 Ninth.AssetGroup assetGroup = item.Key;
 //                 List<string> bundleList = item.Value;
 //                 string move2SourceDataFolder = string.Empty;
 //                 string copy2OutputFolder = string.Empty;
@@ -533,7 +533,7 @@
 //                 for (int i = 0; i < bundleList.Count; i++)
 //                 {
 //                     string bundleName = bundleList[i];
-//                     File.Move(packConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName), locate2SourceDataPath[assetLocate].Invoke(bundleName).Log());
+//                     File.Move(packConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName), locate2SourceDataPath[assetGroup].Invoke(bundleName).Log());
 //                 }
 //             }
 //
@@ -588,7 +588,7 @@
 //                 case Environment.LocalAb:
 //                     {
 //                         // 全部拷贝到streamingAssets
-//                         CopyFilesSortOut(AssetLocate.All);
+//                         CopyFilesSortOut(Ninth.AssetGroup.All);
 //                         break;
 //                     }
 //                 case Environment.RemoteAb:
@@ -596,25 +596,25 @@
 //                         if(backPack)
 //                         {
 //                             // 拷贝local资源到streamingAssets
-//                             CopyFilesSortOut(AssetLocate.Local);
+//                             CopyFilesSortOut(Ninth.AssetGroup.Local);
 //                         }
 //                         break;
 //                     }
 //             }
 //
-//             void CopyFilesSortOut(AssetLocate assetLocate)
+//             void CopyFilesSortOut(Ninth.AssetGroup assetLocate)
 //             {
 //                 List<(string srcPath, string dstPath)> assetDirList = new List<(string, string)>();
 //
-//                 if (assetLocate.HasFlag(AssetLocate.Local))
+//                 if (assetLocate.HasFlag(Ninth.AssetGroup.Local))
 //                 {
 //                     assetDirList.Add((packConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version), packConfig.CopyDataLocalPathDirectory()));
 //                 }
-//                 if(assetLocate.HasFlag(AssetLocate.Remote))
+//                 if(assetLocate.HasFlag(Ninth.AssetGroup.Remote))
 //                 {
 //                     assetDirList.Add((packConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version), packConfig.CopyDataRemotePathDirectory()));
 //                 }
-//                 if(assetLocate.HasFlag(AssetLocate.Dll))
+//                 if(assetLocate.HasFlag(Ninth.AssetGroup.Dll))
 //                 {
 //                     assetDirList.Add((packConfig.SourceDataDllPathDirectory(m_VersionConfig.Version), packConfig.CopyDataDllPathDirectory()));
 //                 }

@@ -13,7 +13,7 @@ namespace Ninth.HotUpdate
         /// <summary>
         /// 资源包定位
         /// </summary>
-        public AssetLocate AssetLocate;
+        public AssetGroup AssetGroup;
 
         /// <summary>
         /// 加载时自身Bundle的引用
