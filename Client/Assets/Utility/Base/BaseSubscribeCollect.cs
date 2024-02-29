@@ -16,10 +16,22 @@ namespace Ninth.Utility
             return genericsSubscribe.Subscribe<TKey>(value, markBit);
         }
 
+        protected ReactivePropertyFunc<TValue> Subscribe<TKey>(Func<TValue> valueFunc, int markBit)
+        {
+            genericsSubscribe ??= new GenericsSubscribe<TValue>();
+            return genericsSubscribe.Subscribe<TKey>(valueFunc, markBit);
+        }
+
         protected ReactiveProperty<TValue> Subscribe(TEnum key, TValue value, int markBit)
         {
             commonSubscribe ??= new CommonSubscribe<TEnum, TValue>();
             return commonSubscribe.Subscribe(key, markBit, value);
+        }
+        
+        protected ReactivePropertyFunc<TValue> Subscribe(TEnum key, Func<TValue> valueFunc, int markBit)
+        {
+            commonSubscribe ??= new CommonSubscribe<TEnum, TValue>();
+            return commonSubscribe.Subscribe(key, markBit, valueFunc);
         }
         #endregion
 
@@ -110,7 +122,7 @@ namespace Ninth.Utility
         #endregion
 
         #region Collection
-        protected Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.KeyCollection Keys()
+        protected Dictionary<(Type type, int mariBit), IReactiveProperty<TValue>>.KeyCollection Keys()
         {
             if (genericsSubscribe == null)
             {
@@ -120,7 +132,7 @@ namespace Ninth.Utility
             return genericsSubscribe.Keys();
         }
 
-        protected Dictionary<(Type type, int mariBit), ReactiveProperty<TValue>>.ValueCollection Values()
+        protected Dictionary<(Type type, int mariBit), IReactiveProperty<TValue>>.ValueCollection Values()
         {
             if (genericsSubscribe == null)
             {
@@ -130,7 +142,7 @@ namespace Ninth.Utility
             return genericsSubscribe.Values();
         }
 
-        protected Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.KeyCollection KeysByCommon()
+        protected Dictionary<(TEnum key, int markBit), IReactiveProperty<TValue>>.KeyCollection KeysByCommon()
         {
             if (commonSubscribe == null)
             {
@@ -140,7 +152,7 @@ namespace Ninth.Utility
             return commonSubscribe.Keys();
         }
 
-        protected Dictionary<(TEnum key, int markBit), ReactiveProperty<TValue>>.ValueCollection ValuesByCommon()
+        protected Dictionary<(TEnum key, int markBit), IReactiveProperty<TValue>>.ValueCollection ValuesByCommon()
         {
             if (commonSubscribe == null)
             {

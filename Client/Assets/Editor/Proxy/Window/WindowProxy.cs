@@ -56,7 +56,7 @@ namespace Ninth.Editor
             return windowConfig.TypeSubscribe.Get(key);
         }
         
-        private Dictionary<(Tab key, int markBit), ReactiveProperty<Type>>.KeyCollection TabKeys()
+        private Dictionary<(Tab key, int markBit), IReactiveProperty<Type>>.KeyCollection TabKeys()
         {
             return windowConfig.TypeSubscribe.KeysByCommon();
         }

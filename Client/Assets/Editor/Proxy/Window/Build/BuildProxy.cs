@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Ninth.HotUpdate;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using System.IO;
 using System.Linq;
-using NPOI.SS.UserModel;
 
 namespace Ninth.Editor
 {
@@ -140,9 +138,6 @@ namespace Ninth.Editor
             // 构建 player
         }
 
-        
-        
-
         private void CopyBundles()
         {
             
@@ -178,7 +173,7 @@ namespace Ninth.Editor
             return buildConfig.BuildSettingsSubscribe.Get(mode);
         }
 
-        private Dictionary<(Enum key, int markBit), ReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
+        private Dictionary<(Enum key, int markBit), IReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
         {
             return buildConfig.BuildSettingsSubscribe.KeysByCommon();
         }

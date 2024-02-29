@@ -7,7 +7,12 @@ using Cysharp.Threading.Tasks.Linq;
 
 namespace Ninth.Utility
 {
-    public class ReactiveProperty<T>
+    public interface IReactiveProperty<T>
+    {
+        public T Value { get; set; }
+    }
+    
+    public class ReactiveProperty<T>: IReactiveProperty<T>
     {
         private T latestValue;
         private Action<T>? triggerEvents;
@@ -17,7 +22,7 @@ namespace Ninth.Utility
             latestValue = value;
         }
         
-        public T Value
+        T IReactiveProperty<T>.Value
         {
             get => latestValue;
             set
@@ -31,6 +36,20 @@ namespace Ninth.Utility
         {
             triggerEvents += triggerEvent;
             return this;
+        }
+    }
+    
+    public class ReactivePropertyFunc<T>: IReactiveProperty<T>
+    {
+        private readonly Func<T> valueFunc;
+        public ReactivePropertyFunc(Func<T> valueFuncFunc)
+        {
+            valueFunc = valueFuncFunc;
+        }
+        T IReactiveProperty<T>.Value
+        {
+            get => valueFunc.Invoke();
+            set { }
         }
     }
 
