@@ -10,11 +10,11 @@ namespace Ninth.Editor
     public class BuildWindow : IStartable
     {
         private Action? tabFunc;
-        private Func<BuildConfig.BuildSettings>? contentFunc;
-        private Func<BuildConfig.BuildSettings, bool>? checkForCompletenessFunc;
-        private Action<BuildConfig.BuildSettings>? exportFunc;
+        private Func<BuildConfig.BuildSettingssss>? contentFunc;
+        private Func<BuildConfig.BuildSettingssss, bool>? checkForCompletenessFunc;
+        private Action<BuildConfig.BuildSettingssss>? exportFunc;
 
-        public BuildWindow Subscribe(Action tab, Func<BuildConfig.BuildSettings> content, Func<BuildConfig.BuildSettings, bool> checkForCompleteness, Action<BuildConfig.BuildSettings> export)
+        public BuildWindow Subscribe(Action tab, Func<BuildConfig.BuildSettingssss> content, Func<BuildConfig.BuildSettingssss, bool> checkForCompleteness, Action<BuildConfig.BuildSettingssss> export)
         {
             this.tabFunc = tab;
             this.contentFunc = content;

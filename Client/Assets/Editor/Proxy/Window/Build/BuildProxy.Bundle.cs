@@ -11,7 +11,7 @@ namespace Ninth.Editor
 {
     public partial class BuildProxy
     {
-        private void BuildBundles(BuildConfig.BuildSettings build)
+        private void BuildBundles(BuildConfig.BuildSettingssss build)
         {
             var versionInfo = build.VersionInfo;
             versionConfig.DisplayVersion = versionInfo.Display;

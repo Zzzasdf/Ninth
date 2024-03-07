@@ -42,14 +42,14 @@ namespace Ninth.Editor
             SetIntByEnumType<BuildSettingsMode>(temp);
         }
 
-        private BuildConfig.BuildSettings Content()
+        private BuildConfig.BuildSettingssss Content()
         {
             var current = (BuildSettingsMode)GetIntByEnumType<BuildSettingsMode>();
             return Get(current);
         }
 
         // 检查配置完整性
-        private bool CheckForCompleteness(BuildConfig.BuildSettings build)
+        private bool CheckForCompleteness(BuildConfig.BuildSettingssss build)
         {
             // bundle 打包临时缓存路径
             var bundlesTemp = GetStringByEnumType<BuildFolder>();
@@ -129,7 +129,7 @@ namespace Ninth.Editor
             return true;
         }
 
-        private void Export(BuildConfig.BuildSettings build)
+        private void Export(BuildConfig.BuildSettingssss build)
         {
             // 构建 bundle
             BuildBundles(build);
@@ -168,12 +168,12 @@ namespace Ninth.Editor
             return buildConfig.StringSubscribe.Get(key);
         }
 
-        private BuildConfig.BuildSettings Get(BuildSettingsMode mode)
+        private BuildConfig.BuildSettingssss Get(BuildSettingsMode mode)
         {
             return buildConfig.BuildSettingsSubscribe.Get(mode);
         }
 
-        private Dictionary<(Enum key, int markBit), IReactiveProperty<BuildConfig.BuildSettings>>.KeyCollection KeysByCommon()
+        private Dictionary<(Enum key, int markBit), IReactiveProperty<BuildConfig.BuildSettingssss>>.KeyCollection KeysByCommon()
         {
             return buildConfig.BuildSettingsSubscribe.KeysByCommon();
         }

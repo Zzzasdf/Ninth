@@ -12,6 +12,6 @@ namespace Ninth.Editor
         SubscribeCollect<List<string>> StringListSubscribe { get; }
         SubscribeCollect<string> StringSubscribe { get; }
         SubscribeCollect<int> IntSubscribe { get; }
-        SubscribeCollect<BuildConfig.BuildSettings> BuildSettingsSubscribe { get; }
+        SubscribeCollect<BuildConfig.BuildSettingssss> BuildSettingsSubscribe { get; }
     }
 }

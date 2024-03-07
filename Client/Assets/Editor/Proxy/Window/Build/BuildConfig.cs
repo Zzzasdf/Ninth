@@ -13,12 +13,12 @@ namespace Ninth.Editor
         private readonly SubscribeCollect<List<string>> stringListSubscribe;
         private readonly SubscribeCollect<string> stringSubscribe;
         private readonly SubscribeCollect<int> intSubscribe;
-        private readonly SubscribeCollect<BuildSettings> buildSettingsSubscribe;
+        private readonly SubscribeCollect<BuildSettingssss> buildSettingsSubscribe;
 
         SubscribeCollect<List<string>> IBuildConfig.StringListSubscribe => stringListSubscribe;
         SubscribeCollect<string> IBuildConfig.StringSubscribe => stringSubscribe;
         SubscribeCollect<int> IBuildConfig.IntSubscribe => intSubscribe;
-        SubscribeCollect<BuildSettings> IBuildConfig.BuildSettingsSubscribe => buildSettingsSubscribe;
+        SubscribeCollect<BuildSettingssss> IBuildConfig.BuildSettingsSubscribe => buildSettingsSubscribe;
 
         [Inject]
         public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy)
@@ -63,28 +63,28 @@ namespace Ninth.Editor
             }
 
             {
-                var build = buildSettingsSubscribe = new SubscribeCollect<BuildSettings>();
-                build.Subscribe(BuildSettingsMode.Bundle, new BuildSettings(
-                    new BuildSettings.BuildSettingsPath(
-                        new List<BuildSettings.BuildSettingsPath.BuildSettingsPathItem>
+                var build = buildSettingsSubscribe = new SubscribeCollect<BuildSettingssss>();
+                build.Subscribe(BuildSettingsMode.Bundle, new BuildSettingssss(
+                    new BuildSettingssss.BuildSettingsPath(
+                        new List<BuildSettingssss.BuildSettingsPath.BuildSettingsPathItem>
                         {
                             new("bundle 打包的路径", (stringSubscribe, new PackMarkBit<BuildFolder>(BuildFolder.Bundles, 0)), "Bundles"),
                         }),
-                    new BuildSettings.BuildSettingsBundle(
+                    new BuildSettingssss.BuildSettingsBundle(
                         intSubscribe, 0,
                         stringListSubscribe, new Dictionary<BuildBundleMode, List<AssetGroup>>
                         {
                             [BuildBundleMode.HotUpdateBundles] = new() { AssetGroup.Remote },
                             [BuildBundleMode.AllBundles] = new() { AssetGroup.Local, AssetGroup.Remote },
                         }),
-                    new BuildSettings.BuildSettingsCopy(
+                    new BuildSettingssss.BuildSettingsCopy(
                         intSubscribe, 0,
                         stringSubscribe, new List<PackMarkBit<BuildExportCopyFolderMode>>
                         {
                             new(BuildExportCopyFolderMode.StreamingAssets, isModify: false),
                             new(BuildExportCopyFolderMode.Remote, 0),
                         }),
-                    new BuildSettings.BuildSettingsBuildTarget(
+                    new BuildSettingssss.BuildSettingsBuildTarget(
                         intSubscribe, 0,
                         new List<(PackMarkBit<ActiveTargetMode> packBuildTargetMode, BuildTarget? activeBuildTarget)>
                         {
@@ -98,29 +98,29 @@ namespace Ninth.Editor
                             [BuildTarget.Android] = null,
                             [BuildTarget.iOS] = null,
                         }),
-                    new BuildSettings.BuildSettingsVersion(stringSubscribe, intSubscribe, false, true)
+                    new BuildSettingssss.BuildSettingsVersion(stringSubscribe, intSubscribe, false, true)
                 ));
-                build.Subscribe(BuildSettingsMode.Player, new BuildSettings(
-                    new BuildSettings.BuildSettingsPath(
-                        new List<BuildSettings.BuildSettingsPath.BuildSettingsPathItem>
+                build.Subscribe(BuildSettingsMode.Player, new BuildSettingssss(
+                    new BuildSettingssss.BuildSettingsPath(
+                        new List<BuildSettingssss.BuildSettingsPath.BuildSettingsPathItem>
                         {
                             new("bundle 打包的路径", (stringSubscribe, new PackMarkBit<BuildFolder>(BuildFolder.Bundles, 1)), "Bundles"),
                             new("player 打包的路径", (stringSubscribe, new PackMarkBit<BuildFolder>(BuildFolder.Players, 0)), "Players"),
                         }),
-                    new BuildSettings.BuildSettingsBundle(
+                    new BuildSettingssss.BuildSettingsBundle(
                         intSubscribe, 1,
                         stringListSubscribe, new Dictionary<BuildBundleMode, List<AssetGroup>>
                         {
                             [BuildBundleMode.AllBundles] = new() { AssetGroup.Local, AssetGroup.Remote }
                         }),
-                    new BuildSettings.BuildSettingsCopy(
+                    new BuildSettingssss.BuildSettingsCopy(
                         intSubscribe, 1,
                         stringSubscribe, new List<PackMarkBit<BuildExportCopyFolderMode>>
                         {
                             new(BuildExportCopyFolderMode.StreamingAssets, isModify: false),
                             new(BuildExportCopyFolderMode.Remote, 1),
                         }),
-                    new BuildSettings.BuildSettingsBuildTarget(
+                    new BuildSettingssss.BuildSettingsBuildTarget(
                         intSubscribe, 1,
                         new List<(PackMarkBit<ActiveTargetMode> packBuildTargetMode, BuildTarget? activeBuildTarget)>
                         {
@@ -134,12 +134,20 @@ namespace Ninth.Editor
                             [BuildTarget.Android] = BuildTargetGroup.Android,
                             [BuildTarget.iOS] = BuildTargetGroup.iOS,
                         }),
-                    new BuildSettings.BuildSettingsVersion(stringSubscribe, intSubscribe, true, false)
+                    new BuildSettingssss.BuildSettingsVersion(stringSubscribe, intSubscribe, true, false)
                 ));
             }
         }
 
         public class BuildSettings
+        {
+            public class BuildSettingsItem
+            {
+                
+            }
+        }
+
+        public class BuildSettingssss
         {
             public BuildSettingsPath PathInfo { get; }
             public BuildSettingsBundle BundleInfo { get; }
@@ -147,7 +155,7 @@ namespace Ninth.Editor
             public BuildSettingsBuildTarget BuildTargetInfo { get; }
             public BuildSettingsVersion VersionInfo { get; }
 
-            public BuildSettings(BuildSettingsPath pathInfo, BuildSettingsBundle bundleInfo, BuildSettingsCopy copyInfo, BuildSettingsBuildTarget buildTargetInfo, BuildSettingsVersion versionInfo)
+            public BuildSettingssss(BuildSettingsPath pathInfo, BuildSettingsBundle bundleInfo, BuildSettingsCopy copyInfo, BuildSettingsBuildTarget buildTargetInfo, BuildSettingsVersion versionInfo)
             {
                 this.PathInfo = pathInfo;
                 this.BundleInfo = bundleInfo;

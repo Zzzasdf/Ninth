@@ -94,7 +94,7 @@ namespace Ninth.Editor
                 helper.Enums.Clear();
                 foreach (var item in Enum.GetValues(typeof(TEnum)))
                 {
-                    TEnum barMode = (TEnum)item;
+                    var barMode = (TEnum)item;
                     if (helper.Enum.HasFlag(barMode))
                     {
                         helper.Enums.Add(barMode);
