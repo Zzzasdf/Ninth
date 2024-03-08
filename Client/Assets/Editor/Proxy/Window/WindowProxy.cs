@@ -25,40 +25,21 @@ namespace Ninth.Editor
 
         void IWindowProxy.Tab()
         {
-            var tabs = TabKeys().Select(x => x.key.ToString()).ToArray();
-            var current = GetEnumType<Tab>();
-            var temp = GUILayout.SelectionGrid(current, tabs, 1);
-            if (temp != current)
+            var texts = windowConfig.MappingSelector.Keys.ToArray().ToArrayString();
+            var selected = windowConfig.MappingSelector.CurrentIndex;
+            using (new GUILayout.VerticalScope())
             {
-                SetEnumType<Tab>(temp);
+                EditorWindowUtility.SelectionGrid(selected, texts, 1);
             }
         }
 
         void IWindowProxy.Content()
         {
-            var tab = GetEnumType<Tab>();
-            var type = GetTab((Tab)tab);
-            (resolver.Resolve(type) as IOnGUI)?.OnGUI();
-        }
-        
-        private int GetEnumType<TKeyEnum>() where TKeyEnum: Enum
-        {
-            return windowConfig.IntSubscribe.Get<TKeyEnum>();
-        }
-
-        private void SetEnumType<TKeyEnum>(int value) where TKeyEnum: Enum
-        {
-            windowConfig.IntSubscribe.Set<TKeyEnum>(value);
-        }
-
-        private Type GetTab(Tab key)
-        {
-            return windowConfig.TypeSubscribe.Get(key);
-        }
-        
-        private Dictionary<(Tab key, int markBit), IReactiveProperty<Type>>.KeyCollection TabKeys()
-        {
-            return windowConfig.TypeSubscribe.KeysByCommon();
+            var type = windowConfig.MappingSelector.CurrentValue;
+            using (new GUILayout.VerticalScope())
+            {
+                (resolver.Resolve(type) as IOnGUI)?.OnGUI();
+            }
         }
     }
 }

@@ -9,28 +9,15 @@ namespace Ninth.Utility
 {
     // 集合选择器
     public class CollectSelector<T>: IEnumerable<T>
-        where T: struct
     {
         private readonly IList<T> collect;
-        private readonly IReactiveProperty<T>? current;
-        
-        private int currentIndex;
-        public int CurrentIndex
-        {
-            get => currentIndex;
-            set
-            {
-                if (!collect.IsSafetyRange(value)) return;
-                currentIndex = value;
-                if (current != null)
-                {
-                    current.Value = collect[value];
-                }
-            }
-        }
+        public IEnumerable<T> Collect => collect;
 
-        public IEnumerable<T> Keys => collect;
-        public T Current => collect.IsSafetyRange(currentIndex) ? collect[currentIndex] : default;
+        
+        public ReactiveProperty<T> Current { get; private set; }
+        public ReactiveProperty<int> CurrentIndex { get; private set; }
+        private bool isValueModify = false;
+        public T CurrentValue => collect.IsSafetyRange(CurrentIndex.Value) ? collect[CurrentIndex.Value] : default!;
 
         public CollectSelector() : this(null)
         {
@@ -40,12 +27,12 @@ namespace Ninth.Utility
         {
         }
         
-        public CollectSelector(IReactiveProperty<T>? current)
+        public CollectSelector(ReactiveProperty<T> current)
         {
             this.collect = new List<T>();
-            this.current = current;
+            this.Current = current;
         }
-
+        
         public void Add(T value)
         {
             if (collect.Contains(value))
@@ -63,23 +50,48 @@ namespace Ninth.Utility
                 $"无法构建一个没有数据的 {GetType()}".FrameError();
                 return this;
             }
-            if (current != null)
+            if (Current == null)
             {
-                if (!collect.Contains(current.Value))
-                {
-                    $"{GetType()} 不存在当前值 {current.Value}, 已重置当前值".Warning();
-                    current.Value = collect[0];
-                    currentIndex = 0;
-                }
-                else
-                {
-                    currentIndex = collect.IndexOf(collect.First(x => x.Equals(current.Value)));
-                }
+                Current = new ReactiveProperty<T>(collect[0]);
+            }
+            ReactiveProperty<int> reactiveProperty;
+
+            if (!collect.Contains(Current.Value))
+            {
+                $"{GetType()} 不存在当前值 {Current.Value}, 已重置当前值".Warning();
+                Current.Value = collect[0];
+                reactiveProperty = new ReactiveProperty<int>(0);
             }
             else
             {
-                currentIndex = 0;
+                reactiveProperty = new ReactiveProperty<int>(collect.IndexOf(collect.First(x => x.Equals(Current.Value))));
             }
+            Current.AsSetEvent(value =>
+            {
+                if (!collect.Contains(value))
+                {
+                    isValueModify = false;
+                    return;
+                }
+                isValueModify = !isValueModify;
+                if (isValueModify)
+                {
+                    CurrentIndex.Value = collect.IndexOf(value);
+                }
+            });
+            CurrentIndex = reactiveProperty.AsSetEvent(value =>
+            {
+                if (!collect.IsSafetyRange(value))
+                {
+                    isValueModify = false;
+                    return;
+                }
+                isValueModify = !isValueModify;
+                if (isValueModify)
+                {
+                    Current.Value = collect[value];
+                }
+            });
             return this;
         }
 

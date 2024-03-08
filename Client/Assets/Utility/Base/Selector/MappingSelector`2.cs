@@ -15,27 +15,13 @@ namespace Ninth.Utility
     {
         private readonly IList<TKey> keyCollect;
         private readonly IList<TValue> valueCollect;
-        private readonly IReactiveProperty<TKey>? current;
-        
-        private int currentIndex;
-        public int CurrentIndex
-        {
-            get => currentIndex;
-            set
-            {
-                if (!keyCollect.IsSafetyRange(value)) return;
-                currentIndex = value;
-                if (current != null)
-                {
-                    current.Value = keyCollect[value];
-                }
-            }
-        }
-
         public IEnumerable<TKey> Keys => keyCollect;
         public IEnumerable<TValue> Values => valueCollect;
-        public TKey Current => keyCollect.IsSafetyRange(currentIndex) ? keyCollect[currentIndex] : default;
-        public TValue? CurrentValue => valueCollect.IsSafetyRange(currentIndex) ? valueCollect[currentIndex] : default;
+
+        public ReactiveProperty<TKey> Current { get; private set; }
+        public ReactiveProperty<int> CurrentIndex { get; private set; }
+        private bool isValueModify = false;
+        public TValue CurrentValue => valueCollect.IsSafetyRange(CurrentIndex.Value) ? valueCollect[CurrentIndex.Value] : default!;
 
         public MappingSelector() : this(null)
         {
@@ -45,11 +31,11 @@ namespace Ninth.Utility
         {
         }
         
-        public MappingSelector(IReactiveProperty<TKey>? current)
+        public MappingSelector(ReactiveProperty<TKey> current)
         {
             this.keyCollect = new List<TKey>();
             this.valueCollect = new List<TValue>();
-            this.current = current;
+            this.Current = current;
         }
 
         public TValue this[TKey key]
@@ -73,23 +59,47 @@ namespace Ninth.Utility
                 $"无法构建一个没有数据的 {GetType()}".FrameError();
                 return this;
             }
-            if (current != null)
+            if (Current == null)
             {
-                if (!keyCollect.Contains(current.Value))
-                {
-                    $"{GetType()} 不存在当前值 {current.Value}, 已重置当前值".Warning();
-                    current.Value = keyCollect[0];
-                    currentIndex = 0;
-                }
-                else
-                {
-                    currentIndex = keyCollect.IndexOf(keyCollect.First(x => x.Equals(current.Value)));
-                }
+                Current = new ReactiveProperty<TKey>(keyCollect[0]);
+            }
+            ReactiveProperty<int> reactiveProperty;
+            if (!keyCollect.Contains(Current.Value))
+            {
+                $"{GetType()} 不存在当前值 {Current.Value}, 已重置当前值".Warning();
+                Current.Value = keyCollect[0];
+                reactiveProperty = new ReactiveProperty<int>(0);
             }
             else
             {
-                currentIndex = 0;
+                reactiveProperty = new ReactiveProperty<int>(keyCollect.IndexOf(keyCollect.First(x => x.Equals(Current.Value))));
             }
+            Current.AsSetEvent(value =>
+            {
+                if (!keyCollect.Contains(value))
+                {
+                    isValueModify = false;
+                    return;
+                }
+                isValueModify = !isValueModify;
+                if (isValueModify)
+                {
+                    CurrentIndex.Value = keyCollect.IndexOf(value);
+                }
+            });
+            CurrentIndex = reactiveProperty.AsSetEvent(value =>
+            {
+                if (!keyCollect.IsSafetyRange(value))
+                {
+                    isValueModify = false;
+                    return;
+                }
+                isValueModify = !isValueModify;
+                if (isValueModify)
+                {
+                    Current.Value = keyCollect[value];
+                }
+            });
             return this;
         }
     }
