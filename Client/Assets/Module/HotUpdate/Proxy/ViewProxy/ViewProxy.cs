@@ -23,7 +23,7 @@ namespace Ninth.HotUpdate
 
         async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
         {
-            var tuple = viewConfig.TupleSubscribe.Get<T>();
+            var tuple = viewConfig.TupleSubscriber.Get<T>();
             var rectHierarchy = await GetHierarchy(tuple.hierarcy);
             var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
             if (obj == null)
@@ -42,7 +42,7 @@ namespace Ninth.HotUpdate
         
         async UniTask<T?> IViewProxy.Get<T>(VIEW view, CancellationToken cancellationToken) where T : class
         {
-            var tuple = viewConfig.TupleSubscribe.Get(view);
+            var tuple = viewConfig.TupleSubscriber.Get(view);
             var rectHierarchy = await GetHierarchy(tuple.hierarcy);
             var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
             if (obj == null)
@@ -66,7 +66,7 @@ namespace Ninth.HotUpdate
                 $"{nameof(VIEW_HIERARCY)} 为空".FrameError();
                 return null;
             }
-            var viewLayoutPath = viewConfig.StringSubscribe.Get<VIEW_HIERARCY>();
+            var viewLayoutPath = viewConfig.StringSubscriber.Get<VIEW_HIERARCY>();
             if (viewLayout == null)
             {
                 var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath);

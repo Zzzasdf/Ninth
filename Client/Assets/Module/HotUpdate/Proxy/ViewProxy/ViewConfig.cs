@@ -9,21 +9,21 @@ namespace Ninth.HotUpdate
 {
     public class ViewConfig: IViewConfig
     {
-        private readonly SubscribeCollect<string> stringSubscribe;
-        private readonly SubscribeCollect<(string path, VIEW_HIERARCY hierarcy)> tupleSubscribe;
-        SubscribeCollect<string> IViewConfig.StringSubscribe => stringSubscribe;
-        SubscribeCollect<(string path, VIEW_HIERARCY hierarcy)> IViewConfig.TupleSubscribe => tupleSubscribe;
+        private readonly SubscriberCollect<string> stringSubscriber;
+        private readonly SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> tupleSubscriber;
+        SubscriberCollect<string> IViewConfig.StringSubscriber => stringSubscriber;
+        SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> IViewConfig.TupleSubscriber => tupleSubscriber;
         
         [Inject]
         public ViewConfig()
         {
             {
-                var build = stringSubscribe = new SubscribeCollect<string>();
+                var build = stringSubscriber = new SubscriberCollect<string>();
                 build.Subscribe<VIEW_HIERARCY>("Assets/GAssets/RemoteGroup/View/ViewLayout.prefab");
             }
 
             {
-                var build = tupleSubscribe = new SubscribeCollect<(string path, VIEW_HIERARCY hierarcy)>();
+                var build = tupleSubscriber = new SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)>();
                 build.Subscribe<HelloScreen>(("Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab", VIEW_HIERARCY.Frame));
                 build.Subscribe(VIEW.HelloScreen, ("Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab", VIEW_HIERARCY.Frame));
             }

@@ -8,7 +8,7 @@ namespace Ninth.Editor
 {
     public class EditorWindowUtility
     {
-        public static void ToolBar(ReactiveProperty<int> selected, string[] texts)
+        public static void Toolbar(ReactiveProperty<int> selected, string[] texts)
         {
             var temp = GUILayout.Toolbar(selected.Value, texts);
             if (temp == selected.Value) return;
@@ -22,77 +22,86 @@ namespace Ninth.Editor
             selected.Value = temp;
         }
         
-        public static void SelectFolder(string label, ReactiveProperty<string> folder, string defaultName, Func<string, bool>? condition = null, bool isModify = true)
-        {
-            using (new GUILayout.HorizontalScope())
-            {
-                GUI.enabled = false;
-                EditorGUILayout.TextField(label, folder.Value);
-                GUI.enabled = true;
-                if (isModify && GUILayout.Button("浏览"))
-                {
-                    var temp = EditorUtility.OpenFolderPanel("选择目标文件夹", folder.Value, defaultName);
-                    if (string.IsNullOrEmpty(temp))
-                    {
-                        return;
-                    }
-                    if (temp.Equals(folder.Value))
-                    {
-                        return;
-                    }
-                    if (condition != null && !condition.Invoke(temp))
-                    {
-                        return;
-                    }
-                    folder.Value = temp;
-                }
-            }
-        }
-        
-        public static void SelectFolderCollect(string label, ReactiveProperty<List<string>> folders, string defaultName, Func<string, bool>? condition = null)
+        public static bool SelectFolder(string label, ReactiveProperty<string> folder, string defaultName, Func<string, string?>? condition = null, bool isModify = true)
         {
             using (new GUILayout.VerticalScope())
             {
-                EditorGUILayout.LabelField(label);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUI.enabled = false;
+                    EditorGUILayout.TextField(label, folder.Value);
+                    GUI.enabled = true;
+                    if (isModify && GUILayout.Button("浏览"))
+                    {
+                        folder.Value = EditorUtility.OpenFolderPanel("选择目标文件夹", folder.Value, defaultName);
+                    }
+                }
+                using(new GUILayout.HorizontalScope())
+                {
+                    if (string.IsNullOrEmpty(folder.Value))
+                    {
+                        EditorGUILayout.HelpBox("不能为空", MessageType.Error);
+                        return false;
+                    }
+                    var conditionHelpBox = condition?.Invoke(folder.Value);
+                    if (!string.IsNullOrEmpty(conditionHelpBox))
+                    {
+                        EditorGUILayout.HelpBox(conditionHelpBox, MessageType.Error);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        public static bool SelectFolderCollect(string label, ReactiveProperty<List<string>> folders, string defaultName, Func<string, string?>? condition = null)
+        {
+            var result = true;
+            using (new GUILayout.VerticalScope())
+            {
+                using (new GUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(label);
+                    if (GUILayout.Button("++++++新增资源组++++++"))
+                    {
+                        folders.Value.Add(string.Empty);
+                    }
+                }
                 Stack<int>? removes = null;
                 for (var i = 0; i < folders.Value.Count; i++)
                 {
-                    using (new GUILayout.HorizontalScope())
+                    using (new GUILayout.VerticalScope())
                     {
-                        GUI.enabled = false;
-                        EditorGUILayout.TextField($"[{i}] =>", folders.Value[i]);
-                        GUI.enabled = true;
-                        if (GUILayout.Button("浏览"))
+                        using (new GUILayout.HorizontalScope())
                         {
-                            var temp = EditorUtility.OpenFolderPanel("选择目标文件夹", folders.Value[i], defaultName);
-                            if (string.IsNullOrEmpty(temp))
+                            GUI.enabled = false;
+                            EditorGUILayout.TextField($"[{i}] =>", folders.Value[i]);
+                            GUI.enabled = true;
+                            if (GUILayout.Button("浏览"))
                             {
-                                return;
+                                folders.Value[i] = EditorUtility.OpenFolderPanel("选择目标文件夹", folders.Value[i], defaultName);
                             }
-
-                            if (temp.Equals(folders.Value[i]))
+                            if (GUILayout.Button("移除"))
                             {
-                                return;
+                                removes ??= new Stack<int>();
+                                removes.Push(i);
                             }
-
-                            if (condition != null && !condition.Invoke(temp))
-                            {
-                                return;
-                            }
-
-                            folders.Value[i] = temp;
                         }
-
-                        if (GUILayout.Button("移除"))
+                        if (string.IsNullOrEmpty(folders.Value[i]))
                         {
-                            removes ??= new Stack<int>();
-                            removes.Push(i);
+                            EditorGUILayout.HelpBox("不能为空", MessageType.Error);
+                            result = false;
+                        }
+                        else
+                        {
+                            var conditionHelpBox = condition?.Invoke(folders.Value[i]);
+                            if (!string.IsNullOrEmpty(conditionHelpBox))
+                            {
+                                EditorGUILayout.HelpBox(conditionHelpBox, MessageType.Error);
+                                result = false;
+                            }
                         }
                     }
-                }
-                if (GUILayout.Button("++++++新增资源组++++++"))
-                {
-                    folders.Value.Add(string.Empty);
                 }
                 while (removes is { Count: > 0 })
                 {
@@ -100,6 +109,7 @@ namespace Ninth.Editor
                     folders.Value.RemoveAt(index);
                 }
             }
+            return result;
         }
         
         public static void IntPopup<T>(string label, ReactiveProperty<T> selectedValue, string[] displayedOptions, int[] optionValues, bool isModify = true)
@@ -114,6 +124,11 @@ namespace Ninth.Editor
             {
                 GUI.enabled = true;
             }
+        }
+
+        public static void TextField(string label, ReactiveProperty<string> text)
+        {
+            text.Value = EditorGUILayout.TextField(label, text.Value);
         }
     }
 }

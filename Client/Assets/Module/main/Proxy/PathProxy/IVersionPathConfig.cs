@@ -20,7 +20,7 @@ namespace Ninth
     
     public interface IVersionPathConfig
     {
-        SubscribeCollect<string, VERSION_PATH> VersionPathSubscribe { get; }
-        SubscribeCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> AssetServerVersionPathSubscribe { get; }
+        SubscriberCollect<string, VERSION_PATH> VersionPathSubscriber { get; }
+        SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> AssetServerVersionPathSubscriber { get; }
     }
 }

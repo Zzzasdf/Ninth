@@ -1,32 +1,33 @@
 {
-    "BuildCommon": {
-        "LocalGroup": [
-            "C:/UnityProject/Ninth/Client/Assets/GAssets/LocalGroup"
-        ],
-        "RemoteGroup": [
-            "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
-        ],
-        "CurrentBuildModeIndex": 0,
-        "DisplayVersion": null,
-        "HotUpdateVersion": 0,
-        "IterateVersion": 0
-    },
-    "BuildBundle": {
-        "ExportBundleFolder": "C:/UnityProject/Ninth/Bundles",
-        "CurrentExportBundleModeIndex": 0,
-        "CurrentCopyBundleModeIndex": 1,
-        "CopyBundleRemotePath": "C:/UnityProject/Ninth/Remote",
-        "CurrentActiveTargetModeIndex": 1,
-        "InactiveBuildTargetIndex": 9
-    },
-    "BuildPlayer": {
-        "ExportBundleFolder": "C:/UnityProject/Ninth/Bundles",
-        "ExportPlayFolder": "C:/UnityProject/Ninth/Players",
-        "CurrentExportBundleModeIndex": 1,
-        "CurrentCopyBundleModeIndex": 0,
-        "CopyBundleRemotePath": "C:/UnityProject/Ninth/Remote",
-        "CurrentActiveTargetModeIndex": 0,
-        "InactiveBuildTargetIndex": 0,
-        "FrameVersion": 0
+    "ExportBundleFolder": "C:/UnityProject/Ninth/Bundles",
+    "ExportPlayFolder": "C:/UnityProject/Ninth/Players",
+    "LocalGroup": [
+        "C:/UnityProject/Ninth/Client/Assets/GAssets/LocalGroup"
+    ],
+    "RemoteGroup": [
+        "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
+    ],
+    "BuildTargetPlatforms": -1,
+    "PlatformVersions": {
+        "container": {
+            "StandaloneWindows64": {
+                "DisplayVersion": "0.0.1",
+                "FrameVersion": 0,
+                "HotUpdateVersion": 0,
+                "IterateVersion": 0
+            },
+            "Android": {
+                "DisplayVersion": null,
+                "FrameVersion": 0,
+                "HotUpdateVersion": 0,
+                "IterateVersion": 0
+            },
+            "iOS": {
+                "DisplayVersion": "0.0.1",
+                "FrameVersion": 0,
+                "HotUpdateVersion": 0,
+                "IterateVersion": 0
+            }
+        }
     }
 }

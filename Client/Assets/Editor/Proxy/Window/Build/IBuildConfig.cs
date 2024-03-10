@@ -5,9 +5,9 @@ namespace Ninth.Editor
 {
     public interface IBuildConfig : IJson
     {
-        SubscribeCollect<List<string>> StringListSubscribe { get; }
-        SubscribeCollect<string> StringSubscribe { get; }
-        SubscribeCollect<int> IntSubscribe { get; }
+        SubscriberCollect<List<string>> StringListSubscriber { get; }
+        SubscriberCollect<string> StringSubscriber { get; }
+        SubscriberCollect<int> IntSubscriber { get; }
         BuildConfig.BuildSettings BuildSettings { get; }
     }
 }

@@ -5,13 +5,16 @@ using UnityEngine;
 
 namespace Ninth
 {
-    public class VersionConfig: IJson
+    public class VersionJson : IJson
     {
         public string DisplayVersion { get; set; }
         public int FrameVersion { get; set; }
         public int HotUpdateVersion { get; set; }
         public int IterateVersion { get; set; }
-
+    }
+    
+    public class VersionConfig: VersionJson
+    {
         public string BuiltIn => $"{FrameVersion}.{HotUpdateVersion}.{IterateVersion}";
 
         public static UniTask<bool> UpdateCompare(VersionConfig? server, VersionConfig? persistentData, VersionConfig? streamingAssets, CancellationToken cancellationToken = default)

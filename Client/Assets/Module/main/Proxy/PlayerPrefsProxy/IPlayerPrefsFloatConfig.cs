@@ -13,6 +13,6 @@ namespace Ninth
     
     public interface IPlayerPrefsFloatConfig
     {
-        SubscribeCollect<float, PLAYERPREFS_FLOAT> FloatSubscribe { get; }
+        SubscriberCollect<float, PLAYERPREFS_FLOAT> FloatSubscriber { get; }
     }
 }

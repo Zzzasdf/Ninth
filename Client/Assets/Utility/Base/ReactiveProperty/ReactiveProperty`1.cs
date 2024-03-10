@@ -26,8 +26,8 @@ namespace Ninth.Utility
 
         public ReactiveProperty<TResult> AsEnum<TResult>() where TResult: struct, Enum
         {
-            if (latestValue is int intValue
-                && Enum.IsDefined(typeof(TResult), intValue))  
+            if (latestValue is int intValue)
+                //&& Enum.IsDefined(typeof(TResult), intValue))  
             {  
                 var reactiveProperty = new ReactiveProperty<TResult>((TResult)(object)intValue);
                 if (triggerEvents is Action<int> intTriggerEvents)

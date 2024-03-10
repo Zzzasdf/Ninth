@@ -4,33 +4,33 @@ using UnityEngine;
 
 namespace Ninth.Utility
 {
-    public abstract class BaseSubscribeCollect<TValue, TEnum>
+    public abstract class BaseSubscriberCollect<TValue, TEnum>
     {
-        private GenericsSubscribe<TValue>? genericsSubscribe;
-        private CommonSubscribe<TEnum, TValue>? commonSubscribe;
+        private GenericsSubscriber<TValue>? genericsSubscribe;
+        private CommonSubscriber<TEnum, TValue>? commonSubscribe;
         
         #region Subcribe
         protected ReactiveProperty<TValue> Subscribe<TKey>(TValue value, int markBit)
         {
-            genericsSubscribe ??= new GenericsSubscribe<TValue>();
+            genericsSubscribe ??= new GenericsSubscriber<TValue>();
             return genericsSubscribe.Container.Subscribe<TKey>(value, markBit);
         }
 
         protected ReactivePropertyFunc<TValue> Subscribe<TKey>(Func<TValue> valueFunc, int markBit)
         {
-            genericsSubscribe ??= new GenericsSubscribe<TValue>();
+            genericsSubscribe ??= new GenericsSubscriber<TValue>();
             return genericsSubscribe.FuncContainer.Subscribe<TKey>(valueFunc, markBit);
         }
 
         protected ReactiveProperty<TValue> Subscribe(TEnum key, TValue value, int markBit)
         {
-            commonSubscribe ??= new CommonSubscribe<TEnum, TValue>();
+            commonSubscribe ??= new CommonSubscriber<TEnum, TValue>();
             return commonSubscribe.Container.Subscribe(key, markBit, value);
         }
         
         protected ReactivePropertyFunc<TValue> Subscribe(TEnum key, Func<TValue> valueFunc, int markBit)
         {
-            commonSubscribe ??= new CommonSubscribe<TEnum, TValue>();
+            commonSubscribe ??= new CommonSubscriber<TEnum, TValue>();
             return commonSubscribe.FuncContainer.Subscribe(key, markBit, valueFunc);
         }
         #endregion

@@ -45,7 +45,6 @@ namespace Ninth.Editor.Window
 
         private void OnDisable()
         {
-            jsonProxy.ToJson<WindowJson, Tab>();
             jsonProxy.ToJson<BuildJson>(Tab.Build, false);
             AssetDatabase.Refresh();
         }

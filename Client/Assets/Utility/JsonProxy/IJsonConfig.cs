@@ -10,6 +10,6 @@ namespace Ninth.Utility
     
     public interface IJsonConfig
     {
-        SubscribeCollect<string> StringSubscribe { get; }
+        SubscriberCollect<string> StringSubscriber { get; }
     }
 }

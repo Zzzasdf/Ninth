@@ -39,7 +39,6 @@ namespace Ninth.Editor
             // editor
             builder.Register<VersionConfig>(resolver => resolver.Resolve<IJsonProxy>().ToObject<VersionConfig>(newIfNotExist: true), Lifetime.Singleton).AsSelf();
             
-            builder.Register<WindowJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<WindowJson, Tab>(true), Lifetime.Singleton).AsSelf();
             builder.Register<WindowConfig>(Lifetime.Singleton).As<IWindowConfig>();
             builder.Register<WindowProxy>(Lifetime.Singleton).As<IWindowProxy>();
             

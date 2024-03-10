@@ -9,14 +9,14 @@ namespace Ninth.Editor
 {
     public class JsonConfig : IJsonConfig
     {
-        private readonly SubscribeCollect<string> stringSubscribe;
-        SubscribeCollect<string> IJsonConfig.StringSubscribe => stringSubscribe;
+        private readonly SubscriberCollect<string> stringSubscriber;
+        SubscriberCollect<string> IJsonConfig.StringSubscriber => stringSubscriber;
 
         [Inject]
         public JsonConfig(INameConfig nameConfig)
         {
             {
-                var build = stringSubscribe = new SubscribeCollect<string>();
+                var build = stringSubscriber = new SubscriberCollect<string>();
                 build.Subscribe<VersionConfig>($"{Application.dataPath}/../../BundleTemp/{nameConfig.FileNameByVersionConfig()}");
                 build.Subscribe<LoadConfig>($"{Application.dataPath}/../../BundleTemp/{nameConfig.LoadConfigNameByLocalGroup()}", (int)AssetGroup.Local);
                 build.Subscribe<LoadConfig>($"{Application.dataPath}/../../BundleTemp/{nameConfig.LoadConfigNameByRemoteGroup()}", (int)AssetGroup.Remote);

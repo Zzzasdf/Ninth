@@ -20,7 +20,7 @@ namespace Ninth.HotUpdate
 
     public interface IViewConfig
     {
-        SubscribeCollect<string> StringSubscribe { get; }
-        SubscribeCollect<(string path, VIEW_HIERARCY hierarcy)> TupleSubscribe { get; }
+        SubscriberCollect<string> StringSubscriber { get; }
+        SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> TupleSubscriber { get; }
     }
 }

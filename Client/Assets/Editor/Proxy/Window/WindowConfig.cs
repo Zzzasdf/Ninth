@@ -12,9 +12,10 @@ namespace Ninth.Editor
         private MappingSelector<Tab, Type> mappingSelector;
         MappingSelector<Tab, Type> IWindowConfig.MappingSelector => mappingSelector;
         [Inject]
-        public WindowConfig(WindowJson windowJson)
+        public WindowConfig()
         {
-            mappingSelector = new MappingSelector<Tab, Type>(new ReactiveProperty<Tab>(windowJson.CurrentTab).AsSetEvent(value => windowJson.CurrentTab = value))
+            mappingSelector = new MappingSelector<Tab, Type>
+                (Tab.Build)
             {
                 [Tab.Build] = typeof(IBuildProxy),
                 [Tab.Excel] = typeof(IExcelProxy),

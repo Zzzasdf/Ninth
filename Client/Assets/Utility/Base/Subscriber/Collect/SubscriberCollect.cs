@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Ninth.Utility
 {
-    public class SubscribeCollect<TValue> : SubscribeCollect<TValue, Enum>
+    public class SubscriberCollect<TValue> : SubscriberCollect<TValue, Enum>
     {
     }
 
-    public class SubscribeCollect<TValue, TEnum> : BaseSubscribeCollect<TValue, TEnum>
+    public class SubscriberCollect<TValue, TEnum> : BaseSubscriberCollect<TValue, TEnum>
         where TEnum : Enum
     {
         // Generics

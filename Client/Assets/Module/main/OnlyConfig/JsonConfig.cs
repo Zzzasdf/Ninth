@@ -6,14 +6,14 @@ namespace Ninth
 {
     public class JsonConfig : IJsonConfig
     {
-        private readonly SubscribeCollect<string> stringSubscribe;
-        SubscribeCollect<string> IJsonConfig.StringSubscribe => stringSubscribe;
+        private readonly SubscriberCollect<string> stringSubscriber;
+        SubscriberCollect<string> IJsonConfig.StringSubscriber => stringSubscriber;
 
         [Inject]
         public JsonConfig(IPathProxy pathProxy)
         {
             {
-                var build = stringSubscribe = new SubscribeCollect<string>();
+                var build = stringSubscriber = new SubscriberCollect<string>();
                 build.Subscribe(VERSION_PATH.StreamingAssets, pathProxy.Get(VERSION_PATH.StreamingAssets));
                 build.Subscribe(VERSION_PATH.PersistentData, pathProxy.Get(VERSION_PATH.PersistentData));
                 build.Subscribe(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, pathProxy.Get(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData));

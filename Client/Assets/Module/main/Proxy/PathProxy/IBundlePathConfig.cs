@@ -24,7 +24,7 @@ namespace Ninth
     
     public interface IBundlePathConfig
     {
-        SubscribeCollect<Func<string, string>, BUNDLE_PATH> BundlePathSubscribe { get; }
-        SubscribeCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH> AssetServerBundlePathSubscribe { get; }    
+        SubscriberCollect<Func<string, string>, BUNDLE_PATH> BundlePathSubscriber { get; }
+        SubscriberCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH> AssetServerBundlePathSubscriber { get; }    
     }
 }

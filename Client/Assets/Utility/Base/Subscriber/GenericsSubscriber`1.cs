@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Ninth.Utility
 {
-    public class GenericsSubscribe<TValue>
+    public class GenericsSubscriber<TValue>
     {
-        public readonly GenericsSubscribeContainer<TValue> Container = new();
-        public readonly GenericsSubscribeFuncContainer<TValue> FuncContainer = new();
+        public readonly GenericsSubscriberContainer<TValue> Container = new();
+        public readonly GenericsSubscriberFuncContainer<TValue> FuncContainer = new();
     }
     
-    public class GenericsSubscribeContainer<TValue> : BaseGenericsSubscribeContainer<ReactiveProperty<TValue>>
+    public class GenericsSubscriberContainer<TValue> : BaseGenericsSubscriberContainer<ReactiveProperty<TValue>>
     {
         public ReactiveProperty<TValue> Subscribe<TKey>(TValue value, int markBit)
         {
@@ -36,7 +36,7 @@ namespace Ninth.Utility
         }
     }
     
-    public class GenericsSubscribeFuncContainer<TValue>: BaseGenericsSubscribeContainer<ReactivePropertyFunc<TValue>>
+    public class GenericsSubscriberFuncContainer<TValue>: BaseGenericsSubscriberContainer<ReactivePropertyFunc<TValue>>
     {
         public ReactivePropertyFunc<TValue> Subscribe<TKey>(Func<TValue> valueFunc, int markBit)
         {
@@ -51,7 +51,7 @@ namespace Ninth.Utility
         }
     }
 
-    public abstract class BaseGenericsSubscribeContainer<TReactiveProperty>
+    public abstract class BaseGenericsSubscriberContainer<TReactiveProperty>
     {
         private (Type type, int markBit) searchCommonKey;
         protected readonly Dictionary<(Type, int), TReactiveProperty> Container = new();

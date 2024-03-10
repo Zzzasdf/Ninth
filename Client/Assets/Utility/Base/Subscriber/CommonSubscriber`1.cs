@@ -4,13 +4,13 @@ using System;
 
 namespace Ninth.Utility
 {
-    public class CommonSubscribe<TKey, TValue>
+    public class CommonSubscriber<TKey, TValue>
     {
-        public readonly CommonSubscribeContainer<TKey, TValue> Container = new();
-        public readonly CommonSubscribeFuncContainer<TKey, TValue> FuncContainer = new();
+        public readonly CommonSubscriberContainer<TKey, TValue> Container = new();
+        public readonly CommonSubscriberFuncContainer<TKey, TValue> FuncContainer = new();
     }
 
-    public class CommonSubscribeContainer<TKey, TValue>: BaseCommonSubscribeContainer<TKey, ReactiveProperty<TValue>>
+    public class CommonSubscriberContainer<TKey, TValue>: BaseCommonSubscriberContainer<TKey, ReactiveProperty<TValue>>
     {
         public ReactiveProperty<TValue> Subscribe(TKey key, int markBit, TValue value)
         {
@@ -34,7 +34,7 @@ namespace Ninth.Utility
         }
     }
 
-    public class CommonSubscribeFuncContainer<TKey, TValue>: BaseCommonSubscribeContainer<TKey, ReactivePropertyFunc<TValue>>
+    public class CommonSubscriberFuncContainer<TKey, TValue>: BaseCommonSubscriberContainer<TKey, ReactivePropertyFunc<TValue>>
     {
         public ReactivePropertyFunc<TValue> Subscribe(TKey key, int markBit, Func<TValue> valueFunc)
         {
@@ -48,7 +48,7 @@ namespace Ninth.Utility
         }
     }
     
-    public abstract class BaseCommonSubscribeContainer<TKey, TReactiveProperty>
+    public abstract class BaseCommonSubscriberContainer<TKey, TReactiveProperty>
     {
         private static (TKey key, int markBit) searchCommonKey;
         protected readonly Dictionary<(TKey, int), TReactiveProperty> Container = new();

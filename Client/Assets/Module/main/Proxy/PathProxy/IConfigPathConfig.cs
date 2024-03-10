@@ -29,7 +29,7 @@ namespace Ninth
     
     public interface IConfigPathConfig
     {
-        SubscribeCollect<string, CONFIG_PATH> ConfigPathSubscribe { get; }
-        SubscribeCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH> AssetServerConfigPathSubscribe { get; }
+        SubscriberCollect<string, CONFIG_PATH> ConfigPathSubscriber { get; }
+        SubscriberCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH> AssetServerConfigPathSubscriber { get; }
     }
 }
