@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -14,217 +15,207 @@ namespace Ninth.Utility
         private readonly UTF8Encoding encoding;
         private readonly IJsonConfig jsonConfig;
 
-        private readonly SubscriberCollect<object> objectSubscriber;
+        private readonly Dictionary<string, object> objectCache;
         
         [Inject]
         public JsonProxy(IJsonConfig jsonConfig)
         {
             encoding = new UTF8Encoding(false);
             this.jsonConfig = jsonConfig;
-            objectSubscriber = new SubscriberCollect<object>();
+            objectCache = new Dictionary<string, object>();
         }
         
         // Generics
-        async UniTask<TKey> IJsonProxy.ToObjectAsync<TKey>(CancellationToken cancellationToken, bool newIfNotExist)
+        async UniTask<TKey> IJsonProxy.ToObjectAsync<TKey>(CancellationToken cancellationToken, int markBit, Func<TKey>? notExistHandle)
         {
-            if (objectSubscriber.TryGetValue<TKey>(out var value))
-            {
-                return (TKey)value;
-            }
-            var path = jsonConfig.StringSubscriber.Get<TKey>();
-            var obj = await ToObjectAsync<TKey>(path, cancellationToken, newIfNotExist);
-            objectSubscriber.Subscribe<TKey>(obj);
-            return obj;
-        }
-
-        TKey IJsonProxy.ToObject<TKey>(int markBit, bool newIfNotExist)
-        {
-            if (objectSubscriber.TryGetValue<TKey>(out var value))
-            {
-                return (TKey)value;
-            }
             var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
-            var obj = ToObject<TKey>(path, newIfNotExist);
-            objectSubscriber.Subscribe<TKey>(obj);
+            var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
-        async UniTask IJsonProxy.ToJsonAsync<TKey>(CancellationToken cancellationToken, bool throwEmptyError)
+        TKey IJsonProxy.ToObject<TKey>(int markBit, Func<TKey>? notExistHandle)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey<TKey>())
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get<TKey>();
-            var path = jsonConfig.StringSubscriber.Get<TKey>();
+            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var obj = ToObject(path, notExistHandle);
+            return obj;
+        }
+
+        async UniTask IJsonProxy.ToJsonAsync<TKey>(CancellationToken cancellationToken, int markBit)
+        {
+            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((TKey)obj, path, cancellationToken);
         }
 
-        void IJsonProxy.ToJson<TKey>(int markBit, bool throwEmptyError) where TKey : class
+        void IJsonProxy.ToJson<TKey>(int markBit)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey<TKey>())
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get<TKey>();
             var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((TKey)obj, path);
         }
 
-        string IJsonProxy.GetPath<TKey>(int markBit) where TKey : class
+        bool IJsonProxy.CacheExists<TKey>(int markBit)
         {
-            return jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            return CacheExists<TKey>(path);
         }
-
+        
         // EnumType
-        async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken, bool newIfNotExist)
+        async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken, int markBit, Func<TResult>? notExistHandle)
         {
-            if (objectSubscriber.TryGetValue<TKeyEnum>(out var value))
-            {
-                return (TResult)value;
-            }
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>();
-            var obj = await ToObjectAsync<TResult>(path, cancellationToken, newIfNotExist);
-            objectSubscriber.Subscribe<TKeyEnum>(obj);
+            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
-        TResult IJsonProxy.ToObject<TResult, TKeyEnum>(bool newIfNotExist)
+        TResult IJsonProxy.ToObject<TResult, TKeyEnum>(int markBit, Func<TResult>? notExistHandle)
         {
-            if (objectSubscriber.TryGetValue<TKeyEnum>(out var value))
-            {
-                return (TResult)value;
-            }
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>();
-            var obj = ToObject<TResult>(path, newIfNotExist);
-            objectSubscriber.Subscribe<TKeyEnum>(obj);
+            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var obj = ToObject(path, notExistHandle);
             return obj;
         }
 
-        async UniTask IJsonProxy.ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken, bool throwEmptyError)
+        async UniTask IJsonProxy.ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken, int markBit)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey<TKeyEnum>())
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get<TKeyEnum>();
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
-        void IJsonProxy.ToJson<T, TKeyEnum>(bool throwEmptyError) where T : class
+        void IJsonProxy.ToJson<T, TKeyEnum>(int markBit)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey<TKeyEnum>())
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get<TKeyEnum>();
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((T)obj, path);
         }
-
-        string IJsonProxy.GetPathByEnumType<TKeyEnum>()
+        
+        bool IJsonProxy.CacheExists<T, TKeyEnum>(int markBit)
         {
-            return jsonConfig.StringSubscriber.Get<TKeyEnum>();
+            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            return CacheExists<T>(path);
         }
 
         // Enum
-        async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken, bool newIfNotExist)
+        async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken, int markBit, Func<TResult>? notExistHandle)
         {
-            if (objectSubscriber.TryGetValue(key, out var value))
-            {
-                return (TResult)value;
-            }
-
             var path = jsonConfig.StringSubscriber.Get(key);
-            var obj = await ToObjectAsync<TResult>(path, cancellationToken, newIfNotExist);
-            objectSubscriber.Subscribe(key, obj);
+            var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
-        TResult IJsonProxy.ToObject<TResult>(Enum key, bool newIfNotExist)
+        TResult IJsonProxy.ToObject<TResult>(Enum key, int markBit, Func<TResult>? notExistHandle)
         {
-            if (objectSubscriber.TryGetValue(key, out var value))
-            {
-                return (TResult)value;
-            }
-            var path = jsonConfig.StringSubscriber.Get(key);
-            var obj = ToObject<TResult>(path, newIfNotExist);
-            objectSubscriber.Subscribe(key, obj);
+            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            var obj = ToObject(path, notExistHandle);
             return obj;
         }
 
-        async UniTask IJsonProxy.ToJsonAsync<T>(Enum key, CancellationToken cancellationToken, bool throwEmptyError)
+        async UniTask IJsonProxy.ToJsonAsync<T>(Enum key, CancellationToken cancellationToken, int markBit)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey(key))
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get(key); 
-            var path = jsonConfig.StringSubscriber.Get(key);
+            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
-        void IJsonProxy.ToJson<T>(Enum key, bool throwEmptyError)
+        void IJsonProxy.ToJson<T>(Enum key, int markBit)
         {
-            if (!throwEmptyError && !objectSubscriber.ContainsKey(key))
-            {
-                return;
-            }
-            var obj = objectSubscriber.Get(key);
-            var path = jsonConfig.StringSubscriber.Get(key);
+            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((T)obj, path);
         }
 
+        bool IJsonProxy.CacheExists<T>(Enum key, int markBit)
+        {
+            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            return CacheExists<T>(path);
+        }
+
         // Base
-        private async UniTask<T> ToObjectAsync<T>(string? path, CancellationToken cancellationToken, bool newIfNotExist) where T: class, new()
+        public async UniTask<T> ToObjectAsync<T>(string path, CancellationToken cancellationToken, Func<T>? notExistHandle) where T: class, IJson
         {
+            if (objectCache.TryGetValue(path, out var result))
+            {
+                return (T)result;
+            }
             if (!File.Exists(path))
             {
-                if (newIfNotExist)
+                if (notExistHandle == null)
                 {
-                    $"路径不存在文件: {path}".Log();
-                    return default!;
+                    $"路径不存在文件: {path}".Error();
+                    result = default!;
                 }
-                return new T();
+                else
+                {
+                    result = notExistHandle.Invoke();
+                }
             }
-            var data = await File.ReadAllTextAsync(path, encoding, cancellationToken);
-            return LitJson.JsonMapper.ToObject<T>(data);
+            else
+            {
+                var data = await File.ReadAllTextAsync(path, encoding, cancellationToken);
+                result = LitJson.JsonMapper.ToObject<T>(data);
+            }
+            objectCache.Add(path, result);
+            return (T)result;
         }
         
-        private T ToObject<T>(string path, bool newIfNotExist) where T: class, new()
+        public T ToObject<T>(string path, Func<T>? notExistHandle) where T: class, IJson
         {
+            if (objectCache.TryGetValue(path, out var result))
+            {
+                return (T)result;
+            }
             if (!File.Exists(path))
             {
-                if (!newIfNotExist)
+                if (notExistHandle == null)
                 {
                     $"路径不存在文件: {path}".Log();
-                    return default!;
+                    result = default!;
                 }
-                return new T();
+                else
+                {
+                    result = notExistHandle.Invoke();
+                }
             }
-            var data = File.ReadAllText(path, encoding);
-            return LitJson.JsonMapper.ToObject<T>(data);
+            else
+            {
+                var data = File.ReadAllText(path, encoding);
+                result = LitJson.JsonMapper.ToObject<T>(data);
+            }
+            objectCache.Add(path, result);
+            return (T)result;
         }
         
-        private async UniTask ToJsonAsync<T>(T obj, string path, CancellationToken cancellationToken)
+        public async UniTask ToJsonAsync<T>(T obj, string path, CancellationToken cancellationToken) where T: class, IJson
         {
             if (!File.Exists(path))
             {
                 await File.Create(path).DisposeAsync();
             }
+            if(objectCache.TryGetValue(path, out var item))
+            {
+                CopyHelper.ShallowCopy(item, obj);
+            }
             var jsonData = LitJson.JsonMapper.ToJson(obj);
             await File.WriteAllTextAsync(path, ConvertJsonString(jsonData), encoding, cancellationToken);
         }
         
-        private void ToJson<T>(T obj, string path)
+        public void ToJson<T>(T obj, string path) where T: class, IJson
         {
             if (!File.Exists(path))
             {
                 File.Create(path).Dispose();
             }
+            if(objectCache.TryGetValue(path, out var item))
+            {
+                CopyHelper.ShallowCopy(item, obj);
+            }
             var jsonData = LitJson.JsonMapper.ToJson(obj);
             File.WriteAllText(path, ConvertJsonString(jsonData), encoding);
+        }
+        
+        public bool CacheExists<T>(string path) where T: class, IJson
+        {
+            return objectCache.ContainsKey(path);
         }
 
         private static string ConvertJsonString(string str)

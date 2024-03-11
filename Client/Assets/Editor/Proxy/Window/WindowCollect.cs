@@ -45,10 +45,13 @@ namespace Ninth.Editor.Window
 
         private void OnDisable()
         {
-            jsonProxy.ToJson<BuildJson>(Tab.Build, false);
+            if (jsonProxy.CacheExists<BuildJson>(Tab.Build))
+            {
+                jsonProxy.ToJson<BuildJson>(Tab.Build);
+            }
             AssetDatabase.Refresh();
         }
-
+        
         private void OnGUI()
         {
             using var horizontalScope = new GUILayout.HorizontalScope();

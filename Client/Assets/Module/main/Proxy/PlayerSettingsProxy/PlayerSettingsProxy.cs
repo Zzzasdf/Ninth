@@ -3,17 +3,17 @@ using VContainer;
 
 namespace Ninth
 {
-    public class PlaySettingsProxy : IPlaySettingsProxy
+    public class PlayerSettingsProxy : IPlayerSettingsProxy
     {
         private readonly IPlayerSettingsConfig playerSettingsConfig;
         
         [Inject]
-        public PlaySettingsProxy(IPlayerSettingsConfig playerSettingsConfig)
+        public PlayerSettingsProxy(IPlayerSettingsConfig playerSettingsConfig)
         {
             this.playerSettingsConfig = playerSettingsConfig;
         }
         
-        string IPlaySettingsProxy.Get(PLAY_SETTINGS playSettings)
+        string IPlayerSettingsProxy.Get(PLAY_SETTINGS playSettings)
         {
             var result = playerSettingsConfig.StringSubscriber.Get(playSettings);
             if (result == null)

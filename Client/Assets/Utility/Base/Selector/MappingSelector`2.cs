@@ -40,6 +40,7 @@ namespace Ninth.Utility
 
         public TValue this[TKey key]
         {
+            get => valueCollect[keyCollect.IndexOf(key)];
             set
             {
                 if (keyCollect.Contains(key))

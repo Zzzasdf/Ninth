@@ -28,6 +28,7 @@ namespace Ninth.Editor
             builder.RegisterInstance(nameConfig).As<INameConfig>();
             
             builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();
+            builder.Register<PlayerSettingsProxy>(Lifetime.Singleton).As<IPlayerSettingsProxy>();
             builder.Register<VersionPathConfig>(Lifetime.Singleton).As<IVersionPathConfig>();
             builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>();
             builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
@@ -37,15 +38,16 @@ namespace Ninth.Editor
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
              
             // editor
-            builder.Register<VersionConfig>(resolver => resolver.Resolve<IJsonProxy>().ToObject<VersionConfig>(newIfNotExist: true), Lifetime.Singleton).AsSelf();
+            builder.Register<VersionConfig>(resolver => resolver.Resolve<IJsonProxy>().ToObject(notExistHandle: () => new VersionConfig()), Lifetime.Singleton).AsSelf();
             
             builder.Register<WindowConfig>(Lifetime.Singleton).As<IWindowConfig>();
             builder.Register<WindowProxy>(Lifetime.Singleton).As<IWindowProxy>();
             
-            builder.Register<BuildJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<BuildJson>(Tab.Build, true), Lifetime.Singleton).AsSelf();
+            builder.Register<BuildJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<BuildJson>(Tab.Build, notExistHandle: () => new BuildJson()), Lifetime.Singleton).AsSelf();
             builder.Register<BuildConfig>(Lifetime.Singleton).As<IBuildConfig>();
             builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
-            
+            builder.Register<BuildProxy.BuildBundlesConfig>(Lifetime.Transient).AsSelf();
+            builder.Register<BuildProxy.BuildBundleInfo>(Lifetime.Transient).AsSelf();
             
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();

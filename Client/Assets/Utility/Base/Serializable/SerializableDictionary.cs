@@ -8,7 +8,13 @@ namespace System.Collections.Generic
         where TKey: struct
     {
         public Dictionary<string, TValue> container = new();
- 
+
+        public TValue this[TKey key]
+        {
+            get => container[key.ToString()];
+            set => container[key.ToString()] = value;
+        }
+        
         public void Add(TKey key, TValue value)
         {
             container.Add(key.ToString(), value);

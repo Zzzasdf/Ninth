@@ -7,26 +7,29 @@
     "RemoteGroup": [
         "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
     ],
-    "BuildTargetPlatforms": -1,
+    "BuildTargetPlatforms": 1,
     "PlatformVersions": {
         "container": {
             "StandaloneWindows64": {
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 0,
-                "HotUpdateVersion": 0,
-                "IterateVersion": 0
+                "FrameVersion": 14,
+                "HotUpdateVersion": 30,
+                "IterateVersion": 44,
+                "BuiltIn": "14.30.44"
             },
             "Android": {
-                "DisplayVersion": null,
-                "FrameVersion": 0,
-                "HotUpdateVersion": 0,
-                "IterateVersion": 0
+                "DisplayVersion": "0.0.1",
+                "FrameVersion": 4,
+                "HotUpdateVersion": 9,
+                "IterateVersion": 13,
+                "BuiltIn": "4.9.13"
             },
             "iOS": {
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 0,
-                "HotUpdateVersion": 0,
-                "IterateVersion": 0
+                "FrameVersion": 4,
+                "HotUpdateVersion": 9,
+                "IterateVersion": 13,
+                "BuiltIn": "4.9.13"
             }
         }
     }

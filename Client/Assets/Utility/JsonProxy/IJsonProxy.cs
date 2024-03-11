@@ -7,23 +7,31 @@ namespace Ninth.Utility
     public interface IJsonProxy
     {
         // Generics
-        UniTask<TKey> ToObjectAsync<TKey>(CancellationToken cancellationToken = default, bool newIfNotExist = false) where TKey : class, IJson, new();
-        TKey ToObject<TKey>(int markBit = 0, bool newIfNotExist = false) where TKey : class, IJson, new();
-        UniTask ToJsonAsync<TKey>(CancellationToken cancellationToken = default, bool throwEmptyError = true) where TKey : class, IJson, new();
-        void ToJson<TKey>(int markBit = 0, bool throwEmptyError = true) where TKey : class, IJson, new();
-        string GetPath<TKey>(int markBit = 0) where TKey : class, IJson, new();
-        
+        UniTask<TKey> ToObjectAsync<TKey>(CancellationToken cancellationToken = default, int markBit = 0, Func<TKey>? notExistHandle = null) where TKey : class, IJson;
+        TKey ToObject<TKey>(int markBit = 0, Func<TKey>? notExistHandle = null) where TKey : class, IJson;
+        UniTask ToJsonAsync<TKey>(CancellationToken cancellationToken = default, int markBit = 0) where TKey : class, IJson;
+        void ToJson<TKey>(int markBit = 0) where TKey : class, IJson;
+        bool CacheExists<TKey>(int markBit = 0) where TKey : class, IJson;
+
         // EnumType
-        UniTask<TResult> ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken = default, bool newIfNotExist = false) where TResult : class, IJson, new() where TKeyEnum : Enum;
-        TResult ToObject<TResult, TKeyEnum>(bool newIfNotExist = false) where TResult : class, IJson, new() where TKeyEnum : Enum;
-        UniTask ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken = default, bool throwEmptyError = true) where T : class, IJson, new() where TKeyEnum : Enum;
-        void ToJson<T, TKeyEnum>(bool throwEmptyError = true) where T : class, IJson, new() where TKeyEnum : Enum;
-        string GetPathByEnumType<TKeyEnum>() where TKeyEnum : Enum;
+        UniTask<TResult> ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken = default, int markBit = 0, Func<TResult>? notExistHandle = null) where TResult : class, IJson where TKeyEnum : Enum;
+        TResult ToObject<TResult, TKeyEnum>(int markBit = 0, Func<TResult>? notExistHandle = null) where TResult : class, IJson where TKeyEnum : Enum;
+        UniTask ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken = default, int markBit = 0) where T : class, IJson where TKeyEnum : Enum;
+        void ToJson<T, TKeyEnum>(int markBit = 0) where T : class, IJson where TKeyEnum : Enum;
+        bool CacheExists<T, TKeyEnum>(int markBit = 0) where T : class, IJson where TKeyEnum : Enum;
         
         // Enum
-        UniTask<TResult> ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken = default, bool newIfNotExist = false) where TResult : class, IJson, new();
-        TResult ToObject<TResult>(Enum key, bool newIfNotExist = false) where TResult : class, IJson, new();
-        UniTask ToJsonAsync<T>(Enum key, CancellationToken cancellationToken = default, bool throwEmptyError = true) where T : class, IJson, new();
-        void ToJson<T>(Enum key, bool throwEmptyError = true) where T : class, IJson, new();
+        UniTask<TResult> ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken = default, int markBit = 0, Func<TResult>? notExistHandle = null) where TResult : class, IJson;
+        TResult ToObject<TResult>(Enum key, int markBit = 0, Func<TResult>? notExistHandle = null) where TResult : class, IJson;
+        UniTask ToJsonAsync<T>(Enum key, CancellationToken cancellationToken = default, int markBit = 0) where T : class, IJson;
+        void ToJson<T>(Enum key, int markBit = 0) where T : class, IJson;
+        bool CacheExists<T>(Enum key, int markBit = 0) where T : class, IJson;
+        
+        // Base
+        UniTask<T> ToObjectAsync<T>(string path, CancellationToken cancellationToken, Func<T>? notExistHandle = null) where T : class, IJson;
+        T ToObject<T>(string path, Func<T>? notExistHandle = null) where T : class, IJson;
+        UniTask ToJsonAsync<T>(T obj, string path, CancellationToken cancellationToken) where T : class, IJson;
+        void ToJson<T>(T obj, string path) where T : class, IJson;
+        bool CacheExists<T>(string path) where T : class, IJson;
     }
 }

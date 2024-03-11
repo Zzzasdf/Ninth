@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Ninth.Utility;
@@ -19,9 +20,10 @@ namespace Ninth
                 build.Subscribe(PLAY_SETTINGS.ProduceName, Application.productName);
                 build.Subscribe(PLAY_SETTINGS.PlatformName, Application.platform switch
                 {
+                    RuntimePlatform.WindowsPlayer or RuntimePlatform.WindowsEditor => "StandaloneWindows64",
                     RuntimePlatform.Android => "Android",
                     RuntimePlatform.IPhonePlayer => "iOS",
-                    _ => "StandaloneWindows64"
+                    _ => throw new ArgumentOutOfRangeException()
                 });
             }
         }

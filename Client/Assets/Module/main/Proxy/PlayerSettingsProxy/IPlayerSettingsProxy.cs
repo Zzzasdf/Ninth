@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ninth
 {
-    public interface IPlaySettingsProxy
+    public interface IPlayerSettingsProxy
     {
         string Get(PLAY_SETTINGS playSettings);
     }

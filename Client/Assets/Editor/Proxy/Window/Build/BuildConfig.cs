@@ -38,7 +38,6 @@ namespace Ninth.Editor
 
             {
                 var build = stringSubscriber = new SubscriberCollect<string>();
-                build.Subscribe<BuildFolder>(jsonProxy.GetPathByEnumType<BuildFolder>());
                 build.Subscribe(BuildFolder.Bundles, buildJson.ExportBundleFolder).AsSetEvent(value => buildJson.ExportBundleFolder = value);
                 build.Subscribe(BuildFolder.Players, buildJson.ExportPlayFolder).AsSetEvent(value => buildJson.ExportPlayFolder = value);
             }
