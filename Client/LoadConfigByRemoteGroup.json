@@ -1,0 +1,76 @@
+{
+    "AssetRefList": [
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/Button (Legacy).prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/GameObject.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/Sphere.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/View/ViewLayout.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/View/Login/Cube.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_login",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_test",
+                "AssetGroup": 2,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        }
+    ]
+}

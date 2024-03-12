@@ -54,7 +54,7 @@ namespace Ninth.Editor
                         [BuildFolder.Bundles] = stringSubscriber.GetReactiveProperty(BuildFolder.Bundles),
                         [BuildFolder.Players] = stringSubscriber.GetReactiveProperty(BuildFolder.Players),
                     },
-                    new Dictionary<AssetGroup, ReactiveProperty<List<string>>>()
+                    new Dictionary<AssetGroup, ReactiveProperty<List<string>>>
                     {
                         [AssetGroup.Local] = stringListSubscriber.GetReactiveProperty(AssetGroup.Local),
                         [AssetGroup.Remote] = stringListSubscriber.GetReactiveProperty(AssetGroup.Remote),
@@ -84,14 +84,14 @@ namespace Ninth.Editor
             public readonly ReactiveProperty<BuildTargetPlatform> BuildTargetPlatform;
             public readonly MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> BuildTargetPlatformSelector;
             public readonly ReactiveProperty<int> BuildTargetPlatformCurrentIndex;
-            public readonly SerializableDictionary<BuildTargetPlatform, VersionJson> PlatformVersions;
+            public readonly SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions;
             
             public BuildSettings(Dictionary<BuildFolder, ReactiveProperty<string>> buildFolders, 
                 Dictionary<AssetGroup, ReactiveProperty<List<string>>> assetGroups, 
                 CollectSelector<BuildSettingsMode> buildSettingsModes,
                 ReactiveProperty<BuildTargetPlatform> buildTargetPlatform,
                 MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> buildTargetPlatformSelector,
-                SerializableDictionary<BuildTargetPlatform, VersionJson> platformVersions)
+                SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions)
             {
                 this.BuildFolders = buildFolders;
                 this.AssetGroups = assetGroups;

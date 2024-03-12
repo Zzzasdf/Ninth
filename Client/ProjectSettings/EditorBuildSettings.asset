@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/main.unity
+    path: Assets/GAssets/LocalGroup/main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/HotUpdateScene.unity
+    path: Assets/GAssets/RemoteGroup/HotUpdateScene.unity
     guid: a80124834c907f34bbd7325efd550c55
   - enabled: 1
-    path: Assets/Scenes/test.unity
+    path: Assets/GAssets/RemoteGroup/test.unity
     guid: 89888b78726b83945921f04949e203a2
   m_configObjects: {}

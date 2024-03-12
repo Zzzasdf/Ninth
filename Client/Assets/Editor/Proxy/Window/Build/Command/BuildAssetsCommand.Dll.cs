@@ -9,13 +9,8 @@
 //
 // namespace Ninth.Editor.Window
 // {
-//     public partial class BuildAssetsCommand
+//     public class BuildAssetsCommand
 //     {
-//         public string ToRelativeAssetPath(string s)
-//         {
-//             return s.Substring(s.IndexOf("Assets/"));
-//         }
-//
 //         public void BuildDll(BuildTarget target, string dstDir)
 //         {
 //             ScanAssembly(target, dstDir);
@@ -28,51 +23,48 @@
 //         private void ScanAssembly(BuildTarget target, string dstDir)
 //         {
 //             CompileDllCommand.CompileDll(target);
-//             CopyAOTAssemblies2SourceDataTempPath(dstDir);
-//             CopyHotUpdateAssemblies2SourceDataTempPath(dstDir);
-//         }
+//             CopyAOTAssemblies2SourceDataTempPath(target, dstDir);
+//             CopyHotUpdateAssemblies2SourceDataTempPath(target, dstDir);
+//             return;
 //
-//         public void CopyAOTAssemblies2SourceDataTempPath(string dstDir)
-//         {
-//             var target = EditorUserBuildSettings.activeBuildTarget;
-//             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
-//             string aotAssembliesDstDir = dstDir;
-//
-//             foreach (var dll in LoadDll.AOTMetaAssemblyNames)
+//             void CopyAOTAssemblies2SourceDataTempPath(BuildTarget target, string dstDir)
 //             {
-//                 string srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
-//                 if (!File.Exists(srcDllPath))
+//                 var aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
+//                 var aotAssembliesDstDir = dstDir;
+//
+//                 foreach (var dll in LoadDll.AOTMetaAssemblyNames)
 //                 {
-//                     Debug.LogError($"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
-//                     continue;
+//                     var srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
+//                     if (!File.Exists(srcDllPath))
+//                     {
+//                         Debug.LogError($"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+//                         continue;
+//                     }
+//                     var dllBytesPath = $"{aotAssembliesDstDir}/{dll}.bytes";
+//                     File.Copy(srcDllPath, dllBytesPath, true);
+//                     Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+//                     DllSortOut($"{dll}.bytes");
 //                 }
-//                 string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.bytes";
-//                 File.Copy(srcDllPath, dllBytesPath, true);
-//                 Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
-//                 DllSortOut($"{dll}.bytes");
 //             }
-//         }
 //
-//         public void CopyHotUpdateAssemblies2SourceDataTempPath(string dstDir)
-//         {
-//             var target = EditorUserBuildSettings.activeBuildTarget;
-//
-//             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
-//             string hotfixAssembliesDstDir = dstDir;
-//
-//             foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+//             void CopyHotUpdateAssemblies2SourceDataTempPath(BuildTarget target, string dstDir)
 //             {
-//                 string dllPath = $"{hotfixDllSrcDir}/{dll}";
-//                 string dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
-//                 File.Copy(dllPath, dllBytesPath, true);
-//                 Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
-//                 DllSortOut($"{ dll}.bytes");
+//                 var hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+//                 var hotfixAssembliesDstDir = dstDir;
+//                 foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+//                 {
+//                     var dllPath = $"{hotfixDllSrcDir}/{dll}";
+//                     var dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
+//                     File.Copy(dllPath, dllBytesPath, true);
+//                     Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+//                     DllSortOut($"{dll}.bytes");
+//                 }
 //             }
 //         }
 //
 //         private void DllSortOut(string dllName)
 //         {
-//             AssetGroup assetGroup = AssetGroup.Dll;
+//             var assetGroup = AssetGroup.Dll;
 //             if (!m_AssetLocate2BundleNameList.ContainsKey(assetGroup))
 //             {
 //                 m_AssetLocate2BundleNameList.Add(assetGroup, new List<string>());
@@ -80,7 +72,7 @@
 //             m_AssetLocate2BundleNameList[assetGroup].Add(dllName);
 //
 //             // 配置Bundle引用
-//             BundleRef bundleRef = new BundleRef()
+//             var bundleRef = new BundleRef
 //             {
 //                 BundleName = dllName,
 //                 AssetGroup = assetGroup
@@ -88,7 +80,7 @@
 //             m_BundleName2BundleRef.Add(dllName, bundleRef);
 //
 //             // 资源
-//             AssetRef assetRef = new AssetRef()
+//             var assetRef = new AssetRef
 //             {
 //                 AssetPath = dllName,
 //                 BundleRef = bundleRef

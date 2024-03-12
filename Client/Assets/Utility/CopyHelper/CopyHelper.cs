@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -32,6 +30,12 @@ namespace Ninth.Utility
                     property.SetValue(target, property.GetValue(source, null), null);  
                 }  
             }  
+        }
+
+        public static T DeepCopy<T>(T source)
+        {
+            var json = JsonUtility.ToJson(source);
+            return JsonUtility.FromJson<T>(json);
         }
     }
 }

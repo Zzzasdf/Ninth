@@ -48,6 +48,7 @@ namespace Ninth.Editor
             builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
             builder.Register<BuildProxy.BuildBundlesConfig>(Lifetime.Transient).AsSelf();
             builder.Register<BuildProxy.BuildBundleInfo>(Lifetime.Transient).AsSelf();
+            builder.Register<BuildProxy.BuildPlayersConfig>(Lifetime.Transient).AsSelf();
             
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();

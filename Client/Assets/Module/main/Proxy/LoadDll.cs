@@ -15,7 +15,7 @@ namespace Ninth
 {
     public class LoadDll: IAsyncStartable
     {
-        public static List<string> AOTMetaAssemblyNames { get; } = new List<string>()
+        public static List<string> AOTMetaAssemblyNames { get; } = new()
         {
             "mscorlib.dll",
             "System.dll",
@@ -23,7 +23,7 @@ namespace Ninth
             "UniTask.dll",
         };
 
-        private static Dictionary<string, byte[]> s_assetDatas = new Dictionary<string, byte[]>();
+        private static Dictionary<string, byte[]> s_assetDatas = new();
 
         public static byte[] GetAssetData(string dllName)
         {

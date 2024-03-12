@@ -19,7 +19,5 @@ namespace Ninth
         /// 程序集
         /// </summary>
         Dll = 1 << 2,
-
-        All = int.MaxValue
     }
 }

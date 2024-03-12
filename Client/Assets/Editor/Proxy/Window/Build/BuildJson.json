@@ -11,25 +11,28 @@
     "PlatformVersions": {
         "container": {
             "StandaloneWindows64": {
+                "BuildAssetBundleOptions": 0,
+                "BuildOptions": 0,
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 14,
-                "HotUpdateVersion": 30,
-                "IterateVersion": 44,
-                "BuiltIn": "14.30.44"
+                "FrameVersion": 29,
+                "HotUpdateVersion": 91,
+                "IterateVersion": 120
             },
             "Android": {
+                "BuildAssetBundleOptions": 0,
+                "BuildOptions": 0,
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 4,
-                "HotUpdateVersion": 9,
-                "IterateVersion": 13,
-                "BuiltIn": "4.9.13"
+                "HotUpdateVersion": 11,
+                "IterateVersion": 15
             },
             "iOS": {
+                "BuildAssetBundleOptions": 0,
+                "BuildOptions": 0,
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 4,
-                "HotUpdateVersion": 9,
-                "IterateVersion": 13,
-                "BuiltIn": "4.9.13"
+                "HotUpdateVersion": 11,
+                "IterateVersion": 15
             }
         }
     }

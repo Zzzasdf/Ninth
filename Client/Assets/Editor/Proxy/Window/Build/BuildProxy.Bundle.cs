@@ -1,9 +1,12 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HybridCLR.Editor;
+using HybridCLR.Editor.Commands;
 using Ninth.HotUpdate;
 using Ninth.Utility;
+using NPOI.SS.Formula.Functions;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
@@ -14,41 +17,69 @@ namespace Ninth.Editor
     {
         private void BuildBundles(BuildBundlesConfig buildBundlesConfig)
         {
+            // 创建文件夹
+            var groupFolders = new Dictionary<AssetGroup, string>
+            {
+                [AssetGroup.Local] = $"{buildBundlesConfig.PrefixFolder}/{nameConfig.DirectoryNameByLocalGroup()}",
+                [AssetGroup.Remote] = $"{buildBundlesConfig.PrefixFolder}/{nameConfig.DirectoryNameByRemoteGroup()}",
+                [AssetGroup.Dll] = $"{buildBundlesConfig.PrefixFolder}/{nameConfig.DirectoryNameByDllGroup()}",
+            };
+            foreach (var item in groupFolders)
+            {
+                if (!Directory.Exists($"{buildBundlesConfig.BuildFolder}/{item.Value}"))
+                {
+                    Directory.CreateDirectory($"{buildBundlesConfig.BuildFolder}/{item.Value}");
+                }
+            }
+            
+            // 扫描资源
             var buildBundleInfo = resolver.Resolve<BuildBundleInfo>();
             foreach (var (assetGroup, value) in buildBundlesConfig.AssetGroups)
             {
                 var groupPaths = value.Value;
                 var allSubFolders = Ninth.Utility.Utility.GetAllSubFolders(groupPaths);
+                var prefixFolder = groupFolders[assetGroup];
                 foreach (var folder in allSubFolders)
                 {
                     var bundleName = folder[(Application.dataPath.Length + 1)..].Replace('/', '_').Replace('\\', '_').ToLower();
                     var folderInfo = new DirectoryInfo(folder);
                     var assetPaths = ScanCurrDirectory(folderInfo).ToArray();
-                    buildBundleInfo.Add(assetGroup, buildBundlesConfig.PrefixFolder + bundleName, assetPaths);
+                    buildBundleInfo.Add(assetGroup, $"{prefixFolder}/{bundleName}", assetPaths);
                 }
             }
-
-            // 压缩选项详解
-            // BuildAssetBundleOptions.None：使用LZMA算法压缩，压缩的包更小，但是加载时间更长。使用之前需要整体解压。一旦被解压，这个包会使用LZ4重新压缩。使用资源的时候不需要整体解压。在下载的时候可以使用LZMA算法，一旦它被下载了之后，它会使用LZ4算法保存到本地上。
-            // BuildAssetBundleOptions.UncompressedAssetBundle：不压缩，包大，加载快
-            // BuildAssetBundleOptions.ChunkBasedCompression：使用LZ4压缩，压缩率没有LZMA高，但是我们可以加载指定资源而不用解压全部
-            // 参数一: bundle文件列表的输出路径
-            // 参数二：生成bundle文件列表所需要的AssetBundleBuild对象数组（用来指导Unity生成哪些bundle文件，每个文件的名字以及文件里包含哪些资源）
-            // 参数三：压缩选项BuildAssetBundleOptions.None默认是LZMA算法压缩
-            // 参数四：生成哪个平台的bundle文件，即目标平台
-
             var outputPath = buildBundlesConfig.BuildFolder;
             var buildTarget = buildBundlesConfig.BuildTarget;
-            BuildPipeline.BuildAssetBundles(outputPath, buildBundleInfo.AssetBundleBuilds, BuildAssetBundleOptions.None, buildTarget);
-
-            // // 添加依赖
-            // buildBundleInfo.CalculateDependencies();
-            //
-            // // 下载配置
-            // buildBundleInfo.DownloadConfig(outputPath);
-            //
-            // // 保存配置
-            // buildBundleInfo.SaveConfigs();
+            var buildAssetBundleOptions = buildBundlesConfig.BuildTargetPlatformInfo.BuildAssetBundleOptions;
+            BuildPipeline.BuildAssetBundles(outputPath, buildBundleInfo.AssetBundleBuilds, buildAssetBundleOptions, buildTarget);
+            
+            // 删除 manifest 文件
+            foreach (var (_ , folder) in groupFolders)
+            {
+                var files = Directory.GetFiles($"{buildBundlesConfig.BuildFolder}/{folder}", "*.manifest");
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            {
+                var files = Directory.GetFiles(buildBundlesConfig.BuildFolder);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            
+            // 添加依赖
+            buildBundleInfo.CalculateDependencies();
+            
+            // 添加 Dll
+            buildBundleInfo.BuildDll(buildBundlesConfig.BuildTarget, $"{buildBundlesConfig.BuildFolder}/{buildBundlesConfig.PrefixFolder}/{nameConfig.DirectoryNameByDllGroup()}");
+            
+            // 下载配置
+            buildBundleInfo.DownloadConfig(outputPath);
+            
+            // 保存配置
+            buildBundleInfo.SaveConfigs(buildBundlesConfig.BuildTargetPlatformInfo, $"{buildBundlesConfig.BuildFolder}/{buildBundlesConfig.PrefixFolder}");
             return;
 
             IEnumerable<string> ScanCurrDirectory(DirectoryInfo folderInfo)
@@ -60,7 +91,6 @@ namespace Ninth.Editor
                     {
                         continue;
                     }
-
                     yield return fileInfo.FullName[(Application.dataPath.Length - "Assets".Length)..].Replace('\\', '/');
                 }
             }
@@ -69,6 +99,7 @@ namespace Ninth.Editor
         public class BuildBundleInfo
         {
             private readonly IJsonProxy jsonProxy;
+            private readonly INameConfig nameConfig;
 
             private readonly List<AssetBundleBuild> assetBundleBuilds = new();
             private readonly Dictionary<AssetGroup, LoadConfig> loadConfigDic = new();
@@ -83,9 +114,10 @@ namespace Ninth.Editor
             public AssetBundleBuild[] AssetBundleBuilds => assetBundleBuilds.ToArray();
 
             [Inject]
-            public BuildBundleInfo(IJsonProxy jsonProxy)
+            public BuildBundleInfo(IJsonProxy jsonProxy, INameConfig nameConfig)
             {
                 this.jsonProxy = jsonProxy;
+                this.nameConfig = nameConfig;
             }
 
             public void Add(AssetGroup assetGroup, string bundleName, string[] assetPaths)
@@ -158,7 +190,6 @@ namespace Ninth.Editor
                         assetRef.Dependencies.Add(bundleName2BundleRef[bundleName]);
                     }
                 }
-
                 return;
 
                 IEnumerable<string> GetAssetList(string[] dependencies, string assetPath)
@@ -171,7 +202,6 @@ namespace Ninth.Editor
                             {
                                 continue;
                             }
-
                             yield return oneAsset;
                         }
                     }
@@ -186,19 +216,94 @@ namespace Ninth.Editor
                         {
                             continue;
                         }
-
                         var bundleName = value.BundleRef.BundleName;
                         if (bundleName == assetBundle || bundleNames.Contains(bundleName))
                         {
                             continue;
                         }
-
                         bundleNames.Add(bundleName);
                     }
-
                     return bundleNames;
                 }
             }
+
+            public void BuildDll(BuildTarget buildTarget, string dstDir)
+            {
+                CompileDllCommand.CompileDll(buildTarget);
+                CopyAOTAssemblies2SourceDataTempPath(buildTarget, dstDir);
+                CopyHotUpdateAssemblies2SourceDataTempPath(buildTarget, dstDir);
+                return;
+
+                void CopyAOTAssemblies2SourceDataTempPath(BuildTarget target, string dstDir)
+                {
+                    var aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
+                    var aotAssembliesDstDir = dstDir;
+
+                    foreach (var dll in LoadDll.AOTMetaAssemblyNames)
+                    {
+                        var srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
+                        if (!File.Exists(srcDllPath))
+                        {
+                            Debug.LogError($"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+                            continue;
+                        }
+                        var dllBytesPath = $"{aotAssembliesDstDir}/{dll}.bytes";
+                        File.Copy(srcDllPath, dllBytesPath, true);
+                        Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+                        DllSortOut($"{dll}.bytes");
+                    }
+                }
+
+                void CopyHotUpdateAssemblies2SourceDataTempPath(BuildTarget target, string dstDir)
+                {
+                    var hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+                    var hotfixAssembliesDstDir = dstDir;
+                    foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+                    {
+                        var dllPath = $"{hotfixDllSrcDir}/{dll}";
+                        var dllBytesPath = $"{hotfixAssembliesDstDir}/{dll}.bytes";
+                        File.Copy(dllPath, dllBytesPath, true);
+                        Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+                        DllSortOut($"{dll}.bytes");
+                    }
+                }
+                
+                void DllSortOut(string dllName)
+                {
+                    var assetGroup = AssetGroup.Dll;
+                    if (!assetGroup2BundleNameList.ContainsKey(assetGroup))
+                    {
+                        assetGroup2BundleNameList.Add(assetGroup, new List<string>());
+                    }
+                    assetGroup2BundleNameList[assetGroup].Add(dllName);
+
+                    // 配置Bundle引用
+                    var bundleRef = new BundleRef
+                    {
+                        BundleName = dllName,
+                        AssetGroup = assetGroup
+                    };
+                    bundleName2BundleRef.Add(dllName, bundleRef);
+
+                    // 资源
+                    var assetRef = new AssetRef
+                    {
+                        AssetPath = dllName,
+                        BundleRef = bundleRef
+                    };
+
+                    // 配置加载配置
+                    if (!loadConfigDic.ContainsKey(assetGroup))
+                    {
+                        loadConfigDic.Add(assetGroup, new LoadConfig()
+                        {
+                            AssetRefList = new List<AssetRef>()
+                        });
+                    }
+                    loadConfigDic[assetGroup].AssetRefList.Add(assetRef);
+                }
+            }
+            
 
             public void DownloadConfig(string bundleFolder)
             {
@@ -206,12 +311,10 @@ namespace Ninth.Editor
                 {
                     downloadConfigDic.Add(item.Key, new DownloadConfig());
                 }
-
                 foreach (var (bundleName, value) in bundleName2BundleRef)
                 {
                     var assetGroup = value.AssetGroup;
-
-                    var bundleInfo = new BundleInfo()
+                    var bundleInfo = new BundleInfo
                     {
                         BundleName = bundleName,
                     };
@@ -221,173 +324,60 @@ namespace Ninth.Editor
                         bundleInfo.Crc = Utility.GetCRC32Hash(stream);
                         bundleInfo.Size = (int)stream.Length;
                     }
-
                     downloadConfigDic[assetGroup].BundleInfos.Add(bundleName, bundleInfo);
                 }
             }
 
-            public void SaveConfigs()
+            public void SaveConfigs(VersionJson versionJson, string prefixFolder)
             {
                 // 保存版本号
-                jsonProxy.ToJson<VersionConfig>();
-
-                // 空包也添加配置 =》解决拉取配置404问题
-                var packAssetGroup = new List<AssetGroup>()
-                {
-                    AssetGroup.Local,
-                    AssetGroup.Remote,
-                    AssetGroup.Dll
-                };
-
-                foreach (var assetGroup in packAssetGroup)
-                {
-                    if (!assetGroup2BundleNameList.ContainsKey(assetGroup))
+                var versionSourceFileName = $"{prefixFolder}/{nameConfig.FileNameByVersionConfig()}";
+                var versionDestFileName = $"{prefixFolder}/../{nameConfig.FileNameByVersionConfig()}";
+                jsonProxy.ToJson(new VersionConfig 
                     {
-                        loadConfigDic.Add(assetGroup, jsonProxy.ToObject<LoadConfig>((int)assetGroup, ()=> new LoadConfig()));
-                        downloadConfigDic.Add(assetGroup, jsonProxy.ToObject<DownloadConfig>((int)assetGroup, ()=> new DownloadConfig()));
-                        assetGroup2BundleNameList.Add(assetGroup, new List<string>());
+                        DisplayVersion = versionJson.DisplayVersion,
+                        FrameVersion = versionJson.FrameVersion,
+                        HotUpdateVersion = versionJson.HotUpdateVersion,
+                        IterateVersion = versionJson.IterateVersion,
+                    }, versionSourceFileName);
+                // 拷贝版本号到外部
+                File.Copy(versionSourceFileName, versionDestFileName, true);
+                
+                // 空包也添加配置 =》解决拉取配置404问题
+                var packAssetGroup = new List<(AssetGroup assetGroup, string folder, string loadConfigPath, string? downLoadConfigPath)>
+                {
+                    (AssetGroup.Local, 
+                        $"{prefixFolder}/{nameConfig.DirectoryNameByLocalGroup()}",
+                        nameConfig.LoadConfigNameByLocalGroup(),
+                        null),
+                    (AssetGroup.Remote, 
+                        $"{prefixFolder}/{nameConfig.DirectoryNameByRemoteGroup()}",
+                        nameConfig.LoadConfigNameByRemoteGroup(), 
+                        nameConfig.DownloadConfigNameByRemoteGroup()),
+                    (AssetGroup.Dll, 
+                        $"{prefixFolder}/{nameConfig.DirectoryNameByDllGroup()}",
+                        nameConfig.LoadConfigNameByDllGroup(), 
+                        nameConfig.DownloadConfigNameByDllGroup()),
+                };
+                foreach (var (assetGroup, folder, loadConfigPath, downLoadConfigPath) in packAssetGroup)
+                {
+                    if (!loadConfigDic.TryGetValue(assetGroup, out var loadConfig))
+                    {
+                        loadConfigDic.Add(assetGroup, loadConfig = new LoadConfig());
                     }
+                    jsonProxy.ToJson(loadConfig, $"{folder}/{loadConfigPath}");
 
-                    jsonProxy.ToJson<LoadConfig>((int)assetGroup);
-                    if (assetGroup == AssetGroup.Local) // 本地资源不需要下载配置
+                    if (string.IsNullOrEmpty(downLoadConfigPath))
                     {
                         continue;
                     }
-
-                    jsonProxy.ToJson<DownloadConfig>((int)assetGroup);
+                    if (!downloadConfigDic.TryGetValue(assetGroup, out var downLoadConfig))
+                    {
+                        downloadConfigDic.Add(assetGroup, downLoadConfig = new DownloadConfig());
+                    }
+                    jsonProxy.ToJson(downLoadConfig, $"{folder}/{downLoadConfigPath}");
                 }
             }
-
-            // // 从临时目录移动至源目录
-            // private void MoveFiles()
-            // {
-            //     // 生成源目录
-            //     List<string> increaseSouceDataDirectoty = new List<string>()
-            //     {
-            //         packConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version),
-            //         packConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version),
-            //         packConfig.SourceDataDllPathDirectory(m_VersionConfig.Version),
-            //     };
-            //     for (int index = 0; index < increaseSouceDataDirectoty.Count; index++)
-            //     {
-            //         Editor.Utility.DirectoryCreateNew(increaseSouceDataDirectoty[index]);
-            //     }
-            //
-            //     // 移动AB包至源目录
-            //     Dictionary<Ninth.AssetGroup, Func<string, string>> locate2SourceDataPath = new Dictionary<Ninth.AssetGroup, Func<string, string>>()
-            //     {
-            //         { Ninth.AssetGroup.Local, (bundleName) => packConfig.BundleInLocalInSourceDataPath(m_VersionConfig.Version, bundleName) },
-            //         { Ninth.AssetGroup.Remote, (bundleName) => packConfig.BundleInRemoteInSourceDataPath(m_VersionConfig.Version, bundleName) },
-            //         { Ninth.AssetGroup.Dll, (bundleName) => packConfig.BundleInDllInSourceDataPath(m_VersionConfig.Version, bundleName) },
-            //     };
-            //     foreach (var item in m_AssetLocate2BundleNameList)
-            //     {
-            //         Ninth.AssetGroup assetGroup = item.Key;
-            //         List<string> bundleList = item.Value;
-            //         string move2SourceDataFolder = string.Empty;
-            //         string copy2OutputFolder = string.Empty;
-            //
-            //         for (int i = 0; i < bundleList.Count; i++)
-            //         {
-            //             string bundleName = bundleList[i];
-            //             File.Move(packConfig.BundleInTempInSourceDataPath(m_VersionConfig.Version, bundleName), locate2SourceDataPath[assetGroup].Invoke(bundleName).Log());
-            //         }
-            //     }
-            //
-            //     // 移动配置至源目录
-            //     List<(string scrPath, string dstPath)> temp2SourceDataPath = new List<(string, string)>()
-            //     {
-            //         // 版号
-            //         (packConfig.VersionInSourceDataTempPath(m_VersionConfig.Version), packConfig.VersionInSourceDataPath(m_VersionConfig.Version)),
-            //
-            //         // 加载配置
-            //         (packConfig.LoadConfigInLocalInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInLocalInSourceDataPath(m_VersionConfig.Version)),
-            //         (packConfig.LoadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
-            //         (packConfig.LoadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), packConfig.LoadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
-            //
-            //         // 下载配置
-            //         (packConfig.DownloadConfigInRemoteInSourceDataTempPath(m_VersionConfig.Version), packConfig.DownloadConfigInRemoteInSourceDataPath(m_VersionConfig.Version)),
-            //         (packConfig.DownloadConfigInDllInSourceDataTempPath(m_VersionConfig.Version), packConfig.DownloadConfigInDllInSourceDataPath(m_VersionConfig.Version)),
-            //     };
-            //     for (int index = 0; index < temp2SourceDataPath.Count; index++)
-            //     {
-            //         string srcPath = temp2SourceDataPath[index].scrPath;
-            //         string dstPath = temp2SourceDataPath[index].dstPath;
-            //         File.Move(srcPath, dstPath);
-            //     }
-            // }
-            //
-            // // 删除无用文件
-            // private void DeleteFiles()
-            // {
-            //     // 删除所有manifest文件
-            //     string tempSourceOutPath = packConfig.SourceDataTempPathDirectory(m_VersionConfig.Version);
-            //     FileInfo[] files = new DirectoryInfo(tempSourceOutPath).GetFiles();
-            //     foreach (FileInfo file in files)
-            //     {
-            //         if (file.Name.EndsWith(".manifest"))
-            //         {
-            //             file.Delete();
-            //         }
-            //     }
-            //
-            //     // 删除文件夹文件
-            //     File.Delete(tempSourceOutPath + "/" + new DirectoryInfo(tempSourceOutPath).Name);
-            //     // 删除文件夹
-            //     Directory.Delete(tempSourceOutPath);
-            //     Debug.Log("删除临时文件夹成功！！");
-            // }
-            //
-            // // 复制文件
-            // private void CopyFiles(bool backPack)
-            // {
-            //     switch (PackEnvironment)
-            //     {
-            //         case Environment.LocalAb:
-            //         {
-            //             // 全部拷贝到streamingAssets
-            //             CopyFilesSortOut(Ninth.AssetGroup.All);
-            //             break;
-            //         }
-            //         case Environment.RemoteAb:
-            //         {
-            //             if (backPack)
-            //             {
-            //                 // 拷贝local资源到streamingAssets
-            //                 CopyFilesSortOut(Ninth.AssetGroup.Local);
-            //             }
-            //
-            //             break;
-            //         }
-            //     }
-            //
-            //     void CopyFilesSortOut(Ninth.AssetGroup assetLocate)
-            //     {
-            //         List<(string srcPath, string dstPath)> assetDirList = new List<(string, string)>();
-            //
-            //         if (assetLocate.HasFlag(Ninth.AssetGroup.Local))
-            //         {
-            //             assetDirList.Add((packConfig.SourceDataLocalPathDirectory(m_VersionConfig.Version), packConfig.CopyDataLocalPathDirectory()));
-            //         }
-            //
-            //         if (assetLocate.HasFlag(Ninth.AssetGroup.Remote))
-            //         {
-            //             assetDirList.Add((packConfig.SourceDataRemotePathDirectory(m_VersionConfig.Version), packConfig.CopyDataRemotePathDirectory()));
-            //         }
-            //
-            //         if (assetLocate.HasFlag(Ninth.AssetGroup.Dll))
-            //         {
-            //             assetDirList.Add((packConfig.SourceDataDllPathDirectory(m_VersionConfig.Version), packConfig.CopyDataDllPathDirectory()));
-            //         }
-            //
-            //         for (int index = 0; index < assetDirList.Count; index++)
-            //         {
-            //             Editor.Utility.DirectoryCopy(assetDirList[index].srcPath, assetDirList[index].dstPath);
-            //         }
-            //
-            //         File.Copy(packConfig.VersionInSourceDataPath(m_VersionConfig.Version), packConfig.VersionInCopyDataPath(), true);
-            //     }
-            // }
         }
     }
 }

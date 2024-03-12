@@ -1,0 +1,24 @@
+{
+    "BundleInfos": {
+        "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup": {
+            "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup",
+            "Crc": "bdd16f6f",
+            "Size": 33153
+        },
+        "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view": {
+            "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view",
+            "Crc": "a1088d2e",
+            "Size": 2737
+        },
+        "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_login": {
+            "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_login",
+            "Crc": "20ddad77",
+            "Size": 28378
+        },
+        "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_test": {
+            "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_remotegroup_view_test",
+            "Crc": "1da0095b",
+            "Size": 6069
+        }
+    }
+}

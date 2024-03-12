@@ -1,0 +1,40 @@
+{
+    "AssetRefList": [
+        {
+            "AssetPath": "Assets/GAssets/LocalGroup/Cube.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_localgroup",
+                "AssetGroup": 1,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/LocalGroup/GameObject.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_localgroup",
+                "AssetGroup": 1,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        },
+        {
+            "AssetPath": "Assets/GAssets/LocalGroup/Panel.prefab",
+            "BundleRef": {
+                "BundleName": "Ninth/StandaloneWindows64/0.0.1(14.34.48)/gassets_localgroup",
+                "AssetGroup": 1,
+                "Bundle": null,
+                "BeAssetRefDependedList": null
+            },
+            "Dependencies": [],
+            "Asset": null,
+            "BeGameObjectDependedList": null
+        }
+    ]
+}
