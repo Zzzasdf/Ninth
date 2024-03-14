@@ -29,12 +29,12 @@ namespace Ninth
             var persistentDataProduceNamePlatformName = $"{persistentDataPath}/{produceName}/{platformName}";
             var urlProduceNamePlatformName = $"{url}/{produceName}/{platformName}";
 
-            var bundleRootPathByLocalGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByLocalGroup()}";
-            var bundleRootPathByRemoteGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByRemoteGroup()}";
-            var bundleRootPathByDllGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.DirectoryNameByDllGroup()}";
+            var bundleRootPathByLocalGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.FolderByLocalGroup()}";
+            var bundleRootPathByRemoteGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.FolderByRemoteGroup()}";
+            var bundleRootPathByDllGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.FolderByDllGroup()}";
 
-            var bundleRootPathByRemoteGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.DirectoryNameByRemoteGroup()}";
-            var bundleRootPathByRemoteGroupPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.DirectoryNameByDllGroup()}";
+            var bundleRootPathByRemoteGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FolderByRemoteGroup()}";
+            var bundleRootPathByRemoteGroupPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FolderByDllGroup()}";
 
             {
                 var build = bundlePathSubscriber = new SubscriberCollect<Func<string, string>, BUNDLE_PATH>();
@@ -46,8 +46,8 @@ namespace Ninth
 
             {
                 var build = assetServerBundlePathSubscriber = new SubscriberCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH>();
-                build.Subscribe(ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByRemoteGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData));
-                build.Subscribe(ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.DirectoryNameByDllGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByDllGroupByPersistentData));
+                build.Subscribe(ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.FolderByRemoteGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData));
+                build.Subscribe(ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, ((version, bundleName) => $"{urlProduceNamePlatformName}/{version}/{nameConfig.FolderByDllGroup()}/{bundleName}", BUNDLE_PATH.BundlePathByDllGroupByPersistentData));
             }
         }
     }

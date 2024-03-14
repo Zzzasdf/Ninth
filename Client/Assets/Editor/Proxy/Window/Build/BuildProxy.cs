@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 using System.IO;
 using System.Linq;
 using Ninth.HotUpdate;
-using NPOI.SS.UserModel;
 using UnityEditor;
 
 namespace Ninth.Editor
@@ -14,14 +14,18 @@ namespace Ninth.Editor
     public partial class BuildProxy : IBuildProxy
     {
         private readonly BuildConfig.BuildSettings buildSettings;
+        private readonly IPlayerSettingsProxy playerSettingsProxy;
         private readonly INameConfig nameConfig;
+        private readonly IJsonProxy jsonProxy;
         private readonly IObjectResolver resolver;
 
         [Inject]
-        public BuildProxy(IBuildConfig buildConfig, INameConfig nameConfig, IObjectResolver resolver)
+        public BuildProxy(IBuildConfig buildConfig, IPlayerSettingsProxy playerSettingsProxy, INameConfig nameConfig, IJsonProxy jsonProxy, IObjectResolver resolver)
         {
             this.buildSettings = buildConfig.BuildSettings;
+            this.playerSettingsProxy = playerSettingsProxy;
             this.nameConfig = nameConfig;
+            this.jsonProxy = jsonProxy;
             this.resolver = resolver;
         }
 
@@ -63,20 +67,11 @@ namespace Ninth.Editor
                 };
                 var verify = EditorWindowUtility.SelectFolder(label, buildFolder.Value, defaultName, x =>
                 {
-                    if (x.Contains(Application.dataPath))
-                    {
-                        return $"该路径不能包含 {Application.dataPath}";
-                    }
-                    if (!Directory.Exists(x))
-                    {
-                        return "该路径不存在";
-                    }
+                    if (x.Contains(Application.dataPath)) return $"该路径不能包含 {Application.dataPath}";
+                    if (!Directory.Exists(x)) return "该路径不存在";
                     return null;
                 });
-                if (!verify)
-                {
-                    result = false;
-                }
+                if (!verify) result = false;
             }
             return result;
         }
@@ -85,31 +80,22 @@ namespace Ninth.Editor
         private bool RenderBuildAssetGroup()
         {
             var result = true;
-            var buildAssetGroups = buildSettings.AssetGroups;
-            foreach (var assetGroup in buildAssetGroups)
+            var buildSettingsItems = buildSettings.BuildSettingsItems;
+            foreach (var (_, buildSettingsItem) in buildSettingsItems)
             {
-                var (label, defaultName) = assetGroup.Key switch
+                var assetGroupsInfo = buildSettingsItem.AssetGroupsPaths;
+                if (assetGroupsInfo == null)
                 {
-                    AssetGroup.Local => ("Local 打包资源组", "LocalGroup"),
-                    AssetGroup.Remote => ("Remote 打包资源组", "RemoteGroup"),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-                var verify = EditorWindowUtility.SelectFolderCollect(label, assetGroup.Value, defaultName, x =>
+                    continue;
+                }
+                var verify = EditorWindowUtility.SelectFolderCollect(assetGroupsInfo.AssetGroupLabel, assetGroupsInfo.AssetGroupPaths, assetGroupsInfo.AssetGroupDefaultName, x =>
                 {
-                    if (!x.Contains(Application.dataPath))
-                    {
-                        return $"该路径必须包含 {Application.dataPath}";
-                    }
-                    if (!Directory.Exists(x))
-                    {
-                        return "该路径不存在";
-                    }
+                    if (!x.Contains(Application.dataPath)) return $"该路径必须包含 {Application.dataPath}";
+                    if (!Directory.Exists(x)) return "该路径不存在";
                     return null;
                 });
-                if (!verify)
-                {
-                    result = false;
-                }
+                if (!verify) result = false;
+                break;
             }
             return result;
         }
@@ -120,24 +106,24 @@ namespace Ninth.Editor
             var barMenu = buildSettings.BuildSettingsModes.Collect.ToArray().ToArrayString();
             var currentIndex = buildSettings.BuildSettingsModes.CurrentIndex;
             var current = buildSettings.BuildSettingsModes.Current;
-            var assetGroups = buildSettings.AssetGroups;
+            var buildSettingsItems = buildSettings.BuildSettingsItems;
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField("打包模式");
                 EditorWindowUtility.Toolbar(currentIndex, barMenu);
             }
-
             var (result, message) = current.Value switch
             {
-                BuildSettingsMode.HotUpdateBundle => (assetGroups[AssetGroup.Remote].Value.Count > 0, "Remote 打包资源组至少有一个路径"),
-                BuildSettingsMode.AllBundle or BuildSettingsMode.Player => (assetGroups[AssetGroup.Local].Value.Count > 0 || assetGroups[AssetGroup.Remote].Value.Count > 0, "Local 或 Remote 打包资源组至少有一个路径"),
+                BuildSettingsMode.HotUpdateBundle => 
+                    (buildSettingsItems[AssetGroup.Remote].AssetGroupsPaths!.AssetGroupPaths.Value.Count > 0, 
+                        "Remote 打包资源组至少有一个路径"),
+                BuildSettingsMode.AllBundle or BuildSettingsMode.Player =>
+                    (buildSettingsItems[AssetGroup.Local].AssetGroupsPaths!.AssetGroupPaths.Value.Count > 0
+                     || buildSettingsItems[AssetGroup.Remote].AssetGroupsPaths!.AssetGroupPaths.Value.Count > 0,
+                        "Local 或 Remote 打包资源组至少有一个路径"),
                 _ => (true, null)
             };
-            if (!result)
-            {
-                EditorGUILayout.HelpBox(message, MessageType.Error);
-            }
-
+            if (!result) EditorGUILayout.HelpBox(message, MessageType.Error);
             return result;
         }
 
@@ -165,9 +151,7 @@ namespace Ninth.Editor
             foreach (var item in buildTargetPlatformSelector.Keys)
             {
                 if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
-                {
                     buildTargetPlatforms.Add(item);
-                }
             }
             if (buildTargetPlatforms.Count == 0)
             {
@@ -176,13 +160,9 @@ namespace Ninth.Editor
                 return result;
             }
             if (buildTargetPlatformCurrentIndex.Value < 0)
-            {
                 buildTargetPlatformCurrentIndex.Value = 0;
-            }
             else if (buildTargetPlatformCurrentIndex.Value >= buildTargetPlatforms.Count)
-            {
                 buildTargetPlatformCurrentIndex.Value = buildTargetPlatforms.Count - 1;
-            }
             using (new GUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField("目标平台打包信息");
@@ -213,9 +193,7 @@ namespace Ninth.Editor
                 GUI.enabled = true;
                 buildTargetPlatformInfo.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("bundle 压缩选项", buildTargetPlatformInfo.BuildAssetBundleOptions);
                 if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
-                {
                     buildTargetPlatformInfo.BuildOptions = (BuildOptions)EditorGUILayout.EnumPopup("player 压缩选项", buildTargetPlatformInfo.BuildOptions);
-                }
             }
             var buildSettingsMode = buildSettings.BuildSettingsModes.Current.Value;
             using (new GUILayout.VerticalScope())
@@ -287,11 +265,11 @@ namespace Ninth.Editor
 
         private void Export()
         {
-            var assetGroups = buildSettings.AssetGroups;
+            var produceName = playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName);
+            var buildSettingsItems = buildSettings.BuildSettingsItems;
             var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
             var buildFolders = buildSettings.BuildFolders;
             var platformVersions = buildSettings.PlatformVersions;
-            var buildSettingsMode = buildSettings.BuildSettingsModes.Current.Value;
             foreach (var item in buildTargetPlatformSelector.Keys)
             {
                 if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
@@ -300,6 +278,7 @@ namespace Ninth.Editor
                     {
                         // 构建 player
                         var buildPlayersConfig = resolver.Resolve<BuildPlayersConfig>();
+                        buildPlayersConfig.ProduceName = produceName;
                         buildPlayersConfig.BuildTarget = buildTargetPlatformSelector[item].Item1;
                         buildPlayersConfig.BuildTargetGroup = buildTargetPlatformSelector[item].Item2;
                         buildPlayersConfig.BuildFolder = buildFolders[BuildFolder.Players].Value;
@@ -309,7 +288,8 @@ namespace Ninth.Editor
 
                     // 构建 bundle
                     var buildBundlesConfig = resolver.Resolve<BuildBundlesConfig>();
-                    buildBundlesConfig.AssetGroups = assetGroups;
+                    buildBundlesConfig.ProduceName = produceName;
+                    buildBundlesConfig.BuildSettingsItems = buildSettingsItems;
                     buildBundlesConfig.BuildTarget = buildTargetPlatformSelector[item].Item1;
                     buildBundlesConfig.BuildFolder = buildFolders[BuildFolder.Bundles].Value;
                     buildBundlesConfig.BuildTargetPlatformInfo = platformVersions[item];
@@ -317,38 +297,34 @@ namespace Ninth.Editor
                 }
             }
             "构建成功..".Log();
+            if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
+            {
+                Process.Start($"{buildFolders[BuildFolder.Players].Value}/{produceName}");
+            }
+            else
+            {
+                Process.Start($"{buildFolders[BuildFolder.Bundles].Value}/{produceName}");
+            }
         }
 
         public class BuildBundlesConfig
         {
-            private readonly string produceName;
-            public string PrefixFolder => $"{produceName}/{BuildTarget}/{BuildTargetPlatformInfo.DisplayVersion}({BuildTargetPlatformInfo.BuiltIn()})";
-            public Dictionary<AssetGroup, ReactiveProperty<List<string>>> AssetGroups { get; set; }
-            public BuildTarget BuildTarget { get; set; }
+            public string ProduceName { get; set; }
             public string BuildFolder { get; set; }
+            public string BundlePrefix => $"{ProduceName}/{BuildTarget}/{BuildTargetPlatformInfo.DisplayVersion}({BuildTargetPlatformInfo.BuiltIn()})";
+            public Dictionary<AssetGroup, IBuildAssets> BuildSettingsItems { get; set; }
+            public BuildTarget BuildTarget { get; set; }
             public BuildTargetPlatformInfo BuildTargetPlatformInfo { get; set; }
-
-            [Inject]
-            public BuildBundlesConfig(IPlayerSettingsProxy playerSettingsProxy)
-            {
-                produceName = playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName);
-            }
         }
 
         public class BuildPlayersConfig
         {
-            public readonly string ProduceName;
-            public string PrefixFolder => $"{ProduceName}/{BuildTarget}/{BuildTargetPlatformInfo.DisplayVersion}({BuildTargetPlatformInfo.BuiltIn()})";
+            public string ProduceName { get; set; }
+            public string BuildFolder { get; set; }
+            public string PlayerPrefix => $"{ProduceName}/{BuildTarget}/{BuildTargetPlatformInfo.DisplayVersion}({BuildTargetPlatformInfo.BuiltIn()})";
             public BuildTarget BuildTarget { get; set; }
             public BuildTargetGroup BuildTargetGroup { get; set; }
-            public string BuildFolder { get; set; }
             public BuildTargetPlatformInfo BuildTargetPlatformInfo { get; set; }
-            
-            [Inject]
-            public BuildPlayersConfig(IPlayerSettingsProxy playerSettingsProxy)
-            {
-                ProduceName = playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName);
-            }
         }
     }
 }

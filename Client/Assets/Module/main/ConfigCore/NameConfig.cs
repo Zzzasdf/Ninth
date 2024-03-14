@@ -51,15 +51,15 @@ namespace Ninth
         string INameConfig.FileNameByVersionConfig() => fileNameByVersionConfig;
         string INameConfig.FileTempNameByVersionConfig() => fileTempNameByVersionConfig;
         
-        string INameConfig.DirectoryNameByLocalGroup() => directoryNameByLocalGroup;
+        string INameConfig.FolderByLocalGroup() => directoryNameByLocalGroup;
         string INameConfig.LoadConfigNameByLocalGroup() => loadConfigNameByLocalGroup;
         
-        string INameConfig.DirectoryNameByRemoteGroup() => directoryNameByRemoteGroup;
+        string INameConfig.FolderByRemoteGroup() => directoryNameByRemoteGroup;
         string INameConfig.DownloadConfigNameByRemoteGroup() => downloadConfigNameByRemoteGroup;
         string INameConfig.DownloadConfigTempNameByRemoteGroup() => downloadConfigTempNameByRemoteGroup;
         string INameConfig.LoadConfigNameByRemoteGroup() => loadConfigNameByRemoteGroup;
         
-        string INameConfig.DirectoryNameByDllGroup() => directoryNameByDllGroup;
+        string INameConfig.FolderByDllGroup() => directoryNameByDllGroup;
         string INameConfig.DllsBundleNameByDllGroup() => dllsBundleNameByDllGroup;
         string INameConfig.DownloadConfigNameByDllGroup() => downloadConfigNameByDllGroup;
         string INameConfig.DownloadConfigTempNameByDllGroup() => downloadConfigTempNameByDllGroup;

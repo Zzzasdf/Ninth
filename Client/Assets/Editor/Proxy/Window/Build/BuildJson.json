@@ -14,9 +14,9 @@
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 29,
-                "HotUpdateVersion": 91,
-                "IterateVersion": 120
+                "FrameVersion": 31,
+                "HotUpdateVersion": 141,
+                "IterateVersion": 172
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,

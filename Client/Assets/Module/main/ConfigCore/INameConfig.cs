@@ -12,12 +12,12 @@ namespace Ninth
         string FileTempNameByVersionConfig();
         
         // Local组文件夹名
-        string DirectoryNameByLocalGroup();
+        string FolderByLocalGroup();
         // Local组的加载配置名
         string LoadConfigNameByLocalGroup();
 
         // Remote组文件夹名
-        string DirectoryNameByRemoteGroup();
+        string FolderByRemoteGroup();
         // Remote组的下载配置名
         string DownloadConfigNameByRemoteGroup();
         // Remote组的下载临时配置名
@@ -26,7 +26,7 @@ namespace Ninth
         string LoadConfigNameByRemoteGroup();
 
         // Dll文件夹
-        string DirectoryNameByDllGroup();
+        string FolderByDllGroup();
         // Dll程序集集合的Bundle名
         string DllsBundleNameByDllGroup();
         // Dll的下载配置名

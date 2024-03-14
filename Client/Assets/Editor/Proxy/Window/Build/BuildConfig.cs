@@ -28,7 +28,7 @@ namespace Ninth.Editor
         BuildSettings IBuildConfig.BuildSettings => buildSettings;
 
         [Inject]
-        public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy)
+        public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy, INameConfig nameConfig)
         {
             {
                 var build = stringListSubscriber = new SubscriberCollect<List<string>>();
@@ -54,10 +54,22 @@ namespace Ninth.Editor
                         [BuildFolder.Bundles] = stringSubscriber.GetReactiveProperty(BuildFolder.Bundles),
                         [BuildFolder.Players] = stringSubscriber.GetReactiveProperty(BuildFolder.Players),
                     },
-                    new Dictionary<AssetGroup, ReactiveProperty<List<string>>>
+                    new Dictionary<AssetGroup, IBuildAssets>
                     {
-                        [AssetGroup.Local] = stringListSubscriber.GetReactiveProperty(AssetGroup.Local),
-                        [AssetGroup.Remote] = stringListSubscriber.GetReactiveProperty(AssetGroup.Remote),
+                        [AssetGroup.Local] = new BuildBundle(
+                            AssetGroup.Local,
+                            new AssetGroupsPaths(stringListSubscriber.GetReactiveProperty(AssetGroup.Local), "Local 打包资源组", "LocalGroup"),
+                            nameConfig.FolderByLocalGroup()
+                            ),
+                        [AssetGroup.Remote] = new BuildBundle(
+                            AssetGroup.Remote,
+                            new AssetGroupsPaths(stringListSubscriber.GetReactiveProperty(AssetGroup.Remote), "Remote 打包资源组", "RemoteGroup"),
+                            nameConfig.FolderByRemoteGroup()
+                            ),
+                        [AssetGroup.Dll] = new BuildDll(
+                            AssetGroup.Dll,
+                            nameConfig.FolderByDllGroup()
+                            ),
                     },
                     new CollectSelector<BuildSettingsMode>
                     {
@@ -79,7 +91,7 @@ namespace Ninth.Editor
         public class BuildSettings
         {
             public readonly Dictionary<BuildFolder, ReactiveProperty<string>> BuildFolders;
-            public readonly Dictionary<AssetGroup, ReactiveProperty<List<string>>> AssetGroups;
+            public readonly Dictionary<AssetGroup, IBuildAssets> BuildSettingsItems;
             public readonly CollectSelector<BuildSettingsMode> BuildSettingsModes;
             public readonly ReactiveProperty<BuildTargetPlatform> BuildTargetPlatform;
             public readonly MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> BuildTargetPlatformSelector;
@@ -87,14 +99,14 @@ namespace Ninth.Editor
             public readonly SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions;
             
             public BuildSettings(Dictionary<BuildFolder, ReactiveProperty<string>> buildFolders, 
-                Dictionary<AssetGroup, ReactiveProperty<List<string>>> assetGroups, 
+                Dictionary<AssetGroup, IBuildAssets> buildSettingsItems, 
                 CollectSelector<BuildSettingsMode> buildSettingsModes,
                 ReactiveProperty<BuildTargetPlatform> buildTargetPlatform,
                 MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> buildTargetPlatformSelector,
                 SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions)
             {
                 this.BuildFolders = buildFolders;
-                this.AssetGroups = assetGroups;
+                this.BuildSettingsItems = buildSettingsItems;
                 this.BuildSettingsModes = buildSettingsModes;
                 this.BuildTargetPlatform = buildTargetPlatform;
                 this.BuildTargetPlatformSelector = buildTargetPlatformSelector;

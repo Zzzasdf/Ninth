@@ -18,28 +18,26 @@ namespace Ninth
         private readonly IJsonProxy jsonProxy;
         private readonly IDownloadProxy downloadProxy;
         private readonly IAssetConfig assetConfig;
-        private readonly IAssetDownloadBox assetDownloadBox;
-        private readonly IObjectResolver objResolver;
+        private readonly IObjectResolver resolver;
 
         [Inject]
-        public AssetBundleProxy(IPathProxy pathProxy, IJsonProxy jsonProxy, IDownloadProxy downloadProxy, IAssetConfig assetConfig, IAssetDownloadBox assetDownloadBox, IObjectResolver objResolver)
+        public AssetBundleProxy(IPathProxy pathProxy, IJsonProxy jsonProxy, IDownloadProxy downloadProxy, IAssetConfig assetConfig, IObjectResolver resolver)
         {
             this.pathProxy = pathProxy;
             this.jsonProxy = jsonProxy;
             this.downloadProxy = downloadProxy;
             this.assetConfig = assetConfig;
-            this.assetDownloadBox = assetDownloadBox;
-            this.objResolver = objResolver;
+            this.resolver = resolver;
         }
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
             if (assetConfig.RuntimeEnv() != Environment.RemoteAb)
             {
-                // 启动
-                objResolver.Resolve<LoadDll>();
+                await resolver.Resolve<LoadDll>().StartAsync(cancellation);
                 return;
             }
+
             // versionConfig
             var versionConfigByServer = await GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH.AssetServer, cancellation);
             var versionConfigByPersistentData = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation);
@@ -64,7 +62,7 @@ namespace Ninth
                 || bundleInfosByDll is { Count: > 0 })
             {
                 // box => 下载 bundle
-                var complete = await assetDownloadBox.PopUpAsync(versionConfigByServer.BuiltIn(), cancellation, (ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, bundleInfosByRemote), (ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, bundleInfosByDll));
+                var complete = await resolver.Resolve<IAssetDownloadBox>().PopUpAsync(versionConfigByServer.BuiltIn(), cancellation, (ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, bundleInfosByRemote), (ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, bundleInfosByDll));
                 if (!complete)
                 {
                     Application.Quit();
@@ -121,7 +119,7 @@ namespace Ninth
                 jsonProxy.ToJsonAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation);
             }
             // 启动
-            objResolver.Resolve<LoadDll>();
+            resolver.Resolve<LoadDll>();
         }
 
         private async UniTask<VersionConfig?> GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH versionPath, CancellationToken cancellationToken)

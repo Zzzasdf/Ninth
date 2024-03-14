@@ -11,7 +11,7 @@ namespace Ninth.Editor
         private void BuildPlayer(BuildPlayersConfig buildPlayersConfig)
         {
             var folder = buildPlayersConfig.BuildFolder;
-            var prefixFolder = buildPlayersConfig.PrefixFolder;
+            var prefixFolder = buildPlayersConfig.PlayerPrefix;
             var produceName = buildPlayersConfig.ProduceName;
             var buildOptions = buildPlayersConfig.BuildTargetPlatformInfo.BuildOptions;
             var buildTarget = buildPlayersConfig.BuildTarget;
@@ -21,7 +21,7 @@ namespace Ninth.Editor
             Debug.Log("====> Build App");
             var buildPlayerOptions = new BuildPlayerOptions
             {
-                scenes = new [] { "Assets/GAssets/LocalGroup/main.unity" },
+                scenes = new [] { "Assets/Resources/main.unity" },
                 locationPathName = location,
                 options = buildOptions,
                 target = buildTarget,
