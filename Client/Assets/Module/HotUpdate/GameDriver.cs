@@ -8,7 +8,7 @@ namespace Ninth.HotUpdate
     {
         public static void Init()
         {
-            "热更新成功!!".Log();
+            "UnityEditor下加载成功!!".Log();
         }
     }
 }

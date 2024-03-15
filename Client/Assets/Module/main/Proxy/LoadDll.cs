@@ -1,15 +1,12 @@
 using Cysharp.Threading.Tasks;
 using HybridCLR;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
-using Ninth.Utility;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -47,16 +44,11 @@ namespace Ninth
             await LoadDllFromBytes();
 #else
             var environment = assetConfig.RuntimeEnv();
-            if (!assetConfig.DllRuntimeEnv().Contains(environment))
-            {
-                AppDomain.CurrentDomain.GetAssemblies()
-                    .First(assembly => assembly.GetName().Name == "Assembly-CSharp");
-                LoadHotUpdatePart();
-            }
-            else
+            if (assetConfig.DllRuntimeEnv().Contains(environment))
             {
                 await LoadDllFromBytes();
             }
+            LoadHotUpdatePart();
 #endif
         }
 
@@ -85,10 +77,10 @@ namespace Ninth
                     Debug.Log(www.error);
                 }
 #else
-                            if (www.isHttpError || www.isNetworkError)
-                            {
-                                Debug.Log(www.error);
-                            }
+                if (www.isHttpError || www.isNetworkError)
+                {
+                     Debug.Log(www.error);
+                }
 #endif
                 else
                 {
@@ -98,9 +90,7 @@ namespace Ninth
                     assetDatas[asset] = assetData;
                 }
             }
-
             LoadMetadataForAOTAssemblies();
-            LoadHotUpdatePart();
         }
 
         private string GetWebRequestPath(string path)
@@ -109,12 +99,10 @@ namespace Ninth
             {
                 path = "file://" + path;
             }
-
             if (path.EndsWith(".dll"))
             {
                 path += ".bytes";
             }
-
             return path;
         }
 
@@ -138,13 +126,16 @@ namespace Ninth
 
         private void LoadHotUpdatePart()
         {
-            var gameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
-            if (gameAss == null)
+            var environment = assetConfig.RuntimeEnv();
+            var assembly = assetConfig.DllRuntimeEnv().Contains(environment) ? 
+                Assembly.Load(GetAssetData("Assembly-CSharp.dll")) : Assembly.Load("Assembly-CSharp");
+            if (assembly == null)
             {
                 throw new Exception("未找到对应热更的程序集");
             }
+
             "加载程序集成功".Log();
-            var appType = gameAss.GetType("Ninth.HotUpdate.GameDriver");
+            var appType = assembly.GetType("Ninth.HotUpdate.GameDriver");
             var mainMethod = appType.GetMethod("Init");
             mainMethod.Invoke(null, null);
         }
