@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,9 +117,16 @@ namespace Ninth.Editor.Window
         private Vector2 contentScrollView;
         private void RenderContent()
         {
-            contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-            windowProxy.Content();
-            GUILayout.EndScrollView();
+            try
+            {
+                contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
+                windowProxy.Content();
+                GUILayout.EndScrollView();
+            }
+            catch (Exception e)
+            {
+                e.Warning();
+            }
         }
     }
 }

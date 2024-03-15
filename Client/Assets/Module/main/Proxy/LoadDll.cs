@@ -40,16 +40,12 @@ namespace Ninth
         }
         public async UniTask StartAsync(CancellationToken cancellationToken)
         {
-#if !UNITY_EDITOR
-            await LoadDllFromBytes();
-#else
             var environment = assetConfig.RuntimeEnv();
             if (assetConfig.DllRuntimeEnv().Contains(environment))
             {
                 await LoadDllFromBytes();
             }
             LoadHotUpdatePart();
-#endif
         }
 
         private async UniTask LoadDllFromBytes()
@@ -127,16 +123,22 @@ namespace Ninth
         private void LoadHotUpdatePart()
         {
             var environment = assetConfig.RuntimeEnv();
-            var assembly = assetConfig.DllRuntimeEnv().Contains(environment) ? 
-                Assembly.Load(GetAssetData("Assembly-CSharp.dll")) : Assembly.Load("Assembly-CSharp");
+            Assembly assembly = null;
+            if(assetConfig.DllRuntimeEnv().Contains(environment))
+            {
+                assembly = Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+            }
+            else
+            {
+                assembly = Assembly.Load("Assembly-CSharp");
+            }
             if (assembly == null)
             {
                 throw new Exception("未找到对应热更的程序集");
             }
-
             "加载程序集成功".Log();
-            var appType = assembly.GetType("Ninth.HotUpdate.GameDriver");
-            var mainMethod = appType.GetMethod("Init");
+            var type = assembly.GetType("Ninth.HotUpdate.GameDriver");
+            var mainMethod = type.GetMethod("Init");
             mainMethod.Invoke(null, null);
         }
     }

@@ -23,7 +23,10 @@ MonoBehaviour:
   hotUpdateDllCompileOutputRootDir: HybridCLRData/HotUpdateDlls
   externalHotUpdateAssembliyDirs: []
   strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
-  patchAOTAssemblies: []
+  patchAOTAssemblies:
+  - System.dll
+  - System.Core.dll
+  - UniTask.dll
   collectAssetReferenceTypes: 0
   outputLinkFile: HybridCLRData/Generated/link.xml
   outputAOTGenericReferenceFile: HybridCLRData/Generated/AOTGenericReferences.cs
