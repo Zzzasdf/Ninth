@@ -14,7 +14,6 @@ namespace Ninth
     {
         [SerializeField] private Environment runtimeEnv;
         [SerializeField] private string url;
-        [SerializeField] private List<string> remoteAbGroup;
         [SerializeField] private List<Environment> dllRuntimeEnv;
         
         [Inject]
@@ -22,13 +21,11 @@ namespace Ninth
         {
             runtimeEnv = Environment.LocalAb;
             url = "http://192.168.8.197:80";
-            remoteAbGroup = new List<string> { "RemoteGroup" };
             dllRuntimeEnv = new List<Environment> { Environment.LocalAb, Environment.RemoteAb };
         }
         
         Environment IAssetConfig.RuntimeEnv() => runtimeEnv;
         string IAssetConfig.Url() => url;
-        ReadOnlyCollection<string> IAssetConfig.RemoteGroup() => new(remoteAbGroup);
         ReadOnlyCollection<Environment> IAssetConfig.DllRuntimeEnv() => new(dllRuntimeEnv);
     }
 

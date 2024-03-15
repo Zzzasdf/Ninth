@@ -42,7 +42,7 @@ namespace HybridCLR.Editor
             Debug.Log("====> Build App");
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions()
             {
-                scenes = new string[] { "Assets/Scenes/main.unity" },
+                scenes = new string[] { "Assets/Resources/main.unity" },
                 locationPathName = location,
                 options = buildOptions,
                 target = target,

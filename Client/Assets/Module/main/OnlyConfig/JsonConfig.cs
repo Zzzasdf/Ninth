@@ -20,6 +20,5 @@ namespace Ninth
                 build.Subscribe(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, pathProxy.Get(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData));
             }
         }
-
     }
 }

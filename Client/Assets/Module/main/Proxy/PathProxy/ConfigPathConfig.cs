@@ -31,7 +31,7 @@ namespace Ninth
 
             var loadConfigPathByLocalGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.FolderByLocalGroup()}/{nameConfig.LoadConfigNameByLocalGroup()}";
             var loadConfigPathByRemoteGroupByStreamingAssets = $"{streamingAssetsPath}/{nameConfig.FolderByRemoteGroup()}/{nameConfig.LoadConfigNameByRemoteGroup()}";
-
+            
             var downloadConfigPathByRemoteGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FolderByRemoteGroup()}/{nameConfig.DownloadConfigNameByRemoteGroup()}";
             var downloadConfigTempPathByRemoteGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FolderByRemoteGroup()}/{nameConfig.DownloadConfigTempNameByRemoteGroup()}";
             var downloadConfigPathByDllGroupByPersistentData = $"{persistentDataProduceNamePlatformName}/{nameConfig.FolderByDllGroup()}/{nameConfig.DownloadConfigNameByDllGroup()}";

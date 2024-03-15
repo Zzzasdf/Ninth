@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ninth.Utility;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -17,31 +19,28 @@ namespace Ninth
     {
         public static List<string> AOTMetaAssemblyNames { get; } = new()
         {
-            "mscorlib.dll",
+            // "mscorlib.dll.bytes",
             "System.dll",
             "System.Core.dll",
             "UniTask.dll",
         };
 
-        private static Dictionary<string, byte[]> s_assetDatas = new();
+        private static Dictionary<string, byte[]> assetDatas = new();
 
         public static byte[] GetAssetData(string dllName)
         {
-            return s_assetDatas[dllName];
+            return assetDatas[dllName];
         }
 
         private readonly IAssetConfig assetConfig;
-        private readonly IPathProxy pathProxy;
+        private readonly INameConfig nameConfig;
         
         [Inject]
-        public LoadDll(IAssetConfig assetConfig, IPathProxy pathProxy)
+        public LoadDll(IAssetConfig assetConfig, INameConfig nameConfig)
         {
             this.assetConfig = assetConfig;
-            this.pathProxy = pathProxy;
+            this.nameConfig = nameConfig;
         }
-
-        private System.Reflection.Assembly m_GameAss = null;
-
         public async UniTask StartAsync(CancellationToken cancellationToken)
         {
 #if !UNITY_EDITOR
@@ -50,7 +49,7 @@ namespace Ninth
             var environment = assetConfig.RuntimeEnv();
             if (!assetConfig.DllRuntimeEnv().Contains(environment))
             {
-                m_GameAss = AppDomain.CurrentDomain.GetAssemblies()
+                AppDomain.CurrentDomain.GetAssemblies()
                     .First(assembly => assembly.GetName().Name == "Assembly-CSharp");
                 LoadHotUpdatePart();
             }
@@ -67,19 +66,15 @@ namespace Ninth
             {
                 "Assembly-CSharp.dll",
             }.Concat(AOTMetaAssemblyNames);
+            var folderPrefix = assetConfig.RuntimeEnv() switch
+            {
+                Environment.LocalAb => Application.streamingAssetsPath,
+                Environment.RemoteAb => Application.persistentDataPath,
+                _ => null,
+            };
             foreach (var asset in assets)
             {
-                var dir = assetConfig.RuntimeEnv() switch
-                {
-                    Environment.LocalAb => pathProxy.Get(VERSION_PATH.StreamingAssets),
-                    Environment.RemoteAb => pathProxy.Get(VERSION_PATH.PersistentData),
-                    _ => null,
-                };
-                if (dir == null)
-                {
-                    continue;
-                }
-                var dllPath = GetWebRequestPath(dir);
+                var dllPath = GetWebRequestPath($"{folderPrefix}/{nameConfig.FolderByDllGroup()}/{asset}");
                 Debug.Log($"start download asset:{dllPath}");
                 var www = UnityWebRequest.Get(dllPath);
                 await www.SendWebRequest();
@@ -100,7 +95,7 @@ namespace Ninth
                     // Or retrieve results as binary data
                     var assetData = www.downloadHandler.data;
                     Debug.Log($"dll:{asset}  size:{assetData.Length}");
-                    s_assetDatas[asset] = assetData;
+                    assetDatas[asset] = assetData;
                 }
             }
 
@@ -143,15 +138,15 @@ namespace Ninth
 
         private void LoadHotUpdatePart()
         {
-            m_GameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
-            if (m_GameAss == null)
+            var gameAss = System.Reflection.Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+            if (gameAss == null)
             {
                 throw new Exception("未找到对应热更的程序集");
             }
-            // TODO
-            // var appType = m_GameAss.GetType("Ninth.HotUpdate.GameDriver");
-            // var mainMethod = appType.GetMethod("Init");
-            // mainMethod.Invoke(null);
+            "加载程序集成功".Log();
+            var appType = gameAss.GetType("Ninth.HotUpdate.GameDriver");
+            var mainMethod = appType.GetMethod("Init");
+            mainMethod.Invoke(null, null);
         }
     }
 }

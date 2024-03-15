@@ -21,8 +21,8 @@ namespace Ninth
         {
             var url = assetConfig.Url();
 
-            var produceName = playerSettingsConfig.StringSubscriber?.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.StringSubscriber?.Get(PLAY_SETTINGS.PlatformName);
+            var produceName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.PlatformName);
 
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
