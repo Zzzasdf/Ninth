@@ -117,16 +117,9 @@ namespace Ninth.Editor.Window
         private Vector2 contentScrollView;
         private void RenderContent()
         {
-            try
-            {
-                contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-                windowProxy.Content();
-                GUILayout.EndScrollView();
-            }
-            catch (Exception e)
-            {
-                e.Warning();
-            }
+            contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
+            windowProxy.Content();
+            GUILayout.EndScrollView();
         }
     }
 }

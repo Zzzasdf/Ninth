@@ -35,6 +35,7 @@ namespace Ninth.Editor
         public List<string> RemoteGroup { get; set; } = new();
 
         public BuildTargetPlatform BuildTargetPlatforms { get; set; }
+        public BuildSettingsMode BuildSettingsMode { get; set; }
         public SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions { get; set; } = new();
     }
 

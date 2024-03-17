@@ -153,7 +153,7 @@ namespace Ninth.Editor
                 if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
                     buildTargetPlatforms.Add(item);
             }
-            if (buildTargetPlatforms.Count == 0)
+            if (buildTargetPlatforms.Count == 0) 
             {
                 EditorGUILayout.HelpBox("缺少打包平台", MessageType.Error);
                 result = false;
@@ -297,6 +297,7 @@ namespace Ninth.Editor
                 }
             }
             "构建成功..".Log();
+            AssetDatabase.Refresh();
             if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
             {
                 Process.Start($"{buildFolders[BuildFolder.Players].Value}/{produceName}");

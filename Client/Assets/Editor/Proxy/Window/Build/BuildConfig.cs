@@ -45,6 +45,7 @@ namespace Ninth.Editor
             {
                 var build = intSubscriber = new SubscriberCollect<int>();
                 build.Subscribe<BuildTargetPlatform>((int)buildJson.BuildTargetPlatforms).AsSetEvent(value => buildJson.BuildTargetPlatforms = (BuildTargetPlatform)value);
+                build.Subscribe<BuildSettingsMode>((int)buildJson.BuildSettingsMode).AsSetEvent(value => buildJson.BuildSettingsMode = (BuildSettingsMode)value);
             }
 
             {
@@ -72,6 +73,7 @@ namespace Ninth.Editor
                             ),
                     },
                     new CollectSelector<BuildSettingsMode>
+                        (intSubscriber.GetReactiveProperty<BuildSettingsMode>().AsEnum<BuildSettingsMode>())
                     {
                         BuildSettingsMode.HotUpdateBundle,
                         BuildSettingsMode.AllBundle,
