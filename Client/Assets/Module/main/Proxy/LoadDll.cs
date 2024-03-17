@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -20,7 +21,8 @@ namespace Ninth
             "System.dll",
             "System.Core.dll",
             "UniTask.dll",
-        };
+            "Utility.dll",
+        }; 
 
         private static Dictionary<string, byte[]> assetDatas = new();
 

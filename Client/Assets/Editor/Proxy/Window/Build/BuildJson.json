@@ -8,16 +8,16 @@
         "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
     ],
     "BuildTargetPlatforms": 1,
-    "BuildSettingsMode": 2,
+    "BuildSettingsMode": 0,
     "PlatformVersions": {
         "container": {
             "StandaloneWindows64": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 60,
-                "HotUpdateVersion": 187,
-                "IterateVersion": 247
+                "FrameVersion": 63,
+                "HotUpdateVersion": 205,
+                "IterateVersion": 268
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,

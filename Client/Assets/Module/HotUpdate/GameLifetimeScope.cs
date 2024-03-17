@@ -53,9 +53,12 @@ namespace Ninth.HotUpdate
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
                 // entryPoints.Add<HotUpdateMain>();
-                entryPoints.Add<GamePresenter>();
+                // entryPoints.Add<GamePresenter>();
                 entryPoints.OnException(ex => ex.FrameError());
             });
+
+            555.Log();
+            GameDriver.Init();
         }
     }
 }
