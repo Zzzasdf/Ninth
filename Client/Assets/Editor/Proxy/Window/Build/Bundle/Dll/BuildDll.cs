@@ -10,24 +10,27 @@ namespace Ninth.Editor
     public class BuildDll: IBuildAssets
     {
         public AssetGroupsPaths? AssetGroupsPaths { get; }
-        public string FolderByGroup { get; }
-        public BaseBuildInfo BuildInfo { get; }
+        
+        private readonly AssetGroup assetGroup;
+        private readonly string folderByGroup;
+        private BaseBuildInfo buildInfo;
 
         public BuildDll(AssetGroup assetGroup, string folderByGroup)
         {
-            this.FolderByGroup = folderByGroup;
-            this.BuildInfo = new BuildDllInfo(assetGroup);
+            this.assetGroup = assetGroup;
+            this.folderByGroup = folderByGroup;
         }
         
         public void ScanAssets(string buildFolder, BuildTarget buildTarget)
         {
-            var groupFolder = $"{buildFolder}/{FolderByGroup}";
+            buildInfo = new BuildDllInfo(assetGroup);
+            var groupFolder = $"{buildFolder}/{folderByGroup}";
             if (!Directory.Exists(groupFolder))
                 Directory.CreateDirectory(groupFolder);
             
             CompileDllCommand.CompileDll(buildTarget);
             
-            var buildBundleInfo = (BuildInfo as BuildDllInfo)!;
+            var buildBundleInfo = (buildInfo as BuildDllInfo)!;
             // AOT
             var aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(buildTarget);
             foreach (var dll in LoadDll.AOTMetaAssemblyNames)
@@ -84,7 +87,7 @@ namespace Ninth.Editor
 
         public void SaveConfig(string fullFolder, IJsonProxy jsonProxy, string loadConfigName, string downloadConfigName)
         {
-            BuildInfo.SaveConfig(fullFolder, jsonProxy, loadConfigName, downloadConfigName);
+            buildInfo.SaveConfig(fullFolder, jsonProxy, loadConfigName, downloadConfigName);
         }
     }
 }

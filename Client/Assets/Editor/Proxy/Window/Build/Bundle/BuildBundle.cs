@@ -12,23 +12,25 @@ namespace Ninth.Editor
     public class BuildBundle: IBuildAssets
     {
         public AssetGroupsPaths AssetGroupsPaths { get; }
-        public string FolderByGroup { get; }
-        public BaseBuildInfo BuildInfo { get; }
+
+        private readonly AssetGroup assetGroup;
+        private readonly string folderByGroup;
+        private BaseBuildInfo buildInfo;
 
         public BuildBundle(AssetGroup assetGroup, AssetGroupsPaths assetGroupsPaths, string folderByGroup)
         {
+            this.assetGroup = assetGroup;
             this.AssetGroupsPaths = assetGroupsPaths;
-            this.FolderByGroup = folderByGroup;
-            this.BuildInfo = new BuildBundleInfo(assetGroup);
+            this.folderByGroup = folderByGroup;
         }
-
 
         public void ScanAssets(string buildFolder, BuildTarget buildTarget)
         {
-            var groupFolder = $"{buildFolder}/{FolderByGroup}";
+            buildInfo = new BuildBundleInfo(assetGroup);
+            var groupFolder = $"{buildFolder}/{folderByGroup}";
             if (!Directory.Exists(groupFolder))
                 Directory.CreateDirectory(groupFolder);
-            var buildBundleInfo = (BuildInfo as BuildBundleInfo)!;
+            var buildBundleInfo = (buildInfo as BuildBundleInfo)!;
             
             var groupPaths = AssetGroupsPaths.AssetGroupPaths.Value;
             var allSubFolders = Ninth.Utility.Utility.GetAllSubFolders(groupPaths);
@@ -57,7 +59,7 @@ namespace Ninth.Editor
 
         public void Build(string buildFolder, BuildAssetBundleOptions buildAssetBundleOptions, BuildTarget buildTarget)
         {
-            BuildInfo.Build(buildFolder, buildAssetBundleOptions, buildTarget);
+            buildInfo.Build(buildFolder, buildAssetBundleOptions, buildTarget);
             var files = Directory.GetFiles(buildFolder, "*.manifest");
             foreach (var file in files)
             {
@@ -68,12 +70,12 @@ namespace Ninth.Editor
 
         public void CalculateDependencies()
         {
-            BuildInfo.CalculateDependencies();
+            buildInfo.CalculateDependencies();
         }
 
         public void SaveConfig(string fullFolder, IJsonProxy jsonProxy, string loadConfigName, string? downloadConfigName)
         {
-            BuildInfo.SaveConfig(fullFolder, jsonProxy, loadConfigName, downloadConfigName);
+            buildInfo.SaveConfig(fullFolder, jsonProxy, loadConfigName, downloadConfigName);
         }
     }
 
