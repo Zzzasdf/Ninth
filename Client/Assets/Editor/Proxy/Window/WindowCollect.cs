@@ -30,12 +30,6 @@ namespace Ninth.Editor.Window
             window.Close();
         }
 
-        [MenuItem("Tools/WindowCollect/Display")]
-        private static void Display()
-        {
-            EditorUtility.DisplayDialog("11", "cancel", "ok");
-        }
-
         public static void SubscribeResolver(IObjectResolver resolver)
         {
             WindowCollect.resolver = resolver;
@@ -123,9 +117,12 @@ namespace Ninth.Editor.Window
         private Vector2 contentScrollView;
         private void RenderContent()
         {
-            contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
-            windowProxy.Content();
-            GUILayout.EndScrollView();
+            // contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
+            using (new GUILayout.HorizontalScope())
+            {
+                windowProxy.Content();
+            }
+            // GUILayout.EndScrollView();
         }
     }
 }

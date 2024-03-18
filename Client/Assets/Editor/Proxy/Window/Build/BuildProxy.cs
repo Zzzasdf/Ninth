@@ -259,7 +259,7 @@ namespace Ninth.Editor
                         versionInfo.IterateVersion += 1;
                     }
                 }
-                Export();
+                Export(); 
             }
         }
 
@@ -297,7 +297,6 @@ namespace Ninth.Editor
                 }
             }
             "构建成功..".Log();
-            AssetDatabase.Refresh();
             if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
             {
                 Process.Start($"{buildFolders[BuildFolder.Players].Value}/{produceName}");
@@ -306,6 +305,7 @@ namespace Ninth.Editor
             {
                 Process.Start($"{buildFolders[BuildFolder.Bundles].Value}/{produceName}");
             }
+            UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
         }
 
         public class BuildBundlesConfig
