@@ -12,9 +12,18 @@ namespace Ninth.HotUpdate
             "UnityEditor下加载成功666!!".Log();
             AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup");
             SceneManager.LoadScene("HotUpdateScene");
+            
             var obj = new GameObject("GameLifetimeScope");
             GameObject.DontDestroyOnLoad(obj);
             obj.AddComponent<GameLifetimeScope>();
+
+            var bundle = AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup_test");
+            var sphere = bundle.LoadAsset("Sphere") as GameObject;
+            GameObject.Instantiate(sphere);
+
+
+            new GameObject("AAA").AddComponent<HotUpdateMono>();
+            "finish".Log();
         } 
     }
 }

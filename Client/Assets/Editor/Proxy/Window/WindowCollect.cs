@@ -30,6 +30,12 @@ namespace Ninth.Editor.Window
             window.Close();
         }
 
+        [MenuItem("Tools/WindowCollect/Display")]
+        private static void Display()
+        {
+            EditorUtility.DisplayDialog("11", "cancel", "ok");
+        }
+
         public static void SubscribeResolver(IObjectResolver resolver)
         {
             WindowCollect.resolver = resolver;

@@ -57,7 +57,7 @@ namespace Ninth.HotUpdate
                 entryPoints.OnException(ex => ex.FrameError());
             }); 
 
-            6666.Log();
+            666.Log();
         }
     }
 }
