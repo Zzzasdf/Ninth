@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
@@ -44,12 +43,10 @@ namespace Ninth.Editor
             {
                 if (!RenderBuildMode()) verify = false;
                 RenderBuildPlatform();
-            }
-            using (new GUILayout.VerticalScope(GUI.skin.GetStyle("FrameBox")))
-            {
                 if (!RenderTargetPlatformBuildInfo()) verify = false;
             }
             if (verify) RenderBuildExport();
+            GUILayout.FlexibleSpace();
             using (new GUILayout.VerticalScope(GUI.skin.GetStyle("FrameBox")))
             {
                 RenderCopy();
@@ -103,6 +100,20 @@ namespace Ninth.Editor
             }
             return result;
         }
+        
+        // 平台集
+        private void RenderBuildPlatform()
+        {
+            var selectedFlags = buildSettings.BuildTargetPlatform;
+            using (new EditorGUILayout.VerticalScope())
+            {
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField("平台集");
+                    selectedFlags.Value = (BuildTargetPlatform)EditorGUILayout.EnumFlagsField(selectedFlags.Value);
+                }
+            }
+        }
 
         // 打包模式
         private bool RenderBuildMode()
@@ -131,34 +142,13 @@ namespace Ninth.Editor
             return result;
         }
 
-        // 打包平台集
-        private void RenderBuildPlatform()
-        {
-            var selectedFlags = buildSettings.BuildTargetPlatform;
-            using (new EditorGUILayout.VerticalScope())
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.LabelField("打包平台集");
-                    selectedFlags.Value = (BuildTargetPlatform)EditorGUILayout.EnumFlagsField(selectedFlags.Value);
-                }
-            }
-        }
-
-        public int buildBundleOperateIndex = 0;
-        public enum BuildBundleOperate
-        {
-            None,
-            Copy2PlayerStreamingAssets,
-            ClearPlayerStreamingAssets
-        }
-
         // 目标平台打包信息
         private bool RenderTargetPlatformBuildInfo()
         {
             var result = true;
             var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
             var buildTargetPlatformCurrentIndex = buildSettings.BuildTargetPlatformCurrentIndex;
+            var buildBundleOperates = buildSettings.BuildBundleOperates;
             var buildTargetPlatforms = new List<BuildTargetPlatform>();
             foreach (var item in buildTargetPlatformSelector.Keys)
             {
@@ -167,7 +157,7 @@ namespace Ninth.Editor
             }
             if (buildTargetPlatforms.Count == 0) 
             {
-                EditorGUILayout.HelpBox("缺少打包平台", MessageType.Error);
+                EditorGUILayout.HelpBox("缺少平台", MessageType.Error);
                 result = false;
                 return result;
             }
@@ -200,8 +190,8 @@ namespace Ninth.Editor
             {
                 GUI.enabled = false;
                 buildTargetPlatformSelector.Current.Value = buildTargetPlatforms[buildTargetPlatformCurrentIndex.Value];
-                EditorGUILayout.TextField("BuildTarget", buildTargetPlatformSelector.CurrentValue.Item1.ToString());
-                EditorGUILayout.TextField("BuildTargetGroup", buildTargetPlatformSelector.CurrentValue.Item2.ToString());
+                EditorGUILayout.TextField("BuildTarget", buildTargetPlatformSelector.CurrentValue.BuildTarget.ToString());
+                EditorGUILayout.TextField("BuildTargetGroup", buildTargetPlatformSelector.CurrentValue.BuildTargetGroup.ToString());
                 GUI.enabled = true;
             }
             var buildSettingsMode = buildSettings.BuildSettingsModes.Current.Value;
@@ -236,7 +226,14 @@ namespace Ninth.Editor
 
             using (new GUILayout.HorizontalScope())
             {
-                buildBundleOperateIndex = EditorGUILayout.Popup("生成 bundle 后的操作", buildBundleOperateIndex, Enum.GetNames(typeof(BuildBundleOperate)));
+                buildTargetPlatformInfo.BuildBundleOperateIndex = EditorGUILayout.Popup("生成 bundle 后的操作", buildTargetPlatformInfo.BuildBundleOperateIndex, buildBundleOperates.ToArrayString());
+                if (buildSettings.BuildSettingsModes.Current.Value != BuildSettingsMode.Player)
+                {
+                    if(!string.IsNullOrEmpty(buildTargetPlatformSelector.CurrentValue.BundleCopy2PlayerRelativePath))
+                        buildTargetPlatformInfo.BundleCopy2Player = EditorGUILayout.ToggleLeft("拷贝 bundle 到对应的 player", buildTargetPlatformInfo.BundleCopy2Player);
+                    else
+                        EditorGUILayout.LabelField("该平台不支持拷贝 bundle 到 player");
+                }
             }
             return result;
             
@@ -255,7 +252,163 @@ namespace Ninth.Editor
                 }
             }
         }
+        
+        private void RenderBuildExport()
+        {
+            if (GUILayout.Button("开始构建"))
+            {
+                var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
+                var buildSettingsMode = buildSettings.BuildSettingsModes.Current.Value;
+                foreach (var item in buildTargetPlatformSelector.Keys)
+                {
+                    if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
+                    {
+                        var versionInfo = buildSettings.PlatformVersions[item];
+                        versionInfo.FrameVersion += buildSettingsMode switch
+                        {
+                            BuildSettingsMode.Player or BuildSettingsMode.AllBundle => 1,
+                            _ => 0,
+                        };
+                        versionInfo.HotUpdateVersion += buildSettingsMode switch
+                        {
+                            BuildSettingsMode.HotUpdateBundle => 1,
+                            _ => 0,
+                        };
+                        versionInfo.IterateVersion += 1;
+                    }
+                }
+                Export();
+            }
+            return;
 
+            void Export()
+            {
+                var buildSettingsItems = buildSettings.BuildSettingsItems;
+                var barMenu = buildSettings.BuildSettingsModes.Collect.ToArray();
+                var currentIndex = buildSettings.BuildSettingsModes.CurrentIndex;
+                var buildSettingsMode = barMenu[currentIndex.Value];
+                if(buildSettingsMode == BuildSettingsMode.HotUpdateBundle)
+                {
+                    buildSettingsItems.Remove(AssetGroup.Local);
+                }
+                var produceName = playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName);
+                var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
+                var buildFolders = buildSettings.BuildFolders;
+                var platformVersions = buildSettings.PlatformVersions;
+                var buildBundleOperates = buildSettings.BuildBundleOperates;
+                foreach (var item in buildTargetPlatformSelector.Keys)
+                {
+                    if (!buildSettings.BuildTargetPlatform.Value.HasFlag(item))
+                    {
+                        continue;
+                    }
+
+                    // 构建 bundle
+                    var buildBundlesConfig = resolver.Resolve<BuildBundlesConfig>();
+                    buildBundlesConfig.ProduceName = produceName;
+                    buildBundlesConfig.BuildSettingsItems = buildSettingsItems;
+                    buildBundlesConfig.BuildTarget = buildTargetPlatformSelector[item].BuildTarget;
+                    buildBundlesConfig.BuildFolder = buildFolders[BuildFolder.Bundles].Value;
+                    buildBundlesConfig.BuildTargetPlatformInfo = platformVersions[item];
+                    BuildBundles(buildBundlesConfig);
+
+                    // 操作 Unity 的 StreamingAssets
+                    var buildBundleOperateIndex = platformVersions[item].BuildBundleOperateIndex;
+                    var buildBundleOperate = buildBundleOperates[buildBundleOperateIndex];
+                    switch (buildBundleOperate)
+                    {
+                        case BuildBundleOperate.ClearStreamingAssets:
+                        {
+                            Utility.ClearFolderContents(Application.streamingAssetsPath);
+                            break;
+                        }
+                        case BuildBundleOperate.Copy2StreamingAssets:
+                        {
+                            Utility.CopyDirectory($"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}/{platformVersions[item].BuiltIn()}", Application.streamingAssetsPath);
+                            if (buildSettingsMode == BuildSettingsMode.HotUpdateBundle)
+                            {
+                                // 拷贝 Local 组
+                                var frameVersion = platformVersions[item].FrameVersion;
+                                var playerFolderPath = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}";
+                                var baseVersion = string.Empty;
+                                var baseIterate = int.MaxValue;
+                                foreach (var folder in Directory.GetDirectories(playerFolderPath))
+                                {
+                                    var folderName = Path.GetFileName(folder);
+                                    var parts = folderName.Split('.');
+                                    if (!parts[0].Equals(frameVersion.ToString()))
+                                    {
+                                        continue;
+                                    }
+                                    if (string.IsNullOrEmpty(baseVersion))
+                                    {
+                                        baseVersion = folderName;
+                                        baseIterate = int.Parse(parts[^1]);
+                                    }
+                                    else
+                                    {
+                                        var iterate = int.Parse(parts[^1]);
+                                        if (baseIterate < iterate)
+                                        {
+                                            continue;
+                                        }
+                                        baseVersion = folderName;
+                                        baseIterate = iterate;
+                                    }
+                                    Utility.CopyDirectory($"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}/{baseVersion}/{nameConfig.FolderByLocalGroup()}",
+                                        $"{Application.streamingAssetsPath}/{nameConfig.FolderByLocalGroup()}");
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
+                    {
+                        // 构建 player
+                        var buildPlayersConfig = resolver.Resolve<BuildPlayersConfig>();
+                        buildPlayersConfig.ProduceName = produceName;
+                        buildPlayersConfig.BuildTarget = buildTargetPlatformSelector[item].BuildTarget;
+                        buildPlayersConfig.BuildTargetGroup = buildTargetPlatformSelector[item].BuildTargetGroup;
+                        buildPlayersConfig.BuildFolder = buildFolders[BuildFolder.Players].Value;
+                        buildPlayersConfig.BuildTargetPlatformInfo = platformVersions[item];
+                        BuildPlayer(buildPlayersConfig);
+                    }
+                    else
+                    {
+                        // 拷贝 bundle 到对应 player
+                        var relativePath = buildTargetPlatformSelector[item].BundleCopy2PlayerRelativePath;
+                        if (string.IsNullOrEmpty(relativePath))
+                        {
+                            continue;
+                        }
+                        var frameVersion = platformVersions[item].FrameVersion;
+                        var playerFolderPath = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}";
+                        foreach (var folder in Directory.GetDirectories(playerFolderPath))
+                        {
+                            var folderName = Path.GetFileName(folder);
+                            var parts = folderName.Split('.');
+                            if (!parts[0].Equals(frameVersion.ToString()))
+                            {
+                                continue;
+                            }
+                            Utility.CopyDirectory($"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}/{platformVersions[item].BuiltIn()}",
+                                $"{folder}/{relativePath}");
+                            if (buildSettingsMode == BuildSettingsMode.HotUpdateBundle)
+                            {
+                                // 拷贝 Local 组
+                                Utility.CopyDirectory($"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{item}/{folderName}/{nameConfig.FolderByLocalGroup()}",
+                                    $"{folder}/{relativePath}/{nameConfig.FolderByLocalGroup()}");
+                            }
+                        }
+                    }
+                }
+                AssetDatabase.Refresh();
+                UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
+            }
+        }
+
+        private ReactiveProperty<int> copyTargetPlatformIndex = new ReactiveProperty<int>(0);
         private int versionIndex = 0;
         
         private int lockModeIndex = 0;
@@ -275,29 +428,12 @@ namespace Ninth.Editor
         private void RenderCopy()
         {
             var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
-            var buildTargetPlatformCurrentIndex = buildSettings.BuildTargetPlatformCurrentIndex;
-            var buildTargetPlatforms = new List<BuildTargetPlatform>();
-            foreach (var item in buildTargetPlatformSelector.Keys)
-            {
-                if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
-                    buildTargetPlatforms.Add(item);
-            }
-
-            if (buildTargetPlatforms.Count == 0)
-            {
-                EditorGUILayout.HelpBox("缺少打包平台", MessageType.Error);
-                return;
-            }
-
-            if (buildTargetPlatformCurrentIndex.Value < 0)
-                buildTargetPlatformCurrentIndex.Value = 0;
-            else if (buildTargetPlatformCurrentIndex.Value >= buildTargetPlatforms.Count)
-                buildTargetPlatformCurrentIndex.Value = buildTargetPlatforms.Count - 1;
             using (new GUILayout.HorizontalScope())
             {
-                EditorGUILayout.LabelField("拷贝信息");
-                EditorWindowUtility.Toolbar(buildTargetPlatformCurrentIndex, buildTargetPlatforms.ToArrayString());
+                EditorGUILayout.LabelField("拷贝平台");
+                EditorWindowUtility.Toolbar(copyTargetPlatformIndex, buildTargetPlatformSelector.Keys.ToArray().ToArrayString());
             }
+            var currentTargetPlatform = buildTargetPlatformSelector.Keys.ToArray()[copyTargetPlatformIndex.Value];
 
             var lockModes = new[] { LockMode.None, LockMode.Current };
 
@@ -316,7 +452,7 @@ namespace Ninth.Editor
             using (new GUILayout.HorizontalScope())
             {
                 var versions = new List<string>();
-                var folderPath = $"{buildSettings.BuildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{buildTargetPlatforms[buildTargetPlatformCurrentIndex.Value]}";
+                var folderPath = $"{buildSettings.BuildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
                 if (!Directory.Exists(folderPath))
                 {
                     return;
@@ -349,81 +485,6 @@ namespace Ninth.Editor
             if (GUILayout.Button("拷贝"))
             {
                 "TODO => 拷贝".Log();
-            }
-        }
-
-        private void RenderBuildExport()
-        {
-            if (GUILayout.Button("开始构建"))
-            {
-                var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
-                var buildSettingsMode = buildSettings.BuildSettingsModes.Current.Value;
-                foreach (var item in buildTargetPlatformSelector.Keys)
-                {
-                    if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
-                    {
-                        var versionInfo = buildSettings.PlatformVersions[item];
-                        versionInfo.FrameVersion += buildSettingsMode switch
-                        {
-                            BuildSettingsMode.Player or BuildSettingsMode.AllBundle => 1,
-                            _ => 0,
-                        };
-                        versionInfo.HotUpdateVersion += buildSettingsMode switch
-                        {
-                            BuildSettingsMode.HotUpdateBundle => 1,
-                            _ => 0,
-                        };
-                        versionInfo.IterateVersion += 1;
-                    }
-                }
-                Export();
-            }
-            return;
-
-            void Export()
-            {
-                var produceName = playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName);
-                var buildSettingsItems = buildSettings.BuildSettingsItems;
-                var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
-                var buildFolders = buildSettings.BuildFolders;
-                var platformVersions = buildSettings.PlatformVersions;
-                foreach (var item in buildTargetPlatformSelector.Keys)
-                {
-                    if (buildSettings.BuildTargetPlatform.Value.HasFlag(item))
-                    {
-                        if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
-                        {
-                            // 构建 player
-                            var buildPlayersConfig = resolver.Resolve<BuildPlayersConfig>();
-                            buildPlayersConfig.ProduceName = produceName;
-                            buildPlayersConfig.BuildTarget = buildTargetPlatformSelector[item].Item1;
-                            buildPlayersConfig.BuildTargetGroup = buildTargetPlatformSelector[item].Item2;
-                            buildPlayersConfig.BuildFolder = buildFolders[BuildFolder.Players].Value;
-                            buildPlayersConfig.BuildTargetPlatformInfo = platformVersions[item];
-                            BuildPlayer(buildPlayersConfig);
-                        }
-
-                        // 构建 bundle
-                        var buildBundlesConfig = resolver.Resolve<BuildBundlesConfig>();
-                        buildBundlesConfig.ProduceName = produceName;
-                        buildBundlesConfig.BuildSettingsItems = buildSettingsItems;
-                        buildBundlesConfig.BuildTarget = buildTargetPlatformSelector[item].Item1;
-                        buildBundlesConfig.BuildFolder = buildFolders[BuildFolder.Bundles].Value;
-                        buildBundlesConfig.BuildTargetPlatformInfo = platformVersions[item];
-                        BuildBundles(buildBundlesConfig);
-                    }
-                }
-
-                "构建成功..".Log();
-                if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
-                {
-                    Process.Start($"{buildFolders[BuildFolder.Players].Value}/{produceName}");
-                }
-                else
-                {
-                    Process.Start($"{buildFolders[BuildFolder.Bundles].Value}/{produceName}");
-                }
-                UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
             }
         }
 

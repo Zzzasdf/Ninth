@@ -28,7 +28,7 @@ namespace Ninth.Editor
         BuildSettings IBuildConfig.BuildSettings => buildSettings;
 
         [Inject]
-        public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy, INameConfig nameConfig)
+        public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy, INameConfig nameConfig, IPlayerSettingsProxy playerSettingsProxy)
         {
             {
                 var build = stringListSubscriber = new SubscriberCollect<List<string>>();
@@ -80,12 +80,20 @@ namespace Ninth.Editor
                         BuildSettingsMode.Player,
                     }.Build(),
                     intSubscriber.GetReactiveProperty<BuildTargetPlatform>().AsEnum<BuildTargetPlatform>(),
-                    new MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)>
+                    new MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem>
                     {
-                        [BuildTargetPlatform.StandaloneWindows64] = (BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone),
-                        [BuildTargetPlatform.Android] = (BuildTarget.Android, BuildTargetGroup.Android),
-                        [BuildTargetPlatform.iOS] = (BuildTarget.iOS, BuildTargetGroup.iOS),
+                        [BuildTargetPlatform.StandaloneWindows64] = 
+                            new (BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone, $"{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}_Data/StreamingAssets"),
+                        [BuildTargetPlatform.Android] = 
+                            new (BuildTarget.Android, BuildTargetGroup.Android),
+                        [BuildTargetPlatform.iOS] = 
+                            new (BuildTarget.iOS, BuildTargetGroup.iOS,$"{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}.exe/Data/Raw"),
                     }.Build(),
+                    new List<BuildBundleOperate>
+                    {
+                        BuildBundleOperate.ClearStreamingAssets,
+                        BuildBundleOperate.Copy2StreamingAssets,
+                    },
                     buildJson.PlatformVersions);
             }
         }
@@ -96,7 +104,8 @@ namespace Ninth.Editor
             public readonly Dictionary<AssetGroup, IBuildAssets> BuildSettingsItems;
             public readonly CollectSelector<BuildSettingsMode> BuildSettingsModes;
             public readonly ReactiveProperty<BuildTargetPlatform> BuildTargetPlatform;
-            public readonly MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> BuildTargetPlatformSelector;
+            public readonly MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem> BuildTargetPlatformSelector;
+            public readonly List<BuildBundleOperate> BuildBundleOperates;
             public readonly ReactiveProperty<int> BuildTargetPlatformCurrentIndex;
             public readonly SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions;
             
@@ -104,7 +113,8 @@ namespace Ninth.Editor
                 Dictionary<AssetGroup, IBuildAssets> buildSettingsItems, 
                 CollectSelector<BuildSettingsMode> buildSettingsModes,
                 ReactiveProperty<BuildTargetPlatform> buildTargetPlatform,
-                MappingSelector<BuildTargetPlatform, (BuildTarget, BuildTargetGroup)> buildTargetPlatformSelector,
+                MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem> buildTargetPlatformSelector,
+                List<BuildBundleOperate> buildBundleOperates,
                 SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions)
             {
                 this.BuildFolders = buildFolders;
@@ -112,8 +122,23 @@ namespace Ninth.Editor
                 this.BuildSettingsModes = buildSettingsModes;
                 this.BuildTargetPlatform = buildTargetPlatform;
                 this.BuildTargetPlatformSelector = buildTargetPlatformSelector;
+                this.BuildBundleOperates = buildBundleOperates;
                 this.BuildTargetPlatformCurrentIndex = new ReactiveProperty<int>(0);
                 this.PlatformVersions = platformVersions;
+            }
+        }
+
+        public class BuildTargetPlatformSelectorItem
+        {
+            public BuildTarget BuildTarget { get; }
+            public BuildTargetGroup BuildTargetGroup { get; }
+            public string? BundleCopy2PlayerRelativePath { get; }
+
+            public BuildTargetPlatformSelectorItem(BuildTarget buildTarget, BuildTargetGroup buildTargetGroup, string? bundleCopy2PlayerRelativePath = null)
+            {
+                this.BuildTarget = buildTarget;
+                this.BuildTargetGroup = buildTargetGroup;
+                this.BundleCopy2PlayerRelativePath = bundleCopy2PlayerRelativePath;
             }
         }
     }

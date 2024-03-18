@@ -20,12 +20,12 @@ namespace Ninth.Editor
         Player
     }
 
-    public enum BuildBundleMode
+    public enum BuildBundleOperate
     {
-        HotUpdateBundles,
-        AllBundles
+        ClearStreamingAssets,
+        Copy2StreamingAssets,
     }
-
+    
     public class BuildJson : IJson
     {
         public string? ExportBundleFolder { get; set; }
@@ -47,5 +47,7 @@ namespace Ninth.Editor
         // BuildAssetBundleOptions.ChunkBasedCompression：使用LZ4压缩，压缩率没有LZMA高，但是我们可以加载指定资源而不用解压全部
         public BuildAssetBundleOptions BuildAssetBundleOptions { get; set; }
         public BuildOptions BuildOptions { get; set; }
+        public int BuildBundleOperateIndex { get; set; }
+        public bool BundleCopy2Player { get; set; }
     }
 }
