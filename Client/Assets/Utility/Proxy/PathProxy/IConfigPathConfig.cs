@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Ninth.Utility;
 using UnityEngine;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     public enum CONFIG_PATH
     {

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     [CreateAssetMenu(fileName = "NameConfigSO", menuName = "Config/NameConfigSO")]
     [Serializable]

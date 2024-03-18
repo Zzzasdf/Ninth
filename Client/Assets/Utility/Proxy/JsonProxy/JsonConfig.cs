@@ -2,7 +2,7 @@ using System;
 using Ninth.Utility;
 using VContainer;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     public class JsonConfig : IJsonConfig
     {

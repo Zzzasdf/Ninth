@@ -31,11 +31,11 @@ namespace Ninth.HotUpdate
             var iAssetConfig = assetConfig as IAssetConfig;
             switch (iAssetConfig.RuntimeEnv())
             {
-                case Environment.NonAb:
+                case Ninth.Utility.Environment.NonAb:
                     builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
-                case Environment.LocalAb:
-                case Environment.RemoteAb:
+                case Ninth.Utility.Environment.LocalAb:
+                case Ninth.Utility.Environment.RemoteAb:
                     builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
                 default:
@@ -47,18 +47,17 @@ namespace Ninth.HotUpdate
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
             
-            builder.Register<HelloWorldService>(Lifetime.Singleton);
-            builder.Register<GamePresenter>(Lifetime.Singleton);
+            // builder.Register<HelloWorldService>(Lifetime.Singleton);
+            // builder.Register<GamePresenter>(Lifetime.Singleton);
             
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
                 // entryPoints.Add<HotUpdateMain>();
                 // entryPoints.Add<GamePresenter>();
                 entryPoints.OnException(ex => ex.FrameError());
-            });
+            }); 
 
-            555.Log();
-            GameDriver.Init();
+            6666.Log();
         }
     }
 }

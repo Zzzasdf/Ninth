@@ -1,6 +1,6 @@
 using VContainer;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     public class PathProxy: IPathProxy
     {

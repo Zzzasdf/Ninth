@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     public interface IAssetConfig
     {

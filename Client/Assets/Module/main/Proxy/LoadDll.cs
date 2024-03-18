@@ -5,24 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Ninth.Utility;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
+using Environment = System.Environment;
 
 namespace Ninth
 {
-    public class LoadDll: IAsyncStartable
+    public class LoadDll : IAsyncStartable
     {
         public static List<string> AOTMetaAssemblyNames { get; } = new()
         {
-            // "mscorlib.dll.bytes",
+            // "mscorlib.dll.bytes", 
             "System.dll",
             "System.Core.dll",
             "UniTask.dll",
             "Utility.dll",
-        }; 
+        };
 
         private static Dictionary<string, byte[]> assetDatas = new();
 
@@ -33,13 +35,14 @@ namespace Ninth
 
         private readonly IAssetConfig assetConfig;
         private readonly INameConfig nameConfig;
-        
+
         [Inject]
         public LoadDll(IAssetConfig assetConfig, INameConfig nameConfig)
         {
             this.assetConfig = assetConfig;
             this.nameConfig = nameConfig;
         }
+
         public async UniTask StartAsync(CancellationToken cancellationToken)
         {
             var environment = assetConfig.RuntimeEnv();
@@ -47,6 +50,7 @@ namespace Ninth
             {
                 await LoadDllFromBytes();
             }
+
             LoadHotUpdatePart();
         }
 
@@ -54,12 +58,12 @@ namespace Ninth
         {
             var assets = new List<string>
             {
-                "Assembly-CSharp.dll",
+                "HotUpdateMain.dll",
             }.Concat(AOTMetaAssemblyNames);
             var folderPrefix = assetConfig.RuntimeEnv() switch
             {
-                Environment.LocalAb => Application.streamingAssetsPath,
-                Environment.RemoteAb => Application.persistentDataPath,
+                Ninth.Utility.Environment.LocalAb => Application.streamingAssetsPath,
+                Ninth.Utility.Environment.RemoteAb => Application.persistentDataPath,
                 _ => null,
             };
             foreach (var asset in assets)
@@ -88,6 +92,7 @@ namespace Ninth
                     assetDatas[asset] = assetData;
                 }
             }
+
             LoadMetadataForAOTAssemblies();
         }
 
@@ -97,10 +102,12 @@ namespace Ninth
             {
                 path = "file://" + path;
             }
+
             if (path.EndsWith(".dll"))
             {
                 path += ".bytes";
             }
+
             return path;
         }
 
@@ -128,7 +135,7 @@ namespace Ninth
             Assembly assembly = null;
             if(assetConfig.DllRuntimeEnv().Contains(environment))
             {
-                assembly = Assembly.Load(GetAssetData("Assembly-CSharp.dll"));
+                assembly = Assembly.Load(GetAssetData("HotUpdateMain.dll"));
             }
             else
             {
@@ -137,7 +144,7 @@ namespace Ninth
             if (assembly == null)
             {
                 throw new Exception("未找到对应热更的程序集");
-            }
+            }  
             "加载程序集成功".Log();
             var type = assembly.GetType("Ninth.HotUpdate.GameDriver");
             var mainMethod = type.GetMethod("Init");

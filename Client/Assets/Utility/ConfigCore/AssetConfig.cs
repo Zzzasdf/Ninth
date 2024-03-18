@@ -6,12 +6,13 @@ using System.Runtime.CompilerServices;
 using UnityEngine.Serialization;
 using VContainer;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     [CreateAssetMenu(fileName = "AssetConfigSO", menuName = "Config/AssetConfigSO")]
     [Serializable]
     public sealed class AssetConfig: ScriptableObject, IAssetConfig
     {
+        [Header("Unity编辑器环境下的 LocalAb 模式\n原先挂在预制体上的 Mono 脚本只能加载 cs 代码")]
         [SerializeField] private Environment runtimeEnv;
         [SerializeField] private string url;
         [SerializeField] private List<Environment> dllRuntimeEnv;

@@ -9,9 +9,12 @@ namespace Ninth.HotUpdate
     {
         public static void Init()
         {
-            "UnityEditor下加载成功555!!".Log(); 
+            "UnityEditor下加载成功666!!".Log();
             AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup");
             SceneManager.LoadScene("HotUpdateScene");
-        }
+            var obj = new GameObject("GameLifetimeScope");
+            GameObject.DontDestroyOnLoad(obj);
+            obj.AddComponent<GameLifetimeScope>();
+        } 
     }
 }

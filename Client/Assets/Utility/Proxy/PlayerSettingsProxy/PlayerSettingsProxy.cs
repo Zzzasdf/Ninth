@@ -1,7 +1,7 @@
 using UnityEngine;
 using VContainer;
 
-namespace Ninth
+namespace Ninth.Utility
 {
     public class PlayerSettingsProxy : IPlayerSettingsProxy
     {

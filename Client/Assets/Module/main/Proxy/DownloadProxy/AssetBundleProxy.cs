@@ -32,7 +32,7 @@ namespace Ninth
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            if (assetConfig.RuntimeEnv() != Environment.RemoteAb)
+            if (assetConfig.RuntimeEnv() != Ninth.Utility.Environment.RemoteAb)
             {
                 await resolver.Resolve<LoadDll>().StartAsync(cancellation);
                 return;

@@ -1,4 +1,4 @@
-namespace Ninth
+namespace Ninth.Utility
 {
     /// <summary>
     /// 资源定位

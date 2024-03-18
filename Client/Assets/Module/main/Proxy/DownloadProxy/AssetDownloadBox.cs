@@ -12,6 +12,7 @@ using VContainer;
 using VContainer.Unity;
 using Object = UnityEngine.Object;
 using Cysharp.Threading.Tasks.Linq;
+using Ninth.Utility;
 
 namespace Ninth
 {
