@@ -31,11 +31,11 @@ namespace Ninth.HotUpdate
             var iAssetConfig = assetConfig as IAssetConfig;
             switch (iAssetConfig.RuntimeEnv())
             {
-                case Ninth.Utility.Environment.NonAb:
+                case Utility.Environment.NonAb:
                     builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
-                case Ninth.Utility.Environment.LocalAb:
-                case Ninth.Utility.Environment.RemoteAb:
+                case Utility.Environment.LocalAb:
+                case Utility.Environment.RemoteAb:
                     builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
                 default:
@@ -57,7 +57,7 @@ namespace Ninth.HotUpdate
                 entryPoints.OnException(ex => ex.FrameError());
             }); 
 
-            666.Log();
+            "GameLifetimeScope 777".Log();
         }
     }
 }

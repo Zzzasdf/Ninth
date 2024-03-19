@@ -25,6 +25,10 @@ namespace Ninth
                 $"下载错误, 远端路径: {serverPath}, 本地路径: {cachePath}, 错误日志: {request.error}".Error();
                 return false;
             }
+            else
+            {
+                $"下载成功, 远端路径: {serverPath}, 本地路径: {cachePath}".Log();
+            }
             return true;
         }
     }

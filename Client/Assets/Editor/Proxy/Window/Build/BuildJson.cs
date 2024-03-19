@@ -26,6 +26,18 @@ namespace Ninth.Editor
         Copy2StreamingAssets,
     }
     
+    public enum CopyLockMode
+    {
+        None,
+        Latest,
+    }
+    
+    public enum CopyTargetMode
+    {
+        StreamingAssets,
+        Player,
+    }
+    
     public class BuildJson : IJson
     {
         public string? ExportBundleFolder { get; set; }
@@ -37,6 +49,7 @@ namespace Ninth.Editor
         public BuildTargetPlatform BuildTargetPlatforms { get; set; }
         public BuildSettingsMode BuildSettingsMode { get; set; }
         public SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions { get; set; } = new();
+        public CopySettings CopySettings { get; set; } = new();
     }
 
     public class BuildTargetPlatformInfo: VersionJson
@@ -49,5 +62,13 @@ namespace Ninth.Editor
         public BuildOptions BuildOptions { get; set; }
         public int BuildBundleOperateIndex { get; set; }
         public bool BundleCopy2Player { get; set; }
+    }
+
+    public class CopySettings
+    {
+        public int CopyTargetPlatformIndex { get; set; }
+        public int CopyLockModeIndex { get; set; }
+        public int CopyVersionIndex { get; set; }
+        public int CopyTargetModeIndex { get; set; }
     }
 }

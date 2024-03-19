@@ -9,7 +9,7 @@ namespace Ninth.HotUpdate
         // Start is called before the first frame update
         void Awake()
         {
-            "Mono777".Log();
+            "Mono 777".Log();
         }
     }
 }

@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Ninth.Editor.Window;
-using Ninth.HotUpdate;
+using System.Diagnostics;
 using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace Ninth.Editor.Window
 {
@@ -30,6 +24,12 @@ namespace Ninth.Editor.Window
             window.Close();
         }
 
+        [MenuItem("Tools/PersistentDataPath")]
+        private static void PersistentDataPath()
+        {
+            Process.Start(Application.persistentDataPath);
+        }
+        
         public static void SubscribeResolver(IObjectResolver resolver)
         {
             WindowCollect.resolver = resolver;

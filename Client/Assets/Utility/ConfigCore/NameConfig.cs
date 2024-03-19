@@ -42,7 +42,7 @@ namespace Ninth.Utility
             directoryNameByDllGroup = "Dll";
             dllsBundleNameByDllGroup = "HotUpdateAssemblyByDllGroup";
             downloadConfigNameByDllGroup = "DownloadConfigByDllGroup.json";
-            downloadConfigTempNameByDllGroup = "DownloadConfigByDllGroup.json";
+            downloadConfigTempNameByDllGroup = "DownloadConfigTempByDllGroup.json";
             loadConfigNameByDllGroup = "LoadConfigByDllGroup.json";
 
             directoryTempNameByPack = "DirectoryTempByPack";

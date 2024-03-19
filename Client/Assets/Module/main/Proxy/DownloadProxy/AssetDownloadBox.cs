@@ -24,6 +24,7 @@ namespace Ninth
         private readonly IDownloadProxy downloadProxy;
         
         private readonly string AssetPath = "LoadView/Prefabs/MessageBox";
+        private GameObject gameObject;
         private readonly Text txtMessage;
         private readonly Button btnFirst;
         private bool btnFirstClicked;
@@ -47,9 +48,9 @@ namespace Ninth
             this.pathProxy = pathProxy;
             this.downloadProxy = downloadProxy;
             
-            var node = Object.Instantiate(Resources.Load<GameObject>("LoadView/Prefabs/MessageBox"));
-            var btnDic = node.transform.GetComponentsInChildren<Button>().ToDictionary(value => value.name, value => value);
-            var txtDic = node.transform.GetComponentsInChildren<Text>().ToDictionary(value => value.name, value => value);
+            gameObject = Object.Instantiate(Resources.Load<GameObject>(AssetPath));
+            var btnDic = gameObject.transform.GetComponentsInChildren<Button>().ToDictionary(value => value.name, value => value);
+            var txtDic = gameObject.transform.GetComponentsInChildren<Text>().ToDictionary(value => value.name, value => value);
             
             txtMessage = txtDic["txtMessage"];
             btnFirst = btnDic["btnFirst"];
@@ -133,7 +134,10 @@ namespace Ninth
                 playerPrefsStringProxy.Set(PLAYERPREFS_STRING.DownloadBundleStartPosFromAssetVersion, version);
                 playerPrefsIntProxy.Set(PLAYERPREFS_INT.DownloadBundleStartPos, 0);
             }
-            var startPos = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos);
+            // 初始化
+            this.version = version;
+            bundleInfosGroup = downloadBundleInfos;
+            skipCount = playerPrefsIntProxy.Get(PLAYERPREFS_INT.DownloadBundleStartPos); // 记录进入界面时断点的位置
             var unDownloadSize = GetUnDownloadSize();
             txtMessage.text = $"发现新的版本, 需要下载的资源大小: {SizeToString(unDownloadSize)}";
             
@@ -150,14 +154,10 @@ namespace Ninth
                 txtMessage.text = $"当前的下载进度{(float)size / totalSize}%({value}/{totalBundleCount})";
             });
             
-            // 初始化
-            this.version = version;
-            bundleInfosGroup = downloadBundleInfos;
-            skipCount = startPos; // 记录进入界面时断点的位置
-            
             // 结果
             await UniTask.WaitUntil(() => completeStatus.HasValue, cancellationToken: cancellationToken);
             downloadBundleCancellationToken?.Dispose();
+            Object.Destroy(gameObject);
             return completeStatus.HasValue && completeStatus.Value;
         }
 

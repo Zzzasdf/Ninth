@@ -21,7 +21,7 @@ namespace Ninth.Utility
         public AssetConfig()
         {
             runtimeEnv = Environment.LocalAb;
-            url = "http://192.168.8.197:80";
+            url = "http://192.168.1.105:80";
             dllRuntimeEnv = new List<Environment> { Environment.LocalAb, Environment.RemoteAb };
         }
         

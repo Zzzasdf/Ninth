@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -32,7 +28,7 @@ namespace Ninth
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            if (assetConfig.RuntimeEnv() != Ninth.Utility.Environment.RemoteAb)
+            if (assetConfig.RuntimeEnv() != Environment.RemoteAb)
             {
                 await resolver.Resolve<LoadDll>().StartAsync(cancellation);
                 return;
@@ -40,21 +36,28 @@ namespace Ninth
 
             // versionConfig
             var versionConfigByServer = await GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH.AssetServer, cancellation);
-            var versionConfigByPersistentData = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation);
+            var versionConfigByPersistentData = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation, notExistHandle: () => null);
             var versionConfigByStreamingAssets = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.StreamingAssets, cancellation);
             var update = await VersionConfig.UpdateCompare(versionConfigByServer, versionConfigByPersistentData, versionConfigByStreamingAssets, cancellation);
-            if (!update || versionConfigByServer == null)
+            if (versionConfigByServer == null)
             {
+                "无法加载到资源服务器的版本配置".FrameError();
                 return;
             }
-            
+            if (!update)
+            {
+                File.Delete(pathProxy.Get(VERSION_PATH.PersistentData));
+                File.Move(pathProxy.Get(VERSION_PATH.PersistentDataTemp), pathProxy.Get(VERSION_PATH.PersistentData));
+                await resolver.Resolve<LoadDll>().StartAsync(cancellation);
+                return;
+            }
+
             // downloadConfig
             var downloadConfigByServerRemote = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup, versionConfigByServer.BuiltIn(), cancellation);
-            var downloadConfigByPersistentDataRemote = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation);
+            var downloadConfigByPersistentDataRemote = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation, notExistHandle: () => null);
             var bundleInfosByRemote = DownloadConfig.UpdateCompare(downloadConfigByServerRemote, downloadConfigByPersistentDataRemote, cancellation);
-            
             var downloadConfigByServerDll = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup, versionConfigByServer.BuiltIn(), cancellation);
-            var downloadConfigByPersistentDataDll = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation);
+            var downloadConfigByPersistentDataDll = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation, notExistHandle: () => null);
             var bundleInfosByDll = DownloadConfig.UpdateCompare(downloadConfigByServerDll, downloadConfigByPersistentDataDll, cancellation);
 
             //  download bundle
@@ -108,18 +111,16 @@ namespace Ninth
             await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByRemoteGroup, versionConfigByServer.BuiltIn(), cancellation);
             await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup, versionConfigByServer.BuiltIn(), cancellation);
             
-            // 保存临时 versionConfig, DownloadConfig
-            jsonProxy.ToJsonAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation);
-            if (downloadConfigByServerRemote != null)
-            {
-                jsonProxy.ToJsonAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation);
-            }
-            if (downloadConfigByServerDll != null)
-            {
-                jsonProxy.ToJsonAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation);
-            }
+            // 替换 versionConfig, DownloadConfig
+            File.Delete(pathProxy.Get(VERSION_PATH.PersistentData));
+            File.Move(pathProxy.Get(VERSION_PATH.PersistentDataTemp), pathProxy.Get(VERSION_PATH.PersistentData));
+            File.Delete(pathProxy.Get(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData));
+            File.Move(pathProxy.Get(CONFIG_PATH.DownloadConfigTempPathByRemoteGroupByPersistentData), pathProxy.Get(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData)); 
+            File.Delete(pathProxy.Get(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData));
+            File.Move(pathProxy.Get(CONFIG_PATH.DownloadConfigTempPathByDllGroupByPersistentData), pathProxy.Get(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData));
+            
             // 启动
-            resolver.Resolve<LoadDll>();
+            await resolver.Resolve<LoadDll>().StartAsync(cancellation);
         }
 
         private async UniTask<VersionConfig?> GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH versionPath, CancellationToken cancellationToken)

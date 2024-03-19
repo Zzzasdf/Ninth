@@ -94,7 +94,17 @@ namespace Ninth.Editor
                         BuildBundleOperate.ClearStreamingAssets,
                         BuildBundleOperate.Copy2StreamingAssets,
                     },
-                    buildJson.PlatformVersions);
+                    buildJson.PlatformVersions,
+                    buildJson.CopySettings,
+                    new List<CopyLockMode>
+                    {
+                        CopyLockMode.None, 
+                        CopyLockMode.Latest,
+                    }, new List<CopyTargetMode>
+                    {
+                        CopyTargetMode.StreamingAssets,
+                        CopyTargetMode.Player,
+                    });
             }
         }
 
@@ -108,6 +118,9 @@ namespace Ninth.Editor
             public readonly List<BuildBundleOperate> BuildBundleOperates;
             public readonly ReactiveProperty<int> BuildTargetPlatformCurrentIndex;
             public readonly SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions;
+            public readonly CopySettings CopySettings;
+            public readonly List<CopyLockMode> CopyLockModes;
+            public readonly List<CopyTargetMode> CopyTargetModes;
             
             public BuildSettings(Dictionary<BuildFolder, ReactiveProperty<string>> buildFolders, 
                 Dictionary<AssetGroup, IBuildAssets> buildSettingsItems, 
@@ -115,7 +128,10 @@ namespace Ninth.Editor
                 ReactiveProperty<BuildTargetPlatform> buildTargetPlatform,
                 MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem> buildTargetPlatformSelector,
                 List<BuildBundleOperate> buildBundleOperates,
-                SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions)
+                SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions,
+                CopySettings copySettings,
+                List<CopyLockMode> copyLockModes,
+                List<CopyTargetMode> copyTargetModes)
             {
                 this.BuildFolders = buildFolders;
                 this.BuildSettingsItems = buildSettingsItems;
@@ -125,6 +141,9 @@ namespace Ninth.Editor
                 this.BuildBundleOperates = buildBundleOperates;
                 this.BuildTargetPlatformCurrentIndex = new ReactiveProperty<int>(0);
                 this.PlatformVersions = platformVersions;
+                this.CopySettings = copySettings;
+                this.CopyLockModes = copyLockModes;
+                this.CopyTargetModes = copyTargetModes;
             }
         }
 

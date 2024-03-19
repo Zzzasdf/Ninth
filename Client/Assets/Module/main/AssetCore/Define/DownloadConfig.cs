@@ -28,10 +28,21 @@ namespace Ninth
                 // 全部下载
                 return server.BundleInfos.Values.ToList();
             }
-            
-            var bundleInfos = from item in server.BundleInfos 
-                                                    where !persistentData.BundleInfos.ContainsKey(item.Key) 
-                                                    select item.Value;
+            var bundleInfos = new List<BundleInfo>();
+            foreach (var (bundleName, serverBundleInfo) in server.BundleInfos)
+            {
+                if (!persistentData.BundleInfos.TryGetValue(bundleName, out var bundleInfo))
+                {
+                    bundleInfos.Add(serverBundleInfo);
+                    continue;
+                }
+
+                if (serverBundleInfo.Crc != bundleInfo.Crc
+                    || serverBundleInfo.Size != bundleInfo.Size)
+                {
+                    bundleInfos.Add(serverBundleInfo);
+                }
+            }
             return bundleInfos.ToList();
         }
     }

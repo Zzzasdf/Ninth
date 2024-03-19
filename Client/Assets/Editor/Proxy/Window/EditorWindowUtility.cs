@@ -115,15 +115,16 @@ namespace Ninth.Editor
         public static void IntPopup<T>(string label, ReactiveProperty<T> selectedValue, string[] displayedOptions, int[] optionValues, bool isModify = true)
             where T: struct
         {
-            if (!isModify)
-            {
-                GUI.enabled = false;
-            }
+            if (!isModify) GUI.enabled = false;
             selectedValue.Value = (T)(object)EditorGUILayout.IntPopup(label, (int)(object)selectedValue.Value, displayedOptions, optionValues);
-            if (!isModify)
-            {
-                GUI.enabled = true;
-            }
+            if (!isModify) GUI.enabled = true;
+        }
+
+        public static void Popup(string label, ReactiveProperty<int> selectedIndex, string[] displayedOptions, bool isModify = true)
+        {
+            if (!isModify) GUI.enabled = false;
+            selectedIndex.Value = EditorGUILayout.Popup(label, selectedIndex.Value, displayedOptions);
+            if (!isModify) GUI.enabled = true;
         }
 
         public static void TextField(string label, ReactiveProperty<string> text)

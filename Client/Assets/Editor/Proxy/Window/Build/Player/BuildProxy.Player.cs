@@ -32,12 +32,7 @@ namespace Ninth.Editor
             if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {
                 Debug.LogError("客户端生成失败，请检查！！");
-                return;
             }
-
-#if UNITY_EDITOR
-            Application.OpenURL($"file:///{location}");
-#endif
         }
     }
 }

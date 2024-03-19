@@ -12,3 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a46a9b34d49f44b9c691ec555b1ce6, type: 3}
   m_Name: NameConfigSO
   m_EditorClassIdentifier: 
+  fileNameByVersionConfig: VersionConfig.json
+  fileTempNameByVersionConfig: VersionConfigTemp.json
+  directoryNameByLocalGroup: Local
+  loadConfigNameByLocalGroup: LoadConfigByLocalGroup.json
+  directoryNameByRemoteGroup: Remote
+  downloadConfigNameByRemoteGroup: DownloadConfigByRemoteGroup.json
+  downloadConfigTempNameByRemoteGroup: DownloadConfigTempByRemoteGroup.json
+  loadConfigNameByRemoteGroup: LoadConfigByRemoteGroup.json
+  directoryNameByDllGroup: Dll
+  dllsBundleNameByDllGroup: HotUpdateAssemblyByDllGroup
+  downloadConfigNameByDllGroup: DownloadConfigByDllGroup.json
+  downloadConfigTempNameByDllGroup: DownloadConfigTempByDllGroup.json
+  loadConfigNameByDllGroup: LoadConfigByDllGroup.json
+  directoryTempNameByPack: DirectoryTempByPack
