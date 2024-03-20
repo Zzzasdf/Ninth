@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HybridCLR.Editor;
-using HybridCLR.Editor.Commands;
 using Ninth.Utility;
 using UnityEditor;
 using UnityEngine;

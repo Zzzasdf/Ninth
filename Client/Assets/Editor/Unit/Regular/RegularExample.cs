@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ninth.HotUpdate;
 using NUnit.Framework;
 using UnityEngine;
 

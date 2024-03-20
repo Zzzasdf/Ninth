@@ -1,8 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Ninth.HotUpdate;
 using UnityEngine;
-using VContainer;
 
 namespace Ninth.HotUpdate
 {

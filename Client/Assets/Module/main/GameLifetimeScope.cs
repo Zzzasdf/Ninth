@@ -1,8 +1,7 @@
-using System;
+using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Ninth.Utility;
 
 namespace Ninth
 {

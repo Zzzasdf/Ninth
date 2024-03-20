@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Ninth.Utility;
-using UnityEngine;
 
 namespace Ninth.Utility
 {

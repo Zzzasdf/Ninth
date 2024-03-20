@@ -1,17 +1,16 @@
-using Cysharp.Threading.Tasks;
-using HybridCLR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using HybridCLR;
 using Ninth.Utility;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
-using Environment = System.Environment;
+using Environment = Ninth.Utility.Environment;
 
 namespace Ninth
 {
@@ -62,8 +61,8 @@ namespace Ninth
             }.Concat(AOTMetaAssemblyNames);
             var folderPrefix = assetConfig.RuntimeEnv() switch
             {
-                Ninth.Utility.Environment.LocalAb => Application.streamingAssetsPath,
-                Ninth.Utility.Environment.RemoteAb => Application.persistentDataPath,
+                Environment.LocalAb => Application.streamingAssetsPath,
+                Environment.RemoteAb => Application.persistentDataPath,
                 _ => null,
             };
             foreach (var asset in assets)
