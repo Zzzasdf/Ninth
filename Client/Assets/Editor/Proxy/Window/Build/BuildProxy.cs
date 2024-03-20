@@ -357,7 +357,7 @@ namespace Ninth.Editor
                         {
                             continue;
                         }
-                        var versionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}/{platformVersions[platform].BuiltIn()}".Log();
+                        var versionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}/{platformVersions[platform].BuiltIn()}";
                         Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
                         Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByDllGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
                         var baseVersion = GetBaseVersion(platformVersions[platform].FrameVersion.ToString(), platform);
