@@ -91,8 +91,8 @@ namespace Ninth.Editor
                     }.Build(),
                     new List<BuildBundleOperate>
                     {
-                        BuildBundleOperate.ClearStreamingAssets,
-                        BuildBundleOperate.Copy2StreamingAssets,
+                        BuildBundleOperate.CopyLocalGroup2StreamingAssets,
+                        BuildBundleOperate.CopyAllGroup2StreamingAssets,
                     },
                     buildJson.PlatformVersions,
                     buildJson.CopySettings,
@@ -102,8 +102,9 @@ namespace Ninth.Editor
                         CopyLockMode.Latest,
                     }, new List<CopyTargetMode>
                     {
-                        CopyTargetMode.StreamingAssets,
-                        CopyTargetMode.Player,
+                        CopyTargetMode.LocalGroup2StreamingAssets,
+                        CopyTargetMode.AllGroup2StreamingAssets,
+                        CopyTargetMode.AllGroup2Player,
                     });
             }
         }

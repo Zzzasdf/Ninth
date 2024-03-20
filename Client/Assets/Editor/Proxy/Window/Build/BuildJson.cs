@@ -22,8 +22,8 @@ namespace Ninth.Editor
 
     public enum BuildBundleOperate
     {
-        ClearStreamingAssets,
-        Copy2StreamingAssets,
+        CopyLocalGroup2StreamingAssets,
+        CopyAllGroup2StreamingAssets,
     }
     
     public enum CopyLockMode
@@ -34,8 +34,9 @@ namespace Ninth.Editor
     
     public enum CopyTargetMode
     {
-        StreamingAssets,
-        Player,
+        LocalGroup2StreamingAssets,
+        AllGroup2StreamingAssets,
+        AllGroup2Player,
     }
     
     public class BuildJson : IJson

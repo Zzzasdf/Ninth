@@ -9,7 +9,7 @@ namespace Ninth.HotUpdate
     {
         public static void Init()
         {
-            "UnityEditor下加载成功 999".Log();
+            "UnityEditor下加载成功 5555".Log();
             AssetBundle.LoadFromFile($"{Application.persistentDataPath}/Remote/gassets_remotegroup");
             SceneManager.LoadScene("HotUpdateScene");
             
