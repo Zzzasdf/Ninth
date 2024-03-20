@@ -16,7 +16,7 @@ namespace Ninth.HotUpdate
             var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
             return UniTask.FromResult<(AssetRef?, T?)>((null, asset));
 #else
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
 #endif
         }
 

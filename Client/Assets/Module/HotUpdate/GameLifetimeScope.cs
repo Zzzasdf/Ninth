@@ -9,6 +9,7 @@ namespace Ninth.HotUpdate
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            "HotUpdate 初始化".FrameLog();
             // core
             var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
@@ -28,11 +29,11 @@ namespace Ninth.HotUpdate
             var iAssetConfig = assetConfig as IAssetConfig;
             switch (iAssetConfig.RuntimeEnv())
             {
-                case Utility.Environment.NonAb:
+                case Environment.NonAb:
                     builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
-                case Utility.Environment.LocalAb:
-                case Utility.Environment.RemoteAb:
+                case Environment.LocalAb:
+                case Environment.RemoteAb:
                     builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
                 default:
@@ -53,8 +54,7 @@ namespace Ninth.HotUpdate
                 // entryPoints.Add<GamePresenter>();
                 entryPoints.OnException(ex => ex.FrameError());
             }); 
-
-            "GameLifetimeScope 777".Log();
+            "HotUpdate IOC 容器注册完成！！".FrameLog(); 
         }
     }
 }

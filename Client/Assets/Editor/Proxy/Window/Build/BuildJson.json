@@ -18,8 +18,8 @@
                 "BundleCopy2Player": false,
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 93,
-                "HotUpdateVersion": 324,
-                "IterateVersion": 417
+                "HotUpdateVersion": 328,
+                "IterateVersion": 421
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,
