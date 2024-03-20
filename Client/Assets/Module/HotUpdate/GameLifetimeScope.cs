@@ -45,15 +45,11 @@ namespace Ninth.HotUpdate
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
             
-            // builder.Register<HelloWorldService>(Lifetime.Singleton);
-            // builder.Register<GamePresenter>(Lifetime.Singleton);
-            
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
-                // entryPoints.Add<HotUpdateMain>();
-                // entryPoints.Add<GamePresenter>();
+                // entryPoints.Add<AssetProxy>();
                 entryPoints.OnException(ex => ex.FrameError());
-            }); 
+            });
             "HotUpdate IOC 容器注册完成！！".FrameLog(); 
         }
     }

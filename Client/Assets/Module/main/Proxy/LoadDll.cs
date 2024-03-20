@@ -138,12 +138,14 @@ namespace Ninth
             }
             else
             {
-                assembly = Assembly.Load("Assembly-CSharp");
+#if UNITY_EDITOR
+                assembly = Assembly.Load("HotUpdateMain");
+#endif
             }
             if (assembly == null)
             {
                 throw new Exception("未找到对应热更的程序集");
-            }  
+            }
             "加载程序集成功".Log();
             var type = assembly.GetType("Ninth.HotUpdate.GameDriver");
             var mainMethod = type.GetMethod("Init");

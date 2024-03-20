@@ -15,11 +15,11 @@
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
                 "BuildBundleOperateIndex": 1,
-                "BundleCopy2Player": false,
+                "BundleCopy2Player": true,
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 93,
-                "HotUpdateVersion": 328,
-                "IterateVersion": 421
+                "FrameVersion": 102,
+                "HotUpdateVersion": 338,
+                "IterateVersion": 440
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,
@@ -45,8 +45,8 @@
     },
     "CopySettings": {
         "CopyTargetPlatformIndex": 0,
-        "CopyLockModeIndex": 0,
+        "CopyLockModeIndex": 1,
         "CopyVersionIndex": 0,
-        "CopyTargetModeIndex": 2
+        "CopyTargetModeIndex": 1
     }
 }

@@ -407,7 +407,7 @@ namespace Ninth.Editor
                 {
                     return;
                 }
-                foreach (var versionFolder in new DirectoryInfo(folderPath).GetDirectories().Reverse())
+                foreach (var versionFolder in new DirectoryInfo(folderPath).GetDirectories().OrderByDescending(x => int.Parse(x.Name.Split('.')[2])))
                 {
                     versions.Add(versionFolder.Name);
                 }
