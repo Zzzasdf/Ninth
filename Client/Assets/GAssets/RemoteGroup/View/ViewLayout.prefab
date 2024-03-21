@@ -120,7 +120,6 @@ GameObject:
   - component: {fileID: 7272306107724516106}
   - component: {fileID: 7272306107724516107}
   - component: {fileID: 7272306107724516104}
-  - component: {fileID: 3940750247007743178}
   m_Layer: 5
   m_Name: ViewLayout
   m_TagString: Untagged
@@ -214,23 +213,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3940750247007743178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7272306107724516105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfb5aaa58ad7842b6c36ff9a38cc76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bg: {fileID: 5950968439602189775}
-  main: {fileID: 2886801276868341844}
-  frame: {fileID: 2409940072653366480}
-  tip: {fileID: 5776128037391212073}
-  pop: {fileID: 6284600564712452083}
 --- !u!1 &7441889465492439315
 GameObject:
   m_ObjectHideFlags: 0

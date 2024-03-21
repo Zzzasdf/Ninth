@@ -20,7 +20,7 @@ namespace Ninth.HotUpdate
 
             {
                 var build = tupleSubscriber = new SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)>();
-                // build.Subscribe<HelloScreen>(("Assets/GAssets/RemoteGroup/View/Test/HelloScreen.prefab", VIEW_HIERARCY.Frame));
+                build.Subscribe<LoginView>(("Assets/GAssets/RemoteGroup/View/LoginView.prefab", VIEW_HIERARCY.Frame));
             }
         }
     }

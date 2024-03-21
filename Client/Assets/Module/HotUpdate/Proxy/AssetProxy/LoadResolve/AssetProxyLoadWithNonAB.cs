@@ -5,10 +5,6 @@ namespace Ninth.HotUpdate
 {
     public class AssetProxyLoadWithNonAB: IAssetProxyLoad
     {
-        public void AssemblyConfiguration()
-        {
-        }
-
         UniTask<(AssetRef?,T?)> IAssetProxyLoad.Get<T>(string? assetPath) where T : class
         {
 #if UNITY_EDITOR

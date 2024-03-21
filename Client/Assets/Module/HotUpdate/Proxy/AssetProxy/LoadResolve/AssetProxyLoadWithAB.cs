@@ -4,28 +4,39 @@ using Cysharp.Threading.Tasks;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
+using Environment = Ninth.Utility.Environment;
 
 namespace Ninth.HotUpdate
 {
     public class AssetProxyLoadWithAB : IAssetProxyLoad
     {
         private readonly IPathProxy pathProxy;
-
-        private readonly Dictionary<string, AssetRef> configAssetPath2AssetRef;
+        private readonly IAssetConfig assetConfig;
+        
+        private readonly Dictionary<string, AssetRef> assetPath2AssetRef;
         private readonly Dictionary<string, BundleRef> bundlePath2BundleRef;
 
         [Inject]
-        public AssetProxyLoadWithAB(IPathProxy pathProxy)
+        public AssetProxyLoadWithAB(IPathProxy pathProxy, IAssetConfig assetConfig, IJsonProxy jsonProxy)
         {
             this.pathProxy = pathProxy;
-            configAssetPath2AssetRef = new Dictionary<string, AssetRef>();
+            this.assetConfig = assetConfig;
+            assetPath2AssetRef = new Dictionary<string, AssetRef>();
             bundlePath2BundleRef = new Dictionary<string, BundleRef>();
-            AssemblyConfiguration();
-        }
-
-        public void AssemblyConfiguration()
-        {
-            "开始装配".Log();
+            var localLoadConfig = jsonProxy.ToObject<LoadConfig>(CONFIG_PATH.LoadConfigPathByLocalGroupByStreamingAssets);
+            var remoteLoadConfig = jsonProxy.ToObject<LoadConfig>(assetConfig.RuntimeEnv() switch
+            {
+                Environment.LocalAb => CONFIG_PATH.LoadConfigPathByRemoteGroupByStreamingAssets,
+                Environment.RemoteAb => CONFIG_PATH.LoadConfigPathByRemoteGroupByPersistentData,
+                _ => throw new ArgumentOutOfRangeException()
+            });
+            foreach (var loadConfig in new[]{ localLoadConfig, remoteLoadConfig })
+            {
+                foreach (var assetRef in loadConfig.AssetRefList)
+                {
+                    assetPath2AssetRef.Add(assetRef.AssetPath, assetRef);
+                }
+            }
         }
 
         async UniTask<(AssetRef?, T?)> IAssetProxyLoad.Get<T>(string? assetPath) where T : class
@@ -35,7 +46,7 @@ namespace Ninth.HotUpdate
                 $"无法加载：{nameof(T)}, 资源路径为空".FrameError();
                 return (null, null);
             }
-            if (!configAssetPath2AssetRef.TryGetValue(assetPath, out var assetRef))
+            if (!assetPath2AssetRef.TryGetValue(assetPath, out var assetRef))
             {
                 return (null, null);
             }
@@ -44,7 +55,6 @@ namespace Ninth.HotUpdate
                 // 处理依赖
                 var bundleNames = new List<string>();
                 var waitTasks = new List<UniTask<AssetBundle>>();
-
                 var bundles = new List<BundleRef>();
                 if (assetRef.Dependencies != null)
                 {
@@ -65,8 +75,13 @@ namespace Ninth.HotUpdate
                         var bundlePath = bundleRef.AssetGroup switch
                         {
                             AssetGroup.Local => pathProxy.Get(BUNDLE_PATH.BundlePathByLocalGroupByStreamingAssets, bundleRef.BundleName),
-                            AssetGroup.Remote => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData, bundleRef.BundleName),
-                            _ => throw new Exception("Invalid resource location")
+                            AssetGroup.Remote => assetConfig.RuntimeEnv() switch
+                            {
+                                Environment.LocalAb => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByStreamingAssets, bundleRef.BundleName),
+                                Environment.RemoteAb => pathProxy.Get(BUNDLE_PATH.BundlePathByRemoteGroupByPersistentData, bundleRef.BundleName),
+                                _ => throw new ArgumentOutOfRangeException()
+                            },
+                            _ => throw new ArgumentOutOfRangeException()
                         };
                         if (bundlePath == null)
                         {

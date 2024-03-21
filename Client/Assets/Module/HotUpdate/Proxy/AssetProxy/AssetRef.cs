@@ -8,7 +8,7 @@ namespace Ninth.HotUpdate
         /// <summary>
         /// 这个资源的相对路径
         /// </summary>
-        public string? AssetPath;
+        public string AssetPath;
 
         /// <summary>
         /// 这个资源所属的BundleRef对象

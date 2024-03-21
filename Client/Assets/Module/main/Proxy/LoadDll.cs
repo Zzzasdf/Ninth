@@ -18,7 +18,7 @@ namespace Ninth
     {
         public static List<string> AOTMetaAssemblyNames { get; } = new()
         {
-            // "mscorlib.dll.bytes", 
+            "mscorlib.dll", 
             "System.dll",
             "System.Core.dll",
             "UniTask.dll",

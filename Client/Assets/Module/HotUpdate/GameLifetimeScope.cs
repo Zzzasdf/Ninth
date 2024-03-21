@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
@@ -11,8 +12,8 @@ namespace Ninth.HotUpdate
         {
             "HotUpdate 初始化".FrameLog();
             // core
-            var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
-            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
+            var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO") as IAssetConfig;
+            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO") as INameConfig;
             builder.RegisterInstance(assetConfig).As<IAssetConfig>();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
             
@@ -26,8 +27,7 @@ namespace Ninth.HotUpdate
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
             // hotUpdate
-            var iAssetConfig = assetConfig as IAssetConfig;
-            switch (iAssetConfig.RuntimeEnv())
+            switch (assetConfig.RuntimeEnv())
             {
                 case Environment.NonAb:
                     builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
@@ -37,13 +37,16 @@ namespace Ninth.HotUpdate
                     builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
                     break;
                 default:
-                    $"未注册该类型 {iAssetConfig.RuntimeEnv()}, 请检查或实现".FrameError();
+                    $"未注册该类型 {assetConfig.RuntimeEnv()}, 请检查或实现".FrameError();
                     return;
             }
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
+            
+            builder.Register<LoginCtrl>(Lifetime.Transient).AsSelf();
+            builder.Register<LoginModel>(Lifetime.Transient).AsSelf();
 
             builder.Register<StartUp>(Lifetime.Scoped).AsSelf();
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>

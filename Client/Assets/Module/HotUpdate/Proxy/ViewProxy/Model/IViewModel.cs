@@ -1,6 +1,6 @@
 namespace Ninth.HotUpdate
 {
-    public interface IModel
+    public interface IViewModel
     {
         
     }

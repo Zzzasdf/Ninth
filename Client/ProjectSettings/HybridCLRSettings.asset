@@ -24,6 +24,7 @@ MonoBehaviour:
   externalHotUpdateAssembliyDirs: []
   strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
   patchAOTAssemblies:
+  - mscorlib.dll
   - System.dll
   - System.Core.dll
   - UniTask.dll

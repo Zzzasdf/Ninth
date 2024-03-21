@@ -17,6 +17,7 @@ namespace Ninth.HotUpdate
         
         public async UniTask StartAsync(CancellationToken cancellation)
         {
+            await viewProxy.Controller<LoginCtrl>().ShowView();
         }
     }
 }

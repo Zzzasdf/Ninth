@@ -9,17 +9,24 @@ namespace Ninth.HotUpdate
     {
         private readonly IViewConfig viewConfig;
         private readonly IAssetProxy assetProxy;
+        private readonly IObjectResolver resolver;
         
         private ViewLayout? viewLayout;
         
         [Inject]
-        public ViewProxy(IViewConfig viewConfig, IAssetProxy assetProxy)
+        public ViewProxy(IViewConfig viewConfig, IAssetProxy assetProxy, IObjectResolver resolver)
         {
             this.viewConfig = viewConfig;
             this.assetProxy = assetProxy;
+            this.resolver = resolver;
         }
 
-        async UniTask<T?> IViewProxy.Get<T>(CancellationToken cancellationToken) where T : class
+        T IViewProxy.Controller<T>(CancellationToken cancellationToken) where T : class
+        {
+            return resolver.Resolve<T>();
+        }
+
+        async UniTask<T> IViewProxy.View<T>(CancellationToken cancellationToken)
         {
             var tuple = viewConfig.TupleSubscriber.Get<T>();
             var rectHierarchy = await GetHierarchy(tuple.hierarcy);
@@ -29,6 +36,7 @@ namespace Ninth.HotUpdate
                 $"无法实例化, 预制体路径: {tuple.path}".FrameError();
                 return null;
             }
+            await UniTask.WaitUntil(() => obj.GetComponent<T>() != null, cancellationToken: cancellationToken);
             var component = obj.GetComponent<T>();
             if (component == null)
             {
@@ -38,7 +46,7 @@ namespace Ninth.HotUpdate
             return component;
         }
         
-        async UniTask<T?> IViewProxy.Get<T>(VIEW view, CancellationToken cancellationToken) where T : class
+        async UniTask<T> IViewProxy.View<T>(VIEW view, CancellationToken cancellationToken)
         {
             var tuple = viewConfig.TupleSubscriber.Get(view);
             var rectHierarchy = await GetHierarchy(tuple.hierarcy);
@@ -48,6 +56,7 @@ namespace Ninth.HotUpdate
                 $"无法实例化, 预制体路径: {tuple.path}".FrameError();
                 return null;
             }
+            await UniTask.WaitUntil(() => obj.GetComponent<T>() != null, cancellationToken: cancellationToken);
             var component = obj.GetComponent<T>();
             if (component == null)
             {
@@ -73,7 +82,7 @@ namespace Ninth.HotUpdate
                     $"无法实例化, 预制体路径: {viewLayoutPath}".FrameError();
                     return null;
                 }
-                viewLayout = viewLayoutObj.GetComponent<ViewLayout>();
+                viewLayout = viewLayoutObj.AddComponent<ViewLayout>();
                 if (viewLayout == null)
                 {
                     $"无法找到在实例化的对象的根节点上找到 {nameof(ViewLayout)} 组件，预制体路径：{viewLayoutPath}".FrameError();

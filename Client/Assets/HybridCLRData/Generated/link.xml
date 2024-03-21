@@ -4,6 +4,7 @@
     <type fullname="System.Action" preserve="all" />
     <type fullname="System.Action`1" preserve="all" />
     <type fullname="System.Activator" preserve="all" />
+    <type fullname="System.ArgumentOutOfRangeException" preserve="all" />
     <type fullname="System.Attribute" preserve="all" />
     <type fullname="System.AttributeTargets" preserve="all" />
     <type fullname="System.AttributeUsageAttribute" preserve="all" />
@@ -15,12 +16,14 @@
     <type fullname="System.Collections.Generic.KeyValuePair`2" preserve="all" />
     <type fullname="System.Collections.Generic.List`1" preserve="all" />
     <type fullname="System.Collections.Generic.List`1/Enumerator" preserve="all" />
+    <type fullname="System.Collections.ObjectModel.ReadOnlyCollection`1" preserve="all" />
     <type fullname="System.Delegate" preserve="all" />
     <type fullname="System.Diagnostics.DebuggableAttribute" preserve="all" />
     <type fullname="System.Diagnostics.DebuggableAttribute/DebuggingModes" preserve="all" />
     <type fullname="System.Diagnostics.DebuggerHiddenAttribute" preserve="all" />
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Exception" preserve="all" />
+    <type fullname="System.Func`1" preserve="all" />
     <type fullname="System.Func`2" preserve="all" />
     <type fullname="System.IDisposable" preserve="all" />
     <type fullname="System.IndexOutOfRangeException" preserve="all" />
@@ -29,6 +32,7 @@
     <type fullname="System.Nullable`1" preserve="all" />
     <type fullname="System.Object" preserve="all" />
     <type fullname="System.ParamArrayAttribute" preserve="all" />
+    <type fullname="System.Predicate`1" preserve="all" />
     <type fullname="System.Reflection.DefaultMemberAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.AsyncStateMachineAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.AsyncTaskMethodBuilder" preserve="all" />
@@ -51,6 +55,9 @@
     <type fullname="System.ValueTuple`2" preserve="all" />
     <type fullname="System.ValueType" preserve="all" />
   </assembly>
+  <assembly fullname="System.Core">
+    <type fullname="System.Linq.Enumerable" preserve="all" />
+  </assembly>
   <assembly fullname="UniTask">
     <type fullname="Cysharp.Threading.Tasks.CancellationTokenSourceExtensions" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder" preserve="all" />
@@ -72,6 +79,7 @@
     <type fullname="UnityEngine.AssetBundleCreateRequest" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.CoreModule">
+    <type fullname="UnityEngine.Application" preserve="all" />
     <type fullname="UnityEngine.AsyncOperation" preserve="all" />
     <type fullname="UnityEngine.Component" preserve="all" />
     <type fullname="UnityEngine.Debug" preserve="all" />
@@ -122,6 +130,7 @@
     <type fullname="Ninth.Utility.AssetGroup" preserve="all" />
     <type fullname="Ninth.Utility.BUNDLE_PATH" preserve="all" />
     <type fullname="Ninth.Utility.BundlePathConfig" preserve="all" />
+    <type fullname="Ninth.Utility.CONFIG_PATH" preserve="all" />
     <type fullname="Ninth.Utility.ConfigPathConfig" preserve="all" />
     <type fullname="Ninth.Utility.Environment" preserve="all" />
     <type fullname="Ninth.Utility.IAssetConfig" preserve="all" />
@@ -150,11 +159,13 @@
     <type fullname="VContainer.ContainerBuilderExtensions" preserve="all" />
     <type fullname="VContainer.IContainerBuilder" preserve="all" />
     <type fullname="VContainer.InjectAttribute" preserve="all" />
+    <type fullname="VContainer.IObjectResolver" preserve="all" />
+    <type fullname="VContainer.IObjectResolverExtensions" preserve="all" />
     <type fullname="VContainer.Lifetime" preserve="all" />
     <type fullname="VContainer.RegistrationBuilder" preserve="all" />
     <type fullname="VContainer.Unity.ContainerBuilderUnityExtensions" preserve="all" />
     <type fullname="VContainer.Unity.EntryPointsBuilder" preserve="all" />
-    <type fullname="VContainer.Unity.IStartable" preserve="all" />
+    <type fullname="VContainer.Unity.IAsyncStartable" preserve="all" />
     <type fullname="VContainer.Unity.LifetimeScope" preserve="all" />
   </assembly>
 </linker>

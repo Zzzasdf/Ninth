@@ -5,8 +5,9 @@ namespace Ninth.HotUpdate
 {
     public interface IViewProxy
     {
-        UniTask<T?> Get<T>(CancellationToken cancellationToken = default) where T : class, IView;
-        UniTask<T?> Get<T>(VIEW view, CancellationToken cancellationToken = default) where T : class, IView;
+        T Controller<T>(CancellationToken cancellationToken = default) where T : class, IViewCtrl;
+        UniTask<T> View<T>(CancellationToken cancellationToken = default) where T : UnityEngine.Component, IView;
+        UniTask<T> View<T>(VIEW view, CancellationToken cancellationToken = default) where T : class, IView;
     }
 }
 

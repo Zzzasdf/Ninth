@@ -13,9 +13,7 @@ namespace Ninth.HotUpdate
         [Inject]
         public AssetProxy(IAssetProxyLoad assetProxyLoad)
         {
-            11.Log();
             this.assetProxyLoad = assetProxyLoad;
-            22.Log();
         }
         
         async UniTask<GameObject?> IAssetProxy.CloneAsync(string? assetPath, CancellationToken cancellationToken)
@@ -26,7 +24,7 @@ namespace Ninth.HotUpdate
                 $"无法加载, 预制体路径: {assetPath}".FrameError();
                 return null;
             }
-            var cloneObj = UnityEngine.Object.Instantiate(asset);
+            var cloneObj = Object.Instantiate(asset);
             if (cloneObj == null)
             {
                 $"无法实例化, 预制体路径: {assetPath}".FrameError();
