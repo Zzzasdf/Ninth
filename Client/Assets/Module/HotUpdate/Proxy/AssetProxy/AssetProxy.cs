@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace Ninth.HotUpdate
 {
@@ -14,7 +13,9 @@ namespace Ninth.HotUpdate
         [Inject]
         public AssetProxy(IAssetProxyLoad assetProxyLoad)
         {
+            11.Log();
             this.assetProxyLoad = assetProxyLoad;
+            22.Log();
         }
         
         async UniTask<GameObject?> IAssetProxy.CloneAsync(string? assetPath, CancellationToken cancellationToken)

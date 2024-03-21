@@ -44,10 +44,11 @@ namespace Ninth.HotUpdate
             
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
-            
+
+            builder.Register<StartUp>(Lifetime.Scoped).AsSelf();
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
             {
-                // entryPoints.Add<AssetProxy>();
+                entryPoints.Add<StartUp>();
                 entryPoints.OnException(ex => ex.FrameError());
             });
             "HotUpdate IOC 容器注册完成！！".FrameLog(); 

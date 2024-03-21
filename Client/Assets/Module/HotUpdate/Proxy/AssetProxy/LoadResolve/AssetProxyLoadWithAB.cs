@@ -20,6 +20,12 @@ namespace Ninth.HotUpdate
             this.pathProxy = pathProxy;
             configAssetPath2AssetRef = new Dictionary<string, AssetRef>();
             bundlePath2BundleRef = new Dictionary<string, BundleRef>();
+            AssemblyConfiguration();
+        }
+
+        public void AssemblyConfiguration()
+        {
+            "开始装配".Log();
         }
 
         async UniTask<(AssetRef?, T?)> IAssetProxyLoad.Get<T>(string? assetPath) where T : class
