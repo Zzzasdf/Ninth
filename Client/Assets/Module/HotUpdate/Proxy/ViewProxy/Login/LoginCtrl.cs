@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Ninth.Utility;
 using UnityEngine;
 using VContainer;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Ninth.HotUpdate
 {
@@ -11,12 +10,14 @@ namespace Ninth.HotUpdate
     {
         private readonly LoginModel loginModel;
         private readonly IViewProxy viewProxy;
+        private readonly LoginInputSystem loginInputSystem;
 
         [Inject]
-        public LoginCtrl(LoginModel loginModel, IViewProxy viewProxy)
+        public LoginCtrl(LoginModel loginModel, IViewProxy viewProxy, LoginInputSystem loginInputSystem)
         {
             this.loginModel = loginModel;
             this.viewProxy = viewProxy;
+            this.loginInputSystem = loginInputSystem;
         }
         
         public async UniTask ShowView()
@@ -27,9 +28,22 @@ namespace Ninth.HotUpdate
             loginView.BtnLoadGame.onClick.AddListener(BtnLoadGameClick);
             loginView.BtnLibrary.onClick.AddListener(OnBtnLibraryClick);
             loginView.BtnSystem.onClick.AddListener(OnBtnSystemClick);
-            loginView.BtnExit.onClick.AddListener(OnBtnExitClick);
+            loginInputSystem.LoginView.Any.performed += ctx =>
+            {
+                if (EventSystem.current.currentSelectedGameObject != null 
+                    && EventSystem.current.currentSelectedGameObject.GetComponent<Button>() != null)
+                    return;
+                EventSystem.current.SetSelectedGameObject(loginView.BtnContinue.gameObject);
+            };
+            loginInputSystem.LoginView.Enable();
         }
-
+        
+        public void CloseView()
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            loginInputSystem.LoginView.Disable();
+        }
+        
         private void BtnContinueClick()
         {
             "TODO => Continue".Log();
@@ -53,11 +67,6 @@ namespace Ninth.HotUpdate
         private void OnBtnSystemClick()
         {
             "TODO => System".Log();
-        }
-
-        private void OnBtnExitClick()
-        {
-            Application.Quit();
         }
     }
 }

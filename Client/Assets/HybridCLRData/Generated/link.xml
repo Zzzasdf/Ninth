@@ -74,6 +74,11 @@
     <type fullname="Cysharp.Threading.Tasks.YieldAwaitable" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.YieldAwaitable/Awaiter" preserve="all" />
   </assembly>
+  <assembly fullname="Unity.InputSystem">
+    <type fullname="UnityEngine.InputSystem.InputAction" preserve="all" />
+    <type fullname="UnityEngine.InputSystem.InputAction/CallbackContext" preserve="all" />
+    <type fullname="UnityEngine.InputSystem.InputActionPhase" preserve="all" />
+  </assembly>
   <assembly fullname="UnityEngine.AssetBundleModule">
     <type fullname="UnityEngine.AssetBundle" preserve="all" />
     <type fullname="UnityEngine.AssetBundleCreateRequest" preserve="all" />

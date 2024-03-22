@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace Ninth.HotUpdate
 {
@@ -10,6 +12,5 @@ namespace Ninth.HotUpdate
         public Button BtnLoadGame;
         public Button BtnLibrary;
         public Button BtnSystem;
-        public Button BtnExit;
     }
 }

@@ -47,6 +47,7 @@ namespace Ninth.HotUpdate
             
             builder.Register<LoginCtrl>(Lifetime.Transient).AsSelf();
             builder.Register<LoginModel>(Lifetime.Transient).AsSelf();
+            builder.Register<LoginInputSystem>(Lifetime.Transient).AsSelf();
 
             builder.Register<StartUp>(Lifetime.Scoped).AsSelf();
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>

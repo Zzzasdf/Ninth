@@ -36,8 +36,9 @@ namespace Ninth.HotUpdate
                 $"无法实例化, 预制体路径: {tuple.path}".FrameError();
                 return null;
             }
-            await UniTask.WaitUntil(() => obj.GetComponent<T>() != null, cancellationToken: cancellationToken);
-            var component = obj.GetComponent<T>();
+
+            T component = null;
+            await UniTask.WaitUntil(() => (component = obj.GetComponent<T>()) != null, cancellationToken: cancellationToken);
             if (component == null)
             {
                 $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{tuple.path}".FrameError();
