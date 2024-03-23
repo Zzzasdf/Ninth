@@ -1,7 +1,5 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 namespace Ninth.HotUpdate
 {
