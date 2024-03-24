@@ -1,8 +1,10 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Ninth.Utility;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Environment = Ninth.Utility.Environment;
 
 namespace Ninth.HotUpdate
 {
@@ -46,8 +48,11 @@ namespace Ninth.HotUpdate
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
             
             builder.Register<LoginCtrl>(Lifetime.Transient).AsSelf();
-            builder.Register<LoginModel>(Lifetime.Transient).AsSelf();
             builder.Register<LoginInputSystem>(Lifetime.Transient).AsSelf();
+
+            builder.Register<SettingsCtrl>(Lifetime.Transient).AsSelf();
+            builder.Register<SettingsModel>(Lifetime.Transient).AsSelf();
+            builder.Register<SettingsInputSystem>(Lifetime.Transient).AsSelf();
 
             builder.Register<StartUp>(Lifetime.Scoped).AsSelf();
             builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>

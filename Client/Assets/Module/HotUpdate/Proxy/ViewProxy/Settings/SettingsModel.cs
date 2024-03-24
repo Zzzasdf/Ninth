@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    public class LoginModel : IViewModel
+    public class SettingsModel : IViewModel
     {
         
     }

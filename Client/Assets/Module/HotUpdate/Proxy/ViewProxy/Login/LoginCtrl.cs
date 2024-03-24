@@ -3,70 +3,53 @@ using UnityEngine;
 using VContainer;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 namespace Ninth.HotUpdate
 {
     public class LoginCtrl : IViewCtrl
     {
-        private readonly LoginModel loginModel;
         private readonly IViewProxy viewProxy;
         private readonly LoginInputSystem loginInputSystem;
 
+        private LoginView loginView;
+
         [Inject]
-        public LoginCtrl(LoginModel loginModel, IViewProxy viewProxy, LoginInputSystem loginInputSystem)
+        public LoginCtrl(IViewProxy viewProxy, LoginInputSystem loginInputSystem)
         {
-            this.loginModel = loginModel;
             this.viewProxy = viewProxy;
             this.loginInputSystem = loginInputSystem;
         }
         
         public async UniTask ShowView()
         {
-            var loginView = await viewProxy.View<LoginView>();
-            loginView.BtnContinue.onClick.AddListener(BtnContinueClick);
-            loginView.BtnNewGame.onClick.AddListener(BtnNewGameClick);
-            loginView.BtnLoadGame.onClick.AddListener(BtnLoadGameClick);
-            loginView.BtnLibrary.onClick.AddListener(OnBtnLibraryClick);
-            loginView.BtnSystem.onClick.AddListener(OnBtnSystemClick);
-            loginInputSystem.LoginView.Any.performed += ctx =>
+            loginView = await viewProxy.ViewAsync<LoginView>();
+            loginView.BtnStartGame.onClick.AddListener(OnBtnStartGameClick);
+            loginView.BtnSettings.onClick.AddListener(UniTask.UnityAction(OnBtnSettingsClick));
+            loginInputSystem.Menu.Any.performed += ctx =>
             {
                 if (EventSystem.current.currentSelectedGameObject != null 
                     && EventSystem.current.currentSelectedGameObject.GetComponent<Button>() != null)
                     return;
-                EventSystem.current.SetSelectedGameObject(loginView.BtnContinue.gameObject);
+                EventSystem.current.SetSelectedGameObject(loginView.BtnStartGame.gameObject);
             };
-            loginInputSystem.LoginView.Enable();
+            loginInputSystem.Menu.Enable();
         }
         
         public void CloseView()
         {
             EventSystem.current.SetSelectedGameObject(null);
-            loginInputSystem.LoginView.Disable();
+            loginInputSystem.Menu.Disable();
         }
         
-        private void BtnContinueClick()
+        private void OnBtnStartGameClick()
         {
-            "TODO => Continue".Log();
+            "TODO => StartGame".Log();
         }
 
-        private void BtnNewGameClick()
+        private async UniTaskVoid OnBtnSettingsClick()
         {
-            "TODO => NewGame".Log();
-        }
-
-        private void BtnLoadGameClick()
-        {
-            "TODO => LoadGame".Log();
-        }
-
-        private void OnBtnLibraryClick()
-        {
-            "TODO => Library".Log();
-        }
-
-        private void OnBtnSystemClick()
-        {
-            "TODO => System".Log();
+            await viewProxy.Controller<SettingsCtrl>().ShowView();
         }
     }
 }

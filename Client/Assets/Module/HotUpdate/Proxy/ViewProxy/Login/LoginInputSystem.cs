@@ -27,7 +27,7 @@ namespace Ninth.HotUpdate
     ""name"": ""LoginInputSystem"",
     ""maps"": [
         {
-            ""name"": ""LoginView"",
+            ""name"": ""Menu"",
             ""id"": ""9ae0fde4-2d13-4ce3-a530-1ce677991fdb"",
             ""actions"": [
                 {
@@ -57,14 +57,14 @@ namespace Ninth.HotUpdate
     ],
     ""controlSchemes"": []
 }");
-            // LoginView
-            m_LoginView = asset.FindActionMap("LoginView", throwIfNotFound: true);
-            m_LoginView_Any = m_LoginView.FindAction("Any", throwIfNotFound: true);
+            // Menu
+            m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
+            m_Menu_Any = m_Menu.FindAction("Any", throwIfNotFound: true);
         }
 
         ~@LoginInputSystem()
         {
-            Debug.Assert(!m_LoginView.enabled, "This will cause a leak and performance issues, LoginInputSystem.LoginView.Disable() has not been called.");
+            Debug.Assert(!m_Menu.enabled, "This will cause a leak and performance issues, LoginInputSystem.Menu.Disable() has not been called.");
         }
 
         public void Dispose()
@@ -123,52 +123,52 @@ namespace Ninth.HotUpdate
             return asset.FindBinding(bindingMask, out action);
         }
 
-        // LoginView
-        private readonly InputActionMap m_LoginView;
-        private List<ILoginViewActions> m_LoginViewActionsCallbackInterfaces = new List<ILoginViewActions>();
-        private readonly InputAction m_LoginView_Any;
-        public struct LoginViewActions
+        // Menu
+        private readonly InputActionMap m_Menu;
+        private List<IMenuActions> m_MenuActionsCallbackInterfaces = new List<IMenuActions>();
+        private readonly InputAction m_Menu_Any;
+        public struct MenuActions
         {
             private @LoginInputSystem m_Wrapper;
-            public LoginViewActions(@LoginInputSystem wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Any => m_Wrapper.m_LoginView_Any;
-            public InputActionMap Get() { return m_Wrapper.m_LoginView; }
+            public MenuActions(@LoginInputSystem wrapper) { m_Wrapper = wrapper; }
+            public InputAction @Any => m_Wrapper.m_Menu_Any;
+            public InputActionMap Get() { return m_Wrapper.m_Menu; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
             public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(LoginViewActions set) { return set.Get(); }
-            public void AddCallbacks(ILoginViewActions instance)
+            public static implicit operator InputActionMap(MenuActions set) { return set.Get(); }
+            public void AddCallbacks(IMenuActions instance)
             {
-                if (instance == null || m_Wrapper.m_LoginViewActionsCallbackInterfaces.Contains(instance)) return;
-                m_Wrapper.m_LoginViewActionsCallbackInterfaces.Add(instance);
+                if (instance == null || m_Wrapper.m_MenuActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_MenuActionsCallbackInterfaces.Add(instance);
                 @Any.started += instance.OnAny;
                 @Any.performed += instance.OnAny;
                 @Any.canceled += instance.OnAny;
             }
 
-            private void UnregisterCallbacks(ILoginViewActions instance)
+            private void UnregisterCallbacks(IMenuActions instance)
             {
                 @Any.started -= instance.OnAny;
                 @Any.performed -= instance.OnAny;
                 @Any.canceled -= instance.OnAny;
             }
 
-            public void RemoveCallbacks(ILoginViewActions instance)
+            public void RemoveCallbacks(IMenuActions instance)
             {
-                if (m_Wrapper.m_LoginViewActionsCallbackInterfaces.Remove(instance))
+                if (m_Wrapper.m_MenuActionsCallbackInterfaces.Remove(instance))
                     UnregisterCallbacks(instance);
             }
 
-            public void SetCallbacks(ILoginViewActions instance)
+            public void SetCallbacks(IMenuActions instance)
             {
-                foreach (var item in m_Wrapper.m_LoginViewActionsCallbackInterfaces)
+                foreach (var item in m_Wrapper.m_MenuActionsCallbackInterfaces)
                     UnregisterCallbacks(item);
-                m_Wrapper.m_LoginViewActionsCallbackInterfaces.Clear();
+                m_Wrapper.m_MenuActionsCallbackInterfaces.Clear();
                 AddCallbacks(instance);
             }
         }
-        public LoginViewActions @LoginView => new LoginViewActions(this);
-        public interface ILoginViewActions
+        public MenuActions @Menu => new MenuActions(this);
+        public interface IMenuActions
         {
             void OnAny(InputAction.CallbackContext context);
         }

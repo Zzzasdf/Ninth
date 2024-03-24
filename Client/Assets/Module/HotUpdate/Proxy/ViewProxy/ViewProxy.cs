@@ -1,24 +1,34 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace Ninth.HotUpdate
 {
-    public class ViewProxy: IViewProxy
+    public class ViewProxy : IViewProxy
     {
+        private int uniqueId;
+        
         private readonly IViewConfig viewConfig;
         private readonly IAssetProxy assetProxy;
         private readonly IObjectResolver resolver;
-        
         private ViewLayout? viewLayout;
-        
+
+        private readonly IRecycleProxy<BaseView> recycleProxy;
+        private readonly IStackProxy<VIEW_HIERARCHY, BaseView> stackProxy;
+        private readonly ILinkedListProxy<VIEW_HIERARCHY, BaseView> displayProxy;
+
         [Inject]
         public ViewProxy(IViewConfig viewConfig, IAssetProxy assetProxy, IObjectResolver resolver)
         {
             this.viewConfig = viewConfig;
             this.assetProxy = assetProxy;
             this.resolver = resolver;
+            recycleProxy = new RecycleProxy<BaseView>(single: (null, 10), total: (null, 100));
+            stackProxy = new StackProxy<VIEW_HIERARCHY, BaseView>(single: (10, null), total: (10, null));
+            displayProxy = new LinkedListProxy<VIEW_HIERARCHY, BaseView>(single: (1, null), total: (1, null));
         }
 
         T IViewProxy.Controller<T>(CancellationToken cancellationToken) where T : class
@@ -26,58 +36,71 @@ namespace Ninth.HotUpdate
             return resolver.Resolve<T>();
         }
 
-        async UniTask<T> IViewProxy.View<T>(CancellationToken cancellationToken)
+        public async UniTask<T> ViewAsync<T>(CancellationToken cancellationToken) where T : BaseView
         {
-            var tuple = viewConfig.TupleSubscriber.Get<T>();
-            var rectHierarchy = await GetHierarchy(tuple.hierarcy);
-            var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
-            if (obj == null)
+            var (path, hierarchy, weight) = viewConfig.ViewInfoSubscriber.Get<T>();
+            var currView = await recycleProxy.GetOneAsync(async () =>
             {
-                $"无法实例化, 预制体路径: {tuple.path}".FrameError();
+                var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
+                var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+                T component = null!;
+                await UniTask.WaitUntil(() => (component = obj.GetComponent<T>()) != null, cancellationToken: cancellationToken);
+                component.CreateInit(this, typeof(T), hierarchy, weight);
+                return component;
+            });
+            if (currView == null)
+            {
+                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{path}".FrameError();
                 return null;
             }
+            displayProxy.Enqueue(hierarchy, currView, true, removeDisplayView =>
+            {
+                removeDisplayView.gameObject.SetActive(false);
+                stackProxy.Push(hierarchy, removeDisplayView, true, removeStackView =>
+                {
+                    recycleProxy.Recycle(removeStackView,true, Object.DestroyImmediate);
+                });
+            });
+            currView.AddUniqueId(uniqueId++);
+            currView.gameObject.SetActive(true);
+            return (T)currView;
+        }
 
-            T component = null;
-            await UniTask.WaitUntil(() => (component = obj.GetComponent<T>()) != null, cancellationToken: cancellationToken);
-            if (component == null)
+        public async UniTaskVoid RecycleAsync(VIEW_HIERARCHY hierarchy, int uniqueId, CancellationToken cancellationToken)
+        {
+            var dequeueView = displayProxy.Dequeue(hierarchy, uniqueId);
+            if (dequeueView == null)
             {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件, 预制体路径：{tuple.path}".FrameError();
-                return null;
+                $"无法找到 {hierarchy}, {uniqueId}".Error();
+                return;
             }
-            return component;
+            dequeueView.gameObject.SetActive(false);
+            recycleProxy.Recycle(dequeueView.Type, dequeueView, true, Object.DestroyImmediate);
+            
+            var pop = stackProxy.Pop(hierarchy);
+            if (pop != null)
+            {
+                var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
+                displayProxy.Enqueue(hierarchy, pop, true, removeDisplayView =>
+                {
+                    removeDisplayView.gameObject.SetActive(false);
+                    stackProxy.Push(hierarchy, removeDisplayView, true, removeStackView =>
+                    {
+                        recycleProxy.Recycle(dequeueView.Type, removeStackView,true, Object.DestroyImmediate);
+                    });
+                });
+                pop.transform.SetParent(rectHierarchy);
+                pop.AddUniqueId(this.uniqueId++);
+                pop.gameObject.SetActive(true);
+            }
         }
         
-        async UniTask<T> IViewProxy.View<T>(VIEW view, CancellationToken cancellationToken)
+        private async UniTask<RectTransform> GetHierarchy(VIEW_HIERARCHY hierarchy, CancellationToken cancellationToken = default)
         {
-            var tuple = viewConfig.TupleSubscriber.Get(view);
-            var rectHierarchy = await GetHierarchy(tuple.hierarcy);
-            var obj = await assetProxy.CloneAsync(tuple.path, rectHierarchy, cancellationToken);
-            if (obj == null)
-            {
-                $"无法实例化, 预制体路径: {tuple.path}".FrameError();
-                return null;
-            }
-            await UniTask.WaitUntil(() => obj.GetComponent<T>() != null, cancellationToken: cancellationToken);
-            var component = obj.GetComponent<T>();
-            if (component == null)
-            {
-                $"无法找到在实例化的对象的根节点上找到 {nameof(T)} 组件，预制体路径：{tuple.path}".FrameError();
-                return null;
-            }
-            return component;
-        }
-
-        private async UniTask<RectTransform?> GetHierarchy(VIEW_HIERARCY? viewHierarchy)
-        {
-            if (!viewHierarchy.HasValue)
-            {
-                $"{nameof(VIEW_HIERARCY)} 为空".FrameError();
-                return null;
-            }
-            var viewLayoutPath = viewConfig.StringSubscriber.Get<VIEW_HIERARCY>();
+            var viewLayoutPath = viewConfig.StringSubscriber.Get<VIEW_HIERARCHY>();
             if (viewLayout == null)
             {
-                var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath);
+                var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath, cancellationToken);
                 if (viewLayoutObj == null)
                 {
                     $"无法实例化, 预制体路径: {viewLayoutPath}".FrameError();
@@ -90,12 +113,12 @@ namespace Ninth.HotUpdate
                     return null;
                 }
             }
-            var hierarchy = viewLayout.GetViewHierarchy(viewHierarchy.Value);
-            if (hierarchy == null)
+            var rectHierarchy = viewLayout.GetViewHierarchy(hierarchy);
+            if (rectHierarchy == null)
             {
-                $"无法在 {nameof(ViewLayout)} 框架上找到层级对应的节点, 层级：{viewHierarchy}, 请检查路径 {viewLayoutPath} 预制体根节点上的 {nameof(ViewLayout)} 组件是否正常挂载和调用".FrameError();
+                $"无法在 {nameof(ViewLayout)} 框架上找到层级对应的节点, 层级：{hierarchy}, 请检查路径 {viewLayoutPath} 预制体根节点上的 {nameof(ViewLayout)} 组件是否正常挂载和调用".FrameError();
             }
-            return hierarchy;
+            return rectHierarchy;
         }
     }
 }

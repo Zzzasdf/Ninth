@@ -22,15 +22,15 @@ namespace Ninth.HotUpdate
             pop = rects.Find(x => x.name == "Pop");
         }
 
-        public RectTransform? GetViewHierarchy(VIEW_HIERARCY viewHierarcy)
+        public RectTransform? GetViewHierarchy(VIEW_HIERARCHY viewHierarchy)
         {
-            return viewHierarcy switch
+            return viewHierarchy switch
             {
-                VIEW_HIERARCY.Bg => bg,
-                VIEW_HIERARCY.Main => main,
-                VIEW_HIERARCY.Frame => frame,
-                VIEW_HIERARCY.Tip => tip,
-                VIEW_HIERARCY.Pop => pop,
+                VIEW_HIERARCHY.Bg => bg,
+                VIEW_HIERARCHY.Main => main,
+                VIEW_HIERARCHY.Frame => frame,
+                VIEW_HIERARCHY.Tip => tip,
+                VIEW_HIERARCHY.Pop => pop,
                 _ => null
             };
         }

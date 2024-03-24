@@ -16,7 +16,7 @@ namespace Ninth.HotUpdate
             this.assetProxyLoad = assetProxyLoad;
         }
         
-        async UniTask<GameObject?> IAssetProxy.CloneAsync(string? assetPath, CancellationToken cancellationToken)
+        async UniTask<GameObject> IAssetProxy.CloneAsync(string assetPath, CancellationToken cancellationToken)
         {
             var (assetRef, asset) = await assetProxyLoad.Get<GameObject>(assetPath);
             if (asset == null)
@@ -38,7 +38,7 @@ namespace Ninth.HotUpdate
             return cloneObj;
         }
 
-        async UniTask<GameObject?> IAssetProxy.CloneAsync(string? assetPath, Transform? parent,
+        async UniTask<GameObject> IAssetProxy.CloneAsync(string assetPath, Transform parent,
             CancellationToken cancellationToken)
         {
             var (assetRef, asset) = await assetProxyLoad.Get<GameObject>(assetPath);
@@ -47,7 +47,7 @@ namespace Ninth.HotUpdate
                 $"无法加载, 预制体路径: {assetPath}".FrameError();
                 return null;
             }
-            var cloneObj = UnityEngine.Object.Instantiate(asset, parent);
+            var cloneObj = Object.Instantiate(asset, parent);
             if (cloneObj == null)
             {
                 $"无法实例化, 预制体路径: {assetPath}".FrameError();

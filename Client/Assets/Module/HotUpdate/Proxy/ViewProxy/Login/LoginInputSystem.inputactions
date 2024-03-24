@@ -2,7 +2,7 @@
     "name": "LoginInputSystem",
     "maps": [
         {
-            "name": "LoginView",
+            "name": "Menu",
             "id": "9ae0fde4-2d13-4ce3-a530-1ce677991fdb",
             "actions": [
                 {

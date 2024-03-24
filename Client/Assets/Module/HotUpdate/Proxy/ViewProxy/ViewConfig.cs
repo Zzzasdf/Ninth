@@ -6,21 +6,49 @@ namespace Ninth.HotUpdate
     public class ViewConfig: IViewConfig
     {
         private readonly SubscriberCollect<string> stringSubscriber;
-        private readonly SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> tupleSubscriber;
+        private readonly SubscriberCollect<ViewInfo> viewInfoSubscriber;
         SubscriberCollect<string> IViewConfig.StringSubscriber => stringSubscriber;
-        SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> IViewConfig.TupleSubscriber => tupleSubscriber;
+        SubscriberCollect<ViewInfo> IViewConfig.ViewInfoSubscriber => viewInfoSubscriber;
         
         [Inject]
         public ViewConfig()
         {
             {
                 var build = stringSubscriber = new SubscriberCollect<string>();
-                build.Subscribe<VIEW_HIERARCY>("Assets/GAssets/RemoteGroup/View/ViewLayout.prefab");
+                build.Subscribe<VIEW_HIERARCHY>("Assets/GAssets/RemoteGroup/View/ViewLayout.prefab");
             }
 
             {
-                var build = tupleSubscriber = new SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)>();
-                build.Subscribe<LoginView>(("Assets/GAssets/RemoteGroup/View/LoginView.prefab", VIEW_HIERARCY.Frame));
+                viewInfoSubscriber = new SubscriberCollect<ViewInfo>();
+                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/View/LoginView.prefab", VIEW_HIERARCHY.Frame);
+                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/View/SettingsView.prefab", VIEW_HIERARCHY.Frame);
+            }
+        }
+        
+        private void ViewSubscribe<T>(string path, VIEW_HIERARCHY hierarchy) where T: BaseView
+            => ViewSubscribe<T>(path, hierarchy, 10);
+
+        private void ViewSubscribe<T>(string path, VIEW_HIERARCHY hierarchy, int weights) where T: BaseView
+            => viewInfoSubscriber.Subscribe<T>(new ViewInfo(path, hierarchy, weights));
+
+        public class ViewInfo
+        {
+            public readonly string Path;
+            public readonly VIEW_HIERARCHY Hierarchy;
+            public readonly int Weight;
+
+            public ViewInfo(string path, VIEW_HIERARCHY hierarchy, int weight)
+            {
+                this.Path = path;
+                this.Hierarchy = hierarchy;
+                this.Weight = weight;
+            }
+
+            public void Deconstruct(out string path, out VIEW_HIERARCHY hierarchy, out int weight)
+            {
+                path = this.Path;
+                hierarchy = this.Hierarchy;
+                weight = this.Weight;
             }
         }
     }

@@ -1,0 +1,54 @@
+{
+    "name": "SettingsInputSystem",
+    "maps": [
+        {
+            "name": "Menu",
+            "id": "9ae0fde4-2d13-4ce3-a530-1ce677991fdb",
+            "actions": [
+                {
+                    "name": "Any",
+                    "type": "Button",
+                    "id": "f3f6baca-bcc9-4100-9557-21e79afedf57",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Back",
+                    "type": "Button",
+                    "id": "54e6724b-0b41-4c75-8da9-1f34d1cb7686",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8e5a70f6-d650-4efa-9c5d-33ddd3bc2538",
+                    "path": "*/{Submit}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Any",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "003af6a0-1362-4678-9c48-a732eb8cb61a",
+                    "path": "*/{Back}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -2,7 +2,7 @@ using Ninth.Utility;
 
 namespace Ninth.HotUpdate
 {
-    public enum VIEW_HIERARCY
+    public enum VIEW_HIERARCHY
     {
         Bg,
         Main,
@@ -11,14 +11,9 @@ namespace Ninth.HotUpdate
         Pop
     }
 
-    public enum VIEW
-    {
-        HelloScreen
-    }
-
     public interface IViewConfig
     {
         SubscriberCollect<string> StringSubscriber { get; }
-        SubscriberCollect<(string path, VIEW_HIERARCY hierarcy)> TupleSubscriber { get; }
+        SubscriberCollect<ViewConfig.ViewInfo> ViewInfoSubscriber { get; }
     }
 }
