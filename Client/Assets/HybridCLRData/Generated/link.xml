@@ -9,8 +9,10 @@
     <type fullname="System.AttributeTargets" preserve="all" />
     <type fullname="System.AttributeUsageAttribute" preserve="all" />
     <type fullname="System.Byte" preserve="all" />
+    <type fullname="System.Collections.Generic.CollectionExtensions" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2/Enumerator" preserve="all" />
+    <type fullname="System.Collections.Generic.IDictionary`2" preserve="all" />
     <type fullname="System.Collections.Generic.IEnumerable`1" preserve="all" />
     <type fullname="System.Collections.Generic.IEnumerator`1" preserve="all" />
     <type fullname="System.Collections.Generic.KeyNotFoundException" preserve="all" />
@@ -30,6 +32,7 @@
     <type fullname="System.Func`2" preserve="all" />
     <type fullname="System.IDisposable" preserve="all" />
     <type fullname="System.IndexOutOfRangeException" preserve="all" />
+    <type fullname="System.Int32" preserve="all" />
     <type fullname="System.IProgress`1" preserve="all" />
     <type fullname="System.NotImplementedException" preserve="all" />
     <type fullname="System.Nullable`1" preserve="all" />
@@ -58,6 +61,15 @@
     <type fullname="System.ValueTuple`2" preserve="all" />
     <type fullname="System.ValueType" preserve="all" />
   </assembly>
+  <assembly fullname="System">
+    <type fullname="System.Collections.Generic.LinkedList`1" preserve="all" />
+    <type fullname="System.Collections.Generic.LinkedList`1/Enumerator" preserve="all" />
+    <type fullname="System.Collections.Generic.LinkedListNode`1" preserve="all" />
+    <type fullname="System.Collections.Generic.Queue`1" preserve="all" />
+    <type fullname="System.Collections.Generic.Queue`1/Enumerator" preserve="all" />
+    <type fullname="System.Collections.Generic.SortedDictionary`2" preserve="all" />
+    <type fullname="System.Collections.Generic.SortedDictionary`2/KeyCollection" preserve="all" />
+  </assembly>
   <assembly fullname="System.Core">
     <type fullname="System.Linq.Enumerable" preserve="all" />
   </assembly>
@@ -65,6 +77,7 @@
     <type fullname="Cysharp.Threading.Tasks.CancellationTokenSourceExtensions" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder`1" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskVoidMethodBuilder" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.DelayType" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.PlayerLoopTiming" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.Progress" preserve="all" />
@@ -72,6 +85,7 @@
     <type fullname="Cysharp.Threading.Tasks.UniTask/Awaiter" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask`1" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UniTask`1/Awaiter" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTaskVoid" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.UnityAsyncExtensions/AsyncOperationAwaiter" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.YieldAwaitable" preserve="all" />

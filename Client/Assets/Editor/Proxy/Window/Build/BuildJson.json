@@ -17,9 +17,9 @@
                 "BuildBundleOperateIndex": 1,
                 "BundleCopy2Player": true,
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 134,
-                "HotUpdateVersion": 388,
-                "IterateVersion": 522
+                "FrameVersion": 136,
+                "HotUpdateVersion": 389,
+                "IterateVersion": 525
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,
