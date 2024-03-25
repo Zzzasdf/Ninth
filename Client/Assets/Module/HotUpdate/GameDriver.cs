@@ -14,6 +14,7 @@ namespace Ninth.HotUpdate
             IAssetConfig assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             if(assetConfig.DllRuntimeEnv().Contains(assetConfig.RuntimeEnv()))
             {
+                "加载 Dll 代码".Log();
                 var assetBundle = assetConfig.RuntimeEnv() switch
                 {
                     Environment.LocalAb => AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup"),
@@ -28,6 +29,7 @@ namespace Ninth.HotUpdate
             }
             else
             {
+                "加载 CS 代码".Log();
                 SceneManager.LoadScene("HotUpdateScene");
                 var obj = new GameObject("GameLifetimeScope");
                 GameObject.DontDestroyOnLoad(obj);

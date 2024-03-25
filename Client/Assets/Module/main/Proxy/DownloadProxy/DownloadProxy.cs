@@ -16,6 +16,7 @@ namespace Ninth
 
         async UniTask<bool> IDownloadProxy.DownloadAsync(string serverPath, string cachePath, CancellationToken cancellationToken)
         {
+            $"下载路径, {serverPath}".Log();
             var request = UnityWebRequest.Get(serverPath);
             request.downloadHandler = new DownloadHandlerFile(cachePath);
             await request.SendWebRequest();

@@ -43,9 +43,12 @@ namespace Ninth.HotUpdate
             {
                 var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
                 var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
+                obj.SetActive(false);
+                11.Log();
                 T component = null!;
                 await UniTask.WaitUntil(() => (component = obj.GetComponent<T>()) != null, cancellationToken: cancellationToken);
                 component.CreateInit(this, typeof(T), hierarchy, weight);
+                22.Log();
                 return component;
             });
             if (currView == null)
@@ -63,6 +66,7 @@ namespace Ninth.HotUpdate
             });
             currView.AddUniqueId(uniqueId++);
             currView.gameObject.SetActive(true);
+            $"ViewShow {typeof(T)}".Log();
             return (T)currView;
         }
 
