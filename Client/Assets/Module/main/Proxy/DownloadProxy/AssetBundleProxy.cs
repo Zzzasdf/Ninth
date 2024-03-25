@@ -28,12 +28,14 @@ namespace Ninth
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            if (assetConfig.RuntimeEnv() != Environment.RemoteAb)
+#if UNITY_EDITOR
+            await resolver.Resolve<LoadDll>().StartAsync(cancellation);
+#else
+            if (assetConfig.RuntimeEnv() == Environment.LocalAb)
             {
                 await resolver.Resolve<LoadDll>().StartAsync(cancellation);
                 return;
             }
-
             // versionConfig
             var versionConfigByServer = await GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH.AssetServer, cancellation);
             var versionConfigByPersistentData = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation, notExistHandle: () => null);
@@ -121,6 +123,7 @@ namespace Ninth
             
             // 启动
             await resolver.Resolve<LoadDll>().StartAsync(cancellation);
+#endif
         }
 
         private async UniTask<VersionConfig?> GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH versionPath, CancellationToken cancellationToken)

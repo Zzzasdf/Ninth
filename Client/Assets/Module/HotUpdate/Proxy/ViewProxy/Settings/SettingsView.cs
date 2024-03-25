@@ -12,15 +12,5 @@ namespace Ninth.HotUpdate
         public Button BtnDisplay;
         public Button BtnLanguage;
         public Button BtnPrivacy;
-
-        private void Awake()
-        {
-            var btns = GetComponentsInChildren<Button>().ToDictionary(value => value.name, value => value);
-            BtnAudio = btns["btnAudio"];
-            BtnSaveData = btns["btnSaveData"];
-            BtnDisplay = btns["btnDisplay"];
-            BtnLanguage = btns["btnLanguage"];
-            BtnPrivacy = btns["btnPrivacy"];
-        }
     }
 }

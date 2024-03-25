@@ -42,18 +42,7 @@ namespace Ninth.HotUpdate
                 var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
                 var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
                 obj.SetActive(false);
-                var temps = obj.GetComponents<MonoBehaviour>();
-                foreach (var item in temps)
-                {
-                    Debug.Log(item);
-                    if (item is T)
-                    {
-                        "TTTTTTT".Log();
-                    }
-                }
                 var component = obj.GetComponent<T>();
-                
-                // var component = obj.AddComponent<T>();
                 component.CreateInit(this, typeof(T), hierarchy, weight);
                 return component;
             });
@@ -115,7 +104,7 @@ namespace Ninth.HotUpdate
                     $"无法实例化, 预制体路径: {viewLayoutPath}".FrameError();
                     return null;
                 }
-                viewLayout = viewLayoutObj.AddComponent<ViewLayout>();
+                viewLayout = viewLayoutObj.GetComponent<ViewLayout>();
                 if (viewLayout == null)
                 {
                     $"无法找到在实例化的对象的根节点上找到 {nameof(ViewLayout)} 组件，预制体路径：{viewLayoutPath}".FrameError();

@@ -362,6 +362,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4275262338387525829}
+  - component: {fileID: 923360192684419030}
   m_Layer: 5
   m_Name: SettingsView
   m_TagString: Untagged
@@ -391,6 +392,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &923360192684419030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079342340442880286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16d872ebad6ca2b4a8d6b5820b701690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BtnAudio: {fileID: 7539357323455761767}
+  BtnSaveData: {fileID: 8796119585478203509}
+  BtnDisplay: {fileID: 4210508838951782557}
+  BtnLanguage: {fileID: 4604883450217722667}
+  BtnPrivacy: {fileID: 4659287797190709370}
 --- !u!1 &3209846247003864547
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,8 +9,5 @@ namespace Ninth.Utility
         
         // 模块列表Url
         string Url();
-        
-        // 运行Dll脚本的模式
-        ReadOnlyCollection<Environment> DllRuntimeEnv();
     }
 }

@@ -44,12 +44,9 @@ namespace Ninth
 
         public async UniTask StartAsync(CancellationToken cancellationToken)
         {
-            var environment = assetConfig.RuntimeEnv();
-            if (assetConfig.DllRuntimeEnv().Contains(environment))
-            {
-                await LoadDllFromBytes();
-            }
-
+#if !UNITY_EDITOR
+            await LoadDllFromBytes();
+#endif
             LoadHotUpdatePart();
         }
 
@@ -72,17 +69,10 @@ namespace Ninth
                 var www = UnityWebRequest.Get(dllPath);
                 await www.SendWebRequest();
 
-#if UNITY_2020_1_OR_NEWER
                 if (www.result != UnityWebRequest.Result.Success)
                 {
                     Debug.Log(www.error);
                 }
-#else
-                if (www.isHttpError || www.isNetworkError)
-                {
-                     Debug.Log(www.error);
-                }
-#endif
                 else
                 {
                     // Or retrieve results as binary data
@@ -91,7 +81,6 @@ namespace Ninth
                     assetDatas[asset] = assetData;
                 }
             }
-
             LoadMetadataForAOTAssemblies();
         }
 
@@ -130,18 +119,12 @@ namespace Ninth
 
         private void LoadHotUpdatePart()
         {
-            var environment = assetConfig.RuntimeEnv();
             Assembly assembly = null;
-            if(assetConfig.DllRuntimeEnv().Contains(environment))
-            {
-                assembly = Assembly.Load(GetAssetData("HotUpdateMain.dll"));
-            }
-            else
-            {
 #if UNITY_EDITOR
-                assembly = Assembly.Load("HotUpdateMain");
+            assembly = Assembly.Load("HotUpdateMain");
+#else
+            assembly = Assembly.Load(GetAssetData("HotUpdateMain.dll"));
 #endif
-            }
             if (assembly == null)
             {
                 throw new Exception("未找到对应热更的程序集");

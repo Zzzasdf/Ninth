@@ -26,20 +26,11 @@ namespace Ninth.HotUpdate
             builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
-            // hotUpdate
-            switch (assetConfig.RuntimeEnv())
-            {
-                case Environment.NonAb:
-                    builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-                    break;
-                case Environment.LocalAb:
-                case Environment.RemoteAb:
-                    builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-                    break;
-                default:
-                    $"未注册该类型 {assetConfig.RuntimeEnv()}, 请检查或实现".FrameError();
-                    return;
-            }
+#if UNITY_EDITOR
+            builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+#else
+            builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+#endif
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
