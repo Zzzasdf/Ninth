@@ -1,9 +1,7 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
-using Object = UnityEngine.Object;
 
 namespace Ninth.HotUpdate
 {
@@ -44,11 +42,19 @@ namespace Ninth.HotUpdate
                 var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
                 var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
                 obj.SetActive(false);
-                11.Log();
-                T component = null!;
-                await UniTask.WaitUntil(() => (component = obj.GetComponent<T>()) != null, cancellationToken: cancellationToken);
+                var temps = obj.GetComponents<MonoBehaviour>();
+                foreach (var item in temps)
+                {
+                    Debug.Log(item);
+                    if (item is T)
+                    {
+                        "TTTTTTT".Log();
+                    }
+                }
+                var component = obj.GetComponent<T>();
+                
+                // var component = obj.AddComponent<T>();
                 component.CreateInit(this, typeof(T), hierarchy, weight);
-                22.Log();
                 return component;
             });
             if (currView == null)
@@ -66,7 +72,6 @@ namespace Ninth.HotUpdate
             });
             currView.AddUniqueId(uniqueId++);
             currView.gameObject.SetActive(true);
-            $"ViewShow {typeof(T)}".Log();
             return (T)currView;
         }
 

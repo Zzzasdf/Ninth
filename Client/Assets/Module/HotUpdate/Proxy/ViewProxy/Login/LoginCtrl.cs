@@ -24,9 +24,7 @@ namespace Ninth.HotUpdate
         
         public async UniTask ShowView()
         {
-            "LoginView ..".Error();
             loginView = await viewProxy.ViewAsync<LoginView>();
-            "LoginView2 ..".Error();
             loginView.BtnStartGame.onClick.AddListener(OnBtnStartGameClick);
             loginView.BtnSettings.onClick.AddListener(UniTask.UnityAction(OnBtnSettingsClick));
             loginInputSystem.Menu.Any.performed += ctx =>
@@ -37,7 +35,6 @@ namespace Ninth.HotUpdate
                 EventSystem.current.SetSelectedGameObject(loginView.BtnStartGame.gameObject);
             };
             loginInputSystem.Menu.Enable();
-            "LoginView3 ..".Error();
         }
         
         public void CloseView()

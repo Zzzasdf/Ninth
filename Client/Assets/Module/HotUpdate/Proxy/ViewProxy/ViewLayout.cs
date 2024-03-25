@@ -14,12 +14,12 @@ namespace Ninth.HotUpdate
 
         public void Awake()
         {
-            var rects = GetComponentsInChildren<RectTransform>().ToList();
-            bg = rects.Find(x => x.name == "Bg");
-            main = rects.Find(x => x.name == "Main");
-            frame = rects.Find(x => x.name == "Frame");
-            tip = rects.Find(x => x.name == "Tip");
-            pop = rects.Find(x => x.name == "Pop");
+            var rects = GetComponentsInChildren<RectTransform>().ToDictionary(value => value.name, value => value);
+            bg = rects["Bg"];
+            main = rects["Main"];
+            frame = rects["Frame"];
+            tip = rects["Tip"];
+            pop = rects["Pop"];
         }
 
         public RectTransform? GetViewHierarchy(VIEW_HIERARCHY viewHierarchy)
