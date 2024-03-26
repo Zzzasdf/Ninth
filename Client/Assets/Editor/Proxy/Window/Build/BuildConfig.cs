@@ -73,7 +73,6 @@ namespace Ninth.Editor
                         (intSubscriber.GetReactiveProperty<BuildSettingsMode>().AsEnum<BuildSettingsMode>())
                     {
                         BuildSettingsMode.HotUpdateBundle,
-                        BuildSettingsMode.AllBundle,
                         BuildSettingsMode.Player,
                     }.Build(),
                     intSubscriber.GetReactiveProperty<BuildTargetPlatform>().AsEnum<BuildTargetPlatform>(),
@@ -86,22 +85,12 @@ namespace Ninth.Editor
                         [BuildTargetPlatform.iOS] = 
                             new (BuildTarget.iOS, BuildTargetGroup.iOS,$"{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}.exe/Data/Raw"),
                     }.Build(),
-                    new List<BuildBundleOperate>
-                    {
-                        BuildBundleOperate.CopyLocalGroup2StreamingAssets,
-                        BuildBundleOperate.CopyAllGroup2StreamingAssets,
-                    },
                     buildJson.PlatformVersions,
                     buildJson.CopySettings,
                     new List<CopyLockMode>
                     {
                         CopyLockMode.None, 
                         CopyLockMode.Latest,
-                    }, new List<CopyTargetMode>
-                    {
-                        CopyTargetMode.LocalGroup2StreamingAssets,
-                        CopyTargetMode.AllGroup2StreamingAssets,
-                        CopyTargetMode.AllGroup2Player,
                     });
             }
         }
@@ -113,35 +102,29 @@ namespace Ninth.Editor
             public readonly CollectSelector<BuildSettingsMode> BuildSettingsModes;
             public readonly ReactiveProperty<BuildTargetPlatform> BuildTargetPlatform;
             public readonly MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem> BuildTargetPlatformSelector;
-            public readonly List<BuildBundleOperate> BuildBundleOperates;
             public readonly ReactiveProperty<int> BuildTargetPlatformCurrentIndex;
             public readonly SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> PlatformVersions;
             public readonly CopySettings CopySettings;
             public readonly List<CopyLockMode> CopyLockModes;
-            public readonly List<CopyTargetMode> CopyTargetModes;
             
             public BuildSettings(Dictionary<BuildFolder, ReactiveProperty<string>> buildFolders, 
                 Dictionary<AssetGroup, IBuildAssets> buildSettingsItems, 
                 CollectSelector<BuildSettingsMode> buildSettingsModes,
                 ReactiveProperty<BuildTargetPlatform> buildTargetPlatform,
                 MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem> buildTargetPlatformSelector,
-                List<BuildBundleOperate> buildBundleOperates,
                 SerializableDictionary<BuildTargetPlatform, BuildTargetPlatformInfo> platformVersions,
                 CopySettings copySettings,
-                List<CopyLockMode> copyLockModes,
-                List<CopyTargetMode> copyTargetModes)
+                List<CopyLockMode> copyLockModes)
             {
                 this.BuildFolders = buildFolders;
                 this.BuildSettingsItems = buildSettingsItems;
                 this.BuildSettingsModes = buildSettingsModes;
                 this.BuildTargetPlatform = buildTargetPlatform;
                 this.BuildTargetPlatformSelector = buildTargetPlatformSelector;
-                this.BuildBundleOperates = buildBundleOperates;
                 this.BuildTargetPlatformCurrentIndex = new ReactiveProperty<int>(0);
                 this.PlatformVersions = platformVersions;
                 this.CopySettings = copySettings;
                 this.CopyLockModes = copyLockModes;
-                this.CopyTargetModes = copyTargetModes;
             }
         }
 

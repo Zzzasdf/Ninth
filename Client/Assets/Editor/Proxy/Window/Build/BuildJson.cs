@@ -9,31 +9,11 @@ namespace Ninth.Editor
         Players,
         Bundles,
     }
-
-    public enum BuildSettingsMode
-    {
-        HotUpdateBundle,
-        AllBundle,
-        Player
-    }
-
-    public enum BuildBundleOperate
-    {
-        CopyLocalGroup2StreamingAssets,
-        CopyAllGroup2StreamingAssets,
-    }
     
     public enum CopyLockMode
     {
         None,
         Latest,
-    }
-    
-    public enum CopyTargetMode
-    {
-        LocalGroup2StreamingAssets,
-        AllGroup2StreamingAssets,
-        AllGroup2Player,
     }
     
     public class BuildJson : IJson
@@ -58,8 +38,9 @@ namespace Ninth.Editor
         // BuildAssetBundleOptions.ChunkBasedCompression：使用LZ4压缩，压缩率没有LZMA高，但是我们可以加载指定资源而不用解压全部
         public BuildAssetBundleOptions BuildAssetBundleOptions { get; set; }
         public BuildOptions BuildOptions { get; set; }
-        public int BuildBundleOperateIndex { get; set; }
-        public bool BundleCopy2Player { get; set; }
+        public Environment Env { get; set; }
+        public string Url { get; set; }
+        public string PlayerByBuiltIn() => $"{FrameVersion}.{HotUpdateVersion}.{IterateVersion}.{Env}";
     }
 
     public class CopySettings
@@ -67,6 +48,5 @@ namespace Ninth.Editor
         public int CopyTargetPlatformIndex { get; set; }
         public int CopyLockModeIndex { get; set; }
         public int CopyVersionIndex { get; set; }
-        public int CopyTargetModeIndex { get; set; }
     }
 }

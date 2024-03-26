@@ -8,7 +8,7 @@ namespace Ninth.Editor
     {
         private void BuildBundles(BuildBundlesConfig buildBundlesConfig)
         {
-            var buildFullFolder = $"{buildBundlesConfig.BuildFolder}/{buildBundlesConfig.BundlePrefix}";
+            var buildFullFolder = $"{buildBundlesConfig.BuildFolder}/{buildBundlesConfig.BundlePrefix()}";
             var buildSettingsItems = buildBundlesConfig.BuildSettingsItems;
             var buildTarget = buildBundlesConfig.BuildTarget;
             var buildTargetPlatformInfo = buildBundlesConfig.BuildTargetPlatformInfo;
@@ -46,13 +46,35 @@ namespace Ninth.Editor
             // 保存版本号
             var versionSourceFileName = $"{buildFullFolder}/{nameConfig.FileNameByVersionConfig()}";
             var versionDestFileName = $"{buildFullFolder}/../{nameConfig.FileNameByVersionConfig()}";
-            jsonProxy.ToJson(new VersionConfig 
+            switch (buildBundlesConfig.BuildTargetPlatformInfo.BuildSettingsMode)
             {
-                DisplayVersion = buildBundlesConfig.BuildTargetPlatformInfo.DisplayVersion,
-                FrameVersion = buildBundlesConfig.BuildTargetPlatformInfo.FrameVersion,
-                HotUpdateVersion = buildBundlesConfig.BuildTargetPlatformInfo.HotUpdateVersion,
-                IterateVersion = buildBundlesConfig.BuildTargetPlatformInfo.IterateVersion,
-            }, versionSourceFileName);
+                case BuildSettingsMode.HotUpdateBundle:
+                {
+                    jsonProxy.ToJson(new VersionConfig
+                    {
+                        DisplayVersion = buildBundlesConfig.BuildTargetPlatformInfo.DisplayVersion,
+                        FrameVersion = buildBundlesConfig.BuildTargetPlatformInfo.FrameVersion,
+                        HotUpdateVersion = buildBundlesConfig.BuildTargetPlatformInfo.HotUpdateVersion,
+                        IterateVersion = buildBundlesConfig.BuildTargetPlatformInfo.IterateVersion,
+                        BuildSettingsMode = buildBundlesConfig.BuildTargetPlatformInfo.BuildSettingsMode,
+                    }, versionSourceFileName);
+                    break;
+                }
+                case BuildSettingsMode.Player:
+                {
+                    jsonProxy.ToJson(new PlayerVersionConfig
+                    {
+                        DisplayVersion = buildBundlesConfig.BuildTargetPlatformInfo.DisplayVersion,
+                        FrameVersion = buildBundlesConfig.BuildTargetPlatformInfo.FrameVersion,
+                        HotUpdateVersion = buildBundlesConfig.BuildTargetPlatformInfo.HotUpdateVersion,
+                        IterateVersion = buildBundlesConfig.BuildTargetPlatformInfo.IterateVersion,
+                        BuildSettingsMode = buildBundlesConfig.BuildTargetPlatformInfo.BuildSettingsMode,
+                        Env = buildBundlesConfig.BuildTargetPlatformInfo.Env,
+                        Url = buildBundlesConfig.BuildTargetPlatformInfo.Url
+                    }, versionSourceFileName);
+                    break;
+                }
+            }
             // 拷贝版本号到外部
             File.Copy(versionSourceFileName, versionDestFileName, true);
         }

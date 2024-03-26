@@ -1,17 +1,29 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Ninth.Utility;
 using UnityEngine;
 
-namespace Ninth
+namespace Ninth.Utility
 {
+    public enum BuildSettingsMode
+    {
+        HotUpdateBundle,
+        Player
+    }
+    
+    public enum Environment
+    {
+        Local,
+        Remote,
+    }
+    
     public class VersionJson : IJson
     {
         public string DisplayVersion { get; set; }
         public int FrameVersion { get; set; }
         public int HotUpdateVersion { get; set; }
         public int IterateVersion { get; set; }
-        public string BuiltIn() => $"{FrameVersion}.{HotUpdateVersion}.{IterateVersion}";
+        public BuildSettingsMode BuildSettingsMode { get; set; }
+        public string BundleByBuiltIn() => $"{FrameVersion}.{HotUpdateVersion}.{IterateVersion}.{BuildSettingsMode}";
     }
     
     public class VersionConfig: VersionJson
@@ -43,5 +55,11 @@ namespace Ninth
             }
             return UniTask.FromResult(true);
         }
+    }
+
+    public class PlayerVersionConfig : VersionConfig
+    {
+        public Environment Env { get; set; }
+        public string Url { get; set; }
     }
 }

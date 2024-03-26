@@ -8,45 +8,47 @@
         "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
     ],
     "BuildTargetPlatforms": 1,
-    "BuildSettingsMode": 0,
+    "BuildSettingsMode": 1,
     "PlatformVersions": {
         "container": {
             "StandaloneWindows64": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
-                "BuildBundleOperateIndex": 1,
-                "BundleCopy2Player": true,
+                "Env": 1,
+                "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 146,
-                "HotUpdateVersion": 461,
-                "IterateVersion": 607
+                "FrameVersion": 211,
+                "HotUpdateVersion": 484,
+                "IterateVersion": 695,
+                "BuildSettingsMode": 1
             },
             "Android": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
-                "BuildBundleOperateIndex": 0,
-                "BundleCopy2Player": false,
+                "Env": 1,
+                "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 5,
                 "HotUpdateVersion": 24,
-                "IterateVersion": 29
+                "IterateVersion": 29,
+                "BuildSettingsMode": 0
             },
             "iOS": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
-                "BuildBundleOperateIndex": 1,
-                "BundleCopy2Player": false,
+                "Env": 1,
+                "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 5,
                 "HotUpdateVersion": 23,
-                "IterateVersion": 28
+                "IterateVersion": 28,
+                "BuildSettingsMode": 0
             }
         }
     },
     "CopySettings": {
         "CopyTargetPlatformIndex": 0,
-        "CopyLockModeIndex": 1,
-        "CopyVersionIndex": 0,
-        "CopyTargetModeIndex": 2
+        "CopyLockModeIndex": 0,
+        "CopyVersionIndex": 1
     }
 }

@@ -32,13 +32,13 @@ namespace Ninth
             return assetDatas[dllName];
         }
 
-        private readonly IAssetConfig assetConfig;
+        private readonly Environment env;
         private readonly INameConfig nameConfig;
 
         [Inject]
-        public LoadDll(IAssetConfig assetConfig, INameConfig nameConfig)
+        public LoadDll(PlayerVersionConfig playerVersionConfig, INameConfig nameConfig)
         {
-            this.assetConfig = assetConfig;
+            this.env = playerVersionConfig.Env;
             this.nameConfig = nameConfig;
         }
 
@@ -56,10 +56,10 @@ namespace Ninth
             {
                 "HotUpdateMain.dll",
             }.Concat(AOTMetaAssemblyNames);
-            var folderPrefix = assetConfig.RuntimeEnv() switch
+            var folderPrefix = env switch
             {
-                Environment.LocalAb => Application.streamingAssetsPath,
-                Environment.RemoteAb => Application.persistentDataPath,
+                Environment.Local => Application.streamingAssetsPath,
+                Environment.Remote => Application.persistentDataPath,
                 _ => null,
             };
             foreach (var asset in assets)

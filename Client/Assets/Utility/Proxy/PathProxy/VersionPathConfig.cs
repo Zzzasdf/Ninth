@@ -12,9 +12,9 @@ namespace Ninth.Utility
         SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> IVersionPathConfig.AssetServerVersionPathSubscriber => assetServerVersionPathSubscriber;
 
         [Inject]
-        public VersionPathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
+        public VersionPathConfig(PlayerVersionConfig playerVersionConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
-            var url = assetConfig.Url();
+            var url = playerVersionConfig.Url;
             var produceName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.ProduceName);
             var platformName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.PlatformName);
 

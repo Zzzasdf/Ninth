@@ -21,9 +21,7 @@ namespace Ninth.Editor
         {
             "编辑器初始化！！".FrameLog();
             // core
-            var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
             var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
-            builder.RegisterInstance(assetConfig).As<IAssetConfig>();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
             
             builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();

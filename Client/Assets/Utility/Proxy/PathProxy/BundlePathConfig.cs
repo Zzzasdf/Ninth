@@ -13,9 +13,9 @@ namespace Ninth.Utility
         SubscriberCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH> IBundlePathConfig.AssetServerBundlePathSubscriber => assetServerBundlePathSubscriber;
 
         [Inject]
-        public BundlePathConfig(IAssetConfig assetConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
+        public BundlePathConfig(PlayerVersionConfig playerVersionConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
-            var url = assetConfig.Url();
+            var url = playerVersionConfig.Url;
             var produceName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.ProduceName);
             var platformName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.PlatformName);
 

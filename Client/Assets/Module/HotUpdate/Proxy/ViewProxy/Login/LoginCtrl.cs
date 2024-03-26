@@ -24,6 +24,8 @@ namespace Ninth.HotUpdate
         
         public async UniTask ShowView()
         {
+            "LoginCtrl ShowView".Log();
+
             loginView = await viewProxy.ViewAsync<LoginView>();
             loginView.BtnStartGame.onClick.AddListener(OnBtnStartGameClick);
             loginView.BtnSettings.onClick.AddListener(UniTask.UnityAction(OnBtnSettingsClick));
@@ -46,7 +48,7 @@ namespace Ninth.HotUpdate
         
         private void OnBtnStartGameClick()
         {
-            "TODO => StartGame".Log();
+            "TODO => StartGame33".Log();
         }
 
         private async UniTaskVoid OnBtnSettingsClick()

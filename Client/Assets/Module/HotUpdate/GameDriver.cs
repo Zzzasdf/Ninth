@@ -1,34 +1,40 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Ninth.Utility;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Environment = Ninth.Utility.Environment;
+using Object = UnityEngine.Object;
 
 namespace Ninth.HotUpdate
 {
     public class GameDriver
     {
-        public static void Init()
+        public static PlayerVersionConfig PlayerVersionConfig { get; set; }
+        public static async void Init()
         {
 #if UNITY_EDITOR
             "加载 CS 代码".Log();
-            SceneManager.LoadScene("HotUpdateScene");
-            // var obj = new GameObject("GameLifetimeScope");
-            // GameObject.DontDestroyOnLoad(obj);
-            // obj.AddComponent<GameLifetimeScope>();
+            await SceneManager.LoadSceneAsync("HotUpdateScene");
 #else
             "加载 Dll 代码".Log();
-            IAssetConfig assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO");
-            var assetBundle = assetConfig.RuntimeEnv() switch 
+            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
+            var request = UnityWebRequest.Get($"{Application.streamingAssetsPath}/{(nameConfig as INameConfig).FileNameByVersionConfig()}");
+            await request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                request.error.Error();
+                return;
+            }
+            PlayerVersionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(request.downloadHandler.text);
+            var assetBundle = PlayerVersionConfig.Env switch 
             { 
-                Environment.LocalAb => AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup"), 
-                Environment.RemoteAb => AssetBundle.LoadFromFile($"{Application.persistentDataPath}/Remote/gassets_remotegroup"), 
+                Environment.Local => AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/Remote/gassets_remotegroup"), 
+                Environment.Remote => AssetBundle.LoadFromFile($"{Application.persistentDataPath}/Remote/gassets_remotegroup"), 
                 _ => throw new ArgumentOutOfRangeException()
             }; 
-            SceneManager.LoadScene("HotUpdateScene");
-            // var obj = new GameObject("GameLifetimeScope"); 
-            // GameObject.DontDestroyOnLoad(obj); 
-            // obj.AddComponent<GameLifetimeScope>(); 
+            await SceneManager.LoadSceneAsync("HotUpdateScene");
             assetBundle.Unload(false);
 #endif
         } 

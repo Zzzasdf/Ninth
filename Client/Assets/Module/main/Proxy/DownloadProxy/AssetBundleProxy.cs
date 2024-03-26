@@ -13,33 +13,23 @@ namespace Ninth
         private readonly IPathProxy pathProxy;
         private readonly IJsonProxy jsonProxy;
         private readonly IDownloadProxy downloadProxy;
-        private readonly IAssetConfig assetConfig;
         private readonly IObjectResolver resolver;
 
         [Inject]
-        public AssetBundleProxy(IPathProxy pathProxy, IJsonProxy jsonProxy, IDownloadProxy downloadProxy, IAssetConfig assetConfig, IObjectResolver resolver)
+        public AssetBundleProxy(IPathProxy pathProxy, IJsonProxy jsonProxy, IDownloadProxy downloadProxy, IObjectResolver resolver)
         {
             this.pathProxy = pathProxy;
             this.jsonProxy = jsonProxy;
             this.downloadProxy = downloadProxy;
-            this.assetConfig = assetConfig;
             this.resolver = resolver;
         }
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-#if UNITY_EDITOR
-            await resolver.Resolve<LoadDll>().StartAsync(cancellation);
-#else
-            if (assetConfig.RuntimeEnv() == Environment.LocalAb)
-            {
-                await resolver.Resolve<LoadDll>().StartAsync(cancellation);
-                return;
-            }
             // versionConfig
             var versionConfigByServer = await GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH.AssetServer, cancellation);
             var versionConfigByPersistentData = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.PersistentData, cancellation, notExistHandle: () => null);
-            var versionConfigByStreamingAssets = await jsonProxy.ToObjectAsync<VersionConfig>(VERSION_PATH.StreamingAssets, cancellation);
+            var versionConfigByStreamingAssets = await jsonProxy.ToObjectAsync<PlayerVersionConfig>(VERSION_PATH.StreamingAssets, cancellation);
             var update = await VersionConfig.UpdateCompare(versionConfigByServer, versionConfigByPersistentData, versionConfigByStreamingAssets, cancellation);
             if (versionConfigByServer == null)
             {
@@ -55,19 +45,18 @@ namespace Ninth
             }
 
             // downloadConfig
-            var downloadConfigByServerRemote = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup, versionConfigByServer.BuiltIn(), cancellation);
+            var downloadConfigByServerRemote = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByRemoteGroup, versionConfigByServer.BundleByBuiltIn(), cancellation);
             var downloadConfigByPersistentDataRemote = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByRemoteGroupByPersistentData, cancellation, notExistHandle: () => null);
             var bundleInfosByRemote = DownloadConfig.UpdateCompare(downloadConfigByServerRemote, downloadConfigByPersistentDataRemote, cancellation);
-            var downloadConfigByServerDll = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup, versionConfigByServer.BuiltIn(), cancellation);
+            var downloadConfigByServerDll = await GetDownloadConfigAsync(ASSET_SERVER_CONFIG_PATH.DownloadConfigPathByDllGroup, versionConfigByServer.BundleByBuiltIn(), cancellation);
             var downloadConfigByPersistentDataDll = await jsonProxy.ToObjectAsync<DownloadConfig>(CONFIG_PATH.DownloadConfigPathByDllGroupByPersistentData, cancellation, notExistHandle: () => null);
             var bundleInfosByDll = DownloadConfig.UpdateCompare(downloadConfigByServerDll, downloadConfigByPersistentDataDll, cancellation);
-
             //  download bundle
             if (bundleInfosByRemote is { Count: > 0 }
                 || bundleInfosByDll is { Count: > 0 })
             {
                 // box => 下载 bundle
-                var complete = await resolver.Resolve<IAssetDownloadBox>().PopUpAsync(versionConfigByServer.BuiltIn(), cancellation, (ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, bundleInfosByRemote), (ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, bundleInfosByDll));
+                var complete = await resolver.Resolve<IAssetDownloadBox>().PopUpAsync(versionConfigByServer.BundleByBuiltIn(), cancellation, (ASSET_SERVER_BUNDLE_PATH.BundlePathByRemoteGroup, bundleInfosByRemote), (ASSET_SERVER_BUNDLE_PATH.BundlePathByDllGroup, bundleInfosByDll));
                 if (!complete)
                 {
                     Application.Quit();
@@ -110,8 +99,8 @@ namespace Ninth
             }
             
             // 下载 loadConfig
-            await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByRemoteGroup, versionConfigByServer.BuiltIn(), cancellation);
-            await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup, versionConfigByServer.BuiltIn(), cancellation);
+            await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByRemoteGroup, versionConfigByServer.BundleByBuiltIn(), cancellation);
+            await DownloadLoadConfigAsync(ASSET_SERVER_CONFIG_PATH.LoadConfigPathByDllGroup, versionConfigByServer.BundleByBuiltIn(), cancellation);
             
             // 替换 versionConfig, DownloadConfig
             File.Delete(pathProxy.Get(VERSION_PATH.PersistentData));
@@ -123,7 +112,6 @@ namespace Ninth
             
             // 启动
             await resolver.Resolve<LoadDll>().StartAsync(cancellation);
-#endif
         }
 
         private async UniTask<VersionConfig?> GetVersionConfigAsync(ASSET_SERVER_VERSION_PATH versionPath, CancellationToken cancellationToken)

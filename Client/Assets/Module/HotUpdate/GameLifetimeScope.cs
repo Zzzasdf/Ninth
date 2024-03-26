@@ -1,5 +1,7 @@
+using Cysharp.Threading.Tasks;
 using Ninth.Utility;
 using UnityEngine;
+using UnityEngine.Networking;
 using VContainer;
 using VContainer.Unity;
 using Environment = Ninth.Utility.Environment;
@@ -11,10 +13,12 @@ namespace Ninth.HotUpdate
         protected override void Configure(IContainerBuilder builder)
         {
             "HotUpdate 初始化".FrameLog();
-            // core
-            var assetConfig = Resources.Load<AssetConfig>("SOData/AssetConfigSO") as IAssetConfig;
-            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO") as INameConfig;
-            builder.RegisterInstance(assetConfig).As<IAssetConfig>();
+#if UNITY_EDITOR
+            builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+#else
+            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
+            var playerVersionConfig = GameDriver.PlayerVersionConfig;
+            builder.RegisterInstance(playerVersionConfig).AsSelf();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
             
             builder.Register<PlayerSettingsConfig>(Lifetime.Singleton).As<IPlayerSettingsConfig>();
@@ -23,14 +27,11 @@ namespace Ninth.HotUpdate
             builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
             builder.Register<PathProxy>(Lifetime.Singleton).As<IPathProxy>();
             
+            builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
+#endif
             builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
             
-#if UNITY_EDITOR
-            builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-#else
-            builder.Register<AssetProxyLoadWithAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
-#endif
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
             builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
@@ -43,11 +44,11 @@ namespace Ninth.HotUpdate
             builder.Register<SettingsModel>(Lifetime.Transient).AsSelf();
             builder.Register<SettingsInputSystem>(Lifetime.Transient).AsSelf();
 
-            builder.Register<StartUp>(Lifetime.Scoped).AsSelf();
-            builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
+            builder.Register<StartUp>(Lifetime.Scoped);
+            builder.UseEntryPoints(Lifetime.Singleton, configuration =>
             {
-                entryPoints.Add<StartUp>();
-                entryPoints.OnException(ex => ex.FrameError());
+                configuration.Add<StartUp>();
+                configuration.OnException(ex => ex.FrameError());
             });
             "HotUpdate IOC 容器注册完成！！".FrameLog(); 
         }
