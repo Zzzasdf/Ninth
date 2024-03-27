@@ -6,7 +6,7 @@ namespace Ninth.Utility
 {
     public enum BuildSettingsMode
     {
-        HotUpdateBundle,
+        HotUpdate,
         Player
     }
     

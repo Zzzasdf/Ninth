@@ -47,8 +47,9 @@
         }
     },
     "CopySettings": {
-        "CopyTargetPlatformIndex": 0,
-        "CopyLockModeIndex": 0,
-        "CopyVersionIndex": 1
+        "TargetPlatformIndex": 0,
+        "LockModeIndex": 0,
+        "BundleVersionIndex": 0,
+        "PlayerVersionIndex": 0
     }
 }

@@ -72,7 +72,7 @@ namespace Ninth.Editor
                     new CollectSelector<BuildSettingsMode>
                         (intSubscriber.GetReactiveProperty<BuildSettingsMode>().AsEnum<BuildSettingsMode>())
                     {
-                        BuildSettingsMode.HotUpdateBundle,
+                        BuildSettingsMode.HotUpdate,
                         BuildSettingsMode.Player,
                     }.Build(),
                     intSubscriber.GetReactiveProperty<BuildTargetPlatform>().AsEnum<BuildTargetPlatform>(),

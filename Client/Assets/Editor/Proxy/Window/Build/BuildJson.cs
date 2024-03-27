@@ -45,8 +45,9 @@ namespace Ninth.Editor
 
     public class CopySettings
     {
-        public int CopyTargetPlatformIndex { get; set; }
-        public int CopyLockModeIndex { get; set; }
-        public int CopyVersionIndex { get; set; }
+        public int TargetPlatformIndex { get; set; }
+        public int LockModeIndex { get; set; }
+        public int BundleVersionIndex { get; set; }
+        public int PlayerVersionIndex { get; set; }
     }
 }

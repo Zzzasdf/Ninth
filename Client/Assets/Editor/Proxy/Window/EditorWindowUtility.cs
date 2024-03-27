@@ -120,10 +120,15 @@ namespace Ninth.Editor
             if (!isModify) GUI.enabled = true;
         }
 
-        public static void Popup(string label, ReactiveProperty<int> selectedIndex, string[] displayedOptions, bool isModify = true)
+        public static void Popup(string label, ReactiveProperty<int> selectedIndex, string[] displayedOptions, bool isModify = true, Action<int>? modifyFunc = null)
         {
             if (!isModify) GUI.enabled = false;
-            selectedIndex.Value = EditorGUILayout.Popup(label, selectedIndex.Value, displayedOptions);
+            var temp = EditorGUILayout.Popup(label, selectedIndex.Value, displayedOptions);
+            if (temp != selectedIndex.Value)
+            {
+                selectedIndex.Value = temp;
+                modifyFunc?.Invoke(temp);
+            }
             if (!isModify) GUI.enabled = true;
         }
 

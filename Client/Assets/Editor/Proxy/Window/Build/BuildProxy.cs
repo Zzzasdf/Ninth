@@ -6,6 +6,8 @@ using UnityEngine;
 using VContainer;
 using System.IO;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using Ninth.HotUpdate;
 using UnityEditor;
 using Environment = Ninth.Utility.Environment;
@@ -114,7 +116,7 @@ namespace Ninth.Editor
             }
             var (result, message) = current.Value switch
             {
-                BuildSettingsMode.HotUpdateBundle => 
+                BuildSettingsMode.HotUpdate => 
                     (buildSettingsItems[AssetGroup.Remote].AssetGroupsPaths!.AssetGroupPaths.Value.Count > 0, 
                         "Remote 打包资源组至少有一个路径"),
                 BuildSettingsMode.Player =>
@@ -217,7 +219,7 @@ namespace Ninth.Editor
                 });
                 EditorGUILayout.IntField("HotUpdate 版本", buildTargetPlatformInfo.HotUpdateVersion + buildSettingsMode switch
                 {
-                    BuildSettingsMode.HotUpdateBundle => 1,
+                    BuildSettingsMode.HotUpdate => 1,
                     _ => 0,
                 });
                 EditorGUILayout.IntField("迭代版本", buildTargetPlatformInfo.IterateVersion + 1);
@@ -272,7 +274,7 @@ namespace Ninth.Editor
                     };
                     versionInfo.HotUpdateVersion += buildSettingsMode switch
                     {
-                        BuildSettingsMode.HotUpdateBundle => 1,
+                        BuildSettingsMode.HotUpdate => 1,
                         _ => 0,
                     };
                     versionInfo.IterateVersion += 1;
@@ -285,7 +287,7 @@ namespace Ninth.Editor
                 var barMenu = buildSettings.BuildSettingsModes.Collect.ToArray();
                 var currentIndex = buildSettings.BuildSettingsModes.CurrentIndex;
                 var buildSettingsMode = barMenu[currentIndex.Value];
-                if(buildSettingsMode == BuildSettingsMode.HotUpdateBundle)
+                if(buildSettingsMode == BuildSettingsMode.HotUpdate)
                 {
                     buildSettingsItems.Remove(AssetGroup.Local);
                 }
@@ -312,7 +314,7 @@ namespace Ninth.Editor
                     // 构建 player
                     if (buildSettings.BuildSettingsModes.Current.Value == BuildSettingsMode.Player)
                     {
-                        Utility.ClearFolderContents(Application.streamingAssetsPath);
+                        Directory.Delete(Application.streamingAssetsPath, true);
                         // 拷贝 bundle 到 unity streamingAssets
                         if (platformVersions[platform].Env == Environment.Local)
                         {
@@ -332,8 +334,7 @@ namespace Ninth.Editor
                         buildPlayersConfig.BuildFolder = buildFolders[BuildFolder.Players].Value;
                         buildPlayersConfig.BuildTargetPlatformInfo = platformVersions[platform];
                         BuildPlayer(buildPlayersConfig);
-                        
-                        Utility.ClearFolderContents(Application.streamingAssetsPath);
+                        Directory.Delete(Application.streamingAssetsPath, true);
                     }
                     else
                     {
@@ -345,21 +346,18 @@ namespace Ninth.Editor
                         }
                         var frameVersion = platformVersions[platform].FrameVersion;
                         var playerPlatformFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}";
-                        var (folder, env) = GetPlayerFolderName(playerPlatformFolder, frameVersion.ToString());
-                        if (string.IsNullOrEmpty(folder) || string.IsNullOrEmpty(env))
+                        var (playerFolderName, env) = GetPlayerFolderName(playerPlatformFolder, frameVersion.ToString());
+                        if (string.IsNullOrEmpty(playerFolderName) || string.IsNullOrEmpty(env))
                         {
                             continue;
                         }
+                        var playerFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}/{playerFolderName}";
                         if (env == Environment.Local.ToString())
                         {
                             var versionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}/{platformVersions[platform].BundleByBuiltIn()}";
-                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
-                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByDllGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
+                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
+                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByDllGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
                         }
-                        // var baseVersion = GetBaseVersion(platformVersions[platform].FrameVersion.ToString(), platform);
-                        // var baseVersionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{platform}/{baseVersion}"; 
-                        // Utility.CopyDirectory($"{baseVersionFolder}/{nameConfig.FolderByLocalGroup()}", $"{Application.streamingAssetsPath}/{nameConfig.FolderByLocalGroup()}");
-                        // File.Copy($"{baseVersionFolder}/{nameConfig.FileNameByVersionConfig()}", $"{Application.streamingAssetsPath}/{nameConfig.FileNameByVersionConfig()}", true);
                     }
                 }
                 AssetDatabase.Refresh();
@@ -369,13 +367,14 @@ namespace Ninth.Editor
 
         private void RenderCopy()
         {
-            var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
             var copySettings = buildSettings.CopySettings;
-            var copyTargetPlatformIndex = new ReactiveProperty<int>(copySettings.CopyTargetPlatformIndex).AsSetEvent(value => copySettings.CopyTargetPlatformIndex = value);
-            var copyLockModes = buildSettings.CopyLockModes;
-            var copyLockModeIndex = new ReactiveProperty<int>(copySettings.CopyLockModeIndex).AsSetEvent(value => copySettings.CopyLockModeIndex = value);
-            var copyVersionIndex = new ReactiveProperty<int>(copySettings.CopyVersionIndex).AsSetEvent(value => copySettings.CopyVersionIndex = value);
+            var copyTargetPlatformIndex = new ReactiveProperty<int>(copySettings.TargetPlatformIndex).AsSetEvent(value => copySettings.TargetPlatformIndex = value);
+            var copyLockModeIndex = new ReactiveProperty<int>(copySettings.LockModeIndex).AsSetEvent(value => copySettings.LockModeIndex = value);
+            var copyBundleVersionIndex = new ReactiveProperty<int>(copySettings.BundleVersionIndex).AsSetEvent(value => copySettings.BundleVersionIndex = value);
+            var copyPlayerVersionIndex = new ReactiveProperty<int>(copySettings.PlayerVersionIndex).AsSetEvent(value => copySettings.PlayerVersionIndex = value);
             var buildFolders = buildSettings.BuildFolders;
+            var buildTargetPlatformSelector = buildSettings.BuildTargetPlatformSelector;
+            var copyLockModes = buildSettings.CopyLockModes;
             using (new GUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField("拷贝平台");
@@ -383,82 +382,169 @@ namespace Ninth.Editor
             }
             using (new GUILayout.HorizontalScope())
             {
-                EditorGUILayout.LabelField("锁定版本模式");
+                EditorGUILayout.LabelField("锁定模式");
                 EditorWindowUtility.Toolbar(copyLockModeIndex, copyLockModes.ToArrayString());
             }
             var isModify = copyLockModes[copyLockModeIndex.Value] == CopyLockMode.None;
-            if (!isModify)
-            {
-                copyVersionIndex.Value = 0;
-            }
+            if (!isModify) copyBundleVersionIndex.Value = 0;
+            
             var currentTargetPlatform = buildTargetPlatformSelector.Keys.ToArray()[copyTargetPlatformIndex.Value];
-            var currentVersion = string.Empty;
+            var bundleVersions = new List<string>();
+            var bundleFolderPath = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
+            if (Directory.Exists(bundleFolderPath))
+            {
+                foreach (var versionFolder in new DirectoryInfo(bundleFolderPath).GetDirectories().OrderByDescending(x => int.Parse(x.Name.Split('.')[2])))
+                {
+                    bundleVersions.Add(versionFolder.Name);
+                }
+            }
+            var playerVersions = new List<string>();
+            var playerFolderPath = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
+            if (Directory.Exists(playerFolderPath))
+            {
+                foreach (var versionFolder in new DirectoryInfo(playerFolderPath).GetDirectories().OrderByDescending(x => int.Parse(x.Name.Split('.')[2])))
+                {
+                    playerVersions.Add(versionFolder.Name);
+                }
+            }
+            
+            // Bundle
             using (new GUILayout.HorizontalScope())
             {
-                var versions = new List<string>();
-                var folderPath = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
-                if (!Directory.Exists(folderPath))
+                if (bundleVersions.Count == 0)
                 {
-                    return;
+                    EditorGUILayout.LabelField("不存在 Bundle 版本");
                 }
-                foreach (var versionFolder in new DirectoryInfo(folderPath).GetDirectories().OrderByDescending(x => int.Parse(x.Name.Split('.')[2])))
+                else
                 {
-                    versions.Add(versionFolder.Name);
+                    EditorWindowUtility.Popup("Bundle 版本", copyBundleVersionIndex, bundleVersions.ToArray(), isModify, value =>
+                    {
+                        var targetBundleVersion = bundleVersions[value];
+                        var relativePath = buildTargetPlatformSelector[currentTargetPlatform].BundleCopy2PlayerRelativePath;
+                        if (string.IsNullOrEmpty(relativePath))
+                        {
+                            return;
+                        }
+                        var frameVersion = targetBundleVersion.Split('.')[0];
+                        var playerPlatformFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
+                        var (folderName, _) = GetPlayerFolderName(playerPlatformFolder, frameVersion);
+                        if (folderName == null)
+                        {
+                            copyPlayerVersionIndex.Value = 0;
+                            return;
+                        }
+                        copyPlayerVersionIndex.Value = playerVersions.IndexOf(folderName);
+                    });
+                    var currentBundleVersion = bundleVersions[copyBundleVersionIndex.Value];
+                    if (GUILayout.Button("BundleFolder"))
+                    {
+                        var bundleFolder = $"{bundleFolderPath}/{currentBundleVersion}";
+                        Process.Start(bundleFolder);
+                    }
+                    var playerPlatformFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
+                    var frameVersion = currentBundleVersion.Split('.')[0];
+                    var (playerFolderName, env) = GetPlayerFolderName(playerPlatformFolder, frameVersion);
+                    var playerFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{playerFolderName}";
+                    var relativePath = buildTargetPlatformSelector[currentTargetPlatform].BundleCopy2PlayerRelativePath;
+                    if (!string.IsNullOrEmpty(relativePath))
+                    {
+                        var versionPath = $"{playerFolder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}";
+                        var jsonData = File.ReadAllText(versionPath, Encoding.UTF8);
+                        var versionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(jsonData);
+                        if (versionConfig.Env == Environment.Local)
+                        {
+                            if (GUILayout.Button("拷贝到 Player"))
+                            {
+                                if (!string.IsNullOrEmpty(playerFolderName))
+                                {
+                                    var versionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{currentBundleVersion}";
+                                    Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
+                                    Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByDllGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
+                                }
+                                AssetDatabase.Refresh();
+                            }
+                        }
+                    }
                 }
-                EditorWindowUtility.Popup("拷贝版本", copyVersionIndex, versions.ToArray(), isModify);
-                if (copyVersionIndex.Value >= versions.Count)
+            }
+            
+            // Player
+            using (new GUILayout.HorizontalScope())
+            {
+                EditorWindowUtility.Popup("Player 版本", copyPlayerVersionIndex, playerVersions.ToArray(), isModify, value =>
                 {
-                    copyVersionIndex.Value = versions.Count - 1;
-                }
-                currentVersion = versions[copyVersionIndex.Value];
-                if (GUILayout.Button("BundleFolder"))
-                {
-                    var bundleFolder = $"{folderPath}/{currentVersion}";
-                    Process.Start(bundleFolder);
-                }
+                    var targetPlayerVersion = playerVersions[value];
+                    var relativePath = buildTargetPlatformSelector[currentTargetPlatform].BundleCopy2PlayerRelativePath;
+                    if (string.IsNullOrEmpty(relativePath))
+                    {
+                        return;
+                    }
+                    var frameVersion = targetPlayerVersion.Split('.')[0];
+                    var bundlePlatformFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
+                    var (folderName, _) = GetPlayerFolderName(bundlePlatformFolder, frameVersion);
+                    if (folderName == null)
+                    {
+                        copyBundleVersionIndex.Value = 0;
+                        return;
+                    }
+                    copyBundleVersionIndex.Value = bundleVersions.IndexOf(folderName);
+                });
+                var currentPlayerVersion = playerVersions[copyPlayerVersionIndex.Value];
                 var playerPlatformFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
-                var (playerFolder, _) = GetPlayerFolderName(playerPlatformFolder, currentVersion.Split('.')[0]);
-                if (string.IsNullOrEmpty(playerFolder))
+                var (playerFolderName, _) = GetPlayerFolderName(playerPlatformFolder, currentPlayerVersion.Split('.')[0]);
+                if (string.IsNullOrEmpty(playerFolderName))
                 {
                     EditorGUILayout.LabelField("不存在对应的 Player 版本");
                 }
                 else
                 {
+                    var playerFolder = $"{playerPlatformFolder}/{playerFolderName}";
                     if (GUILayout.Button("PlayerFolder"))
                     {
                         Process.Start(playerFolder);
                     }
-                }
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                EditorGUILayout.LabelField("拷贝目标");
-                if (GUILayout.Button("拷贝到 player"))
-                {
                     var relativePath = buildTargetPlatformSelector[currentTargetPlatform].BundleCopy2PlayerRelativePath;
-                    if (!string.IsNullOrEmpty(relativePath))
+                    if (relativePath != null)
                     {
-                        var frameVersion = currentVersion.Split('.')[0];
-                        var playerPlatformFolder = $"{buildFolders[BuildFolder.Players].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}";
-                        var (folder, env) = GetPlayerFolderName(playerPlatformFolder, frameVersion);
-                        if (!string.IsNullOrEmpty(folder))
+                        var versionPath = $"{playerFolder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}";
+                        var jsonData = File.ReadAllText(versionPath, Encoding.UTF8);
+                        var versionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(jsonData);
+                        switch (versionConfig.Env)
                         {
-                            var versionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{currentVersion}";
-                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
-                            Utility.CopyDirectory($"{versionFolder}/{nameConfig.FolderByDllGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
-
-                            // var baseVersion = GetBaseVersion(currentVersion.Split('.')[0], currentTargetPlatform);
-                            // var baseVersionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{baseVersion}".Log();
-                            // Utility.CopyDirectory($"{baseVersionFolder}/{nameConfig.FolderByLocalGroup()}", $"{folder}/{relativePath}/{nameConfig.FolderByLocalGroup()}");
-                            // File.Copy($"{baseVersionFolder}/{nameConfig.FileNameByVersionConfig()}", $"{folder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}", true);
+                            case Environment.Local:
+                            {
+                                if (GUILayout.Button("切换成 Remote"))
+                                {
+                                    versionConfig.Env = Environment.Remote;
+                                    File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), Encoding.UTF8);
+                                    Directory.Delete($"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}", true); 
+                                    Directory.Delete($"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}", true); 
+                                    new DirectoryInfo(playerFolder).MoveTo(playerFolder.Replace($"{Environment.Local}", $"{Environment.Remote}"));
+                                    AssetDatabase.Refresh(); 
+                                }
+                                break;
+                            }
+                            case Environment.Remote:
+                            {
+                                if (GUILayout.Button("切换成 Local "))
+                                {
+                                    versionConfig.Env = Environment.Local;
+                                    File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), Encoding.UTF8);
+                                    var bundleVersionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{bundleVersions[copyBundleVersionIndex.Value]}"; 
+                                    Utility.CopyDirectory($"{bundleVersionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}"); 
+                                    Utility.CopyDirectory($"{bundleVersionFolder}/{nameConfig.FolderByDllGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
+                                    new DirectoryInfo(playerFolder).MoveTo(playerFolder.Replace($"{Environment.Remote}", $"{Environment.Local}"));
+                                    AssetDatabase.Refresh();
+                                }
+                                break;
+                            }
                         }
-                        AssetDatabase.Refresh();
                     }
                 }
             }
         }
 
-        private (string? folder, string? env) GetPlayerFolderName(string playerFolderPath, string frameVersion)
+        private (string? folderName, string? env) GetPlayerFolderName(string playerFolderPath, string frameVersion)
         {
             if (!Directory.Exists(playerFolderPath))
             {
@@ -472,7 +558,7 @@ namespace Ninth.Editor
                 {
                     continue;
                 }
-                return (folder, parts[3]);
+                return (folderName, parts[3]);
             }
             return (null, null);
         }
@@ -507,6 +593,27 @@ namespace Ninth.Editor
                 }
             }
             return baseVersion;
+        }
+        
+        private static string ConvertJsonString(string str)
+        {
+            var serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            var jtr = new JsonTextReader(tr);
+            var obj = serializer.Deserialize(jtr);
+            if (obj == null)
+            {
+                return str;
+            }
+            var textWriter = new StringWriter();
+            var jsonWriter = new JsonTextWriter(textWriter)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 4,
+                IndentChar = ' '
+            };
+            serializer.Serialize(jsonWriter, obj);
+            return textWriter.ToString();
         }
 
         public class BuildBundlesConfig

@@ -48,7 +48,7 @@ namespace Ninth.Editor
             var versionDestFileName = $"{buildFullFolder}/../{nameConfig.FileNameByVersionConfig()}";
             switch (buildBundlesConfig.BuildTargetPlatformInfo.BuildSettingsMode)
             {
-                case BuildSettingsMode.HotUpdateBundle:
+                case BuildSettingsMode.HotUpdate:
                 {
                     jsonProxy.ToJson(new VersionConfig
                     {
