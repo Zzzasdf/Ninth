@@ -14,6 +14,13 @@
 5、LitJson
    eg!! 该类的所有的字段一定要给它设置 Set 权限, 2024/2/25 警钟敲烂！！！！！！！！！！！！！！！！！！
 
+6、TextMeshPro
+    HanZiZhiMeiFangSongGBK
+    Default: Static
+    Fallback: Dynamic
+   
+7、Localization
+    
 >> TODO
 Thread
 // UI

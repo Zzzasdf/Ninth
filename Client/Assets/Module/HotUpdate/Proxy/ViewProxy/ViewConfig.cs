@@ -20,8 +20,8 @@ namespace Ninth.HotUpdate
 
             {
                 viewInfoSubscriber = new SubscriberCollect<ViewInfo>();
-                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/Views/LoginView.prefab", VIEW_HIERARCHY.Frame);
-                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/Views/SettingsView.prefab", VIEW_HIERARCHY.Frame);
+                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/Views/Login/LoginView.prefab", VIEW_HIERARCHY.Frame);
+                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/Views/Settings/SettingsView.prefab", VIEW_HIERARCHY.Frame);
             }
         }
         
