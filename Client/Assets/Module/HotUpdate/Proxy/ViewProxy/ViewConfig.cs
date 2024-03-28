@@ -15,13 +15,13 @@ namespace Ninth.HotUpdate
         {
             {
                 var build = stringSubscriber = new SubscriberCollect<string>();
-                build.Subscribe<VIEW_HIERARCHY>("Assets/GAssets/RemoteGroup/View/ViewLayout.prefab");
+                build.Subscribe<VIEW_HIERARCHY>("Assets/GAssets/RemoteGroup/Views/ViewLayout.prefab");
             }
 
             {
                 viewInfoSubscriber = new SubscriberCollect<ViewInfo>();
-                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/View/LoginView.prefab", VIEW_HIERARCHY.Frame);
-                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/View/SettingsView.prefab", VIEW_HIERARCHY.Frame);
+                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/Views/LoginView.prefab", VIEW_HIERARCHY.Frame);
+                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/Views/SettingsView.prefab", VIEW_HIERARCHY.Frame);
             }
         }
         

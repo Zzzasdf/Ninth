@@ -17,9 +17,9 @@
                 "Env": 0,
                 "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 225,
-                "HotUpdateVersion": 499,
-                "IterateVersion": 724,
+                "FrameVersion": 226,
+                "HotUpdateVersion": 502,
+                "IterateVersion": 728,
                 "BuildSettingsMode": 0
             },
             "Android": {

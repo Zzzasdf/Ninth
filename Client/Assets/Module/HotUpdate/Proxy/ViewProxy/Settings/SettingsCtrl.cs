@@ -38,6 +38,7 @@ namespace Ninth.HotUpdate
                 EventSystem.current.SetSelectedGameObject(settingsView.BtnAudio.gameObject);
             };
             settingsInputSystem.Menu.Back.performed += ctx => CloseView();
+            EventSystem.current.SetSelectedGameObject(settingsView.BtnAudio.gameObject);
             settingsInputSystem.Menu.Enable();
         }
 
