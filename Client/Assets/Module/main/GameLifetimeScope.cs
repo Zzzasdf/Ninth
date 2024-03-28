@@ -33,6 +33,7 @@ namespace Ninth
                 request.error.Error();
                 return;
             }
+
             var playerVersionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(request.downloadHandler.text);
             builder.RegisterInstance(playerVersionConfig).AsSelf();
             builder.RegisterInstance(nameConfig).As<INameConfig>();

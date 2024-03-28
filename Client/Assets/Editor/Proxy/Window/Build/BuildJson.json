@@ -14,12 +14,12 @@
             "StandaloneWindows64": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
-                "Env": 1,
+                "Env": 0,
                 "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 216,
-                "HotUpdateVersion": 491,
-                "IterateVersion": 707,
+                "FrameVersion": 225,
+                "HotUpdateVersion": 499,
+                "IterateVersion": 724,
                 "BuildSettingsMode": 0
             },
             "Android": {

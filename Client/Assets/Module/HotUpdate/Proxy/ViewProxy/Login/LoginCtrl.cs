@@ -48,7 +48,7 @@ namespace Ninth.HotUpdate
         
         private void OnBtnStartGameClick()
         {
-            "TODO => StartGame33".Log();
+            "TODO => StartGame".Log();
         }
 
         private async UniTaskVoid OnBtnSettingsClick()

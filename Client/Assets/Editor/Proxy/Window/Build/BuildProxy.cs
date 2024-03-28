@@ -351,7 +351,7 @@ namespace Ninth.Editor
                         var versionPath = $"{playerFolder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}";
                         if (!string.IsNullOrEmpty(relativePath) && File.Exists(versionPath))
                         {
-                            var jsonData = File.ReadAllText(versionPath, Encoding.UTF8);
+                            var jsonData = File.ReadAllText(versionPath, new UTF8Encoding(false));
                             var versionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(jsonData);
                             if (versionConfig.Env == Environment.Local)
                             {
@@ -459,7 +459,7 @@ namespace Ninth.Editor
                 var versionPath = $"{playerFolder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}";
                 if (!string.IsNullOrEmpty(relativePath) && File.Exists(versionPath))
                 {
-                    var jsonData = File.ReadAllText(versionPath, Encoding.UTF8);
+                    var jsonData = File.ReadAllText(versionPath, new UTF8Encoding(false));
                     var versionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(jsonData);
                     if (versionConfig.Env == Environment.Local)
                     {
@@ -503,7 +503,7 @@ namespace Ninth.Editor
                 var versionPath = $"{playerFolder}/{relativePath}/{nameConfig.FileNameByVersionConfig()}";
                 if (File.Exists(versionPath))
                 {
-                    var jsonData = File.ReadAllText(versionPath, Encoding.UTF8);
+                    var jsonData = File.ReadAllText(versionPath, new UTF8Encoding(false));
                     var versionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(jsonData);
                     switch (versionConfig.Env)
                     {
@@ -512,7 +512,7 @@ namespace Ninth.Editor
                             if (GUILayout.Button("切换成 Remote"))
                             {
                                 versionConfig.Env = Environment.Remote;
-                                File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), Encoding.UTF8);
+                                File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), new UTF8Encoding(false));
                                 Directory.Delete($"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}", true);
                                 Directory.Delete($"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}", true);
                                 new DirectoryInfo(playerFolder).MoveTo(playerFolder.Replace($"{Environment.Local}", $"{Environment.Remote}"));
@@ -525,7 +525,7 @@ namespace Ninth.Editor
                             if (GUILayout.Button("切换成 Local "))
                             {
                                 versionConfig.Env = Environment.Local;
-                                File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), Encoding.UTF8);
+                                File.WriteAllText(versionPath, ConvertJsonString(LitJson.JsonMapper.ToJson(versionConfig)), new UTF8Encoding(false));
                                 var bundleVersionFolder = $"{buildFolders[BuildFolder.Bundles].Value}/{playerSettingsProxy.Get(PLAY_SETTINGS.ProduceName)}/{currentTargetPlatform}/{bundleVersions[copyBundleVersionIndex.Value]}";
                                 Utility.CopyDirectory($"{bundleVersionFolder}/{nameConfig.FolderByRemoteGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByRemoteGroup()}");
                                 Utility.CopyDirectory($"{bundleVersionFolder}/{nameConfig.FolderByDllGroup()}", $"{playerFolder}/{relativePath}/{nameConfig.FolderByDllGroup()}");
