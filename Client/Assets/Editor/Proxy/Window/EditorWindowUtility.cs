@@ -8,11 +8,12 @@ namespace Ninth.Editor
 {
     public class EditorWindowUtility
     {
-        public static void Toolbar(ReactiveProperty<int> selected, string[] texts)
+        public static bool Toolbar(ReactiveProperty<int> selected, string[] texts)
         {
             var temp = GUILayout.Toolbar(selected.Value, texts);
-            if (temp == selected.Value) return;
+            if (temp == selected.Value) return false;
             selected.Value = temp;
+            return true;
         }
         
         public static void SelectionGrid(ReactiveProperty<int> selected, string[] texts, int xCount)
@@ -120,16 +121,14 @@ namespace Ninth.Editor
             if (!isModify) GUI.enabled = true;
         }
 
-        public static void Popup(string label, ReactiveProperty<int> selectedIndex, string[] displayedOptions, bool isModify = true, Action<int>? modifyFunc = null)
+        public static bool Popup(string label, ReactiveProperty<int> selectedIndex, string[] displayedOptions, bool isModify = true)
         {
             if (!isModify) GUI.enabled = false;
             var temp = EditorGUILayout.Popup(label, selectedIndex.Value, displayedOptions);
-            if (temp != selectedIndex.Value)
-            {
-                selectedIndex.Value = temp;
-                modifyFunc?.Invoke(temp);
-            }
             if (!isModify) GUI.enabled = true;
+            if (temp == selectedIndex.Value) return false;
+            selectedIndex.Value = temp;
+            return true;
         }
 
         public static void TextField(string label, ReactiveProperty<string> text)
