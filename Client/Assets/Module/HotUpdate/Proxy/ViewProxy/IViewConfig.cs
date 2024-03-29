@@ -13,7 +13,7 @@ namespace Ninth.HotUpdate
 
     public interface IViewConfig
     {
-        SubscriberCollect<string> StringSubscriber { get; }
-        SubscriberCollect<ViewConfig.ViewInfo> ViewInfoSubscriber { get; }
+        Subscriber<string, string> LayoutSubscriber { get; }
+        Subscriber<string, ViewConfig.ViewInfo> ViewInfoSubscriber { get; }
     }
 }

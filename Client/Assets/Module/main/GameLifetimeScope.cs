@@ -22,19 +22,11 @@ namespace Ninth
             "Main IOC 容器注册完成！！".FrameLog();
         }
 #else
-        protected override async void Configure(IContainerBuilder builder)
+        protected override void Configure(IContainerBuilder builder)
         {
             "Main 初始化".FrameLog();
-            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
-            var request = UnityWebRequest.Get($"{Application.streamingAssetsPath}/{(nameConfig as INameConfig).FileNameByVersionConfig()}");
-            await request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                request.error.Error();
-                return;
-            }
-
-            var playerVersionConfig = LitJson.JsonMapper.ToObject<PlayerVersionConfig>(request.downloadHandler.text);
+            var nameConfig = GameEntry.NameConfig;
+            var playerVersionConfig = GameEntry.PlayerVersionConfig;
             builder.RegisterInstance(playerVersionConfig).AsSelf();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
             builder.Register<LoadDll>(Lifetime.Scoped);

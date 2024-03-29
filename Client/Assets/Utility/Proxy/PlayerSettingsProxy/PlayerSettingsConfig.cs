@@ -6,14 +6,14 @@ namespace Ninth.Utility
 {
     public class PlayerSettingsConfig : IPlayerSettingsConfig
     {
-        private readonly SubscriberCollect<string, PLAY_SETTINGS> stringSubscriber;
-        SubscriberCollect<string, PLAY_SETTINGS> IPlayerSettingsConfig.StringSubscriber => stringSubscriber;
+        private readonly Subscriber<PLAY_SETTINGS, string> stringSubscriber;
+        Subscriber<PLAY_SETTINGS, string> IPlayerSettingsConfig.StringSubscriber => stringSubscriber;
 
         [Inject]
         public PlayerSettingsConfig()
         {
             {
-                var build = stringSubscriber = new SubscriberCollect<string, PLAY_SETTINGS>();
+                var build = stringSubscriber = new Subscriber<PLAY_SETTINGS, string>();
                 build.Subscribe(PLAY_SETTINGS.ProduceName, Application.productName);
                 build.Subscribe(PLAY_SETTINGS.PlatformName, Application.platform switch
                 {

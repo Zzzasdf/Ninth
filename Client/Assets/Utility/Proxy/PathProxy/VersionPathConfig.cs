@@ -5,18 +5,18 @@ namespace Ninth.Utility
 {
     public class VersionPathConfig : IVersionPathConfig
     {
-        private readonly SubscriberCollect<string, VERSION_PATH> versionPathSubscriber;
-        private readonly SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> assetServerVersionPathSubscriber;
+        private readonly Subscriber<VERSION_PATH, string> versionPathSubscriber;
+        private readonly Subscriber<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> assetServerVersionPathSubscriber;
 
-        SubscriberCollect<string, VERSION_PATH> IVersionPathConfig.VersionPathSubscriber => versionPathSubscriber;
-        SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> IVersionPathConfig.AssetServerVersionPathSubscriber => assetServerVersionPathSubscriber;
+        Subscriber<VERSION_PATH, string> IVersionPathConfig.VersionPathSubscriber => versionPathSubscriber;
+        Subscriber<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> IVersionPathConfig.AssetServerVersionPathSubscriber => assetServerVersionPathSubscriber;
 
         [Inject]
         public VersionPathConfig(PlayerVersionConfig playerVersionConfig, IPlayerSettingsConfig playerSettingsConfig, INameConfig nameConfig)
         {
             var url = playerVersionConfig.Url;
-            var produceName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.ProduceName);
-            var platformName = playerSettingsConfig.StringSubscriber.Get(PLAY_SETTINGS.PlatformName);
+            var produceName = playerSettingsConfig.StringSubscriber.GetValue(PLAY_SETTINGS.ProduceName);
+            var platformName = playerSettingsConfig.StringSubscriber.GetValue(PLAY_SETTINGS.PlatformName);
 
             var streamingAssetsPath = Application.streamingAssetsPath;
             var persistentDataPath = Application.persistentDataPath;
@@ -28,14 +28,14 @@ namespace Ninth.Utility
             var assetServer = $"{urlProduceNamePlatformName}/{nameConfig.FileNameByVersionConfig()}";
 
             {
-                var build = versionPathSubscriber = new SubscriberCollect<string, VERSION_PATH>();
+                var build = versionPathSubscriber = new Subscriber<VERSION_PATH, string>();
                 build.Subscribe(VERSION_PATH.StreamingAssets, streamingAssets);
                 build.Subscribe(VERSION_PATH.PersistentData, persistentData);
                 build.Subscribe(VERSION_PATH.PersistentDataTemp, persistentDataTemp);
             }
 
             {
-                var build = assetServerVersionPathSubscriber = new SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH>();
+                var build = assetServerVersionPathSubscriber = new Subscriber<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)>();
                 build.Subscribe(ASSET_SERVER_VERSION_PATH.AssetServer, (assetServer, VERSION_PATH.PersistentDataTemp));
             }
         }

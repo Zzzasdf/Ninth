@@ -14,12 +14,7 @@ namespace Ninth.Utility
         
         string IPlayerSettingsProxy.Get(PLAY_SETTINGS playSettings)
         {
-            var result = playerSettingsConfig.StringSubscriber.Get(playSettings);
-            if (result == null)
-            {
-                return string.Empty;
-            }
-            return result;
+            return playerSettingsConfig.StringSubscriber.GetValue(playSettings);
         }
     }
 }

@@ -28,105 +28,105 @@ namespace Ninth.Utility
         // Generics
         async UniTask<TKey> IJsonProxy.ToObjectAsync<TKey>(CancellationToken cancellationToken, int markBit, Func<TKey>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKey>(markBit);
             var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
         TKey IJsonProxy.ToObject<TKey>(int markBit, Func<TKey>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKey>(markBit);
             var obj = ToObject(path, notExistHandle);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<TKey>(CancellationToken cancellationToken, int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKey>(markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((TKey)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<TKey>(int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKey>(markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((TKey)obj, path);
         }
 
         bool IJsonProxy.CacheExists<TKey>(int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKey>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKey>(markBit);
             return CacheExists<TKey>(path);
         }
         
         // EnumType
         async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult, TKeyEnum>(CancellationToken cancellationToken, int markBit, Func<TResult>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKeyEnum>(markBit);
             var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
         TResult IJsonProxy.ToObject<TResult, TKeyEnum>(int markBit, Func<TResult>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKeyEnum>(markBit);
             var obj = ToObject(path, notExistHandle);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T, TKeyEnum>(CancellationToken cancellationToken, int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKeyEnum>(markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T, TKeyEnum>(int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKeyEnum>(markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((T)obj, path);
         }
         
         bool IJsonProxy.CacheExists<T, TKeyEnum>(int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get<TKeyEnum>(markBit);
+            var path = jsonConfig.TypeSubscriber.GetValue<TKeyEnum>(markBit);
             return CacheExists<T>(path);
         }
 
         // Enum
         async UniTask<TResult> IJsonProxy.ToObjectAsync<TResult>(Enum key, CancellationToken cancellationToken, int markBit, Func<TResult>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get(key);
+            var path = jsonConfig.Subscriber.GetValue(key);
             var obj = await ToObjectAsync(path, cancellationToken, notExistHandle);
             return obj;
         }
 
         TResult IJsonProxy.ToObject<TResult>(Enum key, int markBit, Func<TResult>? notExistHandle)
         {
-            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            var path = jsonConfig.Subscriber.GetValue(key, markBit);
             var obj = ToObject(path, notExistHandle);
             return obj;
         }
 
         async UniTask IJsonProxy.ToJsonAsync<T>(Enum key, CancellationToken cancellationToken, int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            var path = jsonConfig.Subscriber.GetValue(key, markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             await ToJsonAsync((T)obj, path, cancellationToken);
         }
 
         void IJsonProxy.ToJson<T>(Enum key, int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            var path = jsonConfig.Subscriber.GetValue(key, markBit);
             if (!objectCache.TryGetValue(path, out var obj)) return;
             ToJson((T)obj, path);
         }
 
         bool IJsonProxy.CacheExists<T>(Enum key, int markBit)
         {
-            var path = jsonConfig.StringSubscriber.Get(key, markBit);
+            var path = jsonConfig.Subscriber.GetValue(key, markBit);
             return CacheExists<T>(path);
         }
 

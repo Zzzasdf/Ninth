@@ -9,6 +9,6 @@ namespace Ninth
     
     public interface IPlayerPrefsIntConfig
     {
-        SubscriberCollect<int, PLAYERPREFS_INT> IntSubscriber { get; }
+        Subscriber<PLAYERPREFS_INT, int> IntSubscriber { get; }
     }
 }

@@ -333,7 +333,7 @@ namespace Ninth.Editor
                         buildPlayersConfig.BuildTargetGroup = buildTargetPlatformSelector[platform].BuildTargetGroup;
                         buildPlayersConfig.BuildFolder = buildFolders[BuildFolder.Players].Value;
                         buildPlayersConfig.BuildTargetPlatformInfo = platformVersions[platform];
-                        BuildPlayer(buildPlayersConfig);
+                        BuildPlayer(buildPlayersConfig); 
                         Directory.Delete(Application.streamingAssetsPath, true);
                     }
                     else

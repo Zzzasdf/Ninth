@@ -20,7 +20,7 @@ namespace Ninth
         
         int IPlayerPrefsIntProxy.Get(PLAYERPREFS_INT @int)
         {
-            var defaultValue = intConfig.IntSubscriber.Get(@int);
+            var defaultValue = intConfig.IntSubscriber.GetValue(@int);
             return PlayerPrefs.GetInt(((int)@int).ToString(), defaultValue);
         }
 
@@ -36,7 +36,7 @@ namespace Ninth
         
         float IPlayerPrefsFloatProxy.Get(PLAYERPREFS_FLOAT @float)
         {
-            var defaultValue = floatConfig.FloatSubscriber.Get(@float);
+            var defaultValue = floatConfig.FloatSubscriber.GetValue(@float);
             return PlayerPrefs.GetFloat(((int)@float).ToString(), defaultValue);
         }
 
@@ -52,7 +52,7 @@ namespace Ninth
         
         string IPlayerPrefsStringProxy.Get(PLAYERPREFS_STRING @string)
         {
-            var defaultValue = stringConfig.StringSubscriber.Get(@string);
+            var defaultValue = stringConfig.StringSubscriber.GetValue(@string);
             return PlayerPrefs.GetString(((int)@string).ToString(), defaultValue);
         }
 

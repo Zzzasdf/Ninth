@@ -20,7 +20,7 @@ namespace Ninth.Utility
     
     public interface IBundlePathConfig
     {
-        SubscriberCollect<Func<string, string>, BUNDLE_PATH> BundlePathSubscriber { get; }
-        SubscriberCollect<(Func<string, string, string> serverPath, BUNDLE_PATH cachePath), ASSET_SERVER_BUNDLE_PATH> AssetServerBundlePathSubscriber { get; }    
+        Subscriber<BUNDLE_PATH, Func<string, string>> BundlePathSubscriber { get; }
+        Subscriber<ASSET_SERVER_BUNDLE_PATH, (Func<string, string, string> serverPath, BUNDLE_PATH cachePath)> AssetServerBundlePathSubscriber { get; }    
     }
 }

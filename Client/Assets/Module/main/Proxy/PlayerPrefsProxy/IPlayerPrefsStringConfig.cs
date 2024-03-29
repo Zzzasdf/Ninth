@@ -9,6 +9,6 @@ namespace Ninth
     
     public interface IPlayerPrefsStringConfig
     {
-        SubscriberCollect<string, PLAYERPREFS_STRING> StringSubscriber { get; }
+        Subscriber<PLAYERPREFS_STRING, string> StringSubscriber { get; }
     }
 }

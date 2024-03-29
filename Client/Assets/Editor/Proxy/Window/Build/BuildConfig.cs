@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Ninth.Utility;
 using UnityEditor;
@@ -14,33 +15,33 @@ namespace Ninth.Editor
     
     public class BuildConfig : IBuildConfig
     {
-        private readonly SubscriberCollect<List<string>> stringListSubscriber;
-        private readonly SubscriberCollect<string> stringSubscriber;
-        private readonly SubscriberCollect<int> intSubscriber;
+        private readonly Subscriber<Enum, List<string>> stringListSubscriber;
+        private readonly Subscriber<Enum, string> stringSubscriber;
+        private readonly TypeSubscriber<int> intSubscriber;
         private readonly BuildSettings buildSettings;
             
-        SubscriberCollect<List<string>> IBuildConfig.StringListSubscriber => stringListSubscriber;
-        SubscriberCollect<string> IBuildConfig.StringSubscriber => stringSubscriber;
-        SubscriberCollect<int> IBuildConfig.IntSubscriber => intSubscriber;
+        Subscriber<Enum, List<string>> IBuildConfig.StringListSubscriber => stringListSubscriber;
+        Subscriber<Enum, string> IBuildConfig.StringSubscriber => stringSubscriber;
+        TypeSubscriber<int> IBuildConfig.IntSubscriber => intSubscriber;
         BuildSettings IBuildConfig.BuildSettings => buildSettings;
 
         [Inject]
         public BuildConfig(BuildJson buildJson, IJsonProxy jsonProxy, INameConfig nameConfig, IPlayerSettingsProxy playerSettingsProxy)
         {
             {
-                var build = stringListSubscriber = new SubscriberCollect<List<string>>();
+                var build = stringListSubscriber = new Subscriber<Enum, List<string>>();
                 build.Subscribe(AssetGroup.Local, buildJson.LocalGroup).AsSetEvent(value => buildJson.LocalGroup = value);
                 build.Subscribe(AssetGroup.Remote, buildJson.RemoteGroup).AsSetEvent(value => buildJson.RemoteGroup = value);
             }
 
             {
-                var build = stringSubscriber = new SubscriberCollect<string>();
+                var build = stringSubscriber = new Subscriber<Enum, string>();
                 build.Subscribe(BuildFolder.Bundles, buildJson.ExportBundleFolder).AsSetEvent(value => buildJson.ExportBundleFolder = value);
                 build.Subscribe(BuildFolder.Players, buildJson.ExportPlayFolder).AsSetEvent(value => buildJson.ExportPlayFolder = value);
             }
 
             {
-                var build = intSubscriber = new SubscriberCollect<int>();
+                var build = intSubscriber = new TypeSubscriber<int>();
                 build.Subscribe<BuildTargetPlatform>((int)buildJson.BuildTargetPlatforms).AsSetEvent(value => buildJson.BuildTargetPlatforms = (BuildTargetPlatform)value);
                 build.Subscribe<BuildSettingsMode>((int)buildJson.BuildSettingsMode).AsSetEvent(value => buildJson.BuildSettingsMode = (BuildSettingsMode)value);
             }
@@ -70,12 +71,14 @@ namespace Ninth.Editor
                             ),
                     },
                     new CollectSelector<BuildSettingsMode>
-                        (intSubscriber.GetReactiveProperty<BuildSettingsMode>().AsEnum<BuildSettingsMode>())
+                        (new ReactiveProperty<BuildSettingsMode>((BuildSettingsMode)intSubscriber.GetValue<BuildSettingsMode>())
+                            .AsSetEvent(x => intSubscriber.GetReactiveProperty<BuildSettingsMode>().Value = (int)x))
                     {
                         BuildSettingsMode.HotUpdate,
                         BuildSettingsMode.Player,
                     }.Build(),
-                    intSubscriber.GetReactiveProperty<BuildTargetPlatform>().AsEnum<BuildTargetPlatform>(),
+                        new ReactiveProperty<BuildTargetPlatform>((BuildTargetPlatform)intSubscriber.GetValue<BuildTargetPlatform>())
+                            .AsSetEvent(x => intSubscriber.GetReactiveProperty<BuildTargetPlatform>().Value = (int)x),
                     new MappingSelector<BuildTargetPlatform, BuildTargetPlatformSelectorItem>
                     {
                         [BuildTargetPlatform.StandaloneWindows64] = 

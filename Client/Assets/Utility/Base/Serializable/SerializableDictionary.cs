@@ -1,24 +1,38 @@
 namespace System.Collections.Generic
 {
-    public class SerializableDictionary<TKey, TValue>
-        where TKey: struct
+    public class SerializableDictionary<TKey, TValue>: IEnumerable<KeyValuePair<string, TValue>>
     {
-        public Dictionary<string, TValue> container = new();
+        public Dictionary<string, TValue> Container = new();
 
         public TValue this[TKey key]
         {
-            get => container[key.ToString()];
-            set => container[key.ToString()] = value;
+            get => Container[key.ToString()];
+            set => Container[key.ToString()] = value;
         }
         
         public void Add(TKey key, TValue value)
         {
-            container.Add(key.ToString(), value);
+            Container.Add(key.ToString(), value);
+        }
+
+        public bool ContainKey(TKey key)
+        {
+            return Container.ContainsKey(key.ToString());
         }
         
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return container.TryGetValue(key.ToString(), out value);
+            return Container.TryGetValue(key.ToString(), out value);
+        }
+
+        public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator()
+        {
+            return Container.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

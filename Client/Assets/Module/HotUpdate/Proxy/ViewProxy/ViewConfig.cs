@@ -1,48 +1,62 @@
+using System;
+using System.Collections.Generic;
 using Ninth.Utility;
-using VContainer;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Ninth.HotUpdate
 {
-    public class ViewConfig: IViewConfig
+    [CreateAssetMenu(fileName = "ViewConfigSO", menuName = "Config/ViewConfigSO")]
+    public class ViewConfig : ScriptableObject, IViewConfig
     {
-        private readonly SubscriberCollect<string> stringSubscriber;
-        private readonly SubscriberCollect<ViewInfo> viewInfoSubscriber;
-        SubscriberCollect<string> IViewConfig.StringSubscriber => stringSubscriber;
-        SubscriberCollect<ViewInfo> IViewConfig.ViewInfoSubscriber => viewInfoSubscriber;
+        public VIEW_HIERARCHY DefaultHierarchy;
+        public int DefaultWeight;
+        public int DefaultChildWeight;
         
-        [Inject]
-        public ViewConfig()
-        {
-            {
-                var build = stringSubscriber = new SubscriberCollect<string>();
-                build.Subscribe<VIEW_HIERARCHY>("Assets/GAssets/RemoteGroup/Views/ViewLayout.prefab");
-            }
+        public ViewLayout ViewLayout;
+        public string ViewLayoutPath;
+        
+        public List<ViewInfo> ViewInfos = new();
 
+        private Subscriber<string, string> layoutSubscriber;
+        private Subscriber<string, ViewInfo> viewInfoSubscriber;
+        
+        public Subscriber<string, string> LayoutSubscriber
+        {
+            get
             {
-                viewInfoSubscriber = new SubscriberCollect<ViewInfo>();
-                ViewSubscribe<LoginView>("Assets/GAssets/RemoteGroup/Views/Login/LoginView.prefab", VIEW_HIERARCHY.Frame);
-                ViewSubscribe<SettingsView>("Assets/GAssets/RemoteGroup/Views/Settings/SettingsView.prefab", VIEW_HIERARCHY.Frame);
+                if (layoutSubscriber == null)
+                {
+                    layoutSubscriber = new Subscriber<string, string>();
+                    layoutSubscriber.Subscribe(typeof(ViewLayout).Name, ViewLayoutPath);
+                }
+                return layoutSubscriber;
+            }
+        }
+        public Subscriber<string, ViewInfo> ViewInfoSubscriber
+        {
+            get
+            {
+                if (viewInfoSubscriber == null)
+                {
+                    viewInfoSubscriber = new Subscriber<string, ViewInfo>();
+                    // for (var i = 0; i < Keys.Count; i++)
+                    // {
+                    //     viewInfoSubscriber.Subscribe(Keys[i].GetType().Name, new ViewInfo(Paths[i], Hierarchys[i], Weights[i]));
+                    // }
+                }
+                return viewInfoSubscriber;
             }
         }
         
-        private void ViewSubscribe<T>(string path, VIEW_HIERARCHY hierarchy) where T: BaseView
-            => ViewSubscribe<T>(path, hierarchy, 10);
-
-        private void ViewSubscribe<T>(string path, VIEW_HIERARCHY hierarchy, int weights) where T: BaseView
-            => viewInfoSubscriber.Subscribe<T>(new ViewInfo(path, hierarchy, weights));
-
+        [Serializable]
         public class ViewInfo
         {
-            public readonly string Path;
-            public readonly VIEW_HIERARCHY Hierarchy;
-            public readonly int Weight;
-
-            public ViewInfo(string path, VIEW_HIERARCHY hierarchy, int weight)
-            {
-                this.Path = path;
-                this.Hierarchy = hierarchy;
-                this.Weight = weight;
-            }
+            public string Key;
+            public string Path;
+            public VIEW_HIERARCHY Hierarchy;
+            public int Weight;
+            public List<ChildViewInfo>? ChildViewInfos;
 
             public void Deconstruct(out string path, out VIEW_HIERARCHY hierarchy, out int weight)
             {
@@ -51,6 +65,13 @@ namespace Ninth.HotUpdate
                 weight = this.Weight;
             }
         }
+
+        [Serializable]
+        public class ChildViewInfo
+        {
+            public string Key;
+            public string Path;
+            public int Weight;
+        }
     }
 }
-

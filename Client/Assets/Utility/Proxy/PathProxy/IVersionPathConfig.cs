@@ -14,7 +14,7 @@ namespace Ninth.Utility
     
     public interface IVersionPathConfig
     {
-        SubscriberCollect<string, VERSION_PATH> VersionPathSubscriber { get; }
-        SubscriberCollect<(string serverPath, VERSION_PATH cachePath), ASSET_SERVER_VERSION_PATH> AssetServerVersionPathSubscriber { get; }
+        Subscriber<VERSION_PATH, string> VersionPathSubscriber { get; }
+        Subscriber<ASSET_SERVER_VERSION_PATH, (string serverPath, VERSION_PATH cachePath)> AssetServerVersionPathSubscriber { get; }
     }
 }

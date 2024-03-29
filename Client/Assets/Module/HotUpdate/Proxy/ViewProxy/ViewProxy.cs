@@ -36,7 +36,7 @@ namespace Ninth.HotUpdate
 
         public async UniTask<T> ViewAsync<T>(CancellationToken cancellationToken) where T : BaseView
         {
-            var (path, hierarchy, weight) = viewConfig.ViewInfoSubscriber.Get<T>();
+            var (path, hierarchy, weight) = viewConfig.ViewInfoSubscriber.GetValue(typeof(T).Name);
             var currView = await recycleProxy.GetOneAsync(async () =>
             {
                 var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
@@ -63,6 +63,11 @@ namespace Ninth.HotUpdate
             currView.gameObject.SetActive(true);
             return (T)currView;
         }
+
+        // public async UniTask<T> AddChildViewAsync<T>(RectTransform parent, CancellationToken cancellationToken) where T : BaseView
+        // {
+        //     
+        // }
 
         public async UniTaskVoid RecycleAsync(VIEW_HIERARCHY hierarchy, int uniqueId, CancellationToken cancellationToken)
         {
@@ -95,7 +100,7 @@ namespace Ninth.HotUpdate
         
         private async UniTask<RectTransform> GetHierarchy(VIEW_HIERARCHY hierarchy, CancellationToken cancellationToken = default)
         {
-            var viewLayoutPath = viewConfig.StringSubscriber.Get<VIEW_HIERARCHY>();
+            var viewLayoutPath = viewConfig.LayoutSubscriber.GetValue(typeof(ViewLayout).Name);
             if (viewLayout == null)
             {
                 var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath, cancellationToken);

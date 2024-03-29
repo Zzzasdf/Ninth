@@ -27,14 +27,19 @@ namespace Ninth.HotUpdate
             loginView = await viewProxy.ViewAsync<LoginView>();
             loginView.BtnStartGame.onClick.AddListener(OnBtnStartGameClick);
             loginView.BtnSettings.onClick.AddListener(UniTask.UnityAction(OnBtnSettingsClick));
+            loginView.TxtPress.gameObject.SetActive(true);
+            loginView.BtnStartGame.gameObject.SetActive(false);
+            loginView.BtnSettings.gameObject.SetActive(false);
             loginInputSystem.Menu.Any.performed += ctx =>
             {
                 if (EventSystem.current.currentSelectedGameObject != null 
                     && EventSystem.current.currentSelectedGameObject.GetComponent<Button>() != null)
                     return;
                 EventSystem.current.SetSelectedGameObject(loginView.BtnStartGame.gameObject);
+                loginView.TxtPress.gameObject.SetActive(false);
+                loginView.BtnStartGame.gameObject.SetActive(true);
+                loginView.BtnSettings.gameObject.SetActive(true);
             };
-            EventSystem.current.SetSelectedGameObject(loginView.BtnStartGame.gameObject);
             loginInputSystem.Menu.Enable();
         }
         

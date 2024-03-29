@@ -1,13 +1,14 @@
+using System;
 using System.Collections.Generic;
 using Ninth.Utility;
 
 namespace Ninth.Editor
 {
-    public interface IBuildConfig : IJson
+    public interface IBuildConfig
     {
-        SubscriberCollect<List<string>> StringListSubscriber { get; }
-        SubscriberCollect<string> StringSubscriber { get; }
-        SubscriberCollect<int> IntSubscriber { get; }
+        Subscriber<Enum, List<string>> StringListSubscriber { get; }
+        Subscriber<Enum, string> StringSubscriber { get; }
+        TypeSubscriber<int> IntSubscriber { get; }
         BuildConfig.BuildSettings BuildSettings { get; }
     }
 }

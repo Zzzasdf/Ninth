@@ -25,7 +25,7 @@ namespace Ninth.Utility
     
     public interface IConfigPathConfig
     {
-        SubscriberCollect<string, CONFIG_PATH> ConfigPathSubscriber { get; }
-        SubscriberCollect<(Func<string, string> serverPath, CONFIG_PATH cachePath), ASSET_SERVER_CONFIG_PATH> AssetServerConfigPathSubscriber { get; }
+        Subscriber<CONFIG_PATH, string> ConfigPathSubscriber { get; }
+        Subscriber<ASSET_SERVER_CONFIG_PATH, (Func<string, string> serverPath, CONFIG_PATH cachePath)> AssetServerConfigPathSubscriber { get; }
     }
 }

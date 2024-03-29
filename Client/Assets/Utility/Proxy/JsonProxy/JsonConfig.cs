@@ -1,17 +1,21 @@
+using System;
 using VContainer;
 
 namespace Ninth.Utility
 {
     public class JsonConfig : IJsonConfig
     {
-        private readonly SubscriberCollect<string> stringSubscriber;
-        SubscriberCollect<string> IJsonConfig.StringSubscriber => stringSubscriber;
+        private readonly TypeSubscriber<string> typeSubscriber;
+        private readonly Subscriber<Enum, string> subscriber;
+        TypeSubscriber<string> IJsonConfig.TypeSubscriber => typeSubscriber;
+        Subscriber<Enum, string> IJsonConfig.Subscriber => subscriber;
+        
 
         [Inject]
         public JsonConfig(IPathProxy pathProxy)
         {
             {
-                var build = stringSubscriber = new SubscriberCollect<string>();
+                var build = subscriber = new Subscriber<Enum, string>();
                 build.Subscribe(VERSION_PATH.PersistentDataTemp, pathProxy.Get(VERSION_PATH.PersistentDataTemp));
                 build.Subscribe(VERSION_PATH.PersistentData, pathProxy.Get(VERSION_PATH.PersistentData));
                 build.Subscribe(VERSION_PATH.StreamingAssets, pathProxy.Get(VERSION_PATH.StreamingAssets));

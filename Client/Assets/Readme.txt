@@ -19,8 +19,6 @@
     Default: Static
     Fallback: Dynamic
    
-7、Localization
-    
 >> TODO
 Thread
 // UI
@@ -39,4 +37,4 @@ Attribute
 // => 长音效
 //	 => 使用 Vorbis, 质量无需100%
 // => 不常出现的音乐 / 音效
-// 	 => 使用 CompressedInMemory, 或 Streamging (节省内存)
+// 	 => 使用 CompressedInMemory, 或 Streaming (节省内存)

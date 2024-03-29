@@ -8,41 +8,19 @@
         "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
     ],
     "BuildTargetPlatforms": 1,
-    "BuildSettingsMode": 0,
+    "BuildSettingsMode": 1,
     "PlatformVersions": {
-        "container": {
+        "Container": {
             "StandaloneWindows64": {
                 "BuildAssetBundleOptions": 0,
                 "BuildOptions": 0,
                 "Env": 1,
                 "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 230,
-                "HotUpdateVersion": 513,
-                "IterateVersion": 743,
-                "BuildSettingsMode": 0
-            },
-            "Android": {
-                "BuildAssetBundleOptions": 0,
-                "BuildOptions": 0,
-                "Env": 1,
-                "Url": "http://192.168.1.105:80",
-                "DisplayVersion": "0.0.1",
-                "FrameVersion": 6,
-                "HotUpdateVersion": 25,
-                "IterateVersion": 31,
-                "BuildSettingsMode": 0
-            },
-            "iOS": {
-                "BuildAssetBundleOptions": 0,
-                "BuildOptions": 0,
-                "Env": 1,
-                "Url": "http://192.168.1.105:80",
-                "DisplayVersion": "0.0.1",
-                "FrameVersion": 5,
-                "HotUpdateVersion": 23,
-                "IterateVersion": 28,
-                "BuildSettingsMode": 0
+                "FrameVersion": 17,
+                "HotUpdateVersion": 0,
+                "IterateVersion": 17,
+                "BuildSettingsMode": 1
             }
         }
     },

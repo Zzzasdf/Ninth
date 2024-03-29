@@ -1,10 +1,8 @@
-using Cysharp.Threading.Tasks;
 using Ninth.Utility;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Networking;
 using VContainer;
 using VContainer.Unity;
-using Environment = Ninth.Utility.Environment;
 
 namespace Ninth.HotUpdate
 {
@@ -16,7 +14,7 @@ namespace Ninth.HotUpdate
 #if UNITY_EDITOR
             builder.Register<AssetProxyLoadWithNonAB>(Lifetime.Scoped).As<IAssetProxyLoad>();
 #else
-            var nameConfig = Resources.Load<NameConfig>("SOData/NameConfigSO");
+            var nameConfig = GameDriver.NameConfig;
             var playerVersionConfig = GameDriver.PlayerVersionConfig;
             builder.RegisterInstance(playerVersionConfig).AsSelf();
             builder.RegisterInstance(nameConfig).As<INameConfig>();
@@ -34,7 +32,8 @@ namespace Ninth.HotUpdate
             
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
             
-            builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
+            var viewConfig = GameDriver.ViewConfig;
+            builder.RegisterInstance(viewConfig).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
             
             builder.Register<LoginCtrl>(Lifetime.Transient).AsSelf();
