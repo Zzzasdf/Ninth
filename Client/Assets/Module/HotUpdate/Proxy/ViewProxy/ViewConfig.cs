@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Ninth.Utility;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Ninth.HotUpdate
 {
     [CreateAssetMenu(fileName = "ViewConfigSO", menuName = "Config/ViewConfigSO")]
     public class ViewConfig : ScriptableObject, IViewConfig
     {
+        public List<string> folders;
+        
         public VIEW_HIERARCHY DefaultHierarchy;
         public int DefaultWeight;
         public int DefaultChildWeight;

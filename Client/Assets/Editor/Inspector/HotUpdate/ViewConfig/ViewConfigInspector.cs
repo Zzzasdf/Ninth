@@ -17,14 +17,27 @@ namespace Ninth.Editor
         {
             var viewConfig = (ViewConfig)target;
 
-            if (GUILayout.Button("一键删除"))
+            using (new GUILayout.VerticalScope())
             {
-                viewConfig.ViewInfos = new();
+                GUILayout.Label("搜索文件夹集");
+                // EditorWindowUtility.SelectFolderCollect()
             }
-            if (GUILayout.Button("保存"))
+            
+            using (new GUILayout.HorizontalScope())
             {
-                EditorUtility.SetDirty(viewConfig);
-                AssetDatabase.SaveAssetIfDirty(viewConfig);
+                if (GUILayout.Button("一键删除"))
+                {
+                    viewConfig.ViewInfos = new();
+                }
+                if (GUILayout.Button("一键导入"))
+                {
+                    "TODO => 一键导入".Log();
+                }
+                if (GUILayout.Button("一键导出"))
+                {
+                    EditorUtility.SetDirty(viewConfig);
+                    AssetDatabase.SaveAssetIfDirty(viewConfig);
+                }
             }
 
             using (new GUILayout.VerticalScope("FrameBox"))
