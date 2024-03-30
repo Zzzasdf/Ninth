@@ -1,6 +1,7 @@
 using System;
 using VContainer;
 using Ninth.Utility;
+using UnityEngine;
 
 namespace Ninth.Editor
 {
@@ -8,16 +9,23 @@ namespace Ninth.Editor
     {
         private MappingSelector<Tab, Type> mappingSelector;
         MappingSelector<Tab, Type> IWindowConfig.MappingSelector => mappingSelector;
+        
         [Inject]
-        public WindowConfig()
+        public WindowConfig(WindowJson windowJson)
         {
             mappingSelector = new MappingSelector<Tab, Type>
-                (Tab.Build)
+                (new ReactiveProperty<Tab>(windowJson.Tab).AsSetEvent(value => windowJson.Tab = value))
             {
                 [Tab.Build] = typeof(IBuildProxy),
+                [Tab.Module] = typeof(IModuleProxy),
                 [Tab.Excel] = typeof(IExcelProxy),
                 [Tab.Scan] = typeof(IScanProxy),
             }.Build();
         }
+    }
+
+    public class WindowJson: IJson
+    {
+        public Tab Tab;
     }
 }

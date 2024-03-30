@@ -10,7 +10,6 @@ namespace Ninth.Utility
     {
         private readonly IList<T> collect;
         public IEnumerable<T> Collect => collect;
-
         
         public ReactiveProperty<T> Current { get; private set; }
         public ReactiveProperty<int> CurrentIndex { get; private set; }

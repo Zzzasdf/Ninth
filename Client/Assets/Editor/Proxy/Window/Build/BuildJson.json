@@ -17,17 +17,17 @@
                 "Env": 1,
                 "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
-                "FrameVersion": 17,
+                "FrameVersion": 18,
                 "HotUpdateVersion": 0,
-                "IterateVersion": 17,
+                "IterateVersion": 18,
                 "BuildSettingsMode": 1
             }
         }
     },
     "CopySettings": {
-        "TargetPlatformIndex": 0,
+        "TargetPlatformIndex": 1,
         "LockModeIndex": 1,
-        "BundleVersionIndex": 1,
-        "PlayerVersionIndex": 1
+        "BundleVersionIndex": 0,
+        "PlayerVersionIndex": 0
     }
 }

@@ -46,6 +46,10 @@ namespace Ninth.Editor.Window
 
         private void OnDisable()
         {
+            if (jsonProxy.CacheExists<WindowJson, Tab>())
+            {
+                jsonProxy.ToJson<WindowJson, Tab>();
+            }
             if (jsonProxy.CacheExists<BuildJson>(Tab.Build))
             {
                 jsonProxy.ToJson<BuildJson>(Tab.Build);
@@ -117,12 +121,12 @@ namespace Ninth.Editor.Window
         private Vector2 contentScrollView;
         private void RenderContent()
         {
-            // contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
+            contentScrollView = GUILayout.BeginScrollView(contentScrollView, GUILayout.ExpandWidth(true));
             using (new GUILayout.HorizontalScope())
             {
                 windowProxy.Content();
             }
-            // GUILayout.EndScrollView();
+            GUILayout.EndScrollView();
         }
     }
 }
