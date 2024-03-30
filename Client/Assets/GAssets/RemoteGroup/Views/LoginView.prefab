@@ -267,9 +267,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ee1060e1692a844bbcbdc6614593357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TxtPress: {fileID: 4870473402269903401}
   BtnStartGame: {fileID: 1366837955208261741}
   BtnSettings: {fileID: 6559455454346478950}
-  TxtPress: {fileID: 4870473402269903401}
 --- !u!1 &3016716710254890489
 GameObject:
   m_ObjectHideFlags: 0

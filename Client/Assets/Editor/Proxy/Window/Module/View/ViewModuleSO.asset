@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 823f76a188b15a040abb1ff537090fb7, type: 3}
+  m_Name: ViewModuleSO
+  m_EditorClassIdentifier: 
+  AssetFolders:
+    AssetPaths:
+    - RelativePath: Assets/GAssets/RemoteGroup/Views
+  P2MAssetReference:
+    Parents:
+    - Asset: {fileID: 6320267130588914310, guid: aae3ad6e820097d448a2b37cb9387127, type: 3}
+      Config:
+        Weight: 10
+        ChildRefIndexCollect: 00000000
+    - Asset: {fileID: 7363557194153395338, guid: eda7c5172970c584a9bdfe1e0e4c8143, type: 3}
+      Config:
+        Weight: 10
+        ChildRefIndexCollect: 
+    Childs:
+    - Asset: {fileID: 4355650728355869827, guid: 85a8d3f86ee64bd4da322df5040ff2bd, type: 3}
+      Config:
+        Weight: 5
+        ParentRefIndexCollect: 00000000
+    DefaultParentWeight: 10
+    DefaultChildWeight: 5

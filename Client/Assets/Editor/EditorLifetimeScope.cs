@@ -29,14 +29,14 @@ namespace Ninth.Editor
             builder.Register<VersionPathConfig>(Lifetime.Singleton).As<IVersionPathConfig>();
             builder.Register<ConfigPathConfig>(Lifetime.Singleton).As<IConfigPathConfig>();
             builder.Register<BundlePathConfig>(Lifetime.Singleton).As<IBundlePathConfig>();
-            builder.Register<PathProxy>(Lifetime.Singleton).As<IPathProxy>();
             
             builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
              
             // editor
             builder.Register<VersionConfig>(resolver => resolver.Resolve<IJsonProxy>().ToObject(notExistHandle: () => new VersionConfig()), Lifetime.Singleton).AsSelf();
-            
+
+            builder.Register<WindowJson>(resolver => resolver.Resolve<IJsonProxy>().ToObject<WindowJson, Tab>(notExistHandle: () => new WindowJson()), Lifetime.Singleton).AsSelf();
             builder.Register<WindowConfig>(Lifetime.Singleton).As<IWindowConfig>();
             builder.Register<WindowProxy>(Lifetime.Singleton).As<IWindowProxy>();
             
@@ -45,6 +45,12 @@ namespace Ninth.Editor
             builder.Register<BuildProxy>(Lifetime.Singleton).As<IBuildProxy>();
             builder.Register<BuildProxy.BuildBundlesConfig>(Lifetime.Transient).AsSelf();
             builder.Register<BuildProxy.BuildPlayersConfig>(Lifetime.Transient).AsSelf();
+
+            builder.Register<ModuleConfig>(Lifetime.Singleton).As<IModuleConfig>();
+            builder.Register<ModuleProxy>(Lifetime.Singleton).As<IModuleProxy>();
+            var viewConfig = AssetDatabase.LoadAssetAtPath<ViewConfig>("Assets/Editor/Proxy/Window/Module/View/ViewModuleSO.asset");
+            builder.RegisterInstance(viewConfig).AsSelf();
+            builder.Register<ViewProxy>(Lifetime.Singleton).AsSelf();
 
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();
