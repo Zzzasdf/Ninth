@@ -722,7 +722,7 @@ namespace Ninth.Editor
                             {
                                 using (new EditorGUILayout.HorizontalScope())
                                 {
-                                    EditorGUILayout.ObjectField(asset, typeof(BaseChildView), false);
+                                    EditorGUILayout.ObjectField(asset, typeof(TChild), false);
                                     var stringList = new List<string> { "添加" };
                                     stringList.AddRange(assetModuleConfig.P2MAssetReference.Parents.Select(x => x.Asset != null ? $"{x.Asset.name}" : "引用丢失").ToList());
                                     var intList = new List<int>();
