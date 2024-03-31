@@ -10,25 +10,34 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823f76a188b15a040abb1ff537090fb7, type: 3}
-  m_Name: ViewModuleSO
+  m_Name: ViewAssetModuleSO
   m_EditorClassIdentifier: 
+  AssetFoldout: 1
   AssetFolders:
     AssetPaths:
     - RelativePath: Assets/GAssets/RemoteGroup/Views
   P2MAssetReference:
     Parents:
-    - Asset: {fileID: 6320267130588914310, guid: aae3ad6e820097d448a2b37cb9387127, type: 3}
+    - Asset: {fileID: 6320267130588914310, guid: 04af1292aa8743e49b6e67f7e0d41167, type: 3}
       Config:
         Weight: 10
         ChildRefIndexCollect: 00000000
+        IsLock: 0
+        Hierarchy: 0
     - Asset: {fileID: 7363557194153395338, guid: eda7c5172970c584a9bdfe1e0e4c8143, type: 3}
       Config:
         Weight: 10
         ChildRefIndexCollect: 
+        IsLock: 0
+        Hierarchy: 0
     Childs:
     - Asset: {fileID: 4355650728355869827, guid: 85a8d3f86ee64bd4da322df5040ff2bd, type: 3}
       Config:
         Weight: 5
         ParentRefIndexCollect: 00000000
+        IsRepeat: 0
+        IsLock: 0
     DefaultParentWeight: 10
     DefaultChildWeight: 5
+    DefaultParentHierarchy: 0
+    ViewLayout: {fileID: -1952502549081297294, guid: c818ae106e8ec9347a7f5d6631286652, type: 3}

@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ninth.HotUpdate;
-using Ninth.Utility;
-using NPOI.POIFS.Properties;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Ninth.Editor
 {
     [Serializable]
-    public class P2MAssetReference<TParent, TChild>
+    public class P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig>
+        where TParent: UnityEngine.Object
+        where TParentConfig: ParentConfig, new()
+        where TChild: UnityEngine.Object
+        where TChildConfig: ChildConfig, new()
     {
-        public List<AssetReference<TParent, ParentConfig>> Parents = new();
-        public List<AssetReference<TChild, ChildConfig>> Childs = new();
+        public List<AssetReference<TParent, TParentConfig>> Parents = new();
+        public List<AssetReference<TChild, TChildConfig>> Childs = new();
         public int DefaultParentWeight;
         public int DefaultChildWeight;
 
-        public void ChildAdd(AssetReference<TParent, ParentConfig> parentRef, TChild asset)
+        public void ChildAdd(AssetReference<TParent, TParentConfig> parentRef, TChild asset, Action<TChildConfig> extraInit)
         {
             if (Childs.Select(x => x.Asset).ToList().Contains(asset))
             {
@@ -25,14 +25,16 @@ namespace Ninth.Editor
                 return;
             }
             var parentIndex = Parents.IndexOf(parentRef);
-            Childs.Add(new AssetReference<TChild, ChildConfig>
+            var config = new TChildConfig
+            {
+                Weight = DefaultChildWeight,
+                ParentRefIndexCollect = new() { parentIndex }
+            };
+            extraInit.Invoke(config);
+            Childs.Add(new AssetReference<TChild, TChildConfig>
             {
                 Asset = asset,
-                Config = new ChildConfig
-                {
-                    Weight = DefaultChildWeight,
-                    ParentRefIndexCollect = new (){ parentIndex }
-                }
+                Config = config
             });
             parentRef.Config.ChildRefIndexCollect.Add(Childs.Count - 1);
         }
@@ -50,7 +52,7 @@ namespace Ninth.Editor
             Childs[childIndex].Config.ParentRefIndexCollect.Add(parentIndex);
         }
 
-        public void ChildRemove(AssetReference<TParent, ParentConfig> parentRef, AssetReference<TChild, ChildConfig> childRef)
+        public void Remove(AssetReference<TParent, TParentConfig> parentRef, AssetReference<TChild, TChildConfig> childRef)
         {
             var parentIndex = Parents.IndexOf(parentRef);
             var childIndex = Childs.IndexOf(childRef);
@@ -87,15 +89,17 @@ namespace Ninth.Editor
             }
         }
 
-        public void ParentAdd(TParent asset)
+        public void ParentAdd(TParent asset, Action<TParentConfig> extraInit)
         {
-            Parents.Add(new AssetReference<TParent, ParentConfig>
+            var config = new TParentConfig
+            {
+                Weight = DefaultParentWeight
+            };
+            extraInit.Invoke(config);
+            Parents.Add(new AssetReference<TParent, TParentConfig>
             {
                 Asset = asset,
-                Config = new ParentConfig
-                {
-                    Weight = DefaultParentWeight
-                }
+                Config = config
             });
         }
         
@@ -139,6 +143,7 @@ namespace Ninth.Editor
     {
         public int Weight;
         public List<int> ChildRefIndexCollect = new();
+        public bool IsLock;
     }
     
     [Serializable]
@@ -146,5 +151,7 @@ namespace Ninth.Editor
     {
         public int Weight;
         public List<int> ParentRefIndexCollect = new();
+        public bool IsRepeat;
+        public bool IsLock;
     }
 }

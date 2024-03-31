@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c79c830018d4a6b4fb9b262803b5e26f, type: 3}
+  m_Name: AssetModuleConfigReferencesSO
+  m_EditorClassIdentifier: 
+  LockViewAssetModuleConfig: 1
+  ViewAssetModuleConfig: {fileID: 11400000, guid: 7c88300ae8bc71040866d9e27687aed0, type: 2}
+  LockRoleAssetModuleConfig: 1
+  RoleAssetModuleConfig: {fileID: 11400000, guid: cd06d40d144a82644a1a31f01e7582d0, type: 2}

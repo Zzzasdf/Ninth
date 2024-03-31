@@ -6,7 +6,7 @@ namespace Ninth.Editor
     public enum Tab
     {
         Build,
-        Module,
+        AssetModule,
         Excel,
         Scan,
     }

@@ -8,7 +8,7 @@
         "C:/UnityProject/Ninth/Client/Assets/GAssets/RemoteGroup"
     ],
     "BuildTargetPlatforms": 1,
-    "BuildSettingsMode": 1,
+    "BuildSettingsMode": 0,
     "PlatformVersions": {
         "Container": {
             "StandaloneWindows64": {
@@ -18,16 +18,16 @@
                 "Url": "http://192.168.1.105:80",
                 "DisplayVersion": "0.0.1",
                 "FrameVersion": 18,
-                "HotUpdateVersion": 0,
-                "IterateVersion": 18,
-                "BuildSettingsMode": 1
+                "HotUpdateVersion": 2,
+                "IterateVersion": 20,
+                "BuildSettingsMode": 0
             }
         }
     },
     "CopySettings": {
-        "TargetPlatformIndex": 1,
+        "TargetPlatformIndex": 0,
         "LockModeIndex": 1,
-        "BundleVersionIndex": 0,
-        "PlayerVersionIndex": 0
+        "BundleVersionIndex": 1,
+        "PlayerVersionIndex": 1
     }
 }

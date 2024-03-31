@@ -1,15 +1,22 @@
 using System;
 using Ninth.Utility;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Ninth.Editor
 {
     [Serializable]
-    public class BaseAssetModuleConfig<TParent, TChild> : ScriptableObject
+    public class BaseAssetModuleConfig<TParent, TParentConfig, TChild, TChildConfig, TP2MAssetReference> : ScriptableObject
+        where TParent: UnityEngine.Object
+        where TParentConfig: ParentConfig, new()
+        where TChild: UnityEngine.Object
+        where TChildConfig: ChildConfig, new()
+        where TP2MAssetReference: P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig>, new()
     {
+        public bool AssetFoldout;
         public AssetPathList AssetFolders = new();
 
-        public P2MAssetReference<TParent, TChild> P2MAssetReference = new();
+        public TP2MAssetReference P2MAssetReference = new();
         
         public HierarchyInfo HierarchyInfo = new();
     }
@@ -48,5 +55,15 @@ namespace Ninth.Editor
         Appointed,
         UnAppoint,
         RepeatAppoint,
+    }
+
+    public enum Implement
+    {
+        Count,
+        Render,
+        AutoAppoint,
+
+        MissCount,
+        MissAutoRemove,
     }
 }

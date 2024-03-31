@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Ninth.HotUpdate
 {
-    [CreateAssetMenu(fileName = "ViewConfigSO", menuName = "Config/ViewConfigSO")]
     public class ViewConfig : ScriptableObject, IViewConfig
     {
         public List<string> folders;

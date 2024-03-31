@@ -16,8 +16,8 @@ namespace Ninth.Editor
             mappingSelector = new MappingSelector<Tab, Type>
                 (new ReactiveProperty<Tab>(windowJson.Tab).AsSetEvent(value => windowJson.Tab = value))
             {
+                [Tab.AssetModule] = typeof(IAssetModuleProxy),
                 [Tab.Build] = typeof(IBuildProxy),
-                [Tab.Module] = typeof(IModuleProxy),
                 [Tab.Excel] = typeof(IExcelProxy),
                 [Tab.Scan] = typeof(IScanProxy),
             }.Build();

@@ -46,11 +46,12 @@ namespace Ninth.Editor
             builder.Register<BuildProxy.BuildBundlesConfig>(Lifetime.Transient).AsSelf();
             builder.Register<BuildProxy.BuildPlayersConfig>(Lifetime.Transient).AsSelf();
 
-            builder.Register<ModuleConfig>(Lifetime.Singleton).As<IModuleConfig>();
-            builder.Register<ModuleProxy>(Lifetime.Singleton).As<IModuleProxy>();
-            var viewConfig = AssetDatabase.LoadAssetAtPath<ViewConfig>("Assets/Editor/Proxy/Window/Module/View/ViewModuleSO.asset");
-            builder.RegisterInstance(viewConfig).AsSelf();
-            builder.Register<ViewProxy>(Lifetime.Singleton).AsSelf();
+            var assetModuleConfigCollect = AssetDatabase.LoadAssetAtPath<AssetModuleConfigReferences>("Assets/Editor/Proxy/Window/AssetModule/AssetModuleConfigReferencesSO.asset");
+            builder.RegisterInstance(assetModuleConfigCollect).AsSelf();
+            builder.Register<AssetAssetModuleConfig>(Lifetime.Singleton).As<IAssetModuleConfig>();
+            builder.Register<AssetAssetModuleProxy>(Lifetime.Singleton).As<IAssetModuleProxy>();
+            builder.Register<ViewAssetModuleProxy>(Lifetime.Singleton).AsSelf();
+            builder.Register<RoleAssetModuleProxy>(Lifetime.Singleton).AsSelf();
 
             builder.Register<ExcelConfig>(Lifetime.Singleton).As<IExcelConfig>();
             builder.Register<ExcelProxy>(Lifetime.Singleton).As<IExcelProxy>();
