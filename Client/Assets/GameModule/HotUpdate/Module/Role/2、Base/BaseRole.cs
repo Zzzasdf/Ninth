@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using UnityEngine;
 
 namespace Ninth.HotUpdate

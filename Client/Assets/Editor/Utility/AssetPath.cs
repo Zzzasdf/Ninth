@@ -12,6 +12,10 @@ namespace Ninth.Editor
     {
         public static string Convert2Relative(string fullPath)
         {
+            if (string.IsNullOrEmpty(fullPath))
+            {
+                return string.Empty;
+            }
             return fullPath[(Application.dataPath.Length - "Assets".Length)..].Replace('\\', '/');
         }
         

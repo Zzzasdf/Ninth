@@ -23,13 +23,13 @@ MonoBehaviour:
         Weight: 10
         ChildRefIndexCollect: 00000000
         IsLock: 0
-        Hierarchy: 0
+        Hierarchy: 2
     - Asset: {fileID: 7363557194153395338, guid: eda7c5172970c584a9bdfe1e0e4c8143, type: 3}
       Config:
         Weight: 10
         ChildRefIndexCollect: 
         IsLock: 0
-        Hierarchy: 0
+        Hierarchy: 2
     Childs:
     - Asset: {fileID: 4355650728355869827, guid: 85a8d3f86ee64bd4da322df5040ff2bd, type: 3}
       Config:

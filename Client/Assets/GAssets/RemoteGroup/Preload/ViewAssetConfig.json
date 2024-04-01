@@ -1,0 +1,40 @@
+{
+    "ViewLayout": "Assets/GAssets/RemoteGroup/Views/ViewLayout.prefab",
+    "AssetParentConfigs": [
+        {
+            "Hierarchy": 2,
+            "Key": "LoginView",
+            "RelativePath": "Assets/GAssets/RemoteGroup/Views/LoginView.prefab",
+            "Weight": 10
+        },
+        {
+            "Hierarchy": 2,
+            "Key": "SettingsView",
+            "RelativePath": "Assets/GAssets/RemoteGroup/Views/SettingsView.prefab",
+            "Weight": 10
+        }
+    ],
+    "AssetChildConfigs": [
+        {
+            "Key": "LoginTestChildView",
+            "RelativePath": "Assets/GAssets/RemoteGroup/Views/LoginTestChildView.prefab",
+            "Weight": 5
+        }
+    ],
+    "Keys": [
+        "LoginView",
+        "SettingsView"
+    ],
+    "ParentValueIndexs": [
+        {
+            "ValueIndex": 0,
+            "ChildIndex": [
+                0
+            ]
+        },
+        {
+            "ValueIndex": 1,
+            "ChildIndex": []
+        }
+    ]
+}
