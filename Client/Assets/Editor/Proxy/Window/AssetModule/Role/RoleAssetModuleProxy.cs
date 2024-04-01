@@ -1,11 +1,14 @@
 using Ninth.HotUpdate;
 using UnityEditor;
-using UnityEngine;
 using VContainer;
 
 namespace Ninth.Editor
 {
-    public class RoleAssetModuleProxy: BaseAssetModuleProxy<BaseRole, RoleParentConfig, BaseChildRole, RoleChildConfig, RoleP2MAssetReference, RoleAssetModuleConfig>
+    public class RoleAssetModuleProxy: BaseAssetModuleProxy
+        <BaseRole, RoleParentConfig, 
+            BaseChildRole, RoleChildConfig, 
+            RoleP2MAssetReference, RoleAssetModuleConfig,
+            RoleAssetConfig, RoleAssetParentConfig, RoleAssetChildConfig>
     {
         private readonly AssetModuleConfigReferences assetModuleConfigReferences;
         

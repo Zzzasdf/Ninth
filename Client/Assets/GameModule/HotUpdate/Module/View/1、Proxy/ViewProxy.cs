@@ -36,14 +36,17 @@ namespace Ninth.HotUpdate
 
         public async UniTask<T> ViewAsync<T>(CancellationToken cancellationToken) where T : BaseView
         {
-            var (path, hierarchy, weight) = viewConfig.ViewInfoSubscriber.GetValue(typeof(T).Name);
+            var assetParentConfig = viewConfig.ViewAssetConfig.GetAssetParentConfig<T>();
+            var hierarchy = assetParentConfig.Hierarchy;
+            var path = assetParentConfig.RelativePath;
+            var weight = assetParentConfig.Weight;
             var currView = await recycleProxy.GetOneAsync(async () =>
             {
                 var rectHierarchy = await GetHierarchy(hierarchy, cancellationToken);
                 var obj = await assetProxy.CloneAsync(path, rectHierarchy, cancellationToken);
                 obj.SetActive(false);
                 var component = obj.GetComponent<T>();
-                component.CreateInit(this, typeof(T), hierarchy, weight);
+                component.InitOnCreate(this, typeof(T), hierarchy, weight);
                 return component;
             });
             if (currView == null)
@@ -64,10 +67,24 @@ namespace Ninth.HotUpdate
             return (T)currView;
         }
 
-        // public async UniTask<T> AddChildViewAsync<T>(RectTransform parent, CancellationToken cancellationToken) where T : BaseView
-        // {
-        //     
-        // }
+        public async UniTask<TChild> ChildViewAsync<TParent, TChild>(RectTransform parentNode, CancellationToken cancellationToken) where TParent : BaseView where TChild : BaseChildView
+        {
+            var assetParentConfig = viewConfig.ViewAssetConfig.GetAssetChildConfig<TParent, TChild>();
+            var path = assetParentConfig.RelativePath;
+            var weight = assetParentConfig.Weight;
+            var obj = await assetProxy.CloneAsync(path, parentNode, cancellationToken);
+            obj.SetActive(false);
+            var component = obj.GetComponent<TChild>();
+            component.InitOnCreate(this, typeof(TChild), weight);
+            var currView = component;
+            if (currView == null)
+            {
+                $"无法找到在实例化的对象的根节点上找到 {nameof(TChild)} 组件, 预制体路径：{path}".FrameError();
+                return null;
+            }
+            currView.gameObject.SetActive(true);
+            return currView;
+        }
 
         public async UniTaskVoid RecycleAsync(VIEW_HIERARCHY hierarchy, int uniqueId, CancellationToken cancellationToken)
         {
@@ -75,7 +92,7 @@ namespace Ninth.HotUpdate
             if (dequeueView == null)
             {
                 $"无法找到 {hierarchy}, {uniqueId}".Error();
-                return;
+                return; 
             }
             dequeueView.gameObject.SetActive(false);
             recycleProxy.Recycle(dequeueView.Type, dequeueView, true, Object.DestroyImmediate);
@@ -100,7 +117,7 @@ namespace Ninth.HotUpdate
         
         private async UniTask<RectTransform> GetHierarchy(VIEW_HIERARCHY hierarchy, CancellationToken cancellationToken = default)
         {
-            var viewLayoutPath = viewConfig.LayoutSubscriber.GetValue(typeof(ViewLayout).Name);
+            var viewLayoutPath = viewConfig.ViewAssetConfig.ViewLayout;
             if (viewLayout == null)
             {
                 var viewLayoutObj = await assetProxy.CloneAsync(viewLayoutPath, cancellationToken);

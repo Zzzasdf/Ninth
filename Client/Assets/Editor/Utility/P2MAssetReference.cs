@@ -1,21 +1,103 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using LitJson;
+using Newtonsoft.Json;
+using Ninth.HotUpdate;
+using UnityEditor;
 using UnityEngine;
 
 namespace Ninth.Editor
 {
     [Serializable]
-    public class P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig>
+    public abstract class P2MAssetReference
+        <TParent, TParentConfig, 
+            TChild, TChildConfig,
+            TAssetConfig, TAssetParentConfig, TAssetChildConfig>
         where TParent: UnityEngine.Object
         where TParentConfig: ParentConfig, new()
         where TChild: UnityEngine.Object
         where TChildConfig: ChildConfig, new()
+        where TAssetConfig: BaseAssetConfig<TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetParentConfig: BaseAssetParentConfig, new()
+        where TAssetChildConfig: BaseAssetChildConfig, new()
     {
         public List<AssetReference<TParent, TParentConfig>> Parents = new();
         public List<AssetReference<TChild, TChildConfig>> Childs = new();
         public int DefaultParentWeight;
         public int DefaultChildWeight;
+
+        public virtual void WriteExtraParent(TAssetParentConfig assetParentConfig, TParentConfig parentConfig) { }
+        public virtual void WriteExtraChild(TAssetChildConfig assetChildConfig, TChildConfig childConfig) { }
+        public virtual void WriteExtra(TAssetConfig assetConfig) { }
+            
+        public virtual void Write(TextAsset textAsset)
+        {
+            if (textAsset == null)
+            {
+                "未指定文件".FrameError();
+                return;
+            }
+            var assetConfig = new TAssetConfig();
+            for (var i = 0; i < Parents.Count; i++)
+            {
+                var parent = Parents[i];
+                var parentKey = parent.Asset.GetType().Name;
+                var assetParentConfig = new TAssetParentConfig
+                {
+                    Key = parentKey,
+                    RelativePath = AssetDatabase.GetAssetPath(parent.Asset),
+                    Weight = parent.Config.Weight,
+                    ChildKeys = parent.Config.ChildRefIndexCollect.Select(childIndex => Childs[childIndex].Asset.GetType().Name).ToList()
+                };
+                WriteExtraParent(assetParentConfig, parent.Config);
+                assetConfig.AssetParentConfigs.Add(assetParentConfig);
+            }
+
+            for (var i = 0; i < Childs.Count; i++)
+            {
+                var child = Childs[i];
+                var childKey = child.Asset.GetType().Name;
+                var assetChildConfig = new TAssetChildConfig
+                {
+                    Key = childKey,
+                    RelativePath = AssetDatabase.GetAssetPath(child.Asset),
+                    Weight = child.Config.Weight
+                };
+                WriteExtraChild(assetChildConfig, child.Config);
+                assetConfig.AssetChildConfigs.Add(assetChildConfig);
+            }
+            WriteExtra(assetConfig); 
+            var jsonData = JsonMapper.ToJson(assetConfig);
+            var exportPath = Path.Combine(Application.dataPath, "..", AssetDatabase.GetAssetPath(textAsset));
+            File.WriteAllText(exportPath, ConvertJsonString(jsonData), new UTF8Encoding(false));
+            AssetDatabase.Refresh();
+            exportPath.FrameLog("导出路径: {0}");
+            return;
+            
+            string ConvertJsonString(string str)
+            {
+                var serializer = new JsonSerializer();
+                TextReader tr = new StringReader(str);
+                var jtr = new JsonTextReader(tr);
+                var obj = serializer.Deserialize(jtr);
+                if (obj == null)
+                {
+                    return str;
+                }
+                var textWriter = new StringWriter();
+                var jsonWriter = new JsonTextWriter(textWriter)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonWriter, obj);
+                return textWriter.ToString();
+            }
+        }
 
         public void ChildAdd(AssetReference<TParent, TParentConfig> parentRef, TChild asset, Action<TChildConfig> extraInit)
         {

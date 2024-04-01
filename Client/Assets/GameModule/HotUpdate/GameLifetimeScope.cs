@@ -29,11 +29,11 @@ namespace Ninth.HotUpdate
 #endif
             builder.Register<JsonConfig>(Lifetime.Singleton).As<IJsonConfig>();
             builder.Register<JsonProxy>(Lifetime.Singleton).As<IJsonProxy>();
-            
+
+            builder.RegisterInstance(GameDriver.PreLoadAssets).AsSelf();
             builder.Register<AssetProxy>(Lifetime.Singleton).As<IAssetProxy>();
-            
-            var viewConfig = GameDriver.ViewConfig;
-            builder.RegisterInstance(viewConfig).As<IViewConfig>();
+
+            builder.Register<ViewConfig>(Lifetime.Singleton).As<IViewConfig>();
             builder.Register<ViewProxy>(Lifetime.Singleton).As<IViewProxy>();
             
             builder.Register<LoginCtrl>(Lifetime.Transient).AsSelf();

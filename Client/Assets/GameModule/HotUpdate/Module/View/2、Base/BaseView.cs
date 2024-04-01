@@ -13,7 +13,7 @@ namespace Ninth.HotUpdate
         public int Weight { get; set; }
         public int OrderId { get; set; }
 
-        public void CreateInit(IViewProxy viewProxy, Type type, VIEW_HIERARCHY hierarchy, int weight)
+        public void InitOnCreate(IViewProxy viewProxy, Type type, VIEW_HIERARCHY hierarchy, int weight)
         {
             this.viewProxy = viewProxy;
             this.Type = type;

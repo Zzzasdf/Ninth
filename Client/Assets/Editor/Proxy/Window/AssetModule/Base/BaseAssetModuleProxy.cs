@@ -7,17 +7,25 @@ using UnityEngine;
 
 namespace Ninth.Editor
 {
-    public abstract class BaseAssetModuleProxy<TParent, TParentConfig, TChild, TChildConfig, TP2MAssetReference, TAssetModuleConfig>: IOnGUI
+    public abstract class BaseAssetModuleProxy
+        <TParent, TParentConfig, 
+            TChild, TChildConfig, 
+            TP2MAssetReference, TAssetModuleConfig,
+            TAssetConfig, TAssetParentConfig, TAssetChildConfig> : IOnGUI
         where TParent: UnityEngine.Object
         where TParentConfig: ParentConfig, new()
         where TChild: UnityEngine.Object
         where TChildConfig: ChildConfig, new()
-        where TP2MAssetReference: P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig>, new()
-        where TAssetModuleConfig: BaseAssetModuleConfig<TParent, TParentConfig, TChild, TChildConfig, TP2MAssetReference>, new()
+        where TP2MAssetReference: P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig, TAssetConfig, TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetModuleConfig: BaseAssetModuleConfig<TParent, TParentConfig, TChild, TChildConfig, TP2MAssetReference, TAssetConfig, TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetConfig: BaseAssetConfig<TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetParentConfig: BaseAssetParentConfig, new()
+        where TAssetChildConfig: BaseAssetChildConfig, new()
     {
         private GUIStyle frameBox = GUI.skin.GetStyle("FrameBox");
 
         protected TAssetModuleConfig assetModuleConfig;
+        protected TextAsset textAsset;
 
         protected abstract bool RenderLockSOStatus();
         protected abstract void ModifyLockStatus();
@@ -208,7 +216,7 @@ namespace Ninth.Editor
                 }
                 if (GUILayout.Button("导出 Json"))
                 {
-                    "TODO => 转换成 json".Log();
+                    assetModuleConfig.P2MAssetReference.Write(textAsset);
                 }
             }
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Ninth.Utility;
 
 namespace Ninth.HotUpdate
@@ -13,7 +14,6 @@ namespace Ninth.HotUpdate
 
     public interface IViewConfig
     {
-        Subscriber<string, string> LayoutSubscriber { get; }
-        Subscriber<string, ViewConfig.ViewInfo> ViewInfoSubscriber { get; }
+        public ViewAssetConfig ViewAssetConfig { get; }
     }
 }

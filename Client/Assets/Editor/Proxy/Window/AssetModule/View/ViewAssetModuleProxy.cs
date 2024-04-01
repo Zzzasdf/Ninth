@@ -5,7 +5,10 @@ using VContainer;
 
 namespace Ninth.Editor
 {
-    public class ViewAssetModuleProxy: BaseAssetModuleProxy<BaseView, ViewParentConfig, BaseChildView, ViewChildConfig, ViewP2MAssetReference, ViewAssetModuleConfig>
+    public class ViewAssetModuleProxy: BaseAssetModuleProxy
+        <BaseView, ViewParentConfig, 
+            BaseChildView, ViewChildConfig, 
+            ViewP2MAssetReference, ViewAssetModuleConfig, ViewAssetConfig, ViewAssetParentConfig, ViewAssetChildConfig>
     {
         private readonly AssetModuleConfigReferences assetModuleConfigReferences;
         
@@ -14,6 +17,7 @@ namespace Ninth.Editor
         {
             this.assetModuleConfigReferences = assetModuleConfigReferences;
             assetModuleConfig = assetModuleConfigReferences.ViewAssetModuleConfig;
+            textAsset = assetModuleConfigReferences.PreLoadAssets.ViewAssetConfig;
         }
 
         protected override bool RenderLockSOStatus()

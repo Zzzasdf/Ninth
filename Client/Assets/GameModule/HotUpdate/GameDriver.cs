@@ -5,18 +5,17 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Environment = Ninth.Utility.Environment;
-using Object = UnityEngine.Object;
 
 namespace Ninth.HotUpdate
 {
     public class GameDriver
     {
-        public static ViewConfig ViewConfig { get; set; }
+        public static PreLoadAssets PreLoadAssets { get; set; }
 #if UNITY_EDITOR
         public static async void Init()
         {
             "加载 CS 代码".Log();
-            ViewConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<ViewConfig>("Assets/GAssets/RemoteGroup/Views/ViewConfigSO.asset");
+            PreLoadAssets = UnityEditor.AssetDatabase.LoadAssetAtPath<PreLoadAssets>("Assets/GAssets/RemoteGroup/Preload/PreLoadAssetsSO.asset");
             await SceneManager.LoadSceneAsync("HotUpdateScene");
         }
 #else
@@ -40,9 +39,9 @@ namespace Ninth.HotUpdate
                 Environment.Remote => Application.persistentDataPath, 
                 _ => throw new ArgumentOutOfRangeException()
             };
-            var viewBundle = AssetBundle.LoadFromFile($"{prefix}/Remote/gassets_remotegroup_views");
-            ViewConfig = viewBundle.LoadAsset<ViewConfig>("Assets/GAssets/RemoteGroup/Views/ViewConfigSO.asset");
-            await viewBundle.UnloadAsync(false);
+            var preloadBundle = AssetBundle.LoadFromFile($"{prefix}/Remote/gassets_remotegroup_preload");
+            PreLoadAssets = preloadBundle.LoadAsset<PreLoadAssets>("Assets/GAssets/RemoteGroup/Preload/PreLoadAssetsSO.asset");
+            await preloadBundle.UnloadAsync(false);
             
             var assetBundle = AssetBundle.LoadFromFile($"{prefix}/Remote/gassets_remotegroup");
             await SceneManager.LoadSceneAsync("HotUpdateScene");

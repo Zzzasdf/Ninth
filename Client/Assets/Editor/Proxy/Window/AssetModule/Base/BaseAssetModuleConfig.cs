@@ -1,23 +1,28 @@
 using System;
+using Ninth.HotUpdate;
 using Ninth.Utility;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Ninth.Editor
 {
     [Serializable]
-    public class BaseAssetModuleConfig<TParent, TParentConfig, TChild, TChildConfig, TP2MAssetReference> : ScriptableObject
+    public class BaseAssetModuleConfig
+        <TParent, TParentConfig, 
+            TChild, TChildConfig, 
+            TP2MAssetReference,
+            TAssetConfig, TAssetParentConfig, TAssetChildConfig> : ScriptableObject
         where TParent: UnityEngine.Object
         where TParentConfig: ParentConfig, new()
         where TChild: UnityEngine.Object
         where TChildConfig: ChildConfig, new()
-        where TP2MAssetReference: P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig>, new()
+        where TP2MAssetReference: P2MAssetReference<TParent, TParentConfig, TChild, TChildConfig, TAssetConfig, TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetConfig: BaseAssetConfig<TAssetParentConfig, TAssetChildConfig>, new()
+        where TAssetParentConfig: BaseAssetParentConfig, new()
+        where TAssetChildConfig: BaseAssetChildConfig, new()
     {
         public bool AssetFoldout;
         public AssetPathList AssetFolders = new();
-
         public TP2MAssetReference P2MAssetReference = new();
-        
         public HierarchyInfo HierarchyInfo = new();
     }
     

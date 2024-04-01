@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c79c830018d4a6b4fb9b262803b5e26f, type: 3}
   m_Name: AssetModuleConfigReferencesSO
   m_EditorClassIdentifier: 
+  PreLoadAssets: {fileID: 11400000, guid: 6bf0bae45934b254bba252a81dc7c33f, type: 2}
   LockViewAssetModuleConfig: 1
   ViewAssetModuleConfig: {fileID: 11400000, guid: 7c88300ae8bc71040866d9e27687aed0, type: 2}
   LockRoleAssetModuleConfig: 1
