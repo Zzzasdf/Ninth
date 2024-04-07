@@ -18,6 +18,20 @@
     HanZiZhiMeiFangSongGBK
     Default: Static
     Fallback: Dynamic
+    
+7、Shader
+    渲染管线：顶点着色器 -> 光栅化 -> 片段着色器 -> alpha 测试 -> 模板测试 -> 深度测试 -> Blend -> GBuffer -> front buffer -> frame buffer -> 显示
+    Shader 1.0 适用所有显卡
+    Shader 2.0 可以实现编程
+   1、顶点着色器
+        1、计算顶点颜色
+        2、计算灯光设置
+            Ambient * Lighting Window's Ambient Intensity setting + (Light Color * Diffuse + Light Color * Specular) + Emission
+   2、片段着色器
+        1、纹理采样
+     
+   
+   
    
 >> TODO
 Thread
